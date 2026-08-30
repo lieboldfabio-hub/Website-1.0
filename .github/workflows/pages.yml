@@ -1,0 +1,75 @@
+# Veroeffentlicht die Kundenentwuerfe als Vorschau ueber GitHub Pages.
+# Erreichbar unter https://<benutzer>.github.io/Website-1.0/<kunde>/
+name: Vorschau veroeffentlichen
+
+on:
+  push:
+    branches: [main]
+    paths: ['kunden/**', '.github/workflows/pages.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Seiten zusammenstellen
+        run: |
+          mkdir -p _site
+          cp -r kunden/* _site/
+
+          # Vorschau nicht indexieren lassen. Die Quelldateien bleiben
+          # unveraendert und damit fuer die spaetere echte Domain korrekt.
+          find _site -name '*.html' -print0 | xargs -0 sed -i \
+            's|<meta name="robots" content="index, follow">|<meta name="robots" content="noindex, nofollow">|'
+          printf 'User-agent: *\nDisallow: /\n' > _site/robots.txt
+
+          # Einstiegsseite mit Uebersicht der Entwuerfe
+          {
+            printf '<!DOCTYPE html><html lang="de"><head><meta charset="utf-8">'
+            printf '<meta name="viewport" content="width=device-width,initial-scale=1">'
+            printf '<meta name="robots" content="noindex, nofollow">'
+            printf '<title>Entwuerfe</title><style>'
+            printf 'body{font:16px/1.6 system-ui,sans-serif;margin:0;padding:3rem 1.5rem;'
+            printf 'background:#f3f2ed;color:#12291e}main{max-width:34rem;margin:auto}'
+            printf 'h1{font-size:1.6rem;margin:0 0 1.5rem}'
+            printf 'a{display:block;padding:1.1rem 1.3rem;margin-bottom:.75rem;background:#fff;'
+            printf 'border:1px solid rgba(18,41,30,.12);border-radius:12px;text-decoration:none;'
+            printf 'color:inherit;font-weight:600}a:hover{border-color:#e0a02c}'
+            printf 'p{color:#4e6157;font-size:.95rem}'
+            printf '</style></head><body><main><h1>Website-Entwuerfe</h1>'
+            for d in kunden/*/; do
+              n=$(basename "$d")
+              printf '<a href="./%s/">%s</a>' "$n" "$n"
+            done
+            printf '<p>Nicht oeffentlich gelistet. Vorschauen fuer die Kundenabstimmung.</p>'
+            printf '</main></body></html>'
+          } > _site/index.html
+
+      - uses: actions/configure-pages@v5
+        with:
+          enablement: true
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
