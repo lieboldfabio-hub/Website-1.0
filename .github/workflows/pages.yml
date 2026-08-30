@@ -1,11 +1,11 @@
-# Veroeffentlicht die Kundenentwuerfe als Vorschau ueber GitHub Pages.
-# Erreichbar unter https://<benutzer>.github.io/Website-1.0/<kunde>/
+# Veroeffentlicht Kundenentwuerfe und Beispielprojekte als Vorschau.
+# Erreichbar unter https://<benutzer>.github.io/Website-1.0/<ordner>/
 name: Vorschau veroeffentlichen
 
 on:
   push:
     branches: [main]
-    paths: ['kunden/**', '.github/workflows/pages.yml']
+    paths: ['kunden/**', 'beispiele/**', '.github/workflows/pages.yml']
   workflow_dispatch:
 
 permissions:
@@ -27,13 +27,16 @@ jobs:
         run: |
           mkdir -p _site
           cp -r kunden/* _site/
+          cp -r beispiele/* _site/
 
           # Interne Unterlagen gehoeren nicht auf die Vorschau. Die README
           # enthaelt Verkaufsargumente und Notizen zum Kundengespraech, die
           # niemand ausser uns sehen soll.
           find _site \( -name '*.md' -o -name 'README.txt' \) -delete
-          echo "Interne Unterlagen entfernt:"
-          find _site \( -name '*.md' -o -name 'README.txt' \) | grep . && exit 1 || echo "  keine mehr vorhanden"
+          if find _site \( -name '*.md' -o -name 'README.txt' \) | grep .; then
+            echo "Interne Unterlagen sind noch vorhanden, Abbruch."; exit 1
+          fi
+          echo "Interne Unterlagen entfernt."
 
           # Vorschau nicht indexieren lassen. Die Quelldateien bleiben
           # unveraendert und damit fuer die spaetere echte Domain korrekt.
@@ -41,34 +44,87 @@ jobs:
             's|<meta name="robots" content="index, follow">|<meta name="robots" content="noindex, nofollow">|'
           printf 'User-agent: *\nDisallow: /\n' > _site/robots.txt
 
-          # Einstiegsseite mit Uebersicht der Entwuerfe
-          {
-            printf '<!DOCTYPE html><html lang="de"><head><meta charset="utf-8">'
-            printf '<meta name="viewport" content="width=device-width,initial-scale=1">'
-            printf '<meta name="robots" content="noindex, nofollow">'
-            printf '<title>Entwuerfe</title><style>'
-            printf 'body{font:16px/1.6 system-ui,sans-serif;margin:0;padding:3rem 1.5rem;'
-            printf 'background:#f3f2ed;color:#12291e}main{max-width:34rem;margin:auto}'
-            printf 'h1{font-size:1.6rem;margin:0 0 1.5rem}'
-            printf 'a{display:block;padding:1.1rem 1.3rem;margin-bottom:.75rem;background:#fff;'
-            printf 'border:1px solid rgba(18,41,30,.12);border-radius:12px;text-decoration:none;'
-            printf 'color:inherit;font-weight:600}a:hover{border-color:#e0a02c}'
-            printf 'p{color:#4e6157;font-size:.95rem}'
-            printf '</style></head><body><main><h1>Website-Entwuerfe</h1>'
-            for d in kunden/*/; do
-              n=$(basename "$d")
-              printf '<a href="./%s/">%s</a>' "$n" "$n"
-            done
-            printf '<p>Nicht oeffentlich gelistet. Vorschauen fuer die Kundenabstimmung.</p>'
-            printf '</main></body></html>'
-          } > _site/index.html
+          # ---------------------------------------------------------------
+          # Einstiegsseite. Listet Kundenprojekte und Beispiele getrennt.
+          # ---------------------------------------------------------------
+          python3 - <<'PY'
+          import pathlib, html
+
+          def eintraege(ordner):
+              p = pathlib.Path(ordner)
+              if not p.is_dir():
+                  return []
+              raus = []
+              for d in sorted(x for x in p.iterdir() if x.is_dir()):
+                  titel = d.name
+                  idx = d / "index.html"
+                  if idx.exists():
+                      kopf = idx.read_text(encoding="utf-8", errors="ignore")[:4000]
+                      if "<title>" in kopf:
+                          t = kopf.split("<title>", 1)[1].split("</title>", 1)[0]
+                          titel = t.split("|")[0].strip() or titel
+                  raus.append((d.name, titel))
+              return raus
+
+          def block(ueberschrift, liste, leer):
+              if not liste:
+                  return f"<h2>{ueberschrift}</h2><p class='leer'>{leer}</p>"
+              zeilen = "".join(
+                  f"<a href='./{html.escape(o)}/'><b>{html.escape(t)}</b>"
+                  f"<span>{html.escape(o)}</span></a>"
+                  for o, t in liste
+              )
+              return f"<h2>{ueberschrift}</h2><div class='liste'>{zeilen}</div>"
+
+          seite = f"""<!DOCTYPE html><html lang="de"><head>
+          <meta charset="utf-8">
+          <meta name="viewport" content="width=device-width,initial-scale=1">
+          <meta name="robots" content="noindex, nofollow">
+          <title>Website-Entwuerfe</title>
+          <style>
+          :root {{ color-scheme: light dark; }}
+          body {{ font:16px/1.6 ui-sans-serif,system-ui,sans-serif; margin:0;
+                 padding:clamp(2.5rem,7vw,5rem) 1.5rem; background:#f3f2ed; color:#12291e; }}
+          main {{ max-width:44rem; margin:auto; }}
+          h1 {{ font-size:clamp(1.7rem,1.2rem+2vw,2.4rem); letter-spacing:-.02em; margin:0 0 .6rem; }}
+          .intro {{ color:#4e6157; margin:0 0 3rem; max-width:46ch; }}
+          h2 {{ font-size:.78rem; letter-spacing:.16em; text-transform:uppercase;
+               color:#8a7a4a; margin:2.75rem 0 1rem; }}
+          .liste {{ display:grid; gap:.7rem; }}
+          a {{ display:flex; align-items:baseline; justify-content:space-between; gap:1rem;
+              padding:1.15rem 1.35rem; background:#fff; border:1px solid rgba(18,41,30,.12);
+              border-radius:12px; text-decoration:none; color:inherit; transition:border-color .2s; }}
+          a:hover {{ border-color:#e0a02c; }}
+          a b {{ font-size:1.05rem; }}
+          a span {{ color:#74857b; font-size:.85rem; font-family:ui-monospace,monospace; }}
+          .leer {{ color:#74857b; }}
+          .fuss {{ margin-top:3.5rem; padding-top:1.5rem; border-top:1px solid rgba(18,41,30,.12);
+                  color:#74857b; font-size:.88rem; }}
+          @media (prefers-color-scheme: dark) {{
+            body {{ background:#0d2017; color:#eaf2ec; }}
+            a {{ background:#163224; border-color:rgba(255,255,255,.12); }}
+            .intro,.leer,a span,.fuss {{ color:#a9c2b5; }}
+            .fuss {{ border-color:rgba(255,255,255,.12); }}
+          }}
+          </style></head><body><main>
+          <h1>Website-Entwuerfe</h1>
+          <p class="intro">Vorschauen zur Abstimmung. Nicht oeffentlich gelistet
+          und von Suchmaschinen ausgenommen.</p>
+          {block("Kundenprojekte", eintraege("kunden"), "Noch keine angelegt.")}
+          {block("Beispiele", eintraege("beispiele"), "Noch keine angelegt.")}
+          <p class="fuss">Die Beispiele zeigen erfundene Unternehmen. Saemtliche
+          Angaben darin dienen ausschliesslich der Veranschaulichung.</p>
+          </main></body></html>"""
+
+          pathlib.Path("_site/index.html").write_text(seite, encoding="utf-8")
+          print("Einstiegsseite erzeugt")
+          PY
 
           # ---------------------------------------------------------------
           # Selbstaktualisierung der Vorschau.
           # Die Seite fragt regelmaessig version.txt ab und laedt sich neu,
           # sobald ein neuer Stand veroeffentlicht wurde. So bleibt die
-          # Vorschau auf dem iPad neben dem Chat immer aktuell, ohne dass
-          # jemand manuell neu laden muss.
+          # Vorschau neben dem Chat aktuell, ohne manuelles Neuladen.
           # Wird ausschliesslich in die Vorschau eingefuegt, nie in die
           # Quelldateien. Was der Kunde spaeter bekommt, enthaelt das nicht.
           # ---------------------------------------------------------------
@@ -118,8 +174,6 @@ jobs:
           PY
 
       - uses: actions/configure-pages@v5
-        with:
-          enablement: true
 
       - uses: actions/upload-pages-artifact@v3
         with:
