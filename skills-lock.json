@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "skills": {
+    "frontend-design": {
+      "source": "nexu-io/open-design",
+      "sourceType": "github",
+      "skillPath": "skills/frontend-design/SKILL.md",
+      "computedHash": "157de51af16b12d13df05bd3eb5b81f726aa87470abf05b164592fc4ac6fb904"
+    }
+  }
+}
