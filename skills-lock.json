@@ -1,11 +1,131 @@
 {
   "version": 1,
   "skills": {
+    "color-expert": {
+      "source": "nexu-io/open-design",
+      "sourceType": "github",
+      "skillPath": "skills/color-expert/SKILL.md",
+      "computedHash": "9f33da9b942ca6a3f1d3be95e554c10e779d8674a6b5dd4a6750c028abb7714e"
+    },
+    "design-md": {
+      "source": "nexu-io/open-design",
+      "sourceType": "github",
+      "skillPath": "skills/design-md/SKILL.md",
+      "computedHash": "06b9065719901ffdf912c0dfbd74c4a79e5fbde4b69245edfa54f4b847199cc8"
+    },
+    "design-taste-frontend": {
+      "source": "nexu-io/open-design",
+      "sourceType": "github",
+      "skillPath": "skills/taste-skill/SKILL.md",
+      "computedHash": "487467674b8b57954ddffedb5424fd77f0efdfed0c8875bcc8327d688358782f"
+    },
+    "emilkowalski-motion": {
+      "source": "nexu-io/open-design",
+      "sourceType": "github",
+      "skillPath": "skills/emilkowalski-motion/SKILL.md",
+      "computedHash": "ac9e827c591d2527dea51f937e0ba0fc88627c04b713eaaa76bf634c807d547f"
+    },
     "frontend-design": {
       "source": "nexu-io/open-design",
       "sourceType": "github",
       "skillPath": "skills/frontend-design/SKILL.md",
       "computedHash": "157de51af16b12d13df05bd3eb5b81f726aa87470abf05b164592fc4ac6fb904"
+    },
+    "full-page-screenshot": {
+      "source": "nexu-io/open-design",
+      "sourceType": "github",
+      "skillPath": "skills/full-page-screenshot/SKILL.md",
+      "computedHash": "c384611913eb0bfb36f84c0078c6d6ad13a81edd965cc9ed0145f204956d31e2"
+    },
+    "gsap-core": {
+      "source": "nexu-io/open-design",
+      "sourceType": "github",
+      "skillPath": "skills/gsap-core/SKILL.md",
+      "computedHash": "e14468bc306183d19db463dd622163a62013c1fd4424ac2794e06ce636117aea"
+    },
+    "gsap-performance": {
+      "source": "nexu-io/open-design",
+      "sourceType": "github",
+      "skillPath": "skills/gsap-performance/SKILL.md",
+      "computedHash": "5cf5d7dafdf20e57131d6a81a44208a2800cc07f9e93db6507925c8dad999980"
+    },
+    "gsap-plugins": {
+      "source": "nexu-io/open-design",
+      "sourceType": "github",
+      "skillPath": "skills/gsap-plugins/SKILL.md",
+      "computedHash": "15a5dfe91efd4ecaa4038b1eb7554169523dfebfbb680ec8b0cbceb0eb542ce3"
+    },
+    "gsap-scrolltrigger": {
+      "source": "nexu-io/open-design",
+      "sourceType": "github",
+      "skillPath": "skills/gsap-scrolltrigger/SKILL.md",
+      "computedHash": "87845b8d368aa61a7926640d560ee6fa55f0bde49745c6c2a0de62f1bffa474c"
+    },
+    "gsap-timeline": {
+      "source": "nexu-io/open-design",
+      "sourceType": "github",
+      "skillPath": "skills/gsap-timeline/SKILL.md",
+      "computedHash": "46bb93e0fae1a8b2aebe37ed3704f215a317539e38fcd86cb4d0af0ffc81ffe1"
+    },
+    "high-end-visual-design": {
+      "source": "nexu-io/open-design",
+      "sourceType": "github",
+      "skillPath": "skills/soft-skill/SKILL.md",
+      "computedHash": "cff8e68eeb556d4779dd7513b999e80036ea29d568e28344566bfb831cbb2ced"
+    },
+    "impeccable-design-polish": {
+      "source": "nexu-io/open-design",
+      "sourceType": "github",
+      "skillPath": "skills/impeccable-design-polish/SKILL.md",
+      "computedHash": "4e503449a58d0609daba362aea73aebf920b532a9793446158cc8a907e821b78"
+    },
+    "plan-design-review": {
+      "source": "nexu-io/open-design",
+      "sourceType": "github",
+      "skillPath": "skills/plan-design-review/SKILL.md",
+      "computedHash": "075f34d789c4bc97f178875ddb58d0ceb7d647c782561d553d8499364d6069f9"
+    },
+    "redesign-existing-projects": {
+      "source": "nexu-io/open-design",
+      "sourceType": "github",
+      "skillPath": "skills/redesign-skill/SKILL.md",
+      "computedHash": "b80f20b4d6a38f901df385bf01fbd4e0f69527ce11c12acd650637382079f7a6"
+    },
+    "reference-design-contract": {
+      "source": "nexu-io/open-design",
+      "sourceType": "github",
+      "skillPath": "skills/reference-design-contract/SKILL.md",
+      "computedHash": "3f3910d6a6663a8f5696db5ea1cadf1f2d9cf55bbba4fc9480061a12eaf8a74b"
+    },
+    "review-animations": {
+      "source": "nexu-io/open-design",
+      "sourceType": "github",
+      "skillPath": "skills/review-animations/SKILL.md",
+      "computedHash": "6130f0b00c6422049f30dc099a2f7e19148f8a9574d62cc8b2dd464e50040211"
+    },
+    "screenshots-marketing": {
+      "source": "nexu-io/open-design",
+      "sourceType": "github",
+      "skillPath": "skills/screenshots-marketing/SKILL.md",
+      "computedHash": "dbbdb9ffef4b858f8675e6c3ebb8eaa2550a8827911169293f85fc1550af1b2e"
+    },
+    "shader-dev": {
+      "source": "nexu-io/open-design",
+      "sourceType": "github",
+      "skillPath": "skills/shader-dev/SKILL.md",
+      "computedHash": "efcc48262cdf8ba325ccc1dd243909eedfdc3e3a0c9bfd8b0f0b0638c294f724"
+    },
+    "threejs": {
+      "source": "nexu-io/open-design",
+      "sourceType": "github",
+      "skillPath": "skills/threejs/SKILL.md",
+      "computedHash": "880f654b955819c258099eb8d64d4b83f40d2dc8214b685037e1efb024d5f4d5"
+    },
+    "web-design-guidelines": {
+      "source": "nexu-io/open-design",
+      "sourceType": "github",
+      "skillPath": "skills/web-design-guidelines/SKILL.md",
+      "computedHash": "df2006a9f46ff0d4ea81bd42649a15d1b85440ed2ced14d9d0f3868a4ffad66d"
     }
   }
 }
