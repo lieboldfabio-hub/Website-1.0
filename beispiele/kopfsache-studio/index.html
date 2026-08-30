@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kopfsache | Beispielprojekt für einen Friseursalon</title>
+<meta name="description" content="Beispielhafte Website für einen Friseursalon. Erfundenes Unternehmen, gebaut zur Veranschaulichung von Gestaltung und Interaktion.">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#101010">
+<link rel="stylesheet" href="assets/css/site.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%23101010'/><text y='72' x='50' text-anchor='middle' font-size='58' font-family='sans-serif' font-weight='bold' fill='%23c9f24a'>K</text></svg>">
+</head>
+<body>
+
+<!-- Icon-Sprite (Phosphor Icons, MIT) -->
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
+<symbol id="i-arrow-right" viewBox="0 0 256 256" fill="currentColor"><path d="M221.66,133.66l-72,72a8,8,0,0,1-11.32-11.32L196.69,136H40a8,8,0,0,1,0-16H196.69L138.34,61.66a8,8,0,0,1,11.32-11.32l72,72A8,8,0,0,1,221.66,133.66Z"/></symbol>
+<symbol id="i-scissors" viewBox="0 0 256 256" fill="currentColor"><path d="M157.73,113.13A8,8,0,0,1,159.82,102L227.48,55.7a8,8,0,0,1,9,13.21l-67.67,46.3a7.92,7.92,0,0,1-4.51,1.4A8,8,0,0,1,157.73,113.13Zm80.87,85.09a8,8,0,0,1-11.12,2.08L136,137.7,93.49,166.78a36,36,0,1,1-9-13.19L121.83,128,84.44,102.41a35.86,35.86,0,1,1,9-13.19l143,97.87A8,8,0,0,1,238.6,198.22ZM80,180a20,20,0,1,0-5.86,14.14A19.85,19.85,0,0,0,80,180ZM74.14,90.13a20,20,0,1,0-28.28,0A19.85,19.85,0,0,0,74.14,90.13Z"/></symbol>
+<symbol id="i-sparkle" viewBox="0 0 256 256" fill="currentColor"><path d="M197.58,129.06,146,110l-19-51.62a15.92,15.92,0,0,0-29.88,0L78,110l-51.62,19a15.92,15.92,0,0,0,0,29.88L78,178l19,51.62a15.92,15.92,0,0,0,29.88,0L146,178l51.62-19a15.92,15.92,0,0,0,0-29.88ZM137,164.22a8,8,0,0,0-4.74,4.74L112,223.85,91.78,169A8,8,0,0,0,87,164.22L32.15,144,87,123.78A8,8,0,0,0,91.78,119L112,64.15,132.22,119a8,8,0,0,0,4.74,4.74L191.85,144ZM144,40a8,8,0,0,1,8-8h16V16a8,8,0,0,1,16,0V32h16a8,8,0,0,1,0,16H184V64a8,8,0,0,1-16,0V48H152A8,8,0,0,1,144,40ZM248,88a8,8,0,0,1-8,8h-8v8a8,8,0,0,1-16,0V96h-8a8,8,0,0,1,0-16h8V72a8,8,0,0,1,16,0v8h8A8,8,0,0,1,248,88Z"/></symbol>
+<symbol id="i-hand-heart" viewBox="0 0 256 256" fill="currentColor"><path d="M230.33,141.06a24.34,24.34,0,0,0-18.61-4.77C230.5,117.33,240,98.48,240,80c0-26.47-21.29-48-47.46-48A47.58,47.58,0,0,0,156,48.75,47.58,47.58,0,0,0,119.46,32C93.29,32,72,53.53,72,80c0,11,3.24,21.69,10.06,33a31.87,31.87,0,0,0-14.75,8.4L44.69,144H16A16,16,0,0,0,0,160v40a16,16,0,0,0,16,16H120a7.93,7.93,0,0,0,1.94-.24l64-16a6.94,6.94,0,0,0,1.19-.4L226,182.82l.44-.2a24.6,24.6,0,0,0,3.93-41.56ZM119.46,48A31.15,31.15,0,0,1,148.6,67a8,8,0,0,0,14.8,0,31.15,31.15,0,0,1,29.14-19C209.59,48,224,62.65,224,80c0,19.51-15.79,41.58-45.66,63.9l-11.09,2.55A28,28,0,0,0,140,112H100.68C92.05,100.36,88,90.12,88,80,88,62.65,102.41,48,119.46,48ZM16,160H40v40H16Zm203.43,8.21-38,16.18L119,200H56V155.31l22.63-22.62A15.86,15.86,0,0,1,89.94,128H140a12,12,0,0,1,0,24H112a8,8,0,0,0,0,16h32a8.32,8.32,0,0,0,1.79-.2l67-15.41.31-.08a8.6,8.6,0,0,1,6.3,15.9Z"/></symbol>
+<symbol id="i-heart" viewBox="0 0 256 256" fill="currentColor"><path d="M178,40c-20.65,0-38.73,8.88-50,23.89C116.73,48.88,98.65,40,78,40a62.07,62.07,0,0,0-62,62c0,70,103.79,126.66,108.21,129a8,8,0,0,0,7.58,0C136.21,228.66,240,172,240,102A62.07,62.07,0,0,0,178,40ZM128,214.8C109.74,204.16,32,155.69,32,102A46.06,46.06,0,0,1,78,56c19.45,0,35.78,10.36,42.6,27a8,8,0,0,0,14.8,0c6.82-16.67,23.15-27,42.6-27a46.06,46.06,0,0,1,46,46C224,155.61,146.24,204.15,128,214.8Z"/></symbol>
+<symbol id="i-plus" viewBox="0 0 256 256" fill="currentColor"><path d="M224,128a8,8,0,0,1-8,8H136v80a8,8,0,0,1-16,0V136H40a8,8,0,0,1,0-16h80V40a8,8,0,0,1,16,0v80h80A8,8,0,0,1,224,128Z"/></symbol>
+</svg>
+
+<a class="skip" href="#main">Zum Inhalt springen</a>
+<a class="demo-badge" href="../">Beispielprojekt</a>
+
+<header class="nav">
+  <div class="nav__inner">
+    <a class="brand" href="#top">Kopfsache</a>
+    <nav aria-label="Hauptnavigation">
+      <ul class="nav__links">
+        <li><a href="#angebot">Angebot</a></li>
+        <li><a href="#team">Team</a></li>
+        <li><a href="#fragen">Fragen</a></li>
+        <li><a href="#termin">Termin</a></li>
+      </ul>
+    </nav>
+    <div class="nav__cta">
+      <a class="btn btn--sm" href="#termin">Termin buchen</a>
+      <button class="nav__burger" aria-label="Menü öffnen" aria-expanded="false" aria-controls="menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="menu" id="menu" hidden>
+  <a href="#angebot">Angebot</a>
+  <a href="#team">Team</a>
+  <a href="#fragen">Fragen</a>
+  <a href="#termin">Termin</a>
+  <a class="btn" href="#termin">Termin buchen</a>
+</div>
+
+<main id="main">
+
+<!-- ================================================================== Hero -->
+<section class="hero" id="top">
+  <div class="wrap hero__grid">
+    <div>
+      <p class="eyebrow" data-hero="1" style="color:var(--accent)">Friseur in Augsburg</p>
+      <h1 class="display" data-hero="2">Kein Schnitt <em>von der Stange.</em></h1>
+      <p class="lede" data-hero="3">
+        Wir nehmen uns Zeit für Beratung, bevor die Schere kommt.
+        Jeder Kopf ist anders, jeder Alltag auch.
+      </p>
+      <div class="hero__actions" data-hero="4">
+        <a class="btn" href="#termin">
+          Termin buchen
+          <svg class="btn__ico" aria-hidden="true"><use href="#i-arrow-right"></use></svg>
+        </a>
+        <a class="btn btn--ghost" href="#angebot">Preise ansehen</a>
+      </div>
+    </div>
+
+    <div class="ph hero__media" data-hero="5">
+      <img src="assets/img/hero.jpg" alt="Im Salon" width="600" height="800">
+      <svg class="ph__mark" aria-hidden="true"><use href="#i-scissors"></use></svg>
+      <p class="ph__brief"><b>Bildplatz: Hero</b>Blick in den Salon, Hochformat 3:4</p>
+    </div>
+  </div>
+</section>
+
+<!-- =============================================================== Streifen -->
+<div class="streifen" aria-label="Leistungen im Überblick">
+  <div class="streifen__spur">
+    <span>Schnitt</span><i class="streifen__punkt"></i>
+    <span>Farbe</span><i class="streifen__punkt"></i>
+    <span>Balayage</span><i class="streifen__punkt"></i>
+    <span>Beratung</span><i class="streifen__punkt"></i>
+    <span>Hochsteckfrisur</span><i class="streifen__punkt"></i>
+    <span>Bart</span><i class="streifen__punkt"></i>
+  </div>
+</div>
+
+<!-- ============================================================== Angebot -->
+<section class="section" id="angebot">
+  <div class="wrap">
+    <div class="angebot__kopf reveal">
+      <p class="eyebrow">Angebot</p>
+      <h2 class="h2 reveal-lines">Was wir machen und was es kostet.</h2>
+    </div>
+
+    <div class="karten">
+      <article class="karte-k reveal">
+        <svg class="karte-k__ico" aria-hidden="true"><use href="#i-scissors"></use></svg>
+        <h3>Schnitt</h3>
+        <p>Waschen, Beratung, Schnitt und Styling. Wir zeigen Ihnen, wie es zu Hause auch gelingt.</p>
+        <span class="karte-k__preis">ab 45 Euro</span>
+      </article>
+
+      <article class="karte-k karte-k--akzent reveal">
+        <svg class="karte-k__ico" aria-hidden="true"><use href="#i-sparkle"></use></svg>
+        <h3>Farbe und Balayage</h3>
+        <p>Ansatz, Strähnen oder ein kompletter Wechsel. Vorher immer eine Strähnenprobe.</p>
+        <span class="karte-k__preis">ab 85 Euro</span>
+      </article>
+
+      <article class="karte-k reveal">
+        <svg class="karte-k__ico" aria-hidden="true"><use href="#i-hand-heart"></use></svg>
+        <h3>Pflege</h3>
+        <p>Kur, Kopfhautbehandlung, Olaplex. Auch einzeln buchbar, ohne Schnitt.</p>
+        <span class="karte-k__preis">ab 28 Euro</span>
+      </article>
+
+      <article class="karte-k karte-k--dunkel reveal">
+        <svg class="karte-k__ico" aria-hidden="true"><use href="#i-heart"></use></svg>
+        <h3>Anlass</h3>
+        <p>Hochzeit, Feier, Fotoshooting. Auf Wunsch mit Probetermin und vor Ort.</p>
+        <span class="karte-k__preis">auf Anfrage</span>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================= Team -->
+<section class="section team" id="team">
+  <div class="wrap">
+    <div class="team__kopf reveal">
+      <p class="eyebrow">Team</p>
+      <h2 class="h2">Vier Leute, vier Handschriften.</h2>
+    </div>
+
+    <div class="koepfe">
+      <article class="kopf reveal">
+        <div class="ph">
+          <img src="assets/img/team-1.jpg" alt="Portrait" width="600" height="800">
+          <svg class="ph__mark" aria-hidden="true"><use href="#i-scissors"></use></svg>
+          <p class="ph__brief"><b>Portrait</b>Hochformat 3:4</p>
+        </div>
+        <h3>Mira</h3>
+        <p>Farbe und Balayage</p>
+      </article>
+
+      <article class="kopf reveal">
+        <div class="ph">
+          <img src="assets/img/team-2.jpg" alt="Portrait" width="600" height="800">
+          <svg class="ph__mark" aria-hidden="true"><use href="#i-scissors"></use></svg>
+          <p class="ph__brief"><b>Portrait</b>Hochformat 3:4</p>
+        </div>
+        <h3>Jonas</h3>
+        <p>Kurzhaar und Bart</p>
+      </article>
+
+      <article class="kopf reveal">
+        <div class="ph">
+          <img src="assets/img/team-3.jpg" alt="Portrait" width="600" height="800">
+          <svg class="ph__mark" aria-hidden="true"><use href="#i-scissors"></use></svg>
+          <p class="ph__brief"><b>Portrait</b>Hochformat 3:4</p>
+        </div>
+        <h3>Elif</h3>
+        <p>Locken und Curly Cut</p>
+      </article>
+
+      <article class="kopf reveal">
+        <div class="ph">
+          <img src="assets/img/team-4.jpg" alt="Portrait" width="600" height="800">
+          <svg class="ph__mark" aria-hidden="true"><use href="#i-scissors"></use></svg>
+          <p class="ph__brief"><b>Portrait</b>Hochformat 3:4</p>
+        </div>
+        <h3>Bene</h3>
+        <p>Schnitt und Ausbildung</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- =============================================================== Fragen -->
+<section class="section fragen" id="fragen">
+  <div class="wrap fragen__grid">
+    <div class="reveal">
+      <p class="eyebrow">Fragen</p>
+      <h2 class="h2">Kurz erklärt.</h2>
+    </div>
+
+    <div class="akkordeon reveal">
+      <div class="frage">
+        <button class="frage__knopf" aria-expanded="false">
+          Brauche ich für alles einen Termin?
+          <span class="frage__zeichen"><svg aria-hidden="true"><use href="#i-plus"></use></svg></span>
+        </button>
+        <div class="frage__inhalt">
+          <p>
+            Für Schnitt und Farbe ja, weil wir dafür Zeit einplanen. Für einen
+            schnellen Pony oder eine Bartkorrektur kommen Sie gern spontan vorbei,
+            am besten vormittags unter der Woche.
+          </p>
+        </div>
+      </div>
+
+      <div class="frage">
+        <button class="frage__knopf" aria-expanded="false">
+          Wie lange dauert eine Farbbehandlung?
+          <span class="frage__zeichen"><svg aria-hidden="true"><use href="#i-plus"></use></svg></span>
+        </button>
+        <div class="frage__inhalt">
+          <p>
+            Ansatzfarbe etwa neunzig Minuten, Balayage je nach Länge zwei bis vier
+            Stunden. Wir sagen Ihnen die Dauer bei der Buchung, damit Sie planen können.
+          </p>
+        </div>
+      </div>
+
+      <div class="frage">
+        <button class="frage__knopf" aria-expanded="false">
+          Was kostet es genau?
+          <span class="frage__zeichen"><svg aria-hidden="true"><use href="#i-plus"></use></svg></span>
+        </button>
+        <div class="frage__inhalt">
+          <p>
+            Die Preise oben sind Startpreise. Der genaue Betrag hängt von Länge und
+            Aufwand ab und wird vor Beginn besprochen. Es kommt nichts dazu, das
+            wir nicht vorher gesagt haben.
+          </p>
+        </div>
+      </div>
+
+      <div class="frage">
+        <button class="frage__knopf" aria-expanded="false">
+          Kann ich einen Termin verschieben?
+          <span class="frage__zeichen"><svg aria-hidden="true"><use href="#i-plus"></use></svg></span>
+        </button>
+        <div class="frage__inhalt">
+          <p>
+            Ja, bis 24 Stunden vorher ohne Weiteres. Sagen Sie kurzfristiger ab,
+            bitten wir um Verständnis, dass die Zeit dann meist leer bleibt.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =============================================================== Termin -->
+<section class="section termin" id="termin">
+  <div class="wrap termin__inner">
+    <h2 class="h2 reveal">Wann passt es Ihnen?</h2>
+    <p class="lede reveal">
+      Buchen Sie online oder rufen Sie an. Für die Beratung planen wir zehn
+      Minuten extra ein, die kosten nichts.
+    </p>
+    <div class="termin__actions reveal">
+      <a class="btn" href="#termin">
+        Online buchen
+        <svg class="btn__ico" aria-hidden="true"><use href="#i-arrow-right"></use></svg>
+      </a>
+      <a class="btn btn--ghost" href="mailto:termin@kopfsache-studio.example">Schreiben</a>
+    </div>
+
+    <div class="termin__zeiten reveal">
+      <span><b>Dienstag bis Freitag</b> 9:00 bis 19:00</span>
+      <span><b>Samstag</b> 9:00 bis 15:00</span>
+      <span><b>Montag</b> geschlossen</span>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="footer__grid">
+      <a class="brand" href="#top" style="color:var(--band-text)">Kopfsache</a>
+      <ul class="footer__links">
+        <li><a href="#angebot">Angebot</a></li>
+        <li><a href="#team">Team</a></li>
+        <li><a href="#termin">Termin</a></li>
+        <li><a href="../">Weitere Beispiele</a></li>
+      </ul>
+    </div>
+    <p class="footer__note">
+      Beispielprojekt. Kopfsache ist ein erfundenes Unternehmen, sämtliche
+      Angaben auf dieser Seite dienen ausschließlich der Veranschaulichung von
+      Gestaltung und Interaktion.
+    </p>
+  </div>
+</footer>
+
+<script src="assets/js/gsap.min.js"></script>
+<script src="assets/js/ScrollTrigger.min.js"></script>
+<script src="assets/js/basis.js"></script>
+<script src="assets/js/site.js"></script>
+</body>
+</html>

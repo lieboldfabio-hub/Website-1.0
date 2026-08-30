@@ -1,0 +1,399 @@
+/* ============================================================================
+   Halbritter Haustechnik - Beispielprojekt
+   ----------------------------------------------------------------------------
+   Richtung   Hell, technisch, aufgeraeumt. Handwerk verkauft sich ueber
+              Verlaesslichkeit, nicht ueber Effekte. Klare Kanten, ruhiges
+              Raster, ein einziger kraeftiger Akzent.
+   Palette    Graphit, Knochenweiss, ein Akzent in Signalblau.
+   Typografie Archivo (Display) + Barlow (Fliesstext). Beide sachlich,
+              gut lesbar auch in kleinen Groessen.
+   Signatur   Vorher-Nachher-Schieber, mit Zeiger und Tastatur bedienbar.
+   ========================================================================= */
+
+@import url("fonts.css");
+@import url("basis.css");
+
+:root {
+  --graphit-900: #14181d;
+  --graphit-800: #1e242b;
+  --graphit-700: #2c343d;
+  --graphit-500: #55606c;
+  --graphit-300: #98a3ae;
+
+  --knochen: #f4f5f6;
+  --knochen-2: #e7eaed;
+
+  --signal: #1f6feb;
+  --signal-dunkel: #1558c4;
+
+  --bg: var(--knochen);
+  --surface: #ffffff;
+  --line: rgba(20, 24, 29, 0.14);
+  --text: var(--graphit-900);
+  --text-soft: #4d5762;
+
+  --accent: var(--signal);
+  --accent-fg: #ffffff;
+
+  --band: var(--graphit-900);
+  --band-text: #eef1f4;
+  --band-text-soft: #a8b3be;
+  --band-line: rgba(255, 255, 255, 0.14);
+
+  --ph-1: #2c343d;
+  --ph-2: #3a4551;
+  --ph-3: #1b2027;
+
+  --font-display: Archivo, ui-sans-serif, system-ui, sans-serif;
+  --font-body: Barlow, ui-sans-serif, system-ui, sans-serif;
+
+  --r: 6px;
+  --pad-x: clamp(1.25rem, 5vw, 5rem);
+  --section-y: clamp(4.5rem, 9vw, 7.5rem);
+  --wrap: 1240px;
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+
+  color-scheme: light;
+}
+
+h1, h2, h3 { font-weight: 700; letter-spacing: -0.02em; }
+.btn:hover { background: var(--signal-dunkel); }
+
+/* Feines Punktraster als Grundflaeche. Technisch, ohne aufdringlich zu sein. */
+.raster {
+  background-image: radial-gradient(rgba(20, 24, 29, 0.13) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+
+/* ------------------------------------------------------------- Beispiel - */
+
+.demo-badge {
+  position: fixed;
+  right: clamp(1rem, 3vw, 1.75rem);
+  bottom: clamp(1rem, 3vw, 1.75rem);
+  z-index: 130;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.5rem 0.9rem;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.86);
+  border: 1px solid var(--line);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  text-decoration: none;
+}
+.demo-badge::before {
+  content: "";
+  width: 6px; height: 6px; border-radius: 999px; background: var(--accent);
+}
+.demo-badge:hover { border-color: var(--accent); }
+
+/* Die Leiste liegt ueber hellem Grund, deshalb von Anfang an dunkler Text. */
+.nav .brand,
+.nav .nav__links a { color: var(--text); }
+.nav .nav__burger { border-color: var(--line); color: var(--text); }
+
+/* ----------------------------------------------------------------- Hero - */
+
+.hero {
+  position: relative;
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  padding-top: clamp(6rem, 9vh, 7rem);
+  padding-bottom: clamp(3rem, 7vh, 5rem);
+  background-color: var(--bg);
+}
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(rgba(20, 24, 29, 0.13) 1px, transparent 1px);
+  background-size: 22px 22px;
+  mask-image: linear-gradient(to bottom, #000 0%, transparent 78%);
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, transparent 78%);
+  pointer-events: none;
+}
+
+.hero__grid {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  gap: clamp(2.5rem, 5vw, 4.5rem);
+  align-items: center;
+  width: 100%;
+}
+.hero .display { max-width: 15ch; }
+.hero .lede { margin-top: 1.4rem; max-width: 42ch; }
+.hero__actions { margin-top: 2.2rem; display: flex; flex-wrap: wrap; gap: .85rem; }
+.hero__media { aspect-ratio: 4 / 5; }
+
+/* Notdienst ist das staerkste Argument im Handwerk und bekommt deshalb
+   einen eigenen, ruhigen Streifen unter dem Hero. */
+.notdienst {
+  background: var(--graphit-900);
+  color: var(--band-text);
+  padding-block: 1.15rem;
+}
+.notdienst__inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .85rem 1.5rem;
+}
+.notdienst svg { width: 22px; height: 22px; color: var(--accent); flex: none; }
+.notdienst b { font-family: var(--font-display); font-weight: 700; }
+.notdienst span { color: var(--band-text-soft); }
+.notdienst a {
+  margin-left: auto;
+  font-weight: 600;
+  text-decoration: none;
+  border-bottom: 2px solid var(--accent);
+  padding-bottom: 2px;
+}
+.notdienst a:hover { color: var(--accent); }
+
+@media (max-width: 900px) {
+  .hero__grid { grid-template-columns: 1fr; gap: 2.25rem; }
+  .hero .display { max-width: none; }
+  .hero__media { aspect-ratio: 3 / 2; }
+  .notdienst a { margin-left: 0; }
+}
+
+/* ------------------------------------------------------- Leistungen ----- */
+/*
+   Karten, die sich beim Scrollen aufeinander stapeln. Der Stapel zeigt,
+   dass die Gewerke zusammengehoeren, statt sie nebeneinander zu stellen.
+*/
+.leistungen__kopf { max-width: 46rem; margin-bottom: clamp(2rem, 4vw, 3rem); }
+.leistungen__kopf .h2 { max-width: 21ch; }
+
+.stapel { position: relative; }
+
+.karte-l {
+  position: sticky;
+  top: 96px;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: clamp(1.25rem, 3vw, 2.5rem);
+  align-items: center;
+  padding: clamp(1.5rem, 3vw, 2.5rem);
+  margin-bottom: 1rem;
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  background: var(--surface);
+  box-shadow: 0 18px 40px -34px rgba(20, 24, 29, .7);
+}
+.karte-l__nr {
+  font-family: var(--font-display);
+  font-size: .8rem;
+  font-weight: 700;
+  letter-spacing: .1em;
+  color: var(--accent);
+  align-self: start;
+}
+.karte-l h3 { font-size: clamp(1.25rem, 1.05rem + .8vw, 1.7rem); margin-bottom: .5rem; }
+.karte-l p { color: var(--text-soft); max-width: 54ch; }
+.karte-l__ico {
+  width: clamp(38px, 5vw, 52px);
+  height: clamp(38px, 5vw, 52px);
+  color: var(--graphit-300);
+  align-self: start;
+}
+.karte-l ul {
+  margin: 1rem 0 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: .45rem;
+}
+.karte-l li {
+  font-size: .87rem;
+  padding: .32rem .8rem;
+  border-radius: 999px;
+  background: var(--knochen-2);
+  color: var(--text-soft);
+}
+
+@media (max-width: 760px) {
+  .karte-l { grid-template-columns: auto 1fr; position: static; }
+  .karte-l__ico { display: none; }
+}
+
+/* ----------------------------------------------- Vorher-Nachher-Schieber */
+/*
+   Signatur der Seite. Zwei Bildplaetze liegen uebereinander, der obere wird
+   beschnitten. Ziehen, Klicken und die Pfeiltasten steuern die Kante.
+*/
+.vergleich { background: var(--graphit-900); color: var(--band-text); }
+.vergleich__kopf { max-width: 34ch; margin-bottom: clamp(2rem, 4vw, 3rem); }
+.vergleich__kopf .h2 { max-width: 16ch; }
+
+.schieber {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  border-radius: var(--r);
+  overflow: hidden;
+  touch-action: pan-y;
+  cursor: ew-resize;
+  user-select: none;
+}
+.schieber:focus-visible { outline: 3px solid var(--accent); outline-offset: 4px; }
+
+.schieber__seite { position: absolute; inset: 0; }
+.schieber__seite .ph { position: absolute; inset: 0; border-radius: 0; }
+
+/* Solange keine Fotos vorliegen, muessen sich die beiden Seiten optisch
+   unterscheiden. Sonst zeigt der Schieber zwar Bewegung, aber keinen
+   Unterschied, und der Effekt bleibt unverstaendlich. Sobald echte Bilder
+   eingesetzt sind, verdecken sie diese Flaechen ohnehin. */
+.schieber__seite--vorher .ph {
+  --ph-1: #3b3f42;
+  --ph-2: #4a4d50;
+  --ph-3: #232629;
+  filter: saturate(0.15);
+}
+.schieber__seite--nachher .ph {
+  --ph-1: #29558f;
+  --ph-2: #1f6feb;
+  --ph-3: #16233a;
+}
+
+/* Die obere Ebene wird von rechts her beschnitten. */
+.schieber__seite--vorher { clip-path: inset(0 calc(100% - var(--pos, 50%)) 0 0); }
+
+.schieber__marke {
+  position: absolute;
+  top: 1rem;
+  z-index: 4;
+  padding: .4rem .85rem;
+  border-radius: 999px;
+  font-size: .8rem;
+  font-weight: 600;
+  background: rgba(20, 24, 29, .78);
+  color: #fff;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+.schieber__marke--links { left: 1rem; }
+.schieber__marke--rechts { right: 1rem; }
+
+.schieber__kante {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: var(--pos, 50%);
+  width: 2px;
+  background: #fff;
+  z-index: 5;
+  pointer-events: none;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, .18);
+}
+.schieber__griff {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 46px;
+  height: 46px;
+  border-radius: 999px;
+  background: #fff;
+  color: var(--graphit-900);
+  display: grid;
+  place-items: center;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, .35);
+}
+.schieber__griff svg { width: 22px; height: 22px; }
+
+.vergleich__hinweis {
+  margin-top: 1.1rem;
+  font-size: .9rem;
+  color: var(--band-text-soft);
+}
+
+/* --------------------------------------------------------- Vertrauen ---- */
+
+.vertrauen__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  gap: clamp(2.5rem, 6vw, 5rem);
+  align-items: start;
+}
+.vertrauen .h2 { max-width: 12ch; }
+
+.punkte { margin: 0; padding: 0; list-style: none; display: grid; gap: 0; }
+.punkte li {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 1.1rem;
+  align-items: start;
+  padding: 1.4rem 0;
+  border-top: 1px solid var(--line);
+}
+.punkte li:last-child { border-bottom: 1px solid var(--line); }
+.punkte svg { width: 22px; height: 22px; color: var(--accent); margin-top: 3px; }
+.punkte b {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 1.08rem;
+  margin-bottom: .2rem;
+}
+.punkte p { color: var(--text-soft); max-width: 52ch; }
+
+@media (max-width: 860px) {
+  .vertrauen__grid { grid-template-columns: 1fr; gap: 2rem; }
+}
+
+/* ---------------------------------------------------------- Kontakt ----- */
+
+.kontakt { background: var(--knochen-2); }
+.kontakt__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 6fr) minmax(0, 5fr);
+  gap: clamp(2.5rem, 6vw, 5rem);
+  align-items: start;
+}
+.kontakt .h2 { max-width: 14ch; }
+
+.wege { display: grid; gap: 1rem; margin-top: 2rem; }
+.weg {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 1rem;
+  align-items: center;
+  padding: 1.25rem 1.4rem;
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  background: var(--surface);
+  text-decoration: none;
+  transition: border-color .22s var(--ease), transform .22s var(--ease);
+}
+.weg:hover { border-color: var(--accent); transform: translateY(-2px); }
+.weg svg { width: 22px; height: 22px; color: var(--accent); }
+.weg b { display: block; font-family: var(--font-display); }
+.weg span { color: var(--text-soft); font-size: .93rem; }
+
+.einzug {
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  background: var(--surface);
+  padding: clamp(1.5rem, 3vw, 2.25rem);
+}
+.einzug h3 { font-size: 1.25rem; margin-bottom: .6rem; }
+.einzug p { color: var(--text-soft); }
+.einzug dl { margin: 1.5rem 0 0; display: grid; gap: 0; }
+.einzug .zeile {
+  display: flex; justify-content: space-between; gap: 1rem;
+  padding: .8rem 0; border-top: 1px solid var(--line);
+}
+.einzug dt { color: var(--text-soft); }
+.einzug dd { margin: 0; font-variant-numeric: tabular-nums; }
+
+@media (max-width: 860px) {
+  .kontakt__grid { grid-template-columns: 1fr; gap: 2.5rem; }
+}
