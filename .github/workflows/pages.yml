@@ -28,6 +28,13 @@ jobs:
           mkdir -p _site
           cp -r kunden/* _site/
 
+          # Interne Unterlagen gehoeren nicht auf die Vorschau. Die README
+          # enthaelt Verkaufsargumente und Notizen zum Kundengespraech, die
+          # niemand ausser uns sehen soll.
+          find _site \( -name '*.md' -o -name 'README.txt' \) -delete
+          echo "Interne Unterlagen entfernt:"
+          find _site \( -name '*.md' -o -name 'README.txt' \) | grep . && exit 1 || echo "  keine mehr vorhanden"
+
           # Vorschau nicht indexieren lassen. Die Quelldateien bleiben
           # unveraendert und damit fuer die spaetere echte Domain korrekt.
           find _site -name '*.html' -print0 | xargs -0 sed -i \
@@ -55,6 +62,60 @@ jobs:
             printf '<p>Nicht oeffentlich gelistet. Vorschauen fuer die Kundenabstimmung.</p>'
             printf '</main></body></html>'
           } > _site/index.html
+
+          # ---------------------------------------------------------------
+          # Selbstaktualisierung der Vorschau.
+          # Die Seite fragt regelmaessig version.txt ab und laedt sich neu,
+          # sobald ein neuer Stand veroeffentlicht wurde. So bleibt die
+          # Vorschau auf dem iPad neben dem Chat immer aktuell, ohne dass
+          # jemand manuell neu laden muss.
+          # Wird ausschliesslich in die Vorschau eingefuegt, nie in die
+          # Quelldateien. Was der Kunde spaeter bekommt, enthaelt das nicht.
+          # ---------------------------------------------------------------
+          printf '%s' "$GITHUB_SHA" > _site/version.txt
+
+          # Projektseiten liegen unter /<repo>/, der Pfad ist damit bekannt.
+          VERSION_URL="/${GITHUB_REPOSITORY#*/}/version.txt"
+
+          cat > snippet.html <<SNIP
+          <script>
+          (function(){"use strict";
+            var url="${VERSION_URL}",stand=null,fehler=0;
+            function pruefen(){
+              fetch(url+"?t="+Date.now(),{cache:"no-store"})
+                .then(function(r){return r.ok?r.text():Promise.reject(r.status);})
+                .then(function(t){
+                  t=t.trim(); fehler=0;
+                  if(stand===null){stand=t;return;}
+                  if(t!==stand){location.reload();}
+                })
+                .catch(function(){fehler++;});
+            }
+            pruefen();
+            setInterval(function(){
+              if(document.visibilityState==="visible"&&fehler<20){pruefen();}
+            },5000);
+            document.addEventListener("visibilitychange",function(){
+              if(document.visibilityState==="visible"){pruefen();}
+            });
+          })();
+          </script>
+          SNIP
+
+          # Vor </body> einsetzen. python3 statt sed, damit der mehrzeilige
+          # Block unveraendert eingefuegt wird.
+          python3 - "$PWD/snippet.html" <<'PY'
+          import pathlib, sys
+          snippet = pathlib.Path(sys.argv[1]).read_text(encoding="utf-8")
+          n = 0
+          for f in pathlib.Path("_site").rglob("*.html"):
+              s = f.read_text(encoding="utf-8")
+              if "</body>" not in s:
+                  print("kein </body>:", f); continue
+              f.write_text(s.replace("</body>", snippet + "</body>", 1), encoding="utf-8")
+              n += 1
+          print("Selbstaktualisierung eingebaut in", n, "Seiten")
+          PY
 
       - uses: actions/configure-pages@v5
         with:
