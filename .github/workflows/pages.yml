@@ -5,7 +5,7 @@ name: Vorschau veroeffentlichen
 on:
   push:
     branches: [main]
-    paths: ['kunden/**', 'beispiele/**', '.github/workflows/pages.yml']
+    paths: ['kunden/**', 'beispiele/**', 'sf-webseiten/**', '.github/workflows/pages.yml']
   workflow_dispatch:
 
 permissions:
@@ -29,6 +29,10 @@ jobs:
           cp -r kunden/* _site/
           cp -r beispiele/* _site/
 
+          # Der eigene Auftritt der Agentur liegt an der Wurzel, damit er
+          # spaeter unveraendert auf die echte Domain uebertragen werden kann.
+          if [ -d sf-webseiten ]; then cp -r sf-webseiten/* _site/; fi
+
           # Interne Unterlagen gehoeren nicht auf die Vorschau. Die README
           # enthaelt Verkaufsargumente und Notizen zum Kundengespraech, die
           # niemand ausser uns sehen soll.
@@ -45,8 +49,12 @@ jobs:
           printf 'User-agent: *\nDisallow: /\n' > _site/robots.txt
 
           # ---------------------------------------------------------------
-          # Einstiegsseite. Listet Kundenprojekte und Beispiele getrennt.
+          # Interne Uebersicht. Listet Kundenprojekte und Beispiele getrennt,
+          # nur fuer das Team gedacht und von keiner Seite aus verlinkt.
+          # Liegt bewusst nicht unter _site/index.html: dort steht jetzt der
+          # eigene Auftritt der Agentur (sf-webseiten), sobald er vorhanden ist.
           # ---------------------------------------------------------------
+          mkdir -p _site/_uebersicht
           python3 - <<'PY'
           import pathlib, html
 
@@ -70,7 +78,7 @@ jobs:
               if not liste:
                   return f"<h2>{ueberschrift}</h2><p class='leer'>{leer}</p>"
               zeilen = "".join(
-                  f"<a href='./{html.escape(o)}/'><b>{html.escape(t)}</b>"
+                  f"<a href='../{html.escape(o)}/'><b>{html.escape(t)}</b>"
                   f"<span>{html.escape(o)}</span></a>"
                   for o, t in liste
               )
@@ -80,7 +88,7 @@ jobs:
           <meta charset="utf-8">
           <meta name="viewport" content="width=device-width,initial-scale=1">
           <meta name="robots" content="noindex, nofollow">
-          <title>Website-Entwuerfe</title>
+          <title>Interne Uebersicht</title>
           <style>
           :root {{ color-scheme: light dark; }}
           body {{ font:16px/1.6 ui-sans-serif,system-ui,sans-serif; margin:0;
@@ -107,17 +115,19 @@ jobs:
             .fuss {{ border-color:rgba(255,255,255,.12); }}
           }}
           </style></head><body><main>
-          <h1>Website-Entwuerfe</h1>
-          <p class="intro">Vorschauen zur Abstimmung. Nicht oeffentlich gelistet
-          und von Suchmaschinen ausgenommen.</p>
+          <h1>Interne &Uuml;bersicht</h1>
+          <p class="intro">Kundenentwuerfe und Beispielprojekte zur Abstimmung.
+          Nur fuer uns, nicht oeffentlich gelistet und von Suchmaschinen
+          ausgenommen. Der eigene Auftritt der Agentur liegt an der Wurzel
+          dieser Vorschau.</p>
           {block("Kundenprojekte", eintraege("kunden"), "Noch keine angelegt.")}
           {block("Beispiele", eintraege("beispiele"), "Noch keine angelegt.")}
           <p class="fuss">Die Beispiele zeigen erfundene Unternehmen. Saemtliche
           Angaben darin dienen ausschliesslich der Veranschaulichung.</p>
           </main></body></html>"""
 
-          pathlib.Path("_site/index.html").write_text(seite, encoding="utf-8")
-          print("Einstiegsseite erzeugt")
+          pathlib.Path("_site/_uebersicht/index.html").write_text(seite, encoding="utf-8")
+          print("Interne Uebersicht erzeugt")
           PY
 
           # ---------------------------------------------------------------
