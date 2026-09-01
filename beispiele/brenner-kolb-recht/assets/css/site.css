@@ -1,0 +1,172 @@
+/* ============================================================================
+   Brenner & Kolb Rechtsanwälte - Beispielprojekt
+   ----------------------------------------------------------------------------
+   Richtung   Seriös, diskret, unaufgeregt. Vertrauen entsteht über Ruhe und
+              Praezision, nicht über Effekte. Klare Kanten, viel Weissraum.
+   Palette    Tiefes Nachtblau, warmes Pergament, ein Akzent in gedecktem Gold.
+   Typografie Frank Ruhl Libre (Display) + Work Sans (Fliesstext).
+   ========================================================================= */
+
+@import url("fonts.css");
+@import url("basis.css");
+
+:root {
+  --tinte-900: #171b28;
+  --tinte-800: #212639;
+  --tinte-700: #2e3550;
+  --tinte-500: #545d7c;
+  --tinte-300: #9aa1b8;
+
+  --pergament: #f6f2e7;
+  --pergament-2: #ece4d0;
+
+  --gold: #a3812f;
+  --gold-dunkel: #7f6524;
+
+  --bg: var(--pergament);
+  --surface: #fffdf8;
+  --line: rgba(23, 27, 40, 0.14);
+  --text: var(--tinte-900);
+  --text-soft: #4d5266;
+
+  --accent: var(--gold);
+  --accent-fg: #fffaf0;
+
+  --band: var(--tinte-900);
+  --band-text: #f3efe4;
+  --band-text-soft: #a9adc4;
+  --band-line: rgba(255, 255, 255, 0.14);
+
+  --ph-1: #2e3550;
+  --ph-2: #3c4468;
+  --ph-3: #171b28;
+
+  --font-display: 'Frank Ruhl Libre', ui-serif, Georgia, serif;
+  --font-body: 'Work Sans', ui-sans-serif, system-ui, sans-serif;
+
+  --r: 3px;
+  --pad-x: clamp(1.25rem, 5vw, 5rem);
+  --section-y: clamp(4.5rem, 9vw, 7.5rem);
+  --wrap: 1220px;
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+
+  color-scheme: light;
+}
+
+h1, h2, h3 { font-weight: 600; letter-spacing: -0.01em; }
+.btn:hover { background: var(--gold-dunkel); }
+.btn--line:hover { background: var(--tinte-900); border-color: var(--tinte-900); }
+
+/* ------------------------------------------------------------- Beispiel - */
+.demo-badge {
+  position: fixed; right: clamp(1rem, 3vw, 1.75rem); bottom: clamp(1rem, 3vw, 1.75rem);
+  z-index: 130; display: inline-flex; align-items: center; gap: 0.45rem;
+  padding: 0.5rem 0.9rem; border-radius: 999px; font-size: 0.78rem; font-weight: 600;
+  color: var(--text); background: rgba(255, 255, 255, 0.86); border: 1px solid var(--line);
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); text-decoration: none;
+}
+.demo-badge::before { content: ""; width: 6px; height: 6px; border-radius: 999px; background: var(--accent); }
+.demo-badge:hover { border-color: var(--accent); }
+
+.nav .brand, .nav .nav__links a { color: var(--text); }
+.nav .nav__burger { border-color: var(--line); color: var(--text); }
+
+/* ----------------------------------------------------------------- Hero - */
+.hero {
+  position: relative; min-height: 100dvh; display: flex; align-items: center;
+  padding-top: clamp(6rem, 9vh, 7rem); padding-bottom: clamp(3rem, 7vh, 5rem);
+  background-color: var(--bg);
+}
+.hero::before {
+  content: ""; position: absolute; inset: 0;
+  background-image: linear-gradient(var(--line) 1px, transparent 1px), linear-gradient(90deg, var(--line) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: linear-gradient(to bottom, #000 0%, transparent 72%);
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, transparent 72%);
+  opacity: 0.5; pointer-events: none;
+}
+.hero__grid {
+  position: relative; display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  gap: clamp(2.5rem, 5vw, 4.5rem); align-items: center; width: 100%;
+}
+.hero .display { max-width: 16ch; }
+.hero .lede { margin-top: 1.4rem; max-width: 42ch; }
+.hero__actions { margin-top: 2.2rem; display: flex; flex-wrap: wrap; gap: 0.85rem; }
+.hero__media { aspect-ratio: 4 / 5; }
+@media (max-width: 900px) {
+  .hero__grid { grid-template-columns: 1fr; gap: 2.25rem; }
+  .hero .display { max-width: none; }
+  .hero__media { aspect-ratio: 3 / 2; }
+}
+
+/* Diskretions-Hinweis statt Notdienst-Leiste */
+.diskret { background: var(--tinte-900); color: var(--band-text); padding-block: 1.15rem; }
+.diskret__inner { display: flex; flex-wrap: wrap; align-items: center; gap: 0.85rem 1.5rem; }
+.diskret svg { width: 22px; height: 22px; color: var(--accent); flex: none; }
+.diskret b { font-family: var(--font-display); font-weight: 600; }
+.diskret span { color: var(--band-text-soft); }
+.diskret a { margin-left: auto; font-weight: 600; text-decoration: none; border-bottom: 2px solid var(--accent); padding-bottom: 2px; }
+.diskret a:hover { color: var(--accent); }
+@media (max-width: 700px) { .diskret a { margin-left: 0; } }
+
+/* -------------------------------------------------------- Rechtsgebiete - */
+.leistungen__kopf { max-width: 46rem; margin-bottom: clamp(2rem, 4vw, 3rem); }
+.leistungen__kopf .h2 { max-width: 22ch; }
+
+.gebiete { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.25rem; }
+@media (max-width: 760px) { .gebiete { grid-template-columns: 1fr; } }
+
+.gebiet {
+  padding: clamp(1.5rem, 3vw, 2.1rem); border: 1px solid var(--line); border-radius: var(--r);
+  background: var(--surface); display: grid; gap: 0.9rem;
+  transition: border-color 0.22s var(--ease), transform 0.22s var(--ease);
+}
+.gebiet:hover { border-color: var(--accent); transform: translateY(-2px); }
+.gebiet svg { width: 34px; height: 34px; color: var(--accent); }
+.gebiet h3 { font-size: 1.2rem; }
+.gebiet p { color: var(--text-soft); }
+
+/* ------------------------------------------------------------ Grundsätze */
+.grundsaetze { background: var(--tinte-900); color: var(--band-text); }
+.grundsaetze__kopf { max-width: 34rem; margin-bottom: clamp(2rem, 4vw, 3rem); }
+.grundsaetze__kopf .h2 { max-width: 18ch; }
+
+.punkte { margin: 0; padding: 0; list-style: none; display: grid; gap: 0; }
+.punkte li { display: grid; grid-template-columns: auto 1fr; gap: 1.1rem; align-items: start; padding: 1.4rem 0; border-top: 1px solid var(--band-line); }
+.punkte li:last-child { border-bottom: 1px solid var(--band-line); }
+.punkte svg { width: 22px; height: 22px; color: var(--accent); margin-top: 3px; }
+.punkte b { display: block; font-family: var(--font-display); font-size: 1.08rem; margin-bottom: 0.2rem; }
+.punkte p { color: var(--band-text-soft); max-width: 52ch; }
+
+/* ------------------------------------------------------------------ Team */
+.team__grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
+@media (max-width: 700px) { .team__grid { grid-template-columns: 1fr; } }
+.person {
+  border: 1px solid var(--line); border-radius: var(--r); background: var(--surface);
+  padding: clamp(1.5rem, 3vw, 2rem); display: grid; gap: 1.1rem;
+}
+.person .ph { aspect-ratio: 4/3; }
+.person h3 { font-size: 1.25rem; }
+.person__rolle { color: var(--accent); font-weight: 600; font-size: 0.9rem; margin-top: 0.15rem; }
+.person p.body-copy { margin-top: 0.6rem; }
+
+/* ---------------------------------------------------------------- Kontakt */
+.kontakt { background: var(--pergament-2); }
+.kontakt__grid { display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 5fr); gap: clamp(2.5rem, 6vw, 5rem); align-items: start; }
+.kontakt .h2 { max-width: 15ch; }
+@media (max-width: 860px) { .kontakt__grid { grid-template-columns: 1fr; gap: 2.5rem; } }
+
+.wege { display: grid; gap: 1rem; margin-top: 2rem; }
+.weg { display: grid; grid-template-columns: auto 1fr; gap: 1rem; align-items: center; padding: 1.25rem 1.4rem; border: 1px solid var(--line); border-radius: var(--r); background: var(--surface); text-decoration: none; transition: border-color 0.22s var(--ease), transform 0.22s var(--ease); }
+.weg:hover { border-color: var(--accent); transform: translateY(-2px); }
+.weg svg { width: 22px; height: 22px; color: var(--accent); }
+.weg b { display: block; font-family: var(--font-display); }
+.weg span { color: var(--text-soft); font-size: 0.93rem; }
+
+.einzug { border: 1px solid var(--line); border-radius: var(--r); background: var(--surface); padding: clamp(1.5rem, 3vw, 2.25rem); }
+.einzug h3 { font-size: 1.25rem; margin-bottom: 0.6rem; }
+.einzug p { color: var(--text-soft); }
+.einzug dl { margin: 1.5rem 0 0; display: grid; gap: 0; }
+.einzug .zeile { display: flex; justify-content: space-between; gap: 1rem; padding: 0.8rem 0; border-top: 1px solid var(--line); }
+.einzug dt { color: var(--text-soft); }
+.einzug dd { margin: 0; }
