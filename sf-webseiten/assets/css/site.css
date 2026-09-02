@@ -109,14 +109,16 @@
 
 /* -------------------------------------------------------------------- Logo */
 
-/* Das Signet ist das Logo selbst, nicht mehr nachgebauter Text. Der Rahmen
-   um das Bild verhindert, dass es auf dunklem Grund mit ihm verschwimmt. */
+/* Das Signet ist das Logo selbst, rund beschnitten. Den Goldring bringt die
+   Bilddatei mit - ohne ihn waere die runde Form nicht zu erkennen, weil der
+   Grund des Logos so dunkel ist wie die Leiste, auf der es liegt. */
 .brand__mark {
-  width: 2.3rem; height: 2.3rem; border-radius: 9px;
+  width: 2.3rem; height: 2.3rem;
   flex: none; display: block;
-  object-fit: cover;
-  background: var(--nacht-950);
-  border: 1px solid color-mix(in srgb, var(--gold) 40%, transparent);
+  border-radius: 50%;
+  /* .brand richtet an der Schriftlinie aus. Ein Bild saesse dort mit seiner
+     Unterkante und wirkte dadurch zu hoch. */
+  align-self: center;
 }
 
 /* --------------------------------------------------------------- Kicker/CTA-Zeile */

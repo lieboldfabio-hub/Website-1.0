@@ -124,10 +124,19 @@ Die Navigationsleiste ist auf **allen** Seiten dunkel. Vorher war sie hell und
 stieß direkt an den dunklen Hero, was eine sichtbare Naht ergab.
 
 **Bilddateien aus dem Logo** (in `assets/img/`): `logo.jpg` fürs Impressum und
-strukturierte Daten, `signet.png` als Signet in Navigation und Fußbereich,
-`favicon-32/48/64.png`, `apple-touch-icon.png` und `og.jpg` als Vorschaubild.
-Alle sind aus derselben Quelldatei abgeleitet – wird das Logo geändert, müssen
-sie neu erzeugt werden.
+strukturierte Daten, `signet.png` als **rundes** Signet in Navigation und
+Fußbereich, `favicon-32/48/64.png`, `apple-touch-icon.png` und `og.jpg` als
+Vorschaubild. Alle sind aus derselben Quelldatei abgeleitet – wird das Logo
+geändert, müssen sie neu erzeugt werden.
+
+Zum runden Signet: der Goldring ist keine Zierde. Der Grund des Logos ist
+genauso dunkel wie die Navigationsleiste – ohne Ring wäre die runde Form gar
+nicht zu erkennen. Der Rahmen im Logo steht mit 13 % Abstand zum Ring; enger
+berührt er ihn, weiter wird das Signet zu klein. Erzeugt wird das Bild
+vierfach vergrößert und dann verkleinert, das glättet die Kreiskante deutlich
+besser als eine direkt gezeichnete Ellipse. Das Apple-Touch-Icon bleibt
+bewusst quadratisch mit schwarzem Grund, weil iOS eine eigene Maske darüber
+legt und mit Transparenz nicht umgehen kann.
 
 ## Farbwähler auf der Musterseite
 
