@@ -113,13 +113,23 @@
    Bilddatei mit - ohne ihn waere die runde Form nicht zu erkennen, weil der
    Grund des Logos so dunkel ist wie die Leiste, auf der es liegt. */
 .brand__mark {
-  width: 2.3rem; height: 2.3rem;
+  width: 3.2rem; height: 3.2rem;
   flex: none; display: block;
   border-radius: 50%;
   /* .brand richtet an der Schriftlinie aus. Ein Bild saesse dort mit seiner
      Unterkante und wirkte dadurch zu hoch. */
   align-self: center;
 }
+/* Auf schmalen Geraeten darf das Signet die Leiste nicht auseinanderdruecken. */
+@media (max-width: 560px) {
+  .brand__mark { width: 2.6rem; height: 2.6rem; }
+}
+.footer .brand__mark { width: 3.5rem; height: 3.5rem; }
+
+/* Das Signet traegt bereits die Initialen. Daneben steht deshalb nur noch
+   "Webseiten" - und weil es allein steht, darf es etwas groesser sein. */
+.brand { font-size: 1.42rem; gap: 0.65rem; }
+.footer .brand { font-size: 1.5rem; }
 
 /* --------------------------------------------------------------- Kicker/CTA-Zeile */
 

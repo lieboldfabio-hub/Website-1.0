@@ -129,6 +129,12 @@ Fußbereich, `favicon-32/48/64.png`, `apple-touch-icon.png` und `og.jpg` als
 Vorschaubild. Alle sind aus derselben Quelldatei abgeleitet – wird das Logo
 geändert, müssen sie neu erzeugt werden.
 
+Neben dem Signet steht nur noch **„Webseiten"**, nicht „S & F Webseiten" – die
+Initialen stehen bereits im Signet, doppelt gelesen wirkt es ungeschickt. Weil
+der Schriftzug dadurch kürzer ist, darf das Signet größer stehen: 3,2 rem in
+der Leiste, 3,5 rem im Fußbereich, auf schmalen Geräten 2,6 rem, damit es die
+Leiste nicht auseinanderdrückt.
+
 Zum runden Signet: der Goldring ist keine Zierde. Der Grund des Logos ist
 genauso dunkel wie die Navigationsleiste – ohne Ring wäre die runde Form gar
 nicht zu erkennen. Der Rahmen im Logo steht mit 13 % Abstand zum Ring; enger
