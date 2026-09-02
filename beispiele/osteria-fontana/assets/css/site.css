@@ -434,27 +434,8 @@ body::after {
 
 
 /* ============================================================================
-   Farbvarianten
-   ----------------------------------------------------------------------------
-   Dieselbe Marke in drei Akzenten. Papier, Tinte und Schrift bleiben, nur der
-   Akzent wechselt - genau die Frage, die im Kundengespraech kommt. Umgeschaltet
-   wird ueber data-farbe am <html>-Element, der Waehler sitzt im Fussbereich.
-
-   Alle drei Varianten erreichen WCAG AA in allen drei Rollen.
+   Akzent im dunklen Abschnitt
    ========================================================================= */
-
-:root[data-farbe="oliv"] {
-  --accent-flaeche: #a3b545;
-  --accent: #bccc63;
-  --accent-band: #bccc63;
-  --accent-fg: #14170a;
-}
-:root[data-farbe="bordeaux"] {
-  --accent-flaeche: #d97f8b;
-  --accent: #d97f8b;
-  --accent-band: #d97f8b;
-  --accent-fg: #1a0d10;
-}
 
 /* In den dunklen Abschnitten uebernimmt der aufgehellte Ton. Weil --accent
    vererbt wird, genuegt es, ihn am Container zu setzen. */

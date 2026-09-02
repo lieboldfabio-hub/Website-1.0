@@ -15,7 +15,7 @@ sind selbst gehostet.
 | --- | --- |
 | `index.html` | Startseite: Hero, Statistiken, Leistungen-Teaser, Differenzierung, Portfolio-Teaser, Bewertungen-Teaser, CTA |
 | `leistungen.html` | Leistungen im Detail, Ablauf, FAQ |
-| `portfolio.html` | Alle 5 Referenzprojekte mit Branchen-Filter |
+| `portfolio.html` | Alle 5 Vorschau-Projekte mit Branchen-Filter |
 | `bewertungen.html` | Testimonials aus den Beispielprojekten |
 | `ueber-uns.html` | Positionierung, Werte, Servicegebiet |
 | `kontakt.html` | Kontaktformular (siehe Hinweis unten) + Kontaktdaten |
@@ -58,7 +58,7 @@ gefüllt, die versehentlich live gehen könnten.
 
 ---
 
-## Zu den Referenzprojekten
+## Zu den Vorschau-Projekten
 
 Portfolio und Bewertungen zeigen fünf **erfundene** Unternehmen aus Augsburg
 und Umgebung (Handwerk, Gastronomie, Beauty, Recht, Gesundheit) – drei davon
@@ -101,15 +101,20 @@ oder eigene Zahlen ersetzen, sobald echte Projektdaten vorliegen.
 
 ---
 
-## Farbwähler
+## Farbwähler im Bereich Vorschau
 
 Die Seite kann von Besuchern auf sechs Farbrichtungen umgestellt werden. Das
 ist kein Spielzeug, sondern das Verkaufsargument in eigener Sache: im Gespräch
 lässt sich zeigen, dass Gestaltungsspielraum eingebaut werden kann, ohne dass
 jemand Code anfasst.
 
-**Bedienung**: ausführlich im Bereich `#farbwahl` auf der Startseite, kompakt
-als Punktreihe im Fußbereich jeder Seite.
+**Bedienung**: der Block sitzt im Bereich **Vorschau** auf der Startseite,
+oberhalb der Beispielkacheln – erst zeigen, was die eigene Seite kann, dann
+die Beispiele. Zusätzlich als kompakte Punktreihe im Fußbereich jeder Seite,
+damit die Farbe auch von den übrigen Seiten aus erreichbar bleibt.
+
+Die Beispielprojekte unter `beispiele/` haben **bewusst keinen** Farbwähler.
+Sie sollen jeweils eine Marke zeigen, nicht ihre Varianten.
 
 **Wie es funktioniert**
 

@@ -20,19 +20,6 @@
 <meta name="theme-color" content="#14181d">
 <link rel="stylesheet" href="assets/css/site.css">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%2314181d'/><text y='71' x='50' text-anchor='middle' font-size='56' font-family='sans-serif' font-weight='bold' fill='%231f6feb'>H</text></svg>">
-<script>
-/* Stellt die gemerkte Farbwahl her, bevor gezeichnet wird. Ohne das blitzt
-   beim Laden kurz der Grundakzent auf. */
-(function () {
-  "use strict";
-  var wurzel = document.documentElement;
-  wurzel.classList.add("js");
-  var erlaubt = ["signal", "rot", "gruen"];
-  var wahl = null;
-  try { wahl = localStorage.getItem("farbe"); } catch (e) { /* privater Modus */ }
-  wurzel.setAttribute("data-farbe", erlaubt.indexOf(wahl) > -1 ? wahl : "signal");
-})();
-</script>
 </head>
 <body class="seite-hell">
 
@@ -121,17 +108,6 @@
       &uuml;bertragen.
     </p>
 
-    <h2>Speicherung Ihrer Farbauswahl</h2>
-    <p>
-      Diese Website l&auml;sst sich im Fu&szlig;bereich auf eine andere Akzentfarbe
-      umstellen. Damit Ihre Auswahl beim Seitenwechsel erhalten bleibt, wird
-      sie im lokalen Speicher Ihres Browsers abgelegt (<em>localStorage</em>,
-      Schl&uuml;ssel <code>farbe</code>). Diese Angabe verl&auml;sst Ihr Ger&auml;t nicht
-      und wird nicht ausgewertet. Sie ist zur Bereitstellung des von Ihnen
-      ausdr&uuml;cklich gew&uuml;nschten Dienstes erforderlich (&sect; 25 Abs. 2 Nr. 2
-      TDDDG) und damit einwilligungsfrei.
-    </p>
-
     <h2>Cookies</h2>
     <p>
       Diese Website setzt keine Cookies zu Analyse- oder Werbezwecken. Es findet
@@ -173,12 +149,6 @@
         <li><a href="../">Weitere Beispiele</a></li>
       </ul>
     </div>
-    <div class="farbwahl-fuss" role="group" aria-label="Akzentfarbe dieser Seite w&auml;hlen">
-      <span class="farbwahl-fuss__titel">Akzentfarbe ausprobieren:</span>
-      <button class="farbpunkt" type="button" data-farbe-wahl="signal" aria-pressed="false" style="--fp:#1f6feb">Signalblau</button>
-      <button class="farbpunkt" type="button" data-farbe-wahl="rot" aria-pressed="false" style="--fp:#e02424">Signalrot</button>
-      <button class="farbpunkt" type="button" data-farbe-wahl="gruen" aria-pressed="false" style="--fp:#177a4a">Waldgr&uuml;n</button>
-    </div>
     <p class="footer__note">
       Beispielprojekt. Halbritter Haustechnik ist ein erfundenes Unternehmen,
       sämtliche Angaben auf dieser Seite dienen ausschließlich der
@@ -191,42 +161,5 @@
 <script src="assets/js/ScrollTrigger.min.js"></script>
 <script src="assets/js/basis.js"></script>
 <script src="assets/js/site.js"></script>
-<script>
-/* ----------------------------------------------------------------- Farbwahl
-   Setzt data-farbe am <html>-Element, umgeschaltet wird im CSS. Die
-   Wiederherstellung beim Laden passiert bereits im Kopf der Seite.
-   -------------------------------------------------------------------------- */
-(function () {
-  "use strict";
-  var wurzel = document.documentElement;
-  var schalter = Array.prototype.slice.call(document.querySelectorAll("[data-farbe-wahl]"));
-  if (!schalter.length) return;
-  var erlaubt = schalter.map(function (b) { return b.getAttribute("data-farbe-wahl"); });
-  var themeMeta = document.querySelector('meta[name="theme-color"]');
-
-  function anzeigen(wahl) {
-    schalter.forEach(function (b) {
-      b.setAttribute("aria-pressed", String(b.getAttribute("data-farbe-wahl") === wahl));
-    });
-  }
-
-  function setzen(wahl, merken) {
-    if (erlaubt.indexOf(wahl) === -1) return;
-    wurzel.setAttribute("data-farbe", wahl);
-    if (merken) {
-      try { localStorage.setItem("farbe", wahl); } catch (e) { /* privater Modus */ }
-    }
-    anzeigen(wahl);
-  }
-
-  schalter.forEach(function (b) {
-    b.addEventListener("click", function () { setzen(b.getAttribute("data-farbe-wahl"), true); });
-  });
-  window.addEventListener("storage", function (e) {
-    if (e.key === "farbe" && e.newValue) setzen(e.newValue, false);
-  });
-  anzeigen(wurzel.getAttribute("data-farbe") || erlaubt[0]);
-})();
-</script>
 </body>
 </html>

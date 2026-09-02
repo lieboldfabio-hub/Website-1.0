@@ -72,31 +72,13 @@ auch im Formular und in der Datenschutzerklärung.
 
 ---
 
-## Farbwähler
+## Der Akzent hat drei Rollen
 
-Jedes Beispiel lässt sich im Fußbereich auf **drei Akzentfarben** umstellen –
-dieselbe Marke, ein anderer Akzent. Das beantwortet im Kundengespräch die Frage,
-die ohnehin kommt: „Geht das auch in unserem Rot?"
-
-| Projekt | Varianten |
-|---|---|
-| Halbritter Haustechnik | Signalblau · Signalrot · Waldgrün |
-| Osteria Fontana | Terrakotta · Olive · Bordeaux |
-| Kopfsache Studio | Limette · Magenta · Cyan |
-| Brenner & Kolb | Gold · Bordeaux · Marine |
-| Zahnärzte am Königsplatz | Koralle · Himmelblau · Lavendel |
-
-Papier, Tinte und Schrift bleiben unverändert. Nur der Akzent wechselt – das
-ist die realistische Frage und zugleich der überzeugendere Beweis, weil die
-Marke erkennbar bleibt.
-
-### Der Akzent hat drei Rollen
-
-Vorher gab es einen einzigen `--accent` für alles. Derselbe Ton kann aber nicht
-gleichzeitig als kleine Schrift auf hellem Papier **und** als leuchtende Fläche
-funktionieren. Beim Prüfen lagen vier von fünf Projekten mit der Schriftvariante
-unter der Kontrastvorgabe – am deutlichsten Kopfsache, wo Limette auf Papier
-nur 1,19:1 erreichte und praktisch unlesbar war. Deshalb jetzt:
+Ursprünglich gab es einen einzigen `--accent` für alles. Derselbe Ton kann aber
+nicht gleichzeitig als kleine Schrift auf hellem Papier **und** als leuchtende
+Fläche funktionieren. Beim Prüfen lagen vier von fünf Projekten mit der
+Schriftvariante unter der Kontrastvorgabe – am deutlichsten Kopfsache, wo
+Limette auf Papier nur 1,19:1 erreichte und praktisch unlesbar war. Deshalb:
 
 ```css
 --accent-flaeche  /* der Markenton, wie er auf Knöpfen und Balken liegt */
@@ -109,19 +91,13 @@ Am Ende jeder `site.css` steht, welche Abschnitte des Projekts dunkel sind. Dort
 übernehmen `--accent-band` und eine dunkle Knopfbeschriftung. Weil `--accent`
 vererbt wird, genügt es, das am Container zu setzen.
 
-**Alle 15 Varianten** erreichen WCAG AA in allen drei Rollen: Akzentschrift auf
-dem Grund, Akzent im dunklen Abschnitt, Knopfbeschriftung auf der Fläche.
-Wer eine Variante ändert oder hinzufügt, sollte das nachrechnen.
+Wer eine Akzentfarbe ändert, prüft drei Werte: Akzentschrift auf dem Grund,
+Akzent im dunklen Abschnitt, Knopfbeschriftung auf der Fläche. Alle drei
+müssen 4,5:1 erreichen.
 
-### Technik
-
-- Ein kurzes Skript im `<head>` **jeder** Seite stellt die gemerkte Wahl her,
-  bevor gezeichnet wird. Kommt eine neue Seite dazu, muss es mit hinein – sonst
-  blitzt dort beim Laden der Grundakzent auf.
-- Die Wahl liegt in `localStorage` unter dem Schlüssel `farbe`, getrennt je
-  Projekt-Herkunft. Sie verlässt den Browser nicht.
-- Ohne JavaScript wird die Leiste ausgeblendet, die Seite bleibt im
-  Grundakzent vollständig benutzbar.
+**Hinweis:** Den umschaltbaren Farbwähler gibt es hier bewusst **nicht**. Die
+Beispiele sollen jeweils eine Marke zeigen, nicht ihre Varianten. Das
+Baukasten-Feature sitzt im Bereich „Vorschau" auf der Agenturseite.
 
 ---
 
@@ -218,5 +194,3 @@ Für jedes Beispiel im echten Browser nachgestellt:
 - Waagerechte Galerie fällt unter 820 Pixel auf eine wischbare Reihe zurück
 - Bei `prefers-reduced-motion` entfallen Laufband, Heftung und alle Reveals
 - Die aktive Seite ist in der Navigation mit `aria-current="page"` markiert
-- Alle 15 Akzentvarianten im Browser durchgeschaltet und je Variante Attribut,
-  Speicherung, `aria-pressed` und die berechneten Farbwerte ausgelesen

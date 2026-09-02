@@ -403,27 +403,8 @@ h1, h2, h3 { font-weight: 700; letter-spacing: -0.02em; }
 
 
 /* ============================================================================
-   Farbvarianten
-   ----------------------------------------------------------------------------
-   Dieselbe Marke in drei Akzenten. Papier, Tinte und Schrift bleiben, nur der
-   Akzent wechselt - genau die Frage, die im Kundengespraech kommt. Umgeschaltet
-   wird ueber data-farbe am <html>-Element, der Waehler sitzt im Fussbereich.
-
-   Alle drei Varianten erreichen WCAG AA in allen drei Rollen.
+   Akzent im dunklen Abschnitt
    ========================================================================= */
-
-:root[data-farbe="rot"] {
-  --accent-flaeche: #e02424;
-  --accent: #b91c1c;
-  --accent-band: #f87171;
-  --accent-fg: #ffffff;
-}
-:root[data-farbe="gruen"] {
-  --accent-flaeche: #177a4a;
-  --accent: #116038;
-  --accent-band: #4ade80;
-  --accent-fg: #ffffff;
-}
 
 /* In den dunklen Abschnitten uebernimmt der aufgehellte Ton. Weil --accent
    vererbt wird, genuegt es, ihn am Container zu setzen. */
