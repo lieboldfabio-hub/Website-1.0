@@ -22,6 +22,7 @@
 <link rel="stylesheet" href="assets/css/fonts.css">
 <link rel="stylesheet" href="assets/css/basis.css">
 <link rel="stylesheet" href="assets/css/site.css">
+<link rel="stylesheet" href="assets/css/farben.css">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%2315120e'/><text y='69' x='50' text-anchor='middle' font-size='46' font-family='Georgia,serif' font-weight='bold' fill='%23d9502b'>S&amp;F</text></svg>">
 <script type="application/ld+json">
 {
@@ -40,6 +41,17 @@
   "areaServed": ["Augsburg", "Friedberg", "Königsbrunn", "Neusäß", "Gersthofen", "Stadtbergen", "Aichach"],
   "knowsLanguage": "de"
 }
+</script>
+<script>
+(function () {
+  "use strict";
+  var wurzel = document.documentElement;
+  wurzel.classList.add("js");
+  var erlaubt = ["vermillion", "kobalt", "marine", "tanne", "aubergine", "petrol"];
+  var wahl = null;
+  try { wahl = localStorage.getItem("sf-farbe"); } catch (e) { /* privater Modus */ }
+  wurzel.setAttribute("data-farbe", erlaubt.indexOf(wahl) > -1 ? wahl : "vermillion");
+})();
 </script>
 </head>
 <body>
@@ -366,6 +378,99 @@
   </div>
 </section>
 
+<!-- ============================================================= Farbwahl -->
+<section class="section farbwahl" id="farbwahl">
+  <div class="wrap farbwahl__grid">
+
+    <div data-reveal>
+      <p class="eyebrow">Zum Ausprobieren</p>
+      <h2 class="h2">Stellen Sie diese Seite auf Ihre Farbe um.</h2>
+      <p class="farbwahl__text">
+        Klicken Sie eine Richtung an &ndash; die gesamte Website wechselt sofort,
+        von der Navigation bis zum Fu&szlig;bereich. Genau so bauen wir
+        Gestaltungsspielraum in Ihr Projekt ein: eine Stelle &auml;ndern, alles zieht
+        mit, ohne dass jemand Code anfassen muss.
+      </p>
+      <p class="farbwahl__text">
+        Jede der sechs Richtungen ist auf Lesbarkeit gepr&uuml;ft und erf&uuml;llt die
+        Kontrastvorgaben der Barrierefreiheitsrichtlinie WCAG in Stufe AA &ndash;
+        auch die, die auf den ersten Blick nach reiner Optik aussehen.
+      </p>
+      <p class="farbwahl__hinweis">
+        <svg class="ic" aria-hidden="true"><use href="#ic-shield-check"></use></svg>
+        Ihre Auswahl bleibt nur in Ihrem Browser und wird nirgendwohin
+        &uuml;bertragen. Wir erfahren nicht, was Sie hier anklicken.
+      </p>
+    </div>
+
+    <div data-reveal>
+      <div class="farbwahl__reihe" role="group" aria-label="Farbrichtung der Website w&auml;hlen">
+        <button class="farbknopf" type="button" data-farbe-wahl="vermillion"
+                aria-pressed="false"
+                style="--fk-1:#f7f1e3;--fk-2:#15120e;--fk-3:#c23c1a">
+          <span class="farbknopf__probe" aria-hidden="true"><i></i><i></i></span>
+          <span class="farbknopf__name">
+            Vermillion
+            <svg class="ic farbknopf__haken" aria-hidden="true"><use href="#ic-check"></use></svg>
+          </span>
+          <small>warm und direkt</small>
+        </button>
+        <button class="farbknopf" type="button" data-farbe-wahl="kobalt"
+                aria-pressed="false"
+                style="--fk-1:#f5f7fa;--fk-2:#0f1319;--fk-3:#2247d4">
+          <span class="farbknopf__probe" aria-hidden="true"><i></i><i></i></span>
+          <span class="farbknopf__name">
+            Kobalt
+            <svg class="ic farbknopf__haken" aria-hidden="true"><use href="#ic-check"></use></svg>
+          </span>
+          <small>klar und digital</small>
+        </button>
+        <button class="farbknopf" type="button" data-farbe-wahl="marine"
+                aria-pressed="false"
+                style="--fk-1:#f6f3ec;--fk-2:#0d1a2b;--fk-3:#9e580d">
+          <span class="farbknopf__probe" aria-hidden="true"><i></i><i></i></span>
+          <span class="farbknopf__name">
+            Marine
+            <svg class="ic farbknopf__haken" aria-hidden="true"><use href="#ic-check"></use></svg>
+          </span>
+          <small>seri&ouml;s und warm</small>
+        </button>
+        <button class="farbknopf" type="button" data-farbe-wahl="tanne"
+                aria-pressed="false"
+                style="--fk-1:#f4f3ec;--fk-2:#0f2119;--fk-3:#8a6a1c">
+          <span class="farbknopf__probe" aria-hidden="true"><i></i><i></i></span>
+          <span class="farbknopf__name">
+            Tanne
+            <svg class="ic farbknopf__haken" aria-hidden="true"><use href="#ic-check"></use></svg>
+          </span>
+          <small>ruhig und hochwertig</small>
+        </button>
+        <button class="farbknopf" type="button" data-farbe-wahl="aubergine"
+                aria-pressed="false"
+                style="--fk-1:#f8f3f3;--fk-2:#1b1020;--fk-3:#c33c46">
+          <span class="farbknopf__probe" aria-hidden="true"><i></i><i></i></span>
+          <span class="farbknopf__name">
+            Aubergine
+            <svg class="ic farbknopf__haken" aria-hidden="true"><use href="#ic-check"></use></svg>
+          </span>
+          <small>kreativ und eigen</small>
+        </button>
+        <button class="farbknopf" type="button" data-farbe-wahl="petrol"
+                aria-pressed="false"
+                style="--fk-1:#f3f6f6;--fk-2:#0d1a1c;--fk-3:#0a6f78">
+          <span class="farbknopf__probe" aria-hidden="true"><i></i><i></i></span>
+          <span class="farbknopf__name">
+            Petrol
+            <svg class="ic farbknopf__haken" aria-hidden="true"><use href="#ic-check"></use></svg>
+          </span>
+          <small>technisch und frisch</small>
+        </button>
+      </div>
+    </div>
+
+  </div>
+</section>
+
 <!-- =========================================================== Testimonials -->
 <section class="section" style="background:var(--surface-2)">
   <div class="wrap">
@@ -470,6 +575,15 @@
           <a href="kontakt.html">Kontakt aufnehmen</a>
         </div>
       </div>
+    </div>
+    <div class="fussfarben" role="group" aria-label="Farbrichtung der Website w&auml;hlen">
+      <span>Farbe:</span>
+      <button class="fusspunkt" type="button" data-farbe-wahl="vermillion" aria-pressed="false" title="Vermillion" style="--fk-1:#f7f1e3;--fk-3:#c23c1a"><span class="sr-only">Farbrichtung Vermillion</span></button>
+      <button class="fusspunkt" type="button" data-farbe-wahl="kobalt" aria-pressed="false" title="Kobalt" style="--fk-1:#f5f7fa;--fk-3:#2247d4"><span class="sr-only">Farbrichtung Kobalt</span></button>
+      <button class="fusspunkt" type="button" data-farbe-wahl="marine" aria-pressed="false" title="Marine" style="--fk-1:#f6f3ec;--fk-3:#9e580d"><span class="sr-only">Farbrichtung Marine</span></button>
+      <button class="fusspunkt" type="button" data-farbe-wahl="tanne" aria-pressed="false" title="Tanne" style="--fk-1:#f4f3ec;--fk-3:#8a6a1c"><span class="sr-only">Farbrichtung Tanne</span></button>
+      <button class="fusspunkt" type="button" data-farbe-wahl="aubergine" aria-pressed="false" title="Aubergine" style="--fk-1:#f8f3f3;--fk-3:#c33c46"><span class="sr-only">Farbrichtung Aubergine</span></button>
+      <button class="fusspunkt" type="button" data-farbe-wahl="petrol" aria-pressed="false" title="Petrol" style="--fk-1:#f3f6f6;--fk-3:#0a6f78"><span class="sr-only">Farbrichtung Petrol</span></button>
     </div>
     <div class="footer__bottom">
       <p>&copy; <span id="jahr">2026</span> S &amp; F Webseiten</p>

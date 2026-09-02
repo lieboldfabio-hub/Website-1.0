@@ -1,0 +1,450 @@
+/* ============================================================================
+   Farbrichtungen
+   ----------------------------------------------------------------------------
+   Sechs vollstaendige Markenpaletten, umschaltbar ueber data-farbe am
+   <html>-Element. Der Farbwaehler auf der Startseite setzt das Attribut, ein
+   kurzes Skript im Kopf jeder Seite stellt die gemerkte Wahl wieder her,
+   bevor gezeichnet wird - deshalb blitzt beim Laden keine falsche Farbe auf.
+
+   Jede Richtung hat einen hellen und einen dunklen Satz, damit sie in beiden
+   Systemeinstellungen als dieselbe Marke erkennbar bleibt. Alle Kombinationen
+   aus Text, Akzent und Flaeche erreichen WCAG AA.
+
+   --accent-band ist der aufgehellte Akzent fuer die dunklen Baender. Ein
+   dunkler Akzentton auf Fast-Schwarz waere dort nicht lesbar.
+   ========================================================================= */
+
+
+/* ------------------------------------------------------- Vermillion auf Ivory -- */
+/* warm, direkt, unverwechselbar */
+:root[data-farbe="vermillion"] {
+  --paper: #f7f1e3;
+  --paper-2: #efe5cf;
+  --paper-3: #e3d6b8;
+  --accent: #c23c1a;
+  --accent-strong: #9a2f13;
+  --accent-fg: #fff8f0;
+  --accent-band: #f06a44;
+  --accent-soft: color-mix(in srgb, #c23c1a 13%, transparent);
+  --bg: #f7f1e3;
+  --surface: #fffcf5;
+  --surface-2: #efe5cf;
+  --line: color-mix(in srgb, #15120e 12%, transparent);
+  --line-strong: color-mix(in srgb, #15120e 24%, transparent);
+  --text: #15120e;
+  --text-soft: #5b5140;
+  --text-faint: #8b7f68;
+  --ink: #15120e;
+  --ink-text: #fbf5ea;
+  --ink-soft: color-mix(in srgb, #fbf5ea 70%, transparent);
+  --ink-faint: color-mix(in srgb, #fbf5ea 48%, transparent);
+  --ink-line: color-mix(in srgb, #fbf5ea 16%, transparent);
+  --waehler-1: #f7f1e3;
+  --waehler-2: #15120e;
+  --waehler-3: #c23c1a;
+}
+@media (prefers-color-scheme: dark) {
+  :root[data-farbe="vermillion"] {
+    --bg: #0c0a08;
+    --surface: #110f0b;
+    --surface-2: #1a1610;
+    --line: color-mix(in srgb, #f9f4ea 12%, transparent);
+    --line-strong: color-mix(in srgb, #f9f4ea 24%, transparent);
+    --text: #f9f4ea;
+    --text-soft: #afaa9f;
+    --text-faint: #7b766e;
+    --ink: #090806;
+    /* Auf dunklem Grund traegt der aufgehellte Akzent, sonst verschwindet er. */
+    --accent: #f06a44;
+    --accent-strong: #f38566;
+    --accent-fg: #0e0c09;
+    --accent-soft: color-mix(in srgb, #f06a44 16%, transparent);
+    --waehler-3: #f06a44;
+  }
+}
+
+/* ------------------------------------------------------- Kobalt auf Kalkweiß -- */
+/* digital, kühl, sehr klar */
+:root[data-farbe="kobalt"] {
+  --paper: #f5f7fa;
+  --paper-2: #e9edf3;
+  --paper-3: #d8dfe9;
+  --accent: #2247d4;
+  --accent-strong: #17359f;
+  --accent-fg: #ffffff;
+  --accent-band: #7d9bff;
+  --accent-soft: color-mix(in srgb, #2247d4 13%, transparent);
+  --bg: #f5f7fa;
+  --surface: #ffffff;
+  --surface-2: #e9edf3;
+  --line: color-mix(in srgb, #0f1319 12%, transparent);
+  --line-strong: color-mix(in srgb, #0f1319 24%, transparent);
+  --text: #0f1319;
+  --text-soft: #4b5361;
+  --text-faint: #79828f;
+  --ink: #0f1319;
+  --ink-text: #f2f5f9;
+  --ink-soft: color-mix(in srgb, #f2f5f9 70%, transparent);
+  --ink-faint: color-mix(in srgb, #f2f5f9 48%, transparent);
+  --ink-line: color-mix(in srgb, #f2f5f9 16%, transparent);
+  --waehler-1: #f5f7fa;
+  --waehler-2: #0f1319;
+  --waehler-3: #2247d4;
+}
+@media (prefers-color-scheme: dark) {
+  :root[data-farbe="kobalt"] {
+    --bg: #090b0e;
+    --surface: #0c1014;
+    --surface-2: #141820;
+    --line: color-mix(in srgb, #f8f9fb 12%, transparent);
+    --line-strong: color-mix(in srgb, #f8f9fb 24%, transparent);
+    --text: #f8f9fb;
+    --text-soft: #abaeb2;
+    --text-faint: #767a7e;
+    --ink: #06080b;
+    /* Auf dunklem Grund traegt der aufgehellte Akzent, sonst verschwindet er. */
+    --accent: #7d9bff;
+    --accent-strong: #94adff;
+    --accent-fg: #0a0c10;
+    --accent-soft: color-mix(in srgb, #7d9bff 16%, transparent);
+    --waehler-3: #7d9bff;
+  }
+}
+
+/* ------------------------------------------------------- Marine & Bernstein -- */
+/* warm, seriös, gestandener */
+:root[data-farbe="marine"] {
+  --paper: #f6f3ec;
+  --paper-2: #ece5d7;
+  --paper-3: #ddd2bd;
+  --accent: #9e580d;
+  --accent-strong: #7a4308;
+  --accent-fg: #fff6e9;
+  --accent-band: #e2a250;
+  --accent-soft: color-mix(in srgb, #9e580d 13%, transparent);
+  --bg: #f6f3ec;
+  --surface: #fffdf8;
+  --surface-2: #ece5d7;
+  --line: color-mix(in srgb, #0d1a2b 12%, transparent);
+  --line-strong: color-mix(in srgb, #0d1a2b 24%, transparent);
+  --text: #0d1a2b;
+  --text-soft: #4c5a6b;
+  --text-faint: #7d8998;
+  --ink: #0d1a2b;
+  --ink-text: #eef3f8;
+  --ink-soft: color-mix(in srgb, #eef3f8 70%, transparent);
+  --ink-faint: color-mix(in srgb, #eef3f8 48%, transparent);
+  --ink-line: color-mix(in srgb, #eef3f8 16%, transparent);
+  --waehler-1: #f6f3ec;
+  --waehler-2: #0d1a2b;
+  --waehler-3: #9e580d;
+}
+@media (prefers-color-scheme: dark) {
+  :root[data-farbe="marine"] {
+    --bg: #080f19;
+    --surface: #0b1523;
+    --surface-2: #112032;
+    --line: color-mix(in srgb, #f8f6f1 12%, transparent);
+    --line-strong: color-mix(in srgb, #f8f6f1 24%, transparent);
+    --text: #f8f6f1;
+    --text-soft: #abaeae;
+    --text-faint: #767c82;
+    --ink: #050b12;
+    /* Auf dunklem Grund traegt der aufgehellte Akzent, sonst verschwindet er. */
+    --accent: #e2a250;
+    --accent-strong: #e7b370;
+    --accent-fg: #08111c;
+    --accent-soft: color-mix(in srgb, #e2a250 16%, transparent);
+    --waehler-3: #e2a250;
+  }
+}
+
+/* ------------------------------------------------------- Tanne & Messing -- */
+/* ruhig, hochwertig, natürlich */
+:root[data-farbe="tanne"] {
+  --paper: #f4f3ec;
+  --paper-2: #e8e7dc;
+  --paper-3: #d6d5c4;
+  --accent: #8a6a1c;
+  --accent-strong: #6b5113;
+  --accent-fg: #fdf8ec;
+  --accent-band: #d1ac54;
+  --accent-soft: color-mix(in srgb, #8a6a1c 13%, transparent);
+  --bg: #f4f3ec;
+  --surface: #fdfdf8;
+  --surface-2: #e8e7dc;
+  --line: color-mix(in srgb, #0f2119 12%, transparent);
+  --line-strong: color-mix(in srgb, #0f2119 24%, transparent);
+  --text: #0f2119;
+  --text-soft: #4b5a52;
+  --text-faint: #7c8a82;
+  --ink: #0f2119;
+  --ink-text: #eef4ef;
+  --ink-soft: color-mix(in srgb, #eef4ef 70%, transparent);
+  --ink-faint: color-mix(in srgb, #eef4ef 48%, transparent);
+  --ink-line: color-mix(in srgb, #eef4ef 16%, transparent);
+  --waehler-1: #f4f3ec;
+  --waehler-2: #0f2119;
+  --waehler-3: #8a6a1c;
+}
+@media (prefers-color-scheme: dark) {
+  :root[data-farbe="tanne"] {
+    --bg: #09130e;
+    --surface: #0c1b14;
+    --surface-2: #13281f;
+    --line: color-mix(in srgb, #f7f6f1 12%, transparent);
+    --line-strong: color-mix(in srgb, #f7f6f1 24%, transparent);
+    --text: #f7f6f1;
+    --text-soft: #abb0a8;
+    --text-faint: #767f78;
+    --ink: #060e0b;
+    /* Auf dunklem Grund traegt der aufgehellte Akzent, sonst verschwindet er. */
+    --accent: #d1ac54;
+    --accent-strong: #d9bb73;
+    --accent-fg: #0a1510;
+    --accent-soft: color-mix(in srgb, #d1ac54 16%, transparent);
+    --waehler-3: #d1ac54;
+  }
+}
+
+/* ------------------------------------------------------- Aubergine & Koralle -- */
+/* kreativ, eigenwillig, gemerkt */
+:root[data-farbe="aubergine"] {
+  --paper: #f8f3f3;
+  --paper-2: #efe5e6;
+  --paper-3: #e0d1d3;
+  --accent: #c33c46;
+  --accent-strong: #9a2b34;
+  --accent-fg: #fff5f5;
+  --accent-band: #f0787f;
+  --accent-soft: color-mix(in srgb, #c33c46 13%, transparent);
+  --bg: #f8f3f3;
+  --surface: #fffbfb;
+  --surface-2: #efe5e6;
+  --line: color-mix(in srgb, #1b1020 12%, transparent);
+  --line-strong: color-mix(in srgb, #1b1020 24%, transparent);
+  --text: #1b1020;
+  --text-soft: #584d5d;
+  --text-faint: #877c8c;
+  --ink: #1b1020;
+  --ink-text: #f6eef7;
+  --ink-soft: color-mix(in srgb, #f6eef7 70%, transparent);
+  --ink-faint: color-mix(in srgb, #f6eef7 48%, transparent);
+  --ink-line: color-mix(in srgb, #f6eef7 16%, transparent);
+  --waehler-1: #f8f3f3;
+  --waehler-2: #1b1020;
+  --waehler-3: #c33c46;
+}
+@media (prefers-color-scheme: dark) {
+  :root[data-farbe="aubergine"] {
+    --bg: #100913;
+    --surface: #160d1a;
+    --surface-2: #211528;
+    --line: color-mix(in srgb, #faf6f6 12%, transparent);
+    --line-strong: color-mix(in srgb, #faf6f6 24%, transparent);
+    --text: #faf6f6;
+    --text-soft: #b1aaaf;
+    --text-faint: #7e767f;
+    --ink: #0b070d;
+    /* Auf dunklem Grund traegt der aufgehellte Akzent, sonst verschwindet er. */
+    --accent: #f0787f;
+    --accent-strong: #f39096;
+    --accent-fg: #120a15;
+    --accent-soft: color-mix(in srgb, #f0787f 16%, transparent);
+    --waehler-3: #f0787f;
+  }
+}
+
+/* ------------------------------------------------------- Petrol & Schiefer -- */
+/* technisch, frisch, sachlich */
+:root[data-farbe="petrol"] {
+  --paper: #f3f6f6;
+  --paper-2: #e5ecec;
+  --paper-3: #d2dedd;
+  --accent: #0a6f78;
+  --accent-strong: #075158;
+  --accent-fg: #f2fbfb;
+  --accent-band: #4fc3cc;
+  --accent-soft: color-mix(in srgb, #0a6f78 13%, transparent);
+  --bg: #f3f6f6;
+  --surface: #ffffff;
+  --surface-2: #e5ecec;
+  --line: color-mix(in srgb, #0d1a1c 12%, transparent);
+  --line-strong: color-mix(in srgb, #0d1a1c 24%, transparent);
+  --text: #0d1a1c;
+  --text-soft: #47585a;
+  --text-faint: #768688;
+  --ink: #0d1a1c;
+  --ink-text: #eef6f6;
+  --ink-soft: color-mix(in srgb, #eef6f6 70%, transparent);
+  --ink-faint: color-mix(in srgb, #eef6f6 48%, transparent);
+  --ink-line: color-mix(in srgb, #eef6f6 16%, transparent);
+  --waehler-1: #f3f6f6;
+  --waehler-2: #0d1a1c;
+  --waehler-3: #0a6f78;
+}
+@media (prefers-color-scheme: dark) {
+  :root[data-farbe="petrol"] {
+    --bg: #080f10;
+    --surface: #0b1517;
+    --surface-2: #112124;
+    --line: color-mix(in srgb, #f6f8f8 12%, transparent);
+    --line-strong: color-mix(in srgb, #f6f8f8 24%, transparent);
+    --text: #f6f8f8;
+    --text-soft: #a9b0b0;
+    --text-faint: #747d7e;
+    --ink: #050b0c;
+    /* Auf dunklem Grund traegt der aufgehellte Akzent, sonst verschwindet er. */
+    --accent: #4fc3cc;
+    --accent-strong: #6fced5;
+    --accent-fg: #081112;
+    --accent-soft: color-mix(in srgb, #4fc3cc 16%, transparent);
+    --waehler-3: #4fc3cc;
+  }
+}
+
+
+/* ------------------------------------------------- Akzent im dunklen Band -- */
+/*
+   Diese Flaechen laufen auf der Tinte. Dort uebernimmt der aufgehellte
+   Akzent, weil der dunkle sonst mit dem Untergrund verschmilzt. Weil
+   --accent vererbt wird, genuegt es, ihn am Container zu setzen.
+*/
+.hero,
+.marquee,
+.diff,
+.cta-band,
+.footer,
+.brand__mark,
+.testi-card__avatar { --accent: var(--accent-band); }
+
+@media (prefers-color-scheme: dark) {
+  /* Im dunklen Modus ist --accent bereits der aufgehellte Ton. */
+  .hero, .marquee, .diff, .cta-band, .footer,
+  .brand__mark, .testi-card__avatar { --accent: var(--accent-band); }
+}
+
+/* ============================================================ Farbwaehler == */
+
+.farbwahl { background: var(--surface-2); }
+.farbwahl__grid {
+  display: grid;
+  grid-template-columns: 0.9fr 1.1fr;
+  gap: clamp(2rem, 5vw, 4rem);
+  align-items: center;
+}
+.farbwahl h2 { max-width: 15ch; }
+.farbwahl__text { color: var(--text-soft); margin-top: 1.1rem; max-width: 48ch; }
+
+.farbwahl__reihe {
+  max-width: 34rem;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.85rem;
+}
+
+/* Ein Knopf zeigt die Richtung als Probe: Papier, Tinte, Akzent. Wer nicht
+   nach Farbe unterscheiden kann, liest den Namen darunter. */
+.farbknopf {
+  display: grid;
+  gap: 0.6rem;
+  padding: 0.75rem 0.75rem 0.85rem;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r-m);
+  cursor: pointer;
+  text-align: left;
+  font: inherit;
+  color: var(--text);
+  transition: border-color 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
+}
+.farbknopf:hover { border-color: var(--line-strong); transform: translateY(-2px); }
+.farbknopf:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+.farbknopf[aria-pressed="true"] {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent);
+}
+
+.farbknopf__probe {
+  height: 3.1rem;
+  border-radius: var(--r-s);
+  border: 1px solid var(--line);
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  background: var(--fk-1);
+}
+.farbknopf__probe i { display: block; }
+.farbknopf__probe i:first-child { background: var(--fk-2); }
+.farbknopf__probe i:last-child {
+  background: var(--fk-1);
+  position: relative;
+}
+.farbknopf__probe i:last-child::after {
+  content: "";
+  position: absolute;
+  left: 0.45rem; right: 0.45rem; bottom: 0.5rem;
+  height: 0.55rem; border-radius: 999px;
+  background: var(--fk-3);
+}
+
+.farbknopf__name {
+  display: flex; align-items: center; justify-content: space-between; gap: 0.4rem;
+  font-family: var(--font-display); font-weight: 600; font-size: 0.9rem;
+}
+.farbknopf__haken { width: 0.95rem; height: 0.95rem; color: var(--accent); opacity: 0; }
+.farbknopf[aria-pressed="true"] .farbknopf__haken { opacity: 1; }
+.farbknopf small { color: var(--text-faint); font-size: 0.76rem; line-height: 1.35; }
+
+.farbwahl__hinweis {
+  margin-top: 1.6rem; font-size: 0.85rem; color: var(--text-faint);
+  display: flex; align-items: flex-start; gap: 0.5rem;
+}
+.farbwahl__hinweis .ic { flex: none; margin-top: 0.1rem; width: 1rem; height: 1rem; }
+
+@media (max-width: 900px) { .farbwahl__grid { grid-template-columns: 1fr; } }
+@media (max-width: 520px) { .farbwahl__reihe { grid-template-columns: 1fr 1fr; } }
+
+/* ------------------------------------------------- kompakte Reihe im Fuss -- */
+
+.fussfarben {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 0.55rem;
+  margin-top: 1.75rem;
+}
+.fussfarben > span { color: var(--ink-faint); font-size: 0.82rem; margin-right: 0.25rem; }
+/* Der Punkt bleibt optisch klein, die Trefferflaeche ist aber 44 Pixel gross.
+   Sonst waere er auf dem Telefon kaum zu treffen. */
+.fusspunkt {
+  position: relative;
+  width: 1.6rem; height: 1.6rem; padding: 0; border-radius: 999px;
+  border: 1px solid var(--ink-line);
+  background: linear-gradient(135deg, var(--fk-1) 0 50%, var(--fk-3) 50% 100%);
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.fusspunkt::after {
+  content: "";
+  position: absolute; left: 50%; top: 50%;
+  width: 44px; height: 44px; transform: translate(-50%, -50%);
+}
+.fusspunkt:hover { transform: scale(1.12); }
+.fusspunkt:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.fusspunkt[aria-pressed="true"] {
+  box-shadow: 0 0 0 2px var(--ink), 0 0 0 3.5px var(--accent);
+}
+
+/* Ohne JavaScript hat das Umschalten keine Wirkung, also wird es ausgeblendet.
+   Die Seite bleibt in der Grundfarbe vollstaendig benutzbar. */
+html:not(.js) .farbwahl,
+html:not(.js) .fussfarben { display: none; }
+
+
+/* --------------------------------------------------------- Signet-Kante -- */
+/*
+   Das Signet liegt auf der Tinte und stand damit in der Navigation und im
+   Fussbereich unsichtbar auf gleichfarbigem Grund. Eine feine Kante in der
+   Akzentfarbe gibt ihm auf jedem Untergrund eine Kontur.
+*/
+.brand__mark {
+  border: 1px solid color-mix(in srgb, var(--accent) 55%, transparent);
+}

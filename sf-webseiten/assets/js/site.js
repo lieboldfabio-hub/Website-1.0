@@ -107,3 +107,61 @@
     counters.forEach(function (el) { countIo.observe(el); });
   }
 })();
+
+/* ============================================================================
+   Farbwaehler
+   ----------------------------------------------------------------------------
+   Setzt data-farbe am <html>-Element. Die eigentliche Umschaltung macht das
+   CSS, hier wird nur die Wahl verwaltet, gespeichert und an alle Bedienelemente
+   zurueckgemeldet.
+
+   Die Wiederherstellung beim Laden passiert bereits im Kopf jeder Seite, damit
+   beim Aufbau keine falsche Farbe aufblitzt. Hier geht es nur noch um die
+   Bedienung.
+   ========================================================================= */
+
+(function () {
+  "use strict";
+
+  var SPEICHER = "sf-farbe";
+  var ERLAUBT = ["vermillion", "kobalt", "marine", "tanne", "aubergine", "petrol"];
+  var wurzel = document.documentElement;
+  var schalter = Array.prototype.slice.call(document.querySelectorAll("[data-farbe-wahl]"));
+  if (!schalter.length) return;
+
+  /* Die Adressleiste mobiler Browser faerbt sich nach theme-color. Ohne
+     Nachfuehren bliebe dort die Farbe der Grundpalette stehen. */
+  var themeMeta = document.querySelector('meta[name="theme-color"]');
+
+  function anzeigen(wahl) {
+    schalter.forEach(function (b) {
+      b.setAttribute("aria-pressed", String(b.getAttribute("data-farbe-wahl") === wahl));
+    });
+    if (themeMeta) {
+      var tinte = getComputedStyle(wurzel).getPropertyValue("--ink").trim();
+      if (tinte) themeMeta.setAttribute("content", tinte);
+    }
+  }
+
+  function setzen(wahl, merken) {
+    if (ERLAUBT.indexOf(wahl) === -1) return;
+    wurzel.setAttribute("data-farbe", wahl);
+    if (merken) {
+      try { localStorage.setItem(SPEICHER, wahl); } catch (e) { /* privater Modus */ }
+    }
+    anzeigen(wahl);
+  }
+
+  schalter.forEach(function (b) {
+    b.addEventListener("click", function () {
+      setzen(b.getAttribute("data-farbe-wahl"), true);
+    });
+  });
+
+  /* Ist die Seite in einem zweiten Tab offen, zieht sie mit. */
+  window.addEventListener("storage", function (e) {
+    if (e.key === SPEICHER && e.newValue) setzen(e.newValue, false);
+  });
+
+  anzeigen(wurzel.getAttribute("data-farbe") || "vermillion");
+})();

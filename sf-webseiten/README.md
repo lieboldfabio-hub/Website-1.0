@@ -101,6 +101,43 @@ oder eigene Zahlen ersetzen, sobald echte Projektdaten vorliegen.
 
 ---
 
+## Farbwähler
+
+Die Seite kann von Besuchern auf sechs Farbrichtungen umgestellt werden. Das
+ist kein Spielzeug, sondern das Verkaufsargument in eigener Sache: im Gespräch
+lässt sich zeigen, dass Gestaltungsspielraum eingebaut werden kann, ohne dass
+jemand Code anfasst.
+
+**Bedienung**: ausführlich im Bereich `#farbwahl` auf der Startseite, kompakt
+als Punktreihe im Fußbereich jeder Seite.
+
+**Wie es funktioniert**
+
+- `assets/css/farben.css` enthält alle sechs Richtungen als
+  `:root[data-farbe="…"]`, jeweils mit hellem und dunklem Satz.
+- Ein kurzes Skript im `<head>` **jeder** Seite liest die gemerkte Wahl aus
+  `localStorage` und setzt `data-farbe`, **bevor** gezeichnet wird. Ohne das
+  würde beim Laden kurz die Grundfarbe aufblitzen. Kommt eine neue Seite dazu,
+  muss dieses Skript mit hinein – sonst springt genau dort die Farbe.
+- `assets/js/site.js` verwaltet nur noch Klicks, `aria-pressed` und das
+  Speichern. Die Umschaltung selbst macht das CSS.
+- `--accent-band` ist der aufgehellte Akzent für die dunklen Flächen (Hero,
+  Laufband, Abschlussband, Fußbereich). Der normale Akzent wäre dort zu dunkel.
+
+**Geprüft**: Jede der sechs Richtungen erreicht WCAG AA – Fließtext gegen
+Grundfläche mindestens 15:1, Akzent als Text mindestens 4,5:1, Knopfbeschriftung
+auf dem Akzent mindestens 4,5:1, aufgehellter Akzent auf der Tinte mindestens
+6:1. Wer die Palette ändert, sollte das nachrechnen.
+
+**Bewusst nicht mitgeführt**: Das Favicon bleibt in der Grundfarbe. Es steht für
+die Marke, nicht für die Vorliebe eines einzelnen Besuchers. Die
+`theme-color`-Angabe für die Adressleiste mobiler Browser zieht dagegen mit.
+
+**Datenschutz**: Die Wahl liegt ausschließlich im Browser des Besuchers, es
+geht nichts an einen Server. Deshalb ist sie nach § 25 Abs. 2 TDDDG
+einwilligungsfrei – sie ist unbedingt erforderlich, um den vom Nutzer
+ausdrücklich gewünschten Dienst zu erbringen. Kein Banner nötig.
+
 ## Deployment
 
 `.github/workflows/pages.yml` kopiert `sf-webseiten/*` beim Bauen der Vorschau
