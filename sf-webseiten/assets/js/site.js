@@ -109,59 +109,57 @@
 })();
 
 /* ============================================================================
-   Farbwaehler
+   Musterseite einfaerben
    ----------------------------------------------------------------------------
-   Setzt data-farbe am <html>-Element. Die eigentliche Umschaltung macht das
-   CSS, hier wird nur die Wahl verwaltet, gespeichert und an alle Bedienelemente
-   zurueckgemeldet.
-
-   Die Wiederherstellung beim Laden passiert bereits im Kopf jeder Seite, damit
-   beim Aufbau keine falsche Farbe aufblitzt. Hier geht es nur noch um die
-   Bedienung.
+   Der Besucher stellt die Farbe einer Beispiel-Website um, nicht die dieser
+   Seite. Gesetzt wird nur ein Attribut am Muster, die eigentliche Umschaltung
+   macht das CSS. Nichts davon wird gespeichert oder uebertragen - beim
+   naechsten Aufruf steht wieder der Ausgangszustand.
    ========================================================================= */
 
 (function () {
   "use strict";
 
-  var SPEICHER = "sf-farbe";
-  var ERLAUBT = ["vermillion", "kobalt", "marine", "tanne", "aubergine", "petrol"];
-  var wurzel = document.documentElement;
+  var muster = document.querySelector("[data-muster]");
   var schalter = Array.prototype.slice.call(document.querySelectorAll("[data-farbe-wahl]"));
-  if (!schalter.length) return;
+  if (!muster || !schalter.length) return;
 
-  /* Die Adressleiste mobiler Browser faerbt sich nach theme-color. Ohne
-     Nachfuehren bliebe dort die Farbe der Grundpalette stehen. */
-  var themeMeta = document.querySelector('meta[name="theme-color"]');
+  var anzeige = document.querySelector("[data-muster-name]");
+  var reduziert = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  function anzeigen(wahl) {
+  function setzen(wahl, knopf) {
+    muster.setAttribute("data-muster", wahl);
     schalter.forEach(function (b) {
-      b.setAttribute("aria-pressed", String(b.getAttribute("data-farbe-wahl") === wahl));
+      b.setAttribute("aria-pressed", String(b === knopf));
     });
-    if (themeMeta) {
-      var tinte = getComputedStyle(wurzel).getPropertyValue("--ink").trim();
-      if (tinte) themeMeta.setAttribute("content", tinte);
-    }
-  }
+    if (anzeige) anzeige.textContent = knopf.getAttribute("data-farbe-name");
 
-  function setzen(wahl, merken) {
-    if (ERLAUBT.indexOf(wahl) === -1) return;
-    wurzel.setAttribute("data-farbe", wahl);
-    if (merken) {
-      try { localStorage.setItem(SPEICHER, wahl); } catch (e) { /* privater Modus */ }
+    /* Ein kurzer Impuls macht sichtbar, dass etwas passiert ist - auch dann,
+       wenn zwei Richtungen sich farblich aehneln. */
+    if (!reduziert) {
+      muster.classList.remove("muster--wechsel");
+      void muster.offsetWidth;
+      muster.classList.add("muster--wechsel");
     }
-    anzeigen(wahl);
   }
 
   schalter.forEach(function (b) {
-    b.addEventListener("click", function () {
-      setzen(b.getAttribute("data-farbe-wahl"), true);
+    b.addEventListener("click", function () { setzen(b.getAttribute("data-farbe-wahl"), b); });
+  });
+
+  /* Mit den Pfeiltasten laesst sich die Reihe durchgehen, ohne jeden Knopf
+     einzeln anzusteuern. */
+  schalter.forEach(function (b, i) {
+    b.addEventListener("keydown", function (e) {
+      var schritt = e.key === "ArrowRight" ? 1 : e.key === "ArrowLeft" ? -1 : 0;
+      if (!schritt) return;
+      e.preventDefault();
+      var ziel = schalter[(i + schritt + schalter.length) % schalter.length];
+      ziel.focus();
+      setzen(ziel.getAttribute("data-farbe-wahl"), ziel);
     });
   });
 
-  /* Ist die Seite in einem zweiten Tab offen, zieht sie mit. */
-  window.addEventListener("storage", function (e) {
-    if (e.key === SPEICHER && e.newValue) setzen(e.newValue, false);
-  });
-
-  anzeigen(wurzel.getAttribute("data-farbe") || "vermillion");
+  var start = schalter.filter(function (b) { return b.getAttribute("aria-pressed") === "true"; })[0] || schalter[0];
+  setzen(start.getAttribute("data-farbe-wahl"), start);
 })();

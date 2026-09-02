@@ -101,47 +101,63 @@ oder eigene Zahlen ersetzen, sobald echte Projektdaten vorliegen.
 
 ---
 
-## Farbwähler im Bereich Vorschau
+## Marke: Gold auf Schwarz
 
-Die Seite kann von Besuchern auf sechs Farbrichtungen umgestellt werden. Das
-ist kein Spielzeug, sondern das Verkaufsargument in eigener Sache: im Gespräch
-lässt sich zeigen, dass Gestaltungsspielraum eingebaut werden kann, ohne dass
-jemand Code anfasst.
+Die Farben kommen aus dem Firmenlogo. Weil ein einziger Goldton nicht
+gleichzeitig auf hellem Papier lesbar sein und auf Schwarz leuchten kann, ist
+er in drei Stufen aufgeteilt:
 
-**Bedienung**: der Block sitzt im Bereich **Vorschau** auf der Startseite,
-oberhalb der Beispielkacheln – erst zeigen, was die eigene Seite kann, dann
-die Beispiele. Zusätzlich als kompakte Punktreihe im Fußbereich jeder Seite,
-damit die Farbe auch von den übrigen Seiten aus erreichbar bleibt.
+```css
+--gold-tief   #8a6620   Schrift und Linien auf hellem Grund
+--gold        #c9993c   Flächen: Knöpfe, Balken, Signet
+--gold-hell   #ecc879   auf dunklem Grund
+```
 
-Die Beispielprojekte unter `beispiele/` haben **bewusst keinen** Farbwähler.
+Die Rollen dahinter: `--accent` (Schrift), `--accent-flaeche` (Flächen),
+`--accent-strong` (kräftige Schrift, z. B. die Rubrikzeile), `--accent-band`
+(die Stufe, die in dunklen Abschnitten übernimmt). In `site.css` steht eine
+Liste der dunklen Abschnitte; dort werden alle vier umgesetzt. Wer einen neuen
+dunklen Abschnitt anlegt, muss ihn in diese Liste eintragen – sonst steht dort
+tiefes Gold auf Schwarz und ist praktisch unsichtbar.
+
+Die Navigationsleiste ist auf **allen** Seiten dunkel. Vorher war sie hell und
+stieß direkt an den dunklen Hero, was eine sichtbare Naht ergab.
+
+**Bilddateien aus dem Logo** (in `assets/img/`): `logo.jpg` fürs Impressum und
+strukturierte Daten, `signet.png` als Signet in Navigation und Fußbereich,
+`favicon-32/48/64.png`, `apple-touch-icon.png` und `og.jpg` als Vorschaubild.
+Alle sind aus derselben Quelldatei abgeleitet – wird das Logo geändert, müssen
+sie neu erzeugt werden.
+
+## Farbwähler auf der Musterseite
+
+Im Bereich **Vorschau** steht eine Miniatur-Website mit sechs Farbrichtungen.
+Der Wähler färbt **die Musterseite**, nicht diese Website – der eigene Auftritt
+bleibt in der Marke.
+
+- Die Farbwerte hängen an `data-muster` am Element `.muster`, gesetzt von
+  `site.js`. Umgeschaltet wird im CSS.
+- Nichts wird gespeichert oder übertragen; beim nächsten Aufruf steht wieder
+  der Ausgangszustand.
+- Mit den Pfeiltasten lässt sich die Knopfreihe durchgehen.
+- Ohne JavaScript bleibt die Musterseite in der Ausgangsfarbe stehen und ist
+  weiterhin lesbar.
+
+Die Beispielprojekte unter `beispiele/` haben bewusst **keinen** Farbwähler.
 Sie sollen jeweils eine Marke zeigen, nicht ihre Varianten.
 
-**Wie es funktioniert**
+## Zu den Bewertungen
 
-- `assets/css/farben.css` enthält alle sechs Richtungen als
-  `:root[data-farbe="…"]`, jeweils mit hellem und dunklem Satz.
-- Ein kurzes Skript im `<head>` **jeder** Seite liest die gemerkte Wahl aus
-  `localStorage` und setzt `data-farbe`, **bevor** gezeichnet wird. Ohne das
-  würde beim Laden kurz die Grundfarbe aufblitzen. Kommt eine neue Seite dazu,
-  muss dieses Skript mit hinein – sonst springt genau dort die Farbe.
-- `assets/js/site.js` verwaltet nur noch Klicks, `aria-pressed` und das
-  Speichern. Die Umschaltung selbst macht das CSS.
-- `--accent-band` ist der aufgehellte Akzent für die dunklen Flächen (Hero,
-  Laufband, Abschlussband, Fußbereich). Der normale Akzent wäre dort zu dunkel.
+Auf `bewertungen.html` stehen **keine** Bewertungen, und das ist Absicht. Die
+Seite hieß vorher „Was unsere Beispielprojekte über die Zusammenarbeit sagen"
+und zeigte Zitate erfundener Firmen samt einem Schnitt von 4,6 Sternen. Das
+ist als erfundene Bewertung nach § 5 UWG und Nr. 23b des Anhangs zu § 3 Abs. 3
+UWG angreifbar, unabhängig davon, dass die Zitate gekennzeichnet waren.
 
-**Geprüft**: Jede der sechs Richtungen erreicht WCAG AA – Fließtext gegen
-Grundfläche mindestens 15:1, Akzent als Text mindestens 4,5:1, Knopfbeschriftung
-auf dem Akzent mindestens 4,5:1, aufgehellter Akzent auf der Tinte mindestens
-6:1. Wer die Palette ändert, sollte das nachrechnen.
-
-**Bewusst nicht mitgeführt**: Das Favicon bleibt in der Grundfarbe. Es steht für
-die Marke, nicht für die Vorliebe eines einzelnen Besuchers. Die
-`theme-color`-Angabe für die Adressleiste mobiler Browser zieht dagegen mit.
-
-**Datenschutz**: Die Wahl liegt ausschließlich im Browser des Besuchers, es
-geht nichts an einen Server. Deshalb ist sie nach § 25 Abs. 2 TDDDG
-einwilligungsfrei – sie ist unbedingt erforderlich, um den vom Nutzer
-ausdrücklich gewünschten Dienst zu erbringen. Kein Banner nötig.
+An ihrer Stelle stehen jetzt sechs **nachprüfbare Zusagen** – auf der
+Startseite als Bereich „Unsere Zusagen", auf der Bewertungsseite ausführlich.
+Sobald echte Kundenprojekte live sind, gehören sie an diese Stelle: mit Namen,
+mit Link, ohne herausgekürzte Kritik.
 
 ## Deployment
 

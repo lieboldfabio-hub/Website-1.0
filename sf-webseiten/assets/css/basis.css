@@ -59,7 +59,7 @@ figure { margin: 0; }
 
 .skip {
   position: absolute; left: -9999px; top: 0; z-index: 300;
-  background: var(--accent); color: var(--accent-fg);
+  background: var(--accent-flaeche); color: var(--accent-fg);
   padding: 0.9rem 1.4rem; font-weight: 600; border-radius: 0 0 8px 0;
 }
 .skip:focus { left: 0; }
@@ -106,7 +106,7 @@ figure { margin: 0; }
 .eyebrow::before {
   content: "";
   width: 1.6rem; height: 2px;
-  background: var(--accent);
+  background: var(--accent-flaeche);
   display: inline-block;
 }
 
@@ -216,7 +216,7 @@ figure { margin: 0; }
 .btn:active { transform: translateY(0); }
 .btn svg { width: 1rem; height: 1rem; flex: none; }
 
-.btn--primary { background: var(--accent); color: var(--accent-fg); }
+.btn--primary { background: var(--accent-flaeche); color: var(--accent-fg); }
 .btn--primary:hover { background: var(--accent-strong); }
 
 .btn--line { background: transparent; border-color: var(--ink-line, var(--line)); color: inherit; }
@@ -225,7 +225,7 @@ figure { margin: 0; }
 .btn--ghost { background: transparent; color: inherit; }
 .btn--ghost:hover { color: var(--accent-strong); }
 
-.btn--on-ink { background: var(--accent); color: var(--accent-fg); }
+.btn--on-ink { background: var(--accent-flaeche); color: var(--accent-fg); }
 .btn--line-on-ink { border-color: rgba(255,255,255,0.28); color: var(--ink-text, #fff); }
 .btn--line-on-ink:hover { border-color: var(--accent); color: #fff; }
 
@@ -248,7 +248,7 @@ figure { margin: 0; }
 }
 .band .text-soft, .band p { color: var(--ink-soft, rgba(255,255,255,0.72)); }
 .band .eyebrow { color: var(--accent); }
-.band .eyebrow::before { background: var(--accent); }
+.band .eyebrow::before { background: var(--accent-flaeche); }
 
 /* ------------------------------------------------------------------ Reveal */
 
