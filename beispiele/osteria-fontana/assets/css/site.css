@@ -29,8 +29,11 @@
   --line: rgba(242, 237, 228, 0.14);
   --text: var(--creme);
   --text-soft: #b3a89a;
-
-  --accent: var(--terrakotta-hell);
+  /* Der Akzent hat drei Rollen. Ein einziger Ton kann nicht gleichzeitig
+     als kleine Schrift auf hellem Grund und als leuchtende Flaeche taugen. */
+  --accent-flaeche: #e07a52;   /* Knoepfe und Balken */
+  --accent: #e07a52;              /* Akzentschrift und Linien */
+  --accent-band: #e07a52;         /* innerhalb der dunklen Abschnitte */
   --accent-fg: #17110e;
 
   --band: var(--nacht);
@@ -107,7 +110,7 @@ body::after {
   width: 6px;
   height: 6px;
   border-radius: 999px;
-  background: var(--accent);
+  background: var(--accent-flaeche);
 }
 .demo-badge:hover { border-color: var(--accent); }
 
@@ -191,7 +194,7 @@ body::after {
   width: 7px;
   height: 7px;
   border-radius: 999px;
-  background: var(--accent);
+  background: var(--accent-flaeche);
   flex: none;
 }
 @media (prefers-reduced-motion: reduce) {
@@ -428,3 +431,37 @@ body::after {
 /* Unterseiten-Kopf in der dunklen Grundflaeche, passend zum Hero. */
 .seitenkopf { background: var(--nacht); color: var(--creme); border-bottom-color: var(--band-line); }
 .seitenkopf .lede { color: var(--band-text-soft); }
+
+
+/* ============================================================================
+   Farbvarianten
+   ----------------------------------------------------------------------------
+   Dieselbe Marke in drei Akzenten. Papier, Tinte und Schrift bleiben, nur der
+   Akzent wechselt - genau die Frage, die im Kundengespraech kommt. Umgeschaltet
+   wird ueber data-farbe am <html>-Element, der Waehler sitzt im Fussbereich.
+
+   Alle drei Varianten erreichen WCAG AA in allen drei Rollen.
+   ========================================================================= */
+
+:root[data-farbe="oliv"] {
+  --accent-flaeche: #a3b545;
+  --accent: #bccc63;
+  --accent-band: #bccc63;
+  --accent-fg: #14170a;
+}
+:root[data-farbe="bordeaux"] {
+  --accent-flaeche: #d97f8b;
+  --accent: #d97f8b;
+  --accent-band: #d97f8b;
+  --accent-fg: #1a0d10;
+}
+
+/* In den dunklen Abschnitten uebernimmt der aufgehellte Ton. Weil --accent
+   vererbt wird, genuegt es, ihn am Container zu setzen. */
+.footer, .cta-band, .band {
+  --accent: var(--accent-band);
+  --accent-flaeche: var(--accent-band);
+  /* Ein Knopf auf dem Band traegt jetzt die helle Flaeche, also braucht er
+     dunkle Schrift statt der hellen aus dem Grundzustand. */
+  --accent-fg: #17110e;
+}

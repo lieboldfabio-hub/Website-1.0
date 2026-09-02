@@ -29,9 +29,12 @@
   --line: rgba(23, 51, 44, 0.13);
   --text: var(--tanne-900);
   --text-soft: #4d5f58;
-
-  --accent: var(--koralle);
-  --accent-fg: #fff8f3;
+  /* Der Akzent hat drei Rollen. Ein einziger Ton kann nicht gleichzeitig
+     als kleine Schrift auf hellem Grund und als leuchtende Flaeche taugen. */
+  --accent-flaeche: #e97a4e;   /* Knoepfe und Balken */
+  --accent: #b0491f;              /* Akzentschrift und Linien */
+  --accent-band: #f0946d;         /* innerhalb der dunklen Abschnitte */
+  --accent-fg: #17332c;
 
   --band: var(--tanne-900);
   --band-text: #eef6f1;
@@ -66,7 +69,7 @@ h1, h2, h3 { font-weight: 600; letter-spacing: -0.01em; }
   color: var(--text); background: rgba(255, 255, 255, 0.86); border: 1px solid var(--line);
   backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); text-decoration: none;
 }
-.demo-badge::before { content: ""; width: 6px; height: 6px; border-radius: 999px; background: var(--accent); }
+.demo-badge::before { content: ""; width: 6px; height: 6px; border-radius: 999px; background: var(--accent-flaeche); }
 .demo-badge:hover { border-color: var(--accent); }
 
 .nav .brand, .nav .nav__links a { color: var(--text); }
@@ -172,3 +175,37 @@ h1, h2, h3 { font-weight: 600; letter-spacing: -0.01em; }
 .einzug .zeile { display: flex; justify-content: space-between; gap: 1rem; padding: 0.8rem 0; border-top: 1px solid var(--line); }
 .einzug dt { color: var(--text-soft); }
 .einzug dd { margin: 0; }
+
+
+/* ============================================================================
+   Farbvarianten
+   ----------------------------------------------------------------------------
+   Dieselbe Marke in drei Akzenten. Papier, Tinte und Schrift bleiben, nur der
+   Akzent wechselt - genau die Frage, die im Kundengespraech kommt. Umgeschaltet
+   wird ueber data-farbe am <html>-Element, der Waehler sitzt im Fussbereich.
+
+   Alle drei Varianten erreichen WCAG AA in allen drei Rollen.
+   ========================================================================= */
+
+:root[data-farbe="himmel"] {
+  --accent-flaeche: #2a6f9e;
+  --accent: #1f6390;
+  --accent-band: #79bde8;
+  --accent-fg: #f6fbff;
+}
+:root[data-farbe="lavendel"] {
+  --accent-flaeche: #6b52a3;
+  --accent: #5c4593;
+  --accent-band: #b7a3e0;
+  --accent-fg: #fbf9ff;
+}
+
+/* In den dunklen Abschnitten uebernimmt der aufgehellte Ton. Weil --accent
+   vererbt wird, genuegt es, ihn am Container zu setzen. */
+.notfall, .praxis, .footer, .cta-band, .band {
+  --accent: var(--accent-band);
+  --accent-flaeche: var(--accent-band);
+  /* Ein Knopf auf dem Band traegt jetzt die helle Flaeche, also braucht er
+     dunkle Schrift statt der hellen aus dem Grundzustand. */
+  --accent-fg: #17332c;
+}

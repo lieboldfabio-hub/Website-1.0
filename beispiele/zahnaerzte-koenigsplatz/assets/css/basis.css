@@ -48,7 +48,7 @@ img { max-width: 100%; display: block; }
 
 .skip {
   position: absolute; left: -9999px; top: 0; z-index: 200;
-  background: var(--accent); color: var(--accent-fg);
+  background: var(--accent-flaeche); color: var(--accent-fg);
   padding: 0.85rem 1.4rem; font-weight: 600;
 }
 .skip:focus { left: 0; }
@@ -105,7 +105,7 @@ section { position: relative; }
   padding: 1.02rem 1.8rem;
   border-radius: 999px;
   border: 1px solid transparent;
-  background: var(--accent); color: var(--accent-fg);
+  background: var(--accent-flaeche); color: var(--accent-fg);
   text-decoration: none; cursor: pointer;
   transition: transform .18s var(--ease), background-color .22s var(--ease),
               border-color .22s var(--ease), color .22s var(--ease);
@@ -165,7 +165,7 @@ section { position: relative; }
 .nav.is-stuck .nav__links a { color: var(--text); }
 .nav__links a::after {
   content:""; position:absolute; left:0; right:0; bottom:0; height:2px;
-  background: var(--accent); transform: scaleX(0); transform-origin: left;
+  background: var(--accent-flaeche); transform: scaleX(0); transform-origin: left;
   transition: transform .28s var(--ease);
 }
 .nav__links a:hover { color: var(--accent); }
@@ -565,3 +565,64 @@ section { position: relative; }
 .preis b { display: block; font-family: var(--font-display); margin: .8rem 0 .35rem; }
 .preis p { color: var(--text-soft); font-size: .95rem; margin: 0; }
 @media (max-width: 880px) { .preise { grid-template-columns: 1fr; } }
+
+/* ============================================================================
+   Farbwaehler
+   ----------------------------------------------------------------------------
+   Sitzt im Fussbereich jeder Seite. Der Besucher stellt die Seite auf einen
+   anderen Akzent um, die Wahl bleibt beim Seitenwechsel und beim naechsten
+   Besuch erhalten.
+
+   Ein kurzes Skript im Kopf jeder Seite stellt die gemerkte Wahl her, bevor
+   gezeichnet wird - sonst blitzt beim Laden der Grundakzent auf.
+   ========================================================================= */
+
+.farbwahl-fuss {
+  display: flex; flex-wrap: wrap; align-items: center;
+  gap: .6rem;
+  margin-top: 1.75rem; padding-top: 1.5rem;
+  border-top: 1px solid var(--band-line);
+}
+.farbwahl-fuss__titel {
+  color: var(--band-text-soft); font-size: .88rem;
+  margin-right: .35rem;
+}
+.farbpunkt {
+  position: relative;
+  display: inline-flex; align-items: center; gap: .45rem;
+  padding: .34rem .8rem .34rem .5rem;
+  background: transparent;
+  border: 1px solid var(--band-line);
+  border-radius: 999px;
+  color: var(--band-text-soft);
+  font: inherit; font-size: .85rem;
+  cursor: pointer;
+  transition: border-color .16s ease, color .16s ease;
+}
+.farbpunkt::before {
+  content: "";
+  width: 1rem; height: 1rem; flex: none;
+  border-radius: 999px;
+  background: var(--fp);
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .18);
+}
+/* Optisch bleibt der Knopf schlank, die Trefferflaeche misst 44 Pixel. */
+.farbpunkt::after {
+  content: "";
+  position: absolute; left: 0; right: 0; top: 50%;
+  height: 44px; transform: translateY(-50%);
+}
+.farbpunkt:hover { border-color: var(--accent); color: var(--band-text); }
+.farbpunkt:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.farbpunkt[aria-pressed="true"] {
+  border-color: var(--accent);
+  color: var(--band-text);
+}
+
+/* Ohne JavaScript hat das Umschalten keine Wirkung, also wird es ausgeblendet.
+   Die Seite bleibt im Grundakzent vollstaendig benutzbar. */
+html:not(.js) .farbwahl-fuss { display: none; }
+
+@media (max-width: 480px) {
+  .farbwahl-fuss__titel { width: 100%; margin-bottom: .2rem; }
+}

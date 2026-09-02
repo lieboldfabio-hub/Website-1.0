@@ -20,6 +20,19 @@
 <meta name="theme-color" content="#17332c">
 <link rel="stylesheet" href="assets/css/site.css">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='26' fill='%2317332c'/><text y='70' x='50' text-anchor='middle' font-size='54' font-family='sans-serif' font-weight='bold' fill='%23e97a4e'>K</text></svg>">
+<script>
+/* Stellt die gemerkte Farbwahl her, bevor gezeichnet wird. Ohne das blitzt
+   beim Laden kurz der Grundakzent auf. */
+(function () {
+  "use strict";
+  var wurzel = document.documentElement;
+  wurzel.classList.add("js");
+  var erlaubt = ["koralle", "himmel", "lavendel"];
+  var wahl = null;
+  try { wahl = localStorage.getItem("farbe"); } catch (e) { /* privater Modus */ }
+  wurzel.setAttribute("data-farbe", erlaubt.indexOf(wahl) > -1 ? wahl : "koralle");
+})();
+</script>
 </head>
 <body class="seite-hell">
 
@@ -95,6 +108,12 @@
         <li><a href="../">Weitere Beispiele</a></li>
       </ul>
     </div>
+    <div class="farbwahl-fuss" role="group" aria-label="Akzentfarbe dieser Seite w&auml;hlen">
+      <span class="farbwahl-fuss__titel">Akzentfarbe ausprobieren:</span>
+      <button class="farbpunkt" type="button" data-farbe-wahl="koralle" aria-pressed="false" style="--fp:#e97a4e">Koralle</button>
+      <button class="farbpunkt" type="button" data-farbe-wahl="himmel" aria-pressed="false" style="--fp:#2a6f9e">Himmelblau</button>
+      <button class="farbpunkt" type="button" data-farbe-wahl="lavendel" aria-pressed="false" style="--fp:#6b52a3">Lavendel</button>
+    </div>
     <p class="footer__note">
       Beispielprojekt. Zahnärzte am Königsplatz ist ein erfundenes
       Unternehmen, sämtliche Angaben auf dieser Seite dienen ausschließlich
@@ -106,5 +125,42 @@
 <script src="assets/js/gsap.min.js"></script>
 <script src="assets/js/ScrollTrigger.min.js"></script>
 <script src="assets/js/basis.js"></script>
+<script>
+/* ----------------------------------------------------------------- Farbwahl
+   Setzt data-farbe am <html>-Element, umgeschaltet wird im CSS. Die
+   Wiederherstellung beim Laden passiert bereits im Kopf der Seite.
+   -------------------------------------------------------------------------- */
+(function () {
+  "use strict";
+  var wurzel = document.documentElement;
+  var schalter = Array.prototype.slice.call(document.querySelectorAll("[data-farbe-wahl]"));
+  if (!schalter.length) return;
+  var erlaubt = schalter.map(function (b) { return b.getAttribute("data-farbe-wahl"); });
+  var themeMeta = document.querySelector('meta[name="theme-color"]');
+
+  function anzeigen(wahl) {
+    schalter.forEach(function (b) {
+      b.setAttribute("aria-pressed", String(b.getAttribute("data-farbe-wahl") === wahl));
+    });
+  }
+
+  function setzen(wahl, merken) {
+    if (erlaubt.indexOf(wahl) === -1) return;
+    wurzel.setAttribute("data-farbe", wahl);
+    if (merken) {
+      try { localStorage.setItem("farbe", wahl); } catch (e) { /* privater Modus */ }
+    }
+    anzeigen(wahl);
+  }
+
+  schalter.forEach(function (b) {
+    b.addEventListener("click", function () { setzen(b.getAttribute("data-farbe-wahl"), true); });
+  });
+  window.addEventListener("storage", function (e) {
+    if (e.key === "farbe" && e.newValue) setzen(e.newValue, false);
+  });
+  anzeigen(wurzel.getAttribute("data-farbe") || erlaubt[0]);
+})();
+</script>
 </body>
 </html>

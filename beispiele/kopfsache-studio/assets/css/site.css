@@ -28,8 +28,11 @@
   --line: rgba(16, 16, 16, 0.14);
   --text: var(--tinte);
   --text-soft: #5c5c5c;
-
-  --accent: var(--limette);
+  /* Der Akzent hat drei Rollen. Ein einziger Ton kann nicht gleichzeitig
+     als kleine Schrift auf hellem Grund und als leuchtende Flaeche taugen. */
+  --accent-flaeche: #c9f24a;   /* Knoepfe und Balken */
+  --accent: #5c7010;              /* Akzentschrift und Linien */
+  --accent-band: #c9f24a;         /* innerhalb der dunklen Abschnitte */
   --accent-fg: #101010;
 
   --band: var(--tinte);
@@ -83,7 +86,7 @@ h1, h2, h3 { font-weight: 800; letter-spacing: -0.035em; }
   text-decoration: none;
 }
 .demo-badge::before {
-  content: ""; width: 6px; height: 6px; border-radius: 999px; background: var(--accent);
+  content: ""; width: 6px; height: 6px; border-radius: 999px; background: var(--accent-flaeche);
 }
 .demo-badge:hover { border-color: var(--accent); }
 
@@ -134,7 +137,7 @@ h1, h2, h3 { font-weight: 800; letter-spacing: -0.035em; }
 /* ------------------------------------------------------------- Laufband - */
 
 .streifen {
-  background: var(--accent);
+  background: var(--accent-flaeche);
   color: var(--accent-fg);
   padding-block: .9rem;
   overflow: hidden;
@@ -206,7 +209,7 @@ h1, h2, h3 { font-weight: 800; letter-spacing: -0.035em; }
 
 /* Eine Karte bekommt die Akzentflaeche, damit das Raster nicht aus lauter
    weissen Kacheln besteht. */
-.karte-k--akzent { background: var(--accent); border-color: transparent; }
+.karte-k--akzent { background: var(--accent-flaeche); border-color: transparent; }
 .karte-k--akzent p { color: rgba(16, 16, 16, .72); }
 .karte-k--akzent:hover::before { opacity: 0; }
 
@@ -277,7 +280,7 @@ h1, h2, h3 { font-weight: 800; letter-spacing: -0.035em; }
 .frage__zeichen svg { width: 14px; height: 14px; }
 .frage__knopf[aria-expanded="true"] .frage__zeichen {
   transform: rotate(45deg);
-  background: var(--accent);
+  background: var(--accent-flaeche);
   border-color: transparent;
 }
 /* Hoehe wird per JS gesetzt, damit der Uebergang weich laeuft. */
@@ -313,3 +316,37 @@ h1, h2, h3 { font-weight: 800; letter-spacing: -0.035em; }
   font-size: .95rem;
 }
 .termin__zeiten b { color: var(--band-text); font-family: var(--font-display); }
+
+
+/* ============================================================================
+   Farbvarianten
+   ----------------------------------------------------------------------------
+   Dieselbe Marke in drei Akzenten. Papier, Tinte und Schrift bleiben, nur der
+   Akzent wechselt - genau die Frage, die im Kundengespraech kommt. Umgeschaltet
+   wird ueber data-farbe am <html>-Element, der Waehler sitzt im Fussbereich.
+
+   Alle drei Varianten erreichen WCAG AA in allen drei Rollen.
+   ========================================================================= */
+
+:root[data-farbe="magenta"] {
+  --accent-flaeche: #f24a9e;
+  --accent: #9e1257;
+  --accent-band: #ff7ab8;
+  --accent-fg: #101010;
+}
+:root[data-farbe="cyan"] {
+  --accent-flaeche: #4ae0f2;
+  --accent: #116b78;
+  --accent-band: #4ae0f2;
+  --accent-fg: #101010;
+}
+
+/* In den dunklen Abschnitten uebernimmt der aufgehellte Ton. Weil --accent
+   vererbt wird, genuegt es, ihn am Container zu setzen. */
+.team, .termin, .footer, .cta-band, .band, .marquee {
+  --accent: var(--accent-band);
+  --accent-flaeche: var(--accent-band);
+  /* Ein Knopf auf dem Band traegt jetzt die helle Flaeche, also braucht er
+     dunkle Schrift statt der hellen aus dem Grundzustand. */
+  --accent-fg: #101010;
+}
