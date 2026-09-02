@@ -26,6 +26,13 @@
   "name": "S & F Webseiten",
   "url": "https://www.sf-webseiten.de/",
   "description": "Webdesign-Agentur für Unternehmen in Augsburg und Umgebung: individuelles Webdesign, lokale Sichtbarkeit und Betreuung nach dem Launch.",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "Maximilianstraße 57",
+    "postalCode": "86150",
+    "addressLocality": "Augsburg",
+    "addressCountry": "DE"
+  },
   "areaServed": ["Augsburg", "Friedberg", "Königsbrunn", "Neusäß", "Gersthofen", "Stadtbergen", "Aichach"],
   "knowsLanguage": "de"
 }
@@ -79,7 +86,7 @@
         <li><a href="leistungen.html">Leistungen</a></li>
         <li><a href="portfolio.html">Referenzen</a></li>
         <li><a href="bewertungen.html">Bewertungen</a></li>
-        <li><a href="&uuml;ber-uns.html">Über uns</a></li>
+        <li><a href="ueber-uns.html">Über uns</a></li>
         <li><a href="kontakt.html">Kontakt</a></li>
       </ul>
     </nav>
@@ -98,7 +105,7 @@
     <a href="leistungen.html">Leistungen</a>
     <a href="portfolio.html">Referenzen</a>
     <a href="bewertungen.html">Bewertungen</a>
-    <a href="&uuml;ber-uns.html">Über uns</a>
+    <a href="ueber-uns.html">Über uns</a>
     <a href="kontakt.html">Kontakt</a>
     <a class="btn btn--primary" href="kontakt.html">Projekt anfragen</a>
   </div>
@@ -158,25 +165,49 @@
   </div>
 </section>
 
+<!-- =============================================================== Marquee -->
+<div class="marquee" aria-hidden="true">
+  <div class="marquee__track">
+    <span>Individuelles Design</span>
+    <span>Augsburg &amp; Umgebung</span>
+    <span>Antwort in unter 24&nbsp;Std.</span>
+    <span>Keine Baukasten-Vorlagen</span>
+    <span>Betreuung nach dem Launch</span>
+    <span>Friedberg</span>
+    <span>K&ouml;nigsbrunn</span>
+    <span>Neus&auml;&szlig;</span>
+    <span>Gersthofen</span>
+    <span>Individuelles Design</span>
+    <span>Augsburg &amp; Umgebung</span>
+    <span>Antwort in unter 24&nbsp;Std.</span>
+    <span>Keine Baukasten-Vorlagen</span>
+    <span>Betreuung nach dem Launch</span>
+    <span>Friedberg</span>
+    <span>K&ouml;nigsbrunn</span>
+    <span>Neus&auml;&szlig;</span>
+    <span>Gersthofen</span>
+  </div>
+</div>
+
 <!-- ================================================================= Stats -->
 <section class="stats">
   <div class="wrap section section--tight">
     <p class="eyebrow" data-reveal>Warum Design zählt</p>
     <div class="stats__grid" style="margin-top:1.5rem">
       <div class="stats__item" data-reveal>
-        <p class="stats__num"><span>94&nbsp;%</span></p>
+        <p class="stats__num"><span data-count-to="94" data-count-suffix="&nbsp;%">94&nbsp;%</span></p>
         <p class="stats__label">des ersten Eindrucks einer Website hängen vom Design ab – nicht vom Inhalt.</p>
       </div>
       <div class="stats__item" data-reveal>
-        <p class="stats__num"><span>3</span>&nbsp;Sek.</p>
+        <p class="stats__num"><span data-count-to="3" data-count-suffix="&nbsp;Sek.">3&nbsp;Sek.</span></p>
         <p class="stats__label">So lange dauert es im Schnitt, bis mobile Besucher eine langsame Seite wieder verlassen.</p>
       </div>
       <div class="stats__item" data-reveal>
-        <p class="stats__num"><span>75&nbsp;%</span></p>
+        <p class="stats__num"><span data-count-to="75" data-count-suffix="&nbsp;%">75&nbsp;%</span></p>
         <p class="stats__label">beurteilen die Seriosität eines Unternehmens direkt am Website-Design.</p>
       </div>
       <div class="stats__item" data-reveal>
-        <p class="stats__num"><span>88&nbsp;%</span></p>
+        <p class="stats__num"><span data-count-to="88" data-count-suffix="&nbsp;%">88&nbsp;%</span></p>
         <p class="stats__label">kommen nach einer schlechten Nutzererfahrung nicht auf die Seite zurück.</p>
       </div>
     </div>
@@ -344,7 +375,7 @@
         <span class="stars" aria-hidden="true">
           <svg class="ic"><use href="#ic-star"></use></svg><svg class="ic"><use href="#ic-star"></use></svg><svg class="ic"><use href="#ic-star"></use></svg><svg class="ic"><use href="#ic-star"></use></svg><svg class="ic"><use href="#ic-star"></use></svg>
         </span>
-        <blockquote>„Wir wollten keine Vorlage, sondern eine Seite, die aussieht wie wir. Genau das haben wir bekommen.“</blockquote>
+        <blockquote>„Wir wollten keine Vorlage von der Stange, sondern was, das nach uns aussieht. Hat geklappt.“</blockquote>
         <div class="testi-card__who">
           <span class="testi-card__avatar">HH</span>
           <div><p class="testi-card__name">Halbritter Haustechnik</p><p class="testi-card__role">Beispielprojekt · Handwerk</p></div>
@@ -352,9 +383,9 @@
       </article>
       <article class="testi-card" data-reveal>
         <span class="stars" aria-hidden="true">
-          <svg class="ic"><use href="#ic-star"></use></svg><svg class="ic"><use href="#ic-star"></use></svg><svg class="ic"><use href="#ic-star"></use></svg><svg class="ic"><use href="#ic-star"></use></svg><svg class="ic"><use href="#ic-star"></use></svg>
+          <svg class="ic"><use href="#ic-star"></use></svg><svg class="ic"><use href="#ic-star"></use></svg><svg class="ic"><use href="#ic-star"></use></svg><svg class="ic"><use href="#ic-star"></use></svg><svg class="ic is-off"><use href="#ic-star"></use></svg>
         </span>
-        <blockquote>„Erklärt, gezeigt, nachgebessert, ohne dass wir zehnmal nachfragen mussten. So stelle ich mir Zusammenarbeit vor.“</blockquote>
+        <blockquote>„Kommunikation top, auch abends noch schnelle Antworten. Beim Zeitplan hat's am Anfang etwas gehakt.“</blockquote>
         <div class="testi-card__who">
           <span class="testi-card__avatar">OF</span>
           <div><p class="testi-card__name">Osteria Fontana</p><p class="testi-card__role">Beispielprojekt · Gastronomie</p></div>
@@ -362,9 +393,9 @@
       </article>
       <article class="testi-card" data-reveal>
         <span class="stars" aria-hidden="true">
-          <svg class="ic"><use href="#ic-star"></use></svg><svg class="ic"><use href="#ic-star"></use></svg><svg class="ic"><use href="#ic-star"></use></svg><svg class="ic"><use href="#ic-star"></use></svg><svg class="ic"><use href="#ic-star"></use></svg>
+          <svg class="ic"><use href="#ic-star"></use></svg><svg class="ic"><use href="#ic-star"></use></svg><svg class="ic"><use href="#ic-star"></use></svg><svg class="ic"><use href="#ic-star"></use></svg><svg class="ic is-off"><use href="#ic-star"></use></svg>
         </span>
-        <blockquote>„Diskret, direkt, ohne Umwege. Genau der Ton, den man sich von einer Kanzlei-Website wünscht.“</blockquote>
+        <blockquote>„Diskret und auf den Punkt – genau der Ton, den man sich von einer Kanzlei-Website wünscht.“</blockquote>
         <div class="testi-card__who">
           <span class="testi-card__avatar">BK</span>
           <div><p class="testi-card__name">Brenner &amp; Kolb Rechtsanwälte</p><p class="testi-card__role">Beispielprojekt · Recht</p></div>
@@ -394,6 +425,7 @@
         </a>
         <a class="btn btn--line-on-ink" href="leistungen.html">Leistungen ansehen</a>
       </div>
+      <p style="margin-top:1.5rem;font-size:0.85rem;color:var(--ink-faint)">Kostenlos, unverbindlich, ohne versteckte Folgekosten.</p>
     </div>
   </div>
 </section>
@@ -413,7 +445,7 @@
           <a href="leistungen.html">Leistungen</a>
           <a href="portfolio.html">Referenzen</a>
           <a href="bewertungen.html">Bewertungen</a>
-          <a href="&uuml;ber-uns.html">Über uns</a>
+          <a href="ueber-uns.html">Über uns</a>
         </div>
       </div>
       <div>

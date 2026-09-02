@@ -33,9 +33,14 @@ Diese Website ist vollständig gestaltet und funktionsfähig, enthält aber an
 mehreren Stellen bewusst sichtbare Platzhalter (gelb markiert, Klasse `.todo`),
 weil echte Angaben zum Unternehmen noch fehlen:
 
-- **Impressum** (`impressum.html`): Firmierung, Anschrift, USt-IdNr., Kontakt
-- **Datenschutz** (`datenschutz.html`): Hosting-Anbieter, verantwortliche Stelle
-- **Kontakt** (`kontakt.html`): Telefonnummer, E-Mail-Adresse, Anschrift
+- **Adresse**: Maximilianstraße 57, 86150 Augsburg ist bereits eingetragen
+  (Impressum, Kontakt, JSON-LD auf `index.html`) – bei Bedarf gegen die
+  tatsächliche Geschäftsadresse austauschen.
+- **Impressum** (`impressum.html`): Firmierung/Rechtsform, Inhaber:in,
+  Telefon, E-Mail, USt-IdNr. noch offen
+- **Datenschutz** (`datenschutz.html`): Firmierung, Hosting-Anbieter, E-Mail
+  noch offen
+- **Kontakt** (`kontakt.html`): Telefonnummer, E-Mail-Adresse noch offen
 - **Kontaktformular**: hat aktuell keine Versandanbindung. Vor dem Livegang an
   einen Formular-Dienst (z. B. Formspree, eigenes Backend) oder eine echte
   E-Mail-Adresse anbinden – und danach den Hinweis dazu in `kontakt.html`

@@ -66,4 +66,44 @@
 
   var yearEl = document.getElementById("jahr");
   if (yearEl) { yearEl.textContent = String(new Date().getFullYear()); }
+
+  var spotlightEls = document.querySelectorAll(".svc-card, .folio-card, .testi-card");
+  if (spotlightEls.length && !window.matchMedia("(pointer: coarse)").matches) {
+    spotlightEls.forEach(function (el) {
+      el.addEventListener("pointermove", function (e) {
+        var r = el.getBoundingClientRect();
+        el.style.setProperty("--mx", (e.clientX - r.left) + "px");
+        el.style.setProperty("--my", (e.clientY - r.top) + "px");
+      });
+    });
+  }
+
+  var counters = document.querySelectorAll("[data-count-to]");
+  if (counters.length && "IntersectionObserver" in window) {
+    var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    var countIo = new IntersectionObserver(
+      function (entries) {
+        entries.forEach(function (entry) {
+          if (!entry.isIntersecting) return;
+          countIo.unobserve(entry.target);
+          var el = entry.target;
+          var to = parseFloat(el.getAttribute("data-count-to"));
+          var decimals = el.getAttribute("data-count-decimals") ? parseInt(el.getAttribute("data-count-decimals"), 10) : 0;
+          var suffix = el.getAttribute("data-count-suffix") || "";
+          if (reduced) { el.textContent = to.toFixed(decimals) + suffix; return; }
+          var start = null, duration = 1100;
+          function tick(ts) {
+            if (start === null) start = ts;
+            var p = Math.min(1, (ts - start) / duration);
+            var eased = 1 - Math.pow(1 - p, 3);
+            el.textContent = (to * eased).toFixed(decimals) + suffix;
+            if (p < 1) requestAnimationFrame(tick);
+          }
+          requestAnimationFrame(tick);
+        });
+      },
+      { threshold: 0.6 }
+    );
+    counters.forEach(function (el) { countIo.observe(el); });
+  }
 })();
