@@ -161,6 +161,42 @@ bleibt in der Marke.
 Die Beispielprojekte unter `beispiele/` haben bewusst **keinen** Farbwähler.
 Sie sollen jeweils eine Marke zeigen, nicht ihre Varianten.
 
+## Coverflow im Bereich Vorschau
+
+Die drei Vorschau-Karten auf der Startseite liegen als Stapel: eine vorn in
+der Mitte, je eine angeschrägt dahinter. Bedienbar mit Ziehen (Maus und
+Finger), Pfeiltasten, den Pfeilknöpfen, den Punkten und per Klick auf eine
+hintere Karte.
+
+Ein paar Dinge, die beim Bauen nicht offensichtlich waren:
+
+- Die Karten liegen alle in **derselben Rasterzelle** (`grid-area: 1 / 1`),
+  nicht absolut positioniert. Dadurch nimmt die Bühne von selbst die Höhe der
+  höchsten Karte an – ohne dass irgendwo eine feste Höhe steht.
+- `setPointerCapture` löst selbst ein `pointerleave` aus. Wer darauf sein
+  „Loslassen" hängt, beendet jede Geste sofort wieder. Deshalb hören wir nur
+  auf `pointerup` und `pointercancel`.
+- Setzt der Zeiger auf einem Bild in einem Link auf, startet der Browser sein
+  **eigenes** Ziehen und bricht die Geste mit `pointercancel` ab. Dagegen
+  helfen drei Dinge zusammen: `user-select: none` auf der Bühne,
+  `-webkit-user-drag: none` plus `pointer-events: none` auf den Bildern und
+  ein `preventDefault` auf `dragstart`.
+- Ein Zug ist kein Klick: nach einer Bewegung über 6 Pixel wird der folgende
+  Klick abgefangen, sonst öffnet jedes Wischen eine Vorschau.
+- Was hinten liegt, bekommt `tabindex="-1"` und `aria-hidden`, damit der Fokus
+  nicht in eine kaum sichtbare Karte springt.
+
+Ohne JavaScript stehen die drei Karten schlicht nebeneinander und sind
+vollständig bedienbar.
+
+## Einblendungen brauchen die js-Klasse
+
+`[data-reveal]` startet mit `opacity: 0`. Diese Regel hängt an `.js`, einer
+Klasse, die ein kurzes Skript im `<head>` jeder Seite setzt. Fehlt sie, bleibt
+**jeder** eingeblendete Block dauerhaft unsichtbar – ohne JavaScript war
+vorher die halbe Startseite leer. Wer eine neue Seite anlegt, muss dieses
+Skript mit übernehmen.
+
 ## Zu den Bewertungen
 
 Auf `bewertungen.html` stehen **keine** Bewertungen, und das ist Absicht. Die

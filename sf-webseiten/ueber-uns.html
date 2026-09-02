@@ -45,6 +45,13 @@
   ]
 }
 </script>
+<script>
+/* Markiert die Seite als "JavaScript vorhanden", noch bevor gezeichnet wird.
+   Ohne diese Klasse fallen Bausteine wie der Coverflow auf ihre einfache
+   Darstellung zurueck - und das soll nur passieren, wenn wirklich kein
+   JavaScript laeuft, nicht kurz bei jedem Aufbau. */
+document.documentElement.classList.add("js");
+</script>
 </head>
 <body>
 

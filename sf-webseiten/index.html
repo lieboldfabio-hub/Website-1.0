@@ -115,6 +115,13 @@
   }
 }
 </script>
+<script>
+/* Markiert die Seite als "JavaScript vorhanden", noch bevor gezeichnet wird.
+   Ohne diese Klasse fallen Bausteine wie der Coverflow auf ihre einfache
+   Darstellung zurueck - und das soll nur passieren, wenn wirklich kein
+   JavaScript laeuft, nicht kurz bei jedem Aufbau. */
+document.documentElement.classList.add("js");
+</script>
 </head>
 <body class="startseite">
 
@@ -452,8 +459,9 @@
 
     </div>
 
-    <div class="folio-grid" style="margin-top:2.5rem">
-      <article class="folio-card" data-reveal>
+    <div class="coverflow" data-coverflow data-reveal>
+      <div class="coverflow__buehne">
+      <article class="folio-card" data-karte="0">
         <a class="folio-card__shot" href="halbritter-haustechnik/">
           <img src="assets/img/folio-halbritter-haustechnik.jpg" alt="Vorschau der Website für Halbritter Haustechnik" loading="lazy" width="1600" height="1050">
         </a>
@@ -468,7 +476,7 @@
         </div>
       </article>
 
-      <article class="folio-card" data-reveal>
+      <article class="folio-card" data-karte="1">
         <a class="folio-card__shot" href="osteria-fontana/">
           <img src="assets/img/folio-osteria-fontana.jpg" alt="Vorschau der Website für Osteria Fontana" loading="lazy" width="1600" height="1050">
         </a>
@@ -483,7 +491,7 @@
         </div>
       </article>
 
-      <article class="folio-card" data-reveal>
+      <article class="folio-card" data-karte="2">
         <a class="folio-card__shot" href="brenner-kolb-recht/">
           <img src="assets/img/folio-brenner-kolb-recht.jpg" alt="Vorschau der Website für Brenner & Kolb Rechtsanwälte" loading="lazy" width="1600" height="1050">
         </a>
@@ -497,6 +505,27 @@
           </div>
         </div>
       </article>
+      </div>
+
+      <div class="coverflow__steuerung">
+        <button class="coverflow__pfeil" type="button" data-cf="zurueck" aria-label="Vorherige Vorschau">
+          <svg class="ic" aria-hidden="true"><use href="#ic-arrow-right"></use></svg>
+        </button>
+
+        <div class="coverflow__punkte" role="tablist" aria-label="Vorschau w&auml;hlen">
+          <button class="coverflow__punkt" type="button" role="tab" data-cf-zu="0" aria-selected="true"><span class="sr-only">Halbritter Haustechnik</span></button>
+          <button class="coverflow__punkt" type="button" role="tab" data-cf-zu="1" aria-selected="false"><span class="sr-only">Osteria Fontana</span></button>
+          <button class="coverflow__punkt" type="button" role="tab" data-cf-zu="2" aria-selected="false"><span class="sr-only">Brenner &amp; Kolb Rechtsanw&auml;lte</span></button>
+        </div>
+
+        <button class="coverflow__pfeil" type="button" data-cf="vor" aria-label="N&auml;chste Vorschau">
+          <svg class="ic" aria-hidden="true"><use href="#ic-arrow-right"></use></svg>
+        </button>
+      </div>
+
+      <p class="coverflow__hinweis">
+        Ziehen Sie mit der Maus oder wischen Sie &ndash; oder nehmen Sie die Pfeiltasten.
+      </p>
     </div>
 
     <p style="margin-top:2.25rem">

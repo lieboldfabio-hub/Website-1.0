@@ -845,3 +845,152 @@
 .zusage__pruef .ic { flex: none; width: 0.95rem; height: 0.95rem; margin-top: 0.14rem; color: var(--accent); }
 @media (max-width: 900px) { .zusagen { grid-template-columns: 1fr 1fr; } }
 @media (max-width: 620px) { .zusagen { grid-template-columns: 1fr; } }
+
+/* ============================================================================
+   Coverflow
+   ----------------------------------------------------------------------------
+   Drei Vorschauen: eine vorn in der Mitte, je eine angeschraegt dahinter.
+   Ziehen mit Maus oder Finger schiebt den Stapel weiter.
+
+   Alle Karten liegen in derselben Rasterzelle statt absolut positioniert.
+   Dadurch nimmt die Buehne von selbst die Hoehe der hoechsten Karte an, ohne
+   dass irgendwo eine feste Hoehe eingetragen werden muss.
+
+   Ohne JavaScript und bei prefers-reduced-motion greift die Regel am Ende:
+   dann stehen die drei schlicht nebeneinander und bleiben vollstaendig
+   bedienbar. Die Funktion ist Beiwerk, der Inhalt nicht.
+   ========================================================================= */
+
+.coverflow { margin-top: 2.5rem; }
+
+.coverflow__buehne {
+  display: grid;
+  perspective: 1500px;
+  perspective-origin: 50% 45%;
+  /* Der Rand gibt den angeschraegten Karten Platz, ohne dass sie den
+     waagrechten Ueberlauf der Seite ausloesen. */
+  padding-inline: clamp(0rem, 6vw, 5.5rem);
+  overflow: hidden;
+  touch-action: pan-y;
+  /* Die hinteren Karten laufen an den Seiten weich aus, statt an einer harten
+     Kante abgeschnitten zu werden. */
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 7%, #000 93%, transparent);
+          mask-image: linear-gradient(to right, transparent, #000 7%, #000 93%, transparent);
+  /* Ohne das startet der Browser beim Aufsetzen auf einem Bild sein eigenes
+     Ziehen und bricht unsere Geste mit pointercancel ab. */
+  -webkit-user-select: none;
+          user-select: none;
+}
+.coverflow__buehne img {
+  -webkit-user-drag: none;
+  pointer-events: none;
+}
+.coverflow__buehne > .folio-card {
+  grid-area: 1 / 1;
+  width: min(100%, 46rem);
+  margin-inline: auto;
+  transform-style: preserve-3d;
+  transition: transform 0.55s cubic-bezier(0.22, 0.85, 0.24, 1),
+              opacity 0.45s ease,
+              filter 0.45s ease;
+  will-change: transform;
+}
+
+/* Die vordere Karte */
+.coverflow__buehne > .folio-card[data-lage="0"] {
+  transform: translateX(calc(var(--zug, 0px) * 0.55)) translateZ(0) rotateY(calc(var(--zug, 0px) * -0.014deg)) scale(1);
+  z-index: 3;
+}
+/* Die beiden hinteren */
+.coverflow__buehne > .folio-card[data-lage="-1"],
+.coverflow__buehne > .folio-card[data-lage="1"] {
+  z-index: 2;
+  opacity: 0.68;
+  filter: saturate(0.85) brightness(0.86);
+  pointer-events: auto;
+  cursor: pointer;
+}
+.coverflow__buehne > .folio-card[data-lage="-1"] {
+  transform: translateX(calc(-58% + var(--zug, 0px) * 0.55)) translateZ(-230px) rotateY(24deg) scale(0.92);
+}
+.coverflow__buehne > .folio-card[data-lage="1"] {
+  transform: translateX(calc(58% + var(--zug, 0px) * 0.55)) translateZ(-230px) rotateY(-24deg) scale(0.92);
+}
+.coverflow__buehne > .folio-card[data-lage="-1"]:hover,
+.coverflow__buehne > .folio-card[data-lage="1"]:hover { opacity: 0.9; filter: none; }
+
+/* Waehrend des Ziehens laeuft die Karte am Finger mit, ohne Nachlauf. */
+.coverflow.is-zieht .folio-card { transition: none; }
+.coverflow.is-zieht { cursor: grabbing; }
+.coverflow__buehne > .folio-card[data-lage="0"] .folio-card__shot { cursor: grab; }
+.coverflow.is-zieht .folio-card__shot { cursor: grabbing; }
+
+/* ------------------------------------------------------------- Steuerung -- */
+
+.coverflow__steuerung {
+  display: flex; align-items: center; justify-content: center;
+  gap: 1.1rem;
+  margin-top: 1.75rem;
+}
+.coverflow__pfeil {
+  width: 2.9rem; height: 2.9rem; flex: none;
+  display: grid; place-items: center;
+  border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  background: var(--surface);
+  color: var(--text);
+  cursor: pointer;
+  transition: border-color 0.16s ease, background 0.16s ease, transform 0.16s ease;
+}
+.coverflow__pfeil:hover { border-color: var(--accent); transform: translateY(-2px); }
+.coverflow__pfeil:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+.coverflow__pfeil[data-cf="zurueck"] .ic { transform: rotate(180deg); }
+
+.coverflow__punkte { display: flex; align-items: center; gap: 0.5rem; }
+.coverflow__punkt {
+  width: 0.6rem; height: 0.6rem; padding: 0;
+  border: 0; border-radius: 999px;
+  background: var(--line-strong);
+  cursor: pointer;
+  position: relative;
+  transition: background 0.2s ease, width 0.25s ease;
+}
+/* Trefferflaeche von 44 Pixeln, ohne den Punkt optisch aufzublasen. */
+.coverflow__punkt::after {
+  content: ""; position: absolute; left: 50%; top: 50%;
+  width: 44px; height: 44px; transform: translate(-50%, -50%);
+}
+.coverflow__punkt[aria-selected="true"] { background: var(--accent-flaeche); width: 1.6rem; }
+.coverflow__punkt:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+
+.coverflow__hinweis {
+  margin-top: 0.9rem;
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--text-faint);
+}
+
+@media (max-width: 720px) {
+  .coverflow__buehne > .folio-card[data-lage="-1"] { transform: translateX(calc(-64% + var(--zug, 0px) * 0.55)) translateZ(-260px) rotateY(20deg) scale(0.88); }
+  .coverflow__buehne > .folio-card[data-lage="1"]  { transform: translateX(calc(64% + var(--zug, 0px) * 0.55)) translateZ(-260px) rotateY(-20deg) scale(0.88); }
+}
+
+/* Ohne JavaScript oder bei ausgeschalteter Bewegung: die drei stehen
+   nebeneinander wie zuvor, nichts ist verdeckt und nichts unerreichbar. */
+html:not(.js) .coverflow__buehne,
+html:not(.js) .coverflow__steuerung,
+html:not(.js) .coverflow__hinweis { }
+html:not(.js) .coverflow__buehne {
+  grid-template-columns: repeat(auto-fit, minmax(19rem, 1fr));
+  gap: clamp(1.25rem, 2.5vw, 2rem);
+  perspective: none; padding-inline: 0; overflow: visible;
+}
+html:not(.js) .coverflow__buehne > .folio-card {
+  grid-area: auto; width: auto; transform: none; opacity: 1; filter: none;
+}
+html:not(.js) .coverflow__steuerung,
+html:not(.js) .coverflow__hinweis { display: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .coverflow__buehne > .folio-card { transition: none; }
+}
