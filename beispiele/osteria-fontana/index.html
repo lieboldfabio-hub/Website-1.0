@@ -6,6 +6,17 @@
 <title>Osteria Fontana | Beispielprojekt für ein Restaurant</title>
 <meta name="description" content="Beispielhafte Website für ein Restaurant. Erfundenes Unternehmen, gebaut zur Veranschaulichung von Gestaltung und Interaktion.">
 <meta name="robots" content="noindex, nofollow">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Osteria Fontana">
+<meta property="og:title" content="Osteria Fontana | Beispielprojekt für ein Restaurant">
+<meta property="og:description" content="Beispielhafte Website für ein Restaurant. Erfundenes Unternehmen, gebaut zur Veranschaulichung von Gestaltung und Interaktion.">
+<meta property="og:url" content="https://www.osteria-fontana.example/">
+<meta property="og:locale" content="de_DE">
+<meta property="og:image" content="https://www.osteria-fontana.example/assets/img/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Osteria Fontana">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#14100e">
 <link rel="stylesheet" href="assets/css/site.css">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%2314100e'/><text y='72' x='50' text-anchor='middle' font-size='60' font-family='Georgia,serif' font-weight='bold' fill='%23e07a52'>O</text></svg>">
@@ -31,18 +42,18 @@
 
 <header class="nav">
   <div class="nav__inner">
-    <a class="brand" href="#top">Osteria Fontana</a>
+    <a class="brand" href="index.html">Osteria Fontana</a>
     <nav aria-label="Hauptnavigation">
       <ul class="nav__links">
-        <li><a href="#kueche">Küche</a></li>
-        <li><a href="#abend">Der Abend</a></li>
-        <li><a href="#karte">Karte</a></li>
-        <li><a href="#besuch">Besuch</a></li>
+      <li><a href="index.html" aria-current="page">Start</a></li>
+      <li><a href="karte.html">Karte</a></li>
+      <li><a href="abend.html">Der Abend</a></li>
+      <li><a href="besuch.html">Besuch</a></li>
       </ul>
     </nav>
     <div class="nav__cta">
-      <a class="btn btn--sm" href="#besuch">Tisch anfragen</a>
-      <button class="nav__burger" aria-label="Menü öffnen" aria-expanded="false" aria-controls="menu">
+      <a class="btn btn--sm" href="besuch.html">Tisch anfragen</a>
+      <button class="nav__burger" aria-label="Men&uuml; &ouml;ffnen" aria-expanded="false" aria-controls="menu">
         <span></span><span></span><span></span>
       </button>
     </div>
@@ -50,11 +61,11 @@
 </header>
 
 <div class="menu" id="menu" hidden>
-  <a href="#kueche">Küche</a>
-  <a href="#abend">Der Abend</a>
-  <a href="#karte">Karte</a>
-  <a href="#besuch">Besuch</a>
-  <a class="btn" href="#besuch">Tisch anfragen</a>
+  <a href="index.html" aria-current="page">Start</a>
+  <a href="karte.html">Karte</a>
+  <a href="abend.html">Der Abend</a>
+  <a href="besuch.html">Besuch</a>
+  <a class="btn" href="besuch.html">Tisch anfragen</a>
 </div>
 
 <main id="main">
@@ -69,11 +80,11 @@
         Was der Markt hergibt, steht am Abend auf der Karte. Mehr passt nicht darauf.
       </p>
       <div class="hero__actions" data-hero="4">
-        <a class="btn" href="#besuch">
+        <a class="btn" href="besuch.html">
           Tisch anfragen
           <svg class="btn__ico" aria-hidden="true"><use href="#i-arrow-right"></use></svg>
         </a>
-        <a class="btn btn--ghost" href="#karte">Zur Karte</a>
+        <a class="btn btn--ghost" href="karte.html">Zur Karte</a>
       </div>
     </div>
 
@@ -114,6 +125,9 @@
         nicht immer alles, dafür ist alles frisch. Wer sich nicht entscheiden mag,
         lässt sich von uns durch den Abend führen.
       </p>
+      <p class="body-copy reveal" style="margin-top:1rem">
+        <a href="abend.html" style="color:var(--accent)">Wie ein Abend bei uns abläuft</a>
+      </p>
 
       <ul class="merkmale reveal">
         <li>
@@ -139,6 +153,9 @@
     <div class="wrap">
       <p class="eyebrow">Der Abend</p>
       <h2 class="h2">Von der Vorspeise bis zum Digestif.</h2>
+      <p class="body-copy" style="margin-top:1rem">
+        <a href="abend.html" style="color:var(--accent)">Den ganzen Abend ansehen</a>
+      </p>
     </div>
   </div>
 
@@ -240,7 +257,7 @@
         <h3>Primi e Secondi</h3>
         <div class="gericht">
           <div class="gericht__zeile">
-            <b>Bucatini all’amatriciana</b><span class="gericht__fuellung"></span><span class="gericht__preis">16,00</span>
+            <b>Bucatini all&rsquo;amatriciana</b><span class="gericht__fuellung"></span><span class="gericht__preis">16,00</span>
           </div>
           <p>Guanciale, Pecorino, San-Marzano-Tomaten.</p>
         </div>
@@ -250,21 +267,15 @@
           </div>
           <p>Ganzer Wolfsbarsch vom Grill, Zitrone, Fenchel.</p>
         </div>
-        <div class="gericht">
-          <div class="gericht__zeile">
-            <b>Ossobuco</b><span class="gericht__fuellung"></span><span class="gericht__preis">24,00</span>
-          </div>
-          <p>Geschmorte Kalbshaxe, Gremolata, Safranrisotto.</p>
-        </div>
       </div>
 
       <div class="gruppe reveal">
         <h3>Dolci</h3>
         <div class="gericht">
           <div class="gericht__zeile">
-            <b>Tiramisù</b><span class="gericht__fuellung"></span><span class="gericht__preis">8,00</span>
+            <b>Tiramis&ugrave;</b><span class="gericht__fuellung"></span><span class="gericht__preis">8,00</span>
           </div>
-          <p>Nach dem Rezept der Großmutter, mit Marsala.</p>
+          <p>Nach dem Rezept der Gro&szlig;mutter, mit Marsala.</p>
         </div>
         <div class="gericht">
           <div class="gericht__zeile">
@@ -272,59 +283,26 @@
           </div>
           <p>Mit eingekochten Feigen.</p>
         </div>
-        <div class="gericht">
-          <div class="gericht__zeile">
-            <b>Affogato</b><span class="gericht__fuellung"></span><span class="gericht__preis">6,50</span>
-          </div>
-          <p>Vanilleeis, ertränkt in Espresso.</p>
-        </div>
       </div>
+
     </div>
 
     <p class="karte__hinweis reveal">
-      Die vollständige Karte wechselt täglich und hängt am Eingang aus.
-      Allergene und Zusatzstoffe geben wir Ihnen gerne an, fragen Sie uns einfach.
+      Ein Auszug &ndash; die vollst&auml;ndige Karte wechselt t&auml;glich und h&auml;ngt am Eingang aus.
+      <a href="karte.html" style="color:var(--accent)">Ganze Karte samt Weinen ansehen</a>.
     </p>
   </div>
 </section>
 
-<!-- =============================================================== Besuch -->
-<section class="section besuch" id="besuch">
-  <div class="wrap besuch__grid">
-    <div class="reveal">
-      <p class="eyebrow">Besuch</p>
+<section class="section cta-band" id="besuch">
+  <div class="wrap cta-band__inner">
+    <div>
       <h2 class="h2">Kommen Sie vorbei.</h2>
-
-      <dl class="zeiten">
-        <div class="zeit"><dt>Dienstag bis Donnerstag</dt><dd>18:00 bis 23:00</dd></div>
-        <div class="zeit"><dt>Freitag und Samstag</dt><dd>17:30 bis 24:00</dd></div>
-        <div class="zeit"><dt>Sonntag</dt><dd>12:00 bis 22:00</dd></div>
-        <div class="zeit zeit--zu"><dt>Montag</dt><dd>Ruhetag</dd></div>
-      </dl>
-
-      <div class="adresse">
-        <div>
-          <svg aria-hidden="true"><use href="#i-map-pin"></use></svg>
-          <span>Am Brunnenhof 4<br>86150 Augsburg</span>
-        </div>
-        <div>
-          <svg aria-hidden="true"><use href="#i-clock"></use></svg>
-          <span>Küche bis eine Stunde vor Schluss</span>
-        </div>
-      </div>
+      <p>Dienstag bis Sonntag ge&ouml;ffnet, montags ist Ruhetag. F&uuml;r einen Tisch gen&uuml;gt eine kurze Nachricht &ndash; wir melden uns am selben Tag zur&uuml;ck.</p>
     </div>
-
-    <div class="karte-box reveal">
-      <h3>Tisch anfragen</h3>
-      <p>
-        Für Reservierungen schreiben Sie uns kurz, für wie viele Personen und
-        wann Sie kommen möchten. Wir melden uns am selben Tag zurück.
-        Ab sechs Personen planen wir gerne ein festes Menü mit Ihnen.
-      </p>
-      <a class="btn" href="mailto:reservierung@osteria-fontana.example">
-        <svg class="btn__ico" aria-hidden="true"><use href="#i-calendar-check"></use></svg>
-        Anfrage schreiben
-      </a>
+    <div class="cta-band__aktionen">
+      <a class="btn" href="besuch.html">Tisch anfragen</a>
+      <a class="btn btn--ghost" href="karte.html">Zur Karte</a>
     </div>
   </div>
 </section>
@@ -334,11 +312,13 @@
 <footer class="footer">
   <div class="wrap">
     <div class="footer__grid">
-      <a class="brand" href="#top" style="color:var(--band-text)">Osteria Fontana</a>
+      <a class="brand" href="index.html" style="color:var(--band-text)">Osteria Fontana</a>
       <ul class="footer__links">
-        <li><a href="#kueche">Küche</a></li>
-        <li><a href="#karte">Karte</a></li>
-        <li><a href="#besuch">Besuch</a></li>
+        <li><a href="abend.html">Der Abend</a></li>
+        <li><a href="karte.html">Karte</a></li>
+        <li><a href="besuch.html">Besuch</a></li>
+        <li><a href="impressum.html">Impressum</a></li>
+        <li><a href="datenschutz.html">Datenschutz</a></li>
         <li><a href="../">Weitere Beispiele</a></li>
       </ul>
     </div>

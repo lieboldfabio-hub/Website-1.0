@@ -424,3 +424,7 @@ body::after {
 @media (max-width: 860px) {
   .besuch__grid { grid-template-columns: 1fr; gap: 2.5rem; }
 }
+
+/* Unterseiten-Kopf in der dunklen Grundflaeche, passend zum Hero. */
+.seitenkopf { background: var(--nacht); color: var(--creme); border-bottom-color: var(--band-line); }
+.seitenkopf .lede { color: var(--band-text-soft); }

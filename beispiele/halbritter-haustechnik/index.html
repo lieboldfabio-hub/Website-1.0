@@ -6,6 +6,17 @@
 <title>Halbritter Haustechnik | Beispielprojekt für einen Handwerksbetrieb</title>
 <meta name="description" content="Beispielhafte Website für einen Betrieb für Elektro und Sanitär. Erfundenes Unternehmen, gebaut zur Veranschaulichung von Gestaltung und Interaktion.">
 <meta name="robots" content="noindex, nofollow">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Halbritter Haustechnik">
+<meta property="og:title" content="Halbritter Haustechnik | Beispielprojekt für einen Handwerksbetrieb">
+<meta property="og:description" content="Beispielhafte Website für einen Betrieb für Elektro und Sanitär. Erfundenes Unternehmen, gebaut zur Veranschaulichung von Gestaltung und Interaktion.">
+<meta property="og:url" content="https://www.halbritter-haustechnik.example/">
+<meta property="og:locale" content="de_DE">
+<meta property="og:image" content="https://www.halbritter-haustechnik.example/assets/img/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Halbritter Haustechnik">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#14181d">
 <link rel="stylesheet" href="assets/css/site.css">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%2314181d'/><text y='71' x='50' text-anchor='middle' font-size='56' font-family='sans-serif' font-weight='bold' fill='%231f6feb'>H</text></svg>">
@@ -34,18 +45,18 @@
 
 <header class="nav">
   <div class="nav__inner">
-    <a class="brand" href="#top">Halbritter</a>
+    <a class="brand" href="index.html">Halbritter</a>
     <nav aria-label="Hauptnavigation">
       <ul class="nav__links">
-        <li><a href="#leistungen">Leistungen</a></li>
-        <li><a href="#arbeiten">Arbeiten</a></li>
-        <li><a href="#vertrauen">Über uns</a></li>
-        <li><a href="#kontakt">Kontakt</a></li>
+      <li><a href="index.html" aria-current="page">Start</a></li>
+      <li><a href="leistungen.html">Leistungen</a></li>
+      <li><a href="arbeiten.html">Arbeiten</a></li>
+      <li><a href="kontakt.html">Kontakt</a></li>
       </ul>
     </nav>
     <div class="nav__cta">
-      <a class="btn btn--sm" href="#kontakt">Termin anfragen</a>
-      <button class="nav__burger" aria-label="Menü öffnen" aria-expanded="false" aria-controls="menu">
+      <a class="btn btn--sm" href="kontakt.html">Termin anfragen</a>
+      <button class="nav__burger" aria-label="Men&uuml; &ouml;ffnen" aria-expanded="false" aria-controls="menu">
         <span></span><span></span><span></span>
       </button>
     </div>
@@ -53,11 +64,11 @@
 </header>
 
 <div class="menu" id="menu" hidden>
-  <a href="#leistungen">Leistungen</a>
-  <a href="#arbeiten">Arbeiten</a>
-  <a href="#vertrauen">Über uns</a>
-  <a href="#kontakt">Kontakt</a>
-  <a class="btn" href="#kontakt">Termin anfragen</a>
+  <a href="index.html" aria-current="page">Start</a>
+  <a href="leistungen.html">Leistungen</a>
+  <a href="arbeiten.html">Arbeiten</a>
+  <a href="kontakt.html">Kontakt</a>
+  <a class="btn" href="kontakt.html">Termin anfragen</a>
 </div>
 
 <main id="main">
@@ -73,11 +84,11 @@
         Festpreis vor dem ersten Handgriff.
       </p>
       <div class="hero__actions" data-hero="4">
-        <a class="btn" href="#kontakt">
+        <a class="btn" href="kontakt.html">
           Termin anfragen
           <svg class="btn__ico" aria-hidden="true"><use href="#i-arrow-right"></use></svg>
         </a>
-        <a class="btn btn--line" href="#leistungen">Was wir machen</a>
+        <a class="btn btn--line" href="leistungen.html">Was wir machen</a>
       </div>
     </div>
 
@@ -95,7 +106,7 @@
     <svg aria-hidden="true"><use href="#i-lightning"></use></svg>
     <b>Notdienst rund um die Uhr</b>
     <span>Rohrbruch, Stromausfall, defekte Heizung</span>
-    <a href="#kontakt">Notfall melden</a>
+    <a href="kontakt.html">Notfall melden</a>
   </div>
 </div>
 
@@ -105,66 +116,37 @@
     <div class="leistungen__kopf reveal">
       <p class="eyebrow">Leistungen</p>
       <h2 class="h2 reveal-lines">Zwei Gewerke, eine Ansprechperson.</h2>
+      <p class="body-copy" style="margin-top:1.1rem">
+        Elektro und Sanit&auml;r im selben Betrieb. Sie brauchen nicht zwei Firmen
+        zu koordinieren, und keine kann sich hinter der anderen verstecken.
+      </p>
     </div>
 
-    <div class="stapel">
-      <article class="karte-l">
-        <span class="karte-l__nr">01</span>
-        <div>
-          <h3>Elektroinstallation</h3>
-          <p>
-            Von der einzelnen Steckdose bis zur kompletten Neuinstallation im
-            Altbau. Wir prüfen die vorhandene Anlage, bevor wir ein Angebot
-            schreiben, damit hinterher keine Überraschung kommt.
-          </p>
-          <ul>
-            <li>Zählerschrank</li>
-            <li>Leitungen erneuern</li>
-            <li>Beleuchtung</li>
-            <li>E-Check</li>
-            <li>Wallbox</li>
-          </ul>
-        </div>
-        <svg class="karte-l__ico" aria-hidden="true"><use href="#i-lightning"></use></svg>
-      </article>
-
-      <article class="karte-l">
-        <span class="karte-l__nr">02</span>
-        <div>
-          <h3>Sanitär und Bad</h3>
-          <p>
-            Undichte Leitungen, tropfende Armaturen, ein Bad, das seit dreißig
-            Jahren unverändert ist. Wir übernehmen einzelne Arbeiten ebenso wie
-            die komplette Sanierung samt Koordination der anderen Gewerke.
-          </p>
-          <ul>
-            <li>Leitungen</li>
-            <li>Armaturen</li>
-            <li>Badsanierung</li>
-            <li>Barrierefrei</li>
-          </ul>
-        </div>
-        <svg class="karte-l__ico" aria-hidden="true"><use href="#i-drop"></use></svg>
-      </article>
-
-      <article class="karte-l">
-        <span class="karte-l__nr">03</span>
-        <div>
-          <h3>Heizung und Wartung</h3>
-          <p>
-            Wartung hält die Anlage am Laufen und die Kosten unten. Wir erinnern
-            Sie an den Termin, damit Sie nicht daran denken müssen.
-          </p>
-          <ul>
-            <li>Jahreswartung</li>
-            <li>Störungsdienst</li>
-            <li>Heizkörper</li>
-            <li>Hydraulischer Abgleich</li>
-          </ul>
-        </div>
-        <svg class="karte-l__ico" aria-hidden="true"><use href="#i-thermometer"></use></svg>
-      </article>
+    <div class="teaser-grid">
+      <a class="teaser reveal" href="leistungen.html">
+        <svg aria-hidden="true"><use href="#i-lightning"></use></svg>
+        <b>Elektroinstallation</b>
+        <p>Z&auml;hlerschrank, Leitungen, Beleuchtung, E-Check und Wallbox. Vom Altbau bis zur Neuinstallation.</p>
+        <span class="teaser__mehr">Mehr dazu <svg aria-hidden="true"><use href="#i-arrow-right"></use></svg></span>
+      </a>
+      <a class="teaser reveal" href="leistungen.html">
+        <svg aria-hidden="true"><use href="#i-drop"></use></svg>
+        <b>Sanit&auml;r und Bad</b>
+        <p>Von der tropfenden Armatur bis zur kompletten Sanierung samt Koordination der anderen Gewerke.</p>
+        <span class="teaser__mehr">Mehr dazu <svg aria-hidden="true"><use href="#i-arrow-right"></use></svg></span>
+      </a>
+      <a class="teaser reveal" href="leistungen.html">
+        <svg aria-hidden="true"><use href="#i-thermometer"></use></svg>
+        <b>Heizung und Wartung</b>
+        <p>Jahreswartung mit Terminerinnerung, St&ouml;rungsdienst und hydraulischer Abgleich.</p>
+        <span class="teaser__mehr">Mehr dazu <svg aria-hidden="true"><use href="#i-arrow-right"></use></svg></span>
+      </a>
     </div>
+
+    <p class="vergleich__hinweis" style="text-align:left;margin-top:1.75rem">
+      Alle Leistungen mit Ablauf, Preisrahmen und h&auml;ufigen Fragen:
+      <a href="leistungen.html" style="color:var(--accent)">zur &Uuml;bersicht</a>.
+    </p>
   </div>
 </section>
 
@@ -207,8 +189,9 @@
     </div>
 
     <p class="vergleich__hinweis">
-      Ziehen Sie die Kante, um beide Zustände zu vergleichen.
-      Mit der Tastatur geht es über die Pfeiltasten.
+      Ziehen Sie die Kante, um beide Zust&auml;nde zu vergleichen.
+      Mit der Tastatur geht es &uuml;ber die Pfeiltasten.
+      <a href="arbeiten.html" style="color:var(--accent)">Weitere Arbeiten ansehen</a>.
     </p>
   </div>
 </section>
@@ -254,45 +237,15 @@
   </div>
 </section>
 
-<!-- ============================================================== Kontakt -->
-<section class="section kontakt" id="kontakt">
-  <div class="wrap kontakt__grid">
-    <div class="reveal">
-      <p class="eyebrow">Kontakt</p>
+<section class="section cta-band" id="kontakt">
+  <div class="wrap cta-band__inner">
+    <div>
       <h2 class="h2">Sagen Sie uns, worum es geht.</h2>
-      <p class="body-copy" style="margin-top:1.1rem">
-        Am schnellsten geht ein Anruf. Wenn es nicht eilt, schreiben Sie uns
-        und hängen ein Foto an, dann können wir den Aufwand besser einschätzen.
-      </p>
-
-      <div class="wege">
-        <a class="weg" href="#kontakt">
-          <svg aria-hidden="true"><use href="#i-phone"></use></svg>
-          <div><b>Anrufen</b><span>Montag bis Freitag, 7 bis 17 Uhr</span></div>
-        </a>
-        <a class="weg" href="mailto:anfrage@halbritter-haustechnik.example">
-          <svg aria-hidden="true"><use href="#i-envelope-simple"></use></svg>
-          <div><b>Schreiben</b><span>Antwort in der Regel am selben Werktag</span></div>
-        </a>
-        <a class="weg" href="#kontakt">
-          <svg aria-hidden="true"><use href="#i-lightning"></use></svg>
-          <div><b>Notdienst</b><span>Rund um die Uhr erreichbar</span></div>
-        </a>
-      </div>
+      <p>Am schnellsten geht ein Anruf. Wenn es nicht eilt, schreiben Sie uns und h&auml;ngen ein Foto an &ndash; dann k&ouml;nnen wir den Aufwand schon vorab einsch&auml;tzen. Die Besichtigung vor Ort ist kostenlos.</p>
     </div>
-
-    <div class="einzug reveal">
-      <h3>Einzugsgebiet</h3>
-      <p>
-        Wir arbeiten in Augsburg und im Umkreis von etwa dreißig Kilometern.
-        Für die Anfahrt berechnen wir eine Pauschale, die im Festpreis
-        bereits enthalten ist.
-      </p>
-      <dl>
-        <div class="zeile"><dt>Montag bis Donnerstag</dt><dd>7:00 bis 17:00</dd></div>
-        <div class="zeile"><dt>Freitag</dt><dd>7:00 bis 14:00</dd></div>
-        <div class="zeile"><dt>Notdienst</dt><dd>durchgehend</dd></div>
-      </dl>
+    <div class="cta-band__aktionen">
+      <a class="btn" href="kontakt.html">Termin anfragen</a>
+      <a class="btn btn--ghost" href="leistungen.html">Leistungen ansehen</a>
     </div>
   </div>
 </section>
@@ -302,11 +255,13 @@
 <footer class="footer">
   <div class="wrap">
     <div class="footer__grid">
-      <a class="brand" href="#top" style="color:var(--band-text)">Halbritter</a>
+      <a class="brand" href="index.html" style="color:var(--band-text)">Halbritter</a>
       <ul class="footer__links">
-        <li><a href="#leistungen">Leistungen</a></li>
-        <li><a href="#arbeiten">Arbeiten</a></li>
-        <li><a href="#kontakt">Kontakt</a></li>
+        <li><a href="leistungen.html">Leistungen</a></li>
+        <li><a href="arbeiten.html">Arbeiten</a></li>
+        <li><a href="kontakt.html">Kontakt</a></li>
+        <li><a href="impressum.html">Impressum</a></li>
+        <li><a href="datenschutz.html">Datenschutz</a></li>
         <li><a href="../">Weitere Beispiele</a></li>
       </ul>
     </div>

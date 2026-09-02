@@ -6,6 +6,17 @@
 <title>Zahnärzte am Königsplatz | Beispielprojekt für eine Zahnarztpraxis</title>
 <meta name="description" content="Beispielhafte Website für eine Zahnarztpraxis. Erfundenes Unternehmen, gebaut zur Veranschaulichung von Gestaltung und Interaktion.">
 <meta name="robots" content="noindex, nofollow">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Zahnärzte am Königsplatz">
+<meta property="og:title" content="Zahnärzte am Königsplatz | Beispielprojekt für eine Zahnarztpraxis">
+<meta property="og:description" content="Beispielhafte Website für eine Zahnarztpraxis. Erfundenes Unternehmen, gebaut zur Veranschaulichung von Gestaltung und Interaktion.">
+<meta property="og:url" content="https://www.zahnaerzte-koenigsplatz.example/">
+<meta property="og:locale" content="de_DE">
+<meta property="og:image" content="https://www.zahnaerzte-koenigsplatz.example/assets/img/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Zahnärzte am Königsplatz">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#17332c">
 <link rel="stylesheet" href="assets/css/site.css">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='26' fill='%2317332c'/><text y='70' x='50' text-anchor='middle' font-size='54' font-family='sans-serif' font-weight='bold' fill='%23e97a4e'>K</text></svg>">
@@ -33,18 +44,18 @@
 
 <header class="nav">
   <div class="nav__inner">
-    <a class="brand" href="#top">Königsplatz</a>
+    <a class="brand" href="index.html">Königsplatz</a>
     <nav aria-label="Hauptnavigation">
       <ul class="nav__links">
-        <li><a href="#leistungen">Leistungen</a></li>
-        <li><a href="#praxis">Praxis</a></li>
-        <li><a href="#team">Team</a></li>
-        <li><a href="#kontakt">Kontakt</a></li>
+      <li><a href="index.html" aria-current="page">Start</a></li>
+      <li><a href="leistungen.html">Leistungen</a></li>
+      <li><a href="praxis.html">Praxis</a></li>
+      <li><a href="termin.html">Termin</a></li>
       </ul>
     </nav>
     <div class="nav__cta">
-      <a class="btn btn--sm" href="#kontakt">Termin buchen</a>
-      <button class="nav__burger" aria-label="Menü öffnen" aria-expanded="false" aria-controls="menu">
+      <a class="btn btn--sm" href="termin.html">Termin buchen</a>
+      <button class="nav__burger" aria-label="Men&uuml; &ouml;ffnen" aria-expanded="false" aria-controls="menu">
         <span></span><span></span><span></span>
       </button>
     </div>
@@ -52,11 +63,11 @@
 </header>
 
 <div class="menu" id="menu" hidden>
-  <a href="#leistungen">Leistungen</a>
-  <a href="#praxis">Praxis</a>
-  <a href="#team">Team</a>
-  <a href="#kontakt">Kontakt</a>
-  <a class="btn" href="#kontakt">Termin buchen</a>
+  <a href="index.html" aria-current="page">Start</a>
+  <a href="leistungen.html">Leistungen</a>
+  <a href="praxis.html">Praxis</a>
+  <a href="termin.html">Termin</a>
+  <a class="btn" href="termin.html">Termin buchen</a>
 </div>
 
 <main id="main">
@@ -73,11 +84,11 @@
         Angstpatientinnen und -patienten brauchen.
       </p>
       <div class="hero__actions" data-hero="4">
-        <a class="btn" href="#kontakt">
+        <a class="btn" href="termin.html">
           Termin online buchen
           <svg class="btn__ico" aria-hidden="true"><use href="#i-arrow-right"></use></svg>
         </a>
-        <a class="btn btn--line" href="#leistungen">Leistungen ansehen</a>
+        <a class="btn btn--line" href="leistungen.html">Leistungen ansehen</a>
       </div>
     </div>
 
@@ -95,7 +106,7 @@
     <svg aria-hidden="true"><use href="#i-first-aid"></use></svg>
     <b>Zahnschmerzen am Wochenende?</b>
     <span>Notfall-Sprechstunde samstags und sonntags</span>
-    <a href="#kontakt">Jetzt anrufen</a>
+    <a href="termin.html">Jetzt anrufen</a>
   </div>
 </div>
 
@@ -105,6 +116,9 @@
     <div class="leistungen__kopf reveal">
       <p class="eyebrow">Leistungen</p>
       <h2 class="h2 reveal-lines">Behandlung für jedes Alter und jede Situation.</h2>
+      <p class="body-copy" style="margin-top:1.1rem">
+        <a href="leistungen.html" style="color:var(--accent)">Alle Leistungen im Einzelnen, samt Kosten und Kassen</a>
+      </p>
     </div>
 
     <div class="angebote">
@@ -138,6 +152,9 @@
     <div class="praxis__kopf reveal">
       <p class="eyebrow">Praxis</p>
       <h2 class="h2">Warum Patientinnen und Patienten bleiben.</h2>
+      <p class="body-copy" style="margin-top:1.1rem">
+        <a href="praxis.html" style="color:var(--accent)">Praxis, R&auml;ume und Ausstattung ansehen</a>
+      </p>
     </div>
 
     <ul class="punkte">
@@ -179,6 +196,9 @@
     <div class="leistungen__kopf reveal">
       <p class="eyebrow">Team</p>
       <h2 class="h2 reveal-lines">Zwei Zahnärzte, ein Anspruch an Sorgfalt.</h2>
+      <p class="body-copy" style="margin-top:1.1rem">
+        <a href="praxis.html" style="color:var(--accent)">Mehr &uuml;ber das Team und die Praxis</a>
+      </p>
     </div>
 
     <div class="team__grid">
@@ -218,44 +238,15 @@
   </div>
 </section>
 
-<!-- ============================================================== Kontakt -->
-<section class="section kontakt" id="kontakt">
-  <div class="wrap kontakt__grid">
-    <div class="reveal">
-      <p class="eyebrow">Kontakt</p>
+<section class="section cta-band" id="kontakt">
+  <div class="wrap cta-band__inner">
+    <div>
       <h2 class="h2">Vereinbaren Sie Ihren Termin.</h2>
-      <p class="body-copy" style="margin-top:1.1rem">
-        Am schnellsten geht die Online-Buchung. Für Rückfragen oder
-        kurzfristige Termine erreichen Sie unser Team auch telefonisch.
-      </p>
-
-      <div class="wege">
-        <a class="weg" href="#kontakt">
-          <svg aria-hidden="true"><use href="#i-phone"></use></svg>
-          <div><b>Anrufen</b><span>Montag bis Freitag, 8 bis 18 Uhr</span></div>
-        </a>
-        <a class="weg" href="mailto:praxis@koenigsplatz-zahnaerzte.example">
-          <svg aria-hidden="true"><use href="#i-envelope-simple"></use></svg>
-          <div><b>Schreiben</b><span>Antwort in der Regel am selben Werktag</span></div>
-        </a>
-        <a class="weg" href="#kontakt">
-          <svg aria-hidden="true"><use href="#i-map-pin"></use></svg>
-          <div><b>Vorbeikommen</b><span>Direkt am Königsplatz, barrierefrei</span></div>
-        </a>
-      </div>
+      <p>Am schnellsten geht die Online-Buchung. F&uuml;r R&uuml;ckfragen oder kurzfristige Termine erreichen Sie unser Team auch telefonisch. Bei akuten Schmerzen rufen Sie bitte direkt an.</p>
     </div>
-
-    <div class="einzug reveal">
-      <h3>Sprechzeiten</h3>
-      <p>
-        Termine nach Vereinbarung, auch kurzfristig. Für akute Beschwerden
-        halten wir täglich Notfallzeiten frei.
-      </p>
-      <dl>
-        <div class="zeile"><dt>Montag bis Donnerstag</dt><dd>8:00 bis 18:00</dd></div>
-        <div class="zeile"><dt>Freitag</dt><dd>8:00 bis 14:00</dd></div>
-        <div class="zeile"><dt>Notfälle Wochenende</dt><dd>nach Ansage</dd></div>
-      </dl>
+    <div class="cta-band__aktionen">
+      <a class="btn" href="termin.html">Termin buchen</a>
+      <a class="btn btn--ghost" href="leistungen.html">Leistungen ansehen</a>
     </div>
   </div>
 </section>
@@ -265,11 +256,13 @@
 <footer class="footer">
   <div class="wrap">
     <div class="footer__grid">
-      <a class="brand" href="#top" style="color:var(--band-text)">Königsplatz</a>
+      <a class="brand" href="index.html" style="color:var(--band-text)">Königsplatz</a>
       <ul class="footer__links">
-        <li><a href="#leistungen">Leistungen</a></li>
-        <li><a href="#team">Team</a></li>
-        <li><a href="#kontakt">Kontakt</a></li>
+        <li><a href="leistungen.html">Leistungen</a></li>
+        <li><a href="praxis.html">Praxis &amp; Team</a></li>
+        <li><a href="termin.html">Termin</a></li>
+        <li><a href="impressum.html">Impressum</a></li>
+        <li><a href="datenschutz.html">Datenschutz</a></li>
         <li><a href="../">Weitere Beispiele</a></li>
       </ul>
     </div>

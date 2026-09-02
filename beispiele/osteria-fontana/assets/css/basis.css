@@ -285,3 +285,283 @@ section { position: relative; }
     transition-duration: .01ms !important;
   }
 }
+
+/* ------------------------------------------------ Helle Innenseiten ------ */
+/*
+   Rechtstexte und Fehlerseite haben keinen dunklen Hero. Die Leiste startet
+   dort deshalb sofort in Textfarbe statt in Band-Farbe, unabhaengig davon,
+   ob schon gescrollt wurde.
+*/
+.seite-hell { background: var(--bg); }
+.seite-hell .nav { background: var(--bg); box-shadow: 0 1px 0 var(--line); }
+.seite-hell .nav .brand,
+.seite-hell .nav .nav__links a { color: var(--text); }
+.seite-hell .nav .nav__burger { border-color: var(--line); color: var(--text); }
+
+.legal { padding-block: calc(74px + var(--section-y)) var(--section-y); }
+.legal__inner { max-width: 46rem; }
+.legal h1 { font-size: clamp(1.9rem, 1.4rem + 1.8vw, 2.7rem); margin-bottom: 2rem; }
+.legal h2 {
+  font-family: var(--font-display);
+  font-size: .82rem; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--accent); margin: 2.5rem 0 .7rem;
+}
+.legal p, .legal li { color: var(--text-soft); margin-bottom: .85rem; }
+.legal ul { margin: 0 0 .85rem; padding-left: 1.3rem; }
+.legal a { color: var(--accent); }
+.legal__hinweis {
+  border: 1px solid var(--line); border-left: 3px solid var(--accent);
+  border-radius: var(--r); background: var(--surface);
+  padding: 1.1rem 1.3rem; margin-bottom: 2.25rem;
+  font-size: .93rem; color: var(--text);
+}
+.todo {
+  background: color-mix(in srgb, var(--accent) 20%, transparent);
+  padding: .05em .4em; border-radius: 3px; font-weight: 600; color: var(--text);
+}
+
+/* ----------------------------------------------------- Fehlerseite ------- */
+
+.fehler {
+  min-height: 100dvh; display: grid; place-content: center; text-align: center;
+  padding: calc(74px + 2rem) var(--pad-x) 4rem;
+}
+.fehler__code {
+  font-family: var(--font-display); font-weight: 700; line-height: 1;
+  font-size: clamp(4.5rem, 3rem + 12vw, 9rem); color: var(--accent);
+}
+.fehler h1 { font-size: clamp(1.5rem, 1.2rem + 1.4vw, 2.1rem); margin: .8rem 0 .9rem; }
+.fehler p { color: var(--text-soft); max-width: 44ch; margin: 0 auto 2rem; }
+
+/* ------------------------------------------------------- Seitenkopf ------ */
+/*
+   Kopfbereich der Unterseiten. Uebernimmt die Grundflaeche der Seite, damit
+   die feste Leiste darueber lesbar bleibt. Projekte mit dunklem Hero setzen
+   die Flaeche in ihrer site.css auf das dunkle Band um.
+*/
+.seitenkopf {
+  background: var(--bg); color: var(--text);
+  padding-block: calc(74px + clamp(2.5rem, 6vw, 4.5rem)) clamp(2rem, 4vw, 3rem);
+  border-bottom: 1px solid var(--line);
+}
+.seitenkopf h1 { font-size: clamp(2rem, 1.5rem + 2.2vw, 3.1rem); max-width: 20ch; }
+.seitenkopf .lede { margin-top: 1.1rem; }
+
+/* Aktive Seite in der Navigation */
+.nav__links a[aria-current="page"] { color: var(--accent); }
+.nav__links a[aria-current="page"]::after { transform: scaleX(1); }
+.menu a[aria-current="page"] { color: var(--accent); }
+
+/* ============================================================================
+   Bausteine fuer Unterseiten
+   ----------------------------------------------------------------------------
+   Alles hier arbeitet ausschliesslich mit den Marken-Variablen aus site.css.
+   Dadurch sieht derselbe Baustein in jedem Projekt anders aus, ohne dass er
+   pro Projekt neu geschrieben werden muss.
+   ========================================================================= */
+
+/* ------------------------------------------------------- Abschnittskopf -- */
+
+.kopf-block { max-width: 46rem; margin-bottom: clamp(2rem, 4vw, 3rem); }
+.kopf-block .h2 { max-width: 20ch; }
+.kopf-block .body-copy { margin-top: 1.1rem; }
+
+/* ------------------------------------------- Kurzvorschau auf Unterseite -- */
+
+.teaser-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(1rem, 2vw, 1.5rem);
+}
+.teaser {
+  display: flex;
+  flex-direction: column;
+  gap: .7rem;
+  color: var(--text);
+  padding: clamp(1.4rem, 2.4vw, 2rem);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  text-decoration: none;
+  color: inherit;
+  transition: border-color .2s ease, transform .2s ease;
+}
+.teaser:hover { border-color: var(--accent); transform: translateY(-3px); }
+.band .teaser b, .band .projekt h3, .band .zitat b, .band .preis b { color: var(--text); }
+.teaser > svg { width: 26px; height: 26px; color: var(--accent); }
+.teaser b { font-family: var(--font-display); font-size: 1.12rem; font-weight: 700; }
+.teaser p { color: var(--text-soft); font-size: .96rem; margin: 0; }
+.teaser__mehr {
+  margin-top: auto; padding-top: .5rem;
+  display: inline-flex; align-items: center; gap: .45rem;
+  font-weight: 600; font-size: .93rem; color: var(--accent);
+}
+.teaser__mehr svg { width: 1em; height: 1em; transition: transform .15s ease; }
+.teaser:hover .teaser__mehr svg { transform: translateX(3px); }
+@media (max-width: 880px) { .teaser-grid { grid-template-columns: 1fr; } }
+
+/* --------------------------------------------------------------- Ablauf -- */
+
+.ablauf {
+  list-style: none; margin: 0; padding: 0;
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: clamp(1rem, 2vw, 1.75rem);
+  counter-reset: schritt;
+}
+.ablauf li {
+  position: relative;
+  padding-top: 1.4rem;
+  border-top: 2px solid var(--line);
+  counter-increment: schritt;
+}
+.ablauf li::before {
+  content: counter(schritt, decimal-leading-zero);
+  display: block;
+  font-family: var(--font-display); font-weight: 700;
+  font-size: .82rem; letter-spacing: .1em;
+  color: var(--accent);
+  margin-bottom: .6rem;
+}
+.ablauf b { display: block; font-family: var(--font-display); font-size: 1.08rem; margin-bottom: .35rem; }
+.ablauf p { color: var(--text-soft); font-size: .96rem; margin: 0; }
+.band .ablauf li { border-top-color: var(--band-line); }
+.band .ablauf p { color: var(--band-text-soft); }
+@media (max-width: 880px) { .ablauf { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 560px) { .ablauf { grid-template-columns: 1fr; } }
+
+/* -------------------------------------------------------------- Projekte -- */
+
+.projekte { display: grid; gap: clamp(1.25rem, 2.4vw, 2rem); }
+.projekt {
+  color: var(--text);
+  display: grid; grid-template-columns: 1fr 1.15fr;
+  gap: clamp(1.25rem, 3vw, 2.5rem);
+  align-items: center;
+  padding: clamp(1.4rem, 2.6vw, 2.25rem);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+}
+.projekt:nth-child(even) .projekt__bild { order: 2; }
+.projekt__bild { aspect-ratio: 4 / 3; }
+.projekt h3 { font-size: clamp(1.2rem, 1.05rem + .7vw, 1.6rem); margin-bottom: .55rem; }
+.projekt p { color: var(--text-soft); }
+.fakten { margin: 1.4rem 0 0; display: grid; gap: 0; }
+.fakten .zeile {
+  display: flex; justify-content: space-between; gap: 1rem;
+  padding: .6rem 0; border-top: 1px solid var(--line);
+  font-size: .95rem;
+}
+.fakten dt { color: var(--text-soft); }
+.fakten dd { margin: 0; font-weight: 600; text-align: right; }
+@media (max-width: 780px) {
+  .projekt { grid-template-columns: 1fr; }
+  .projekt:nth-child(even) .projekt__bild { order: 0; }
+}
+
+/* ------------------------------------------------------------- Zitate --- */
+
+.zitate { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(1rem, 2vw, 1.75rem); }
+.zitat {
+  color: var(--text);
+  padding: clamp(1.4rem, 2.4vw, 2rem);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+}
+.zitat blockquote { margin: 0; font-size: 1.05rem; line-height: 1.55; }
+.zitat figcaption { margin-top: 1rem; color: var(--text-soft); font-size: .92rem; }
+.zitat figcaption b { color: var(--text); font-family: var(--font-display); display: block; }
+@media (max-width: 780px) { .zitate { grid-template-columns: 1fr; } }
+
+/* ----------------------------------------------------------------- FAQ --- */
+
+.faq { display: grid; gap: 0; max-width: 52rem; }
+.faq details { border-bottom: 1px solid var(--line); }
+.faq details:first-child { border-top: 1px solid var(--line); }
+.faq summary {
+  cursor: pointer; list-style: none;
+  padding: 1.1rem 0;
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+  font-family: var(--font-display); font-weight: 600; font-size: 1.03rem;
+}
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary::after {
+  content: "+"; color: var(--accent); font-size: 1.4rem; line-height: 1;
+  flex: none; transition: transform .2s ease;
+}
+.faq details[open] summary::after { transform: rotate(45deg); }
+.faq details > p { color: var(--text-soft); margin: 0 0 1.15rem; max-width: 60ch; }
+.band .faq details { border-color: var(--band-line); }
+.band .faq details:first-child { border-top-color: var(--band-line); }
+.band .faq details > p { color: var(--band-text-soft); }
+
+/* ------------------------------------------------------------ CTA-Band --- */
+
+.cta-band { background: var(--band); color: var(--band-text); }
+.cta-band__inner {
+  display: grid; grid-template-columns: 1.4fr auto;
+  gap: clamp(1.5rem, 3vw, 3rem); align-items: center;
+}
+.cta-band h2 { color: var(--band-text); max-width: 18ch; }
+.cta-band p { color: var(--band-text-soft); margin-top: 1rem; max-width: 48ch; }
+.cta-band__aktionen { display: flex; flex-wrap: wrap; gap: .85rem; }
+@media (max-width: 880px) { .cta-band__inner { grid-template-columns: 1fr; } }
+
+/* ------------------------------------------------------------ Formular --- */
+
+.formular {
+  color: var(--text);
+  padding: clamp(1.5rem, 3vw, 2.25rem);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+}
+.feld { display: grid; gap: .45rem; margin-bottom: 1.15rem; }
+.feld-paar { display: grid; grid-template-columns: 1fr 1fr; gap: 1.15rem; }
+.feld label { font-size: .88rem; font-weight: 600; }
+.feld input, .feld textarea, .feld select {
+  width: 100%;
+  padding: .8rem .9rem;
+  font: inherit; font-size: .97rem;
+  color: var(--text);
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  transition: border-color .15s ease;
+}
+.feld textarea { resize: vertical; min-height: 7.5rem; }
+.feld input:focus, .feld textarea:focus, .feld select:focus {
+  outline: none; border-color: var(--accent);
+}
+.formular__hinweis { color: var(--text-soft); font-size: .85rem; margin-top: .9rem; }
+@media (max-width: 560px) { .feld-paar { grid-template-columns: 1fr; } }
+
+/* --------------------------------------------------------- Zwei Spalten -- */
+
+.zwei {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: clamp(1.5rem, 4vw, 3.5rem);
+  align-items: start;
+}
+.zwei--schmal-rechts { grid-template-columns: 1.25fr .95fr; }
+@media (max-width: 880px) { .zwei, .zwei--schmal-rechts { grid-template-columns: 1fr; } }
+
+/* ------------------------------------------------------------- Preise ---- */
+
+.preise { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(1rem, 2vw, 1.5rem); }
+.preis {
+  color: var(--text);
+  padding: clamp(1.4rem, 2.4vw, 2rem);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+}
+.preis__wert {
+  font-family: var(--font-display); font-weight: 700;
+  font-size: clamp(1.6rem, 1.3rem + 1.2vw, 2.2rem);
+  color: var(--accent); line-height: 1;
+}
+.preis b { display: block; font-family: var(--font-display); margin: .8rem 0 .35rem; }
+.preis p { color: var(--text-soft); font-size: .95rem; margin: 0; }
+@media (max-width: 880px) { .preise { grid-template-columns: 1fr; } }
