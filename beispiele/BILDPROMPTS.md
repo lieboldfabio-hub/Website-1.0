@@ -209,7 +209,7 @@ warm cream palette with a soft coral accent, calm and reassuring, clean but not
 sterile, 35mm lens, realistic, no text, no logos, no watermark
 ```
 
-### `hero.jpg` — Hochformat 4:5
+### `hero.jpg` — Querformat 16:9
 ```
 A modern dental treatment room, treatment chair beside a large window with
 plants, warm wood and deep green surfaces, soft daylight, welcoming rather than

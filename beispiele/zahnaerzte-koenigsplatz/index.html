@@ -42,20 +42,33 @@
 <a class="skip" href="#main">Zum Inhalt springen</a>
 <a class="demo-badge" href="../">Beispielprojekt</a>
 
-<header class="nav">
-  <div class="nav__inner">
-    <a class="brand" href="index.html">Königsplatz</a>
+<!-- ============================================================================
+     Die Leiste schwebt als abgerundete Kachel ueber dem Inhalt, statt als
+     Balken quer durch die Seite zu gehen. Weiche Formen sind bei einer
+     Zahnarztpraxis kein Schmuck, sondern die Ansage: hier ist es nicht
+     klinisch. Die aktive Seite traegt eine gefuellte Pille, kein Striche
+     darunter.
+     ========================================================================= -->
+
+<header class="schwebeleiste">
+  <div class="schwebeleiste__kachel">
+    <a class="praxisname" href="index.html">
+      <svg aria-hidden="true"><use href="#i-tooth"></use></svg>
+      K&ouml;nigsplatz
+    </a>
+
     <nav aria-label="Hauptnavigation">
-      <ul class="nav__links">
-      <li><a href="index.html" aria-current="page">Start</a></li>
-      <li><a href="leistungen.html">Leistungen</a></li>
-      <li><a href="praxis.html">Praxis</a></li>
-      <li><a href="termin.html">Termin</a></li>
+      <ul class="pillen">
+        <li><a href="index.html" aria-current="page">Start</a></li>
+        <li><a href="leistungen.html">Leistungen</a></li>
+        <li><a href="praxis.html">Praxis</a></li>
+        <li><a href="termin.html">Termin</a></li>
       </ul>
     </nav>
-    <div class="nav__cta">
+
+    <div class="schwebeleiste__cta">
       <a class="btn btn--sm" href="termin.html">Termin buchen</a>
-      <button class="nav__burger" aria-label="Men&uuml; &ouml;ffnen" aria-expanded="false" aria-controls="menu">
+      <button class="schwebeleiste__burger" aria-label="Men&uuml; &ouml;ffnen" aria-expanded="false" aria-controls="menu">
         <span></span><span></span><span></span>
       </button>
     </div>
@@ -73,13 +86,20 @@
 <main id="main">
 
 <!-- ================================================================== Hero -->
-<section class="hero" id="top">
-  <div class="wrap hero__grid">
-    <div>
-      <p class="eyebrow" data-hero="1">Zahnärzte am Königsplatz, Augsburg</p>
+<!-- ============================================================================
+     Empfang: der Satz steht mittig auf einem ruhigen gruenen Feld, das Bild
+     liegt breit darunter und ragt in den hellen Grund hinein. Kein Text
+     links, Bild rechts - eine Praxis empfaengt einen von vorn, nicht von
+     der Seite.
+     ========================================================================= -->
+
+<section class="empfang" id="top">
+  <div class="empfang__feld">
+    <div class="empfang__satz">
+      <p class="eyebrow" data-hero="1">Zahn&auml;rzte am K&ouml;nigsplatz, Augsburg</p>
       <h1 class="display" data-hero="2">Zahnmedizin, die die Angst rausnimmt.</h1>
       <p class="lede" data-hero="3">
-        Von der Kontrolle bis zur Implantatplanung – wir erklären jeden
+        Von der Kontrolle bis zur Implantatplanung &ndash; wir erkl&auml;ren jeden
         Schritt, bevor wir ihn tun, und nehmen uns die Zeit, die
         Angstpatientinnen und -patienten brauchen.
       </p>
@@ -91,12 +111,12 @@
         <a class="btn btn--line" href="leistungen.html">Leistungen ansehen</a>
       </div>
     </div>
+  </div>
 
-    <div class="ph hero__media" data-hero="5">
-      <img src="assets/img/hero.jpg" alt="Behandlungszimmer der Praxis" width="800" height="1000">
-      <svg class="ph__mark" aria-hidden="true"><use href="#i-tooth"></use></svg>
-      <p class="ph__brief"><b>Bildplatz: Hero</b>Behandlungszimmer, Hochformat 4:5</p>
-    </div>
+  <div class="ph empfang__bild" data-hero="5">
+    <img src="assets/img/hero.jpg" alt="Behandlungszimmer der Praxis" width="1800" height="1000">
+    <svg class="ph__mark" aria-hidden="true"><use href="#i-tooth"></use></svg>
+    <p class="ph__brief"><b>Bildplatz: Empfang</b>Behandlungszimmer, Querformat 16:9</p>
   </div>
 </section>
 
@@ -253,25 +273,45 @@
 
 </main>
 
-<footer class="footer">
-  <div class="wrap">
-    <div class="footer__grid">
-      <a class="brand" href="index.html" style="color:var(--band-text)">Königsplatz</a>
-      <ul class="footer__links">
+<!-- ============================================================================
+     Fuss als Praxiskarte: links eine helle Karte mit den Angaben, rechts die
+     Sprechzeiten als Tabelle. Kein Namenszug mit Linkliste daneben.
+     ========================================================================= -->
+
+<footer class="praxiskarte">
+  <div class="praxiskarte__raster">
+    <div class="praxiskarte__karte">
+      <p class="praxiskarte__name">Zahn&auml;rzte am K&ouml;nigsplatz</p>
+      <p>
+        Von der Kontrolle bis zur Implantatplanung. Wir erkl&auml;ren jeden
+        Schritt, bevor wir ihn tun.
+      </p>
+      <a class="btn btn--sm" href="termin.html">Termin buchen</a>
+    </div>
+
+    <div class="praxiskarte__zeiten">
+      <h2>Sprechzeiten</h2>
+      <dl>
+        <div><dt>Montag bis Donnerstag</dt><dd>8&ndash;18 Uhr</dd></div>
+        <div><dt>Freitag</dt><dd>8&ndash;14 Uhr</dd></div>
+        <div><dt>Notfall-Sprechstunde</dt><dd>Sa und So nach Anruf</dd></div>
+      </dl>
+
+      <ul class="praxiskarte__links">
         <li><a href="leistungen.html">Leistungen</a></li>
-        <li><a href="praxis.html">Praxis &amp; Team</a></li>
-        <li><a href="termin.html">Termin</a></li>
+        <li><a href="praxis.html">Praxis</a></li>
         <li><a href="impressum.html">Impressum</a></li>
         <li><a href="datenschutz.html">Datenschutz</a></li>
         <li><a href="../">Weitere Beispiele</a></li>
       </ul>
     </div>
-    <p class="footer__note">
-      Beispielprojekt. Zahnärzte am Königsplatz ist ein erfundenes
-      Unternehmen, sämtliche Angaben auf dieser Seite dienen ausschließlich
-      der Veranschaulichung von Gestaltung und Interaktion.
-    </p>
   </div>
+
+  <p class="praxiskarte__note">
+    Beispielprojekt. Zahn&auml;rzte am K&ouml;nigsplatz ist eine erfundene Praxis,
+    s&auml;mtliche Angaben auf dieser Seite dienen ausschlie&szlig;lich der
+    Veranschaulichung von Gestaltung und Interaktion.
+  </p>
 </footer>
 
 <script src="assets/js/gsap.min.js"></script>

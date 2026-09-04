@@ -133,71 +133,7 @@ section { position: relative; }
 
 .btn__ico { width: 1.05em; height: 1.05em; flex: none; }
 
-/* ------------------------------------------------------------------ Nav -- */
-
-.nav {
-  position: fixed; inset: 0 0 auto 0; z-index: 100;
-  height: 74px; display: flex; align-items: center;
-  transition: height .3s var(--ease), background-color .3s var(--ease),
-              box-shadow .3s var(--ease);
-}
-.nav__inner {
-  width: 100%; max-width: var(--wrap, 1240px); margin-inline: auto;
-  padding-inline: var(--pad-x);
-  display: flex; align-items: center; justify-content: space-between; gap: 1.5rem;
-}
-.nav.is-stuck {
-  height: 62px;
-  background: color-mix(in srgb, var(--bg) 88%, transparent);
-  backdrop-filter: blur(14px) saturate(150%);
-  -webkit-backdrop-filter: blur(14px) saturate(150%);
-  box-shadow: 0 1px 0 var(--line), 0 10px 30px -20px rgba(0,0,0,.45);
-}
-
-.brand {
-  font-family: var(--font-display);
-  font-weight: 700; font-size: 1.24rem; letter-spacing: -.01em;
-  text-decoration: none; color: var(--band-text);
-  transition: color .3s var(--ease);
-}
-.nav.is-stuck .brand { color: var(--text); }
-
-.nav__links { display: flex; align-items: center; gap: clamp(1rem,2vw,2rem);
-  list-style: none; margin: 0; padding: 0; }
-.nav__links a {
-  font-family: var(--font-display); font-size: .96rem; font-weight: 500;
-  text-decoration: none; color: var(--band-text-soft);
-  padding: .4rem 0; position: relative; transition: color .22s var(--ease);
-}
-.nav.is-stuck .nav__links a { color: var(--text); }
-.nav__links a::after {
-  content:""; position:absolute; left:0; right:0; bottom:0; height:2px;
-  background: var(--accent-flaeche); transform: scaleX(0); transform-origin: left;
-  transition: transform .28s var(--ease);
-}
-.nav__links a:hover { color: var(--accent); }
-.nav__links a:hover::after { transform: scaleX(1); }
-
-.nav__cta { display: flex; align-items: center; gap: .7rem; }
-
-.nav__burger {
-  display: none; width: 44px; height: 44px; padding: 0;
-  border: 1px solid var(--band-line); border-radius: 999px;
-  background: transparent; color: inherit; cursor: pointer; place-items: center;
-}
-.nav.is-stuck .nav__burger { border-color: var(--line); color: var(--text); }
-.nav__burger span {
-  display: block; width: 17px; height: 1.6px; background: currentColor;
-  margin: 3.2px auto; transition: transform .3s var(--ease), opacity .2s var(--ease);
-}
-.nav__burger[aria-expanded="true"] span:nth-child(1){transform:translateY(4.8px) rotate(45deg);}
-.nav__burger[aria-expanded="true"] span:nth-child(2){opacity:0;}
-.nav__burger[aria-expanded="true"] span:nth-child(3){transform:translateY(-4.8px) rotate(-45deg);}
-
-@media (max-width: 900px) {
-  .nav__links, .nav__cta .btn { display: none; }
-  .nav__burger { display: grid; }
-}
+/* ----------------------------------------------- Menue auf schmalem Fenster */
 
 .menu {
   position: fixed; inset: 0; z-index: 110;
@@ -256,25 +192,6 @@ section { position: relative; }
   font-size:.84rem; color:rgba(255,255,255,.9); margin-bottom:.1rem;
 }
 
-/* ------------------------------------------------------------- Footer --- */
-
-.footer {
-  background: var(--band); color: var(--band-text-soft);
-  padding-block: clamp(2.5rem,5vw,3.5rem);
-  border-top: 1px solid var(--band-line); font-size: .94rem;
-}
-.footer__grid {
-  display:flex; flex-wrap:wrap; gap:1.5rem 2.5rem;
-  align-items:center; justify-content:space-between;
-}
-.footer__links { display:flex; flex-wrap:wrap; gap:1.5rem; list-style:none; margin:0; padding:0; }
-.footer__links a { text-decoration:none; }
-.footer__links a:hover { color: var(--accent); }
-.footer__note {
-  margin-top:2rem; padding-top:1.5rem; border-top:1px solid var(--band-line);
-  font-size:.85rem; opacity:.75; max-width:78ch;
-}
-
 /* --------------------------------------------------- Bewegung, Grundlage */
 
 .js .reveal { opacity: 0; transform: translateY(26px); }
@@ -300,12 +217,10 @@ section { position: relative; }
    ob schon gescrollt wurde.
 */
 .seite-hell { background: var(--bg); }
-.seite-hell .nav { background: var(--bg); box-shadow: 0 1px 0 var(--line); }
-.seite-hell .nav .brand,
-.seite-hell .nav .nav__links a { color: var(--text); }
-.seite-hell .nav .nav__burger { border-color: var(--line); color: var(--text); }
+/* Die Kachel schwebt immer ueber hellem Grund und traegt ihn selbst mit;
+   die Sonderfaelle fuer eine Leiste ueber dunklem Hero entfallen. */
 
-.legal { padding-block: calc(74px + var(--section-y)) var(--section-y); }
+.legal { padding-block: calc(var(--kachel-h) + var(--section-y)) var(--section-y); }
 .legal__inner { max-width: 46rem; }
 .legal h1 { font-size: clamp(1.9rem, 1.4rem + 1.8vw, 2.7rem); margin-bottom: 2rem; }
 .legal h2 {
@@ -331,7 +246,7 @@ section { position: relative; }
 
 .fehler {
   min-height: 100dvh; display: grid; place-content: center; text-align: center;
-  padding: calc(74px + 2rem) var(--pad-x) 4rem;
+  padding: calc(var(--kachel-h) + 2rem) var(--pad-x) 4rem;
 }
 .fehler__code {
   font-family: var(--font-display); font-weight: 700; line-height: 1;
@@ -348,15 +263,14 @@ section { position: relative; }
 */
 .seitenkopf {
   background: var(--bg); color: var(--text);
-  padding-block: calc(74px + clamp(2.5rem, 6vw, 4.5rem)) clamp(2rem, 4vw, 3rem);
+  padding-block: calc(var(--kachel-h) + clamp(2.5rem, 6vw, 4.5rem)) clamp(2rem, 4vw, 3rem);
   border-bottom: 1px solid var(--line);
 }
 .seitenkopf h1 { font-size: clamp(2rem, 1.5rem + 2.2vw, 3.1rem); max-width: 20ch; }
 .seitenkopf .lede { margin-top: 1.1rem; }
 
 /* Aktive Seite in der Navigation */
-.nav__links a[aria-current="page"] { color: var(--accent); }
-.nav__links a[aria-current="page"]::after { transform: scaleX(1); }
+.pillen a[aria-current="page"] { background: var(--tanne-900); color: var(--band-text); }
 .menu a[aria-current="page"] { color: var(--accent); }
 
 /* ============================================================================
@@ -638,47 +552,6 @@ h1, h2, h3 { font-weight: 600; letter-spacing: -0.01em; }
 .demo-badge::before { content: ""; width: 6px; height: 6px; border-radius: 999px; background: var(--accent-flaeche); }
 .demo-badge:hover { border-color: var(--accent); }
 
-.nav .brand, .nav .nav__links a { color: var(--text); }
-.nav .nav__burger { border-color: var(--line); color: var(--text); }
-
-/* ----------------------------------------------------------------- Hero - */
-.hero {
-  position: relative; min-height: 100dvh; display: flex; align-items: center;
-  padding-top: clamp(6rem, 9vh, 7rem); padding-bottom: clamp(3rem, 7vh, 5rem);
-  background-color: var(--bg);
-}
-.hero::before {
-  content: ""; position: absolute; inset: 0;
-  background-image: radial-gradient(rgba(23, 51, 44, 0.1) 1.6px, transparent 1.6px);
-  background-size: 26px 26px;
-  mask-image: linear-gradient(to bottom, #000 0%, transparent 78%);
-  -webkit-mask-image: linear-gradient(to bottom, #000 0%, transparent 78%);
-  pointer-events: none;
-}
-.hero__grid {
-  position: relative; display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
-  gap: clamp(2.5rem, 5vw, 4.5rem); align-items: center; width: 100%;
-}
-.hero .display { max-width: 17ch; }
-.hero .lede { margin-top: 1.4rem; max-width: 42ch; }
-.hero__actions { margin-top: 2.2rem; display: flex; flex-wrap: wrap; gap: 0.85rem; }
-.hero__media { aspect-ratio: 4 / 5; }
-@media (max-width: 900px) {
-  .hero__grid { grid-template-columns: 1fr; gap: 2.25rem; }
-  .hero .display { max-width: none; }
-  .hero__media { aspect-ratio: 3 / 2; }
-}
-
-/* Notfall-Leiste */
-.notfall { background: var(--tanne-900); color: var(--band-text); padding-block: 1.15rem; }
-.notfall__inner { display: flex; flex-wrap: wrap; align-items: center; gap: 0.85rem 1.5rem; }
-.notfall svg { width: 22px; height: 22px; color: var(--accent); flex: none; }
-.notfall b { font-family: var(--font-display); font-weight: 600; }
-.notfall span { color: var(--band-text-soft); }
-.notfall a { margin-left: auto; font-weight: 700; text-decoration: none; border-bottom: 2px solid var(--accent); padding-bottom: 2px; }
-.notfall a:hover { color: var(--accent); }
-@media (max-width: 700px) { .notfall a { margin-left: 0; } }
-
 /* ------------------------------------------------------------ Leistungen */
 .leistungen__kopf { max-width: 46rem; margin-bottom: clamp(2rem, 4vw, 3rem); }
 .leistungen__kopf .h2 { max-width: 22ch; }
@@ -749,10 +622,186 @@ h1, h2, h3 { font-weight: 600; letter-spacing: -0.01em; }
 
 /* In den dunklen Abschnitten uebernimmt der aufgehellte Ton. Weil --accent
    vererbt wird, genuegt es, ihn am Container zu setzen. */
-.notfall, .praxis, .footer, .cta-band, .band {
+.notfall, .praxis, .cta-band, .band {
   --accent: var(--accent-band);
   --accent-flaeche: var(--accent-band);
   /* Ein Knopf auf dem Band traegt jetzt die helle Flaeche, also braucht er
      dunkle Schrift statt der hellen aus dem Grundzustand. */
   --accent-fg: #17332c;
+}
+
+
+/* ============================================================================
+   3. Rahmen dieser Seite
+   ----------------------------------------------------------------------------
+   Kopf, Empfang und Fuss der Praxis. Weiche, gerundete Formen sind hier
+   kein Schmuck, sondern die Ansage: es ist nicht klinisch.
+
+   - Die Leiste schwebt als abgerundete Kachel ueber dem Inhalt, statt als
+     Balken quer durch die Seite zu gehen. Die aktive Seite traegt eine
+     gefuellte Pille.
+   - Der Empfang stellt den Satz mittig auf ein ruhiges gruenes Feld; das
+     Bild liegt breit darunter und ragt in den hellen Grund hinein.
+   - Der Fuss ist eine Praxiskarte: links die Angaben auf heller Flaeche,
+     rechts die Sprechzeiten als Tabelle.
+   ========================================================================= */
+
+:root { --kachel-h: 92px; }
+
+/* ---------------------------------------------------------- Schwebeleiste */
+
+.schwebeleiste {
+  position: fixed; inset: 0 0 auto; z-index: 100;
+  padding: clamp(.7rem, 1.6vh, 1.1rem) var(--pad-x);
+  pointer-events: none;
+}
+.schwebeleiste__kachel {
+  pointer-events: auto;
+  width: 100%; max-width: var(--wrap); margin-inline: auto;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 1rem clamp(1rem, 3vw, 2rem);
+  padding: .55rem .6rem .55rem 1.3rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--surface) 92%, transparent);
+  backdrop-filter: blur(14px) saturate(150%);
+  -webkit-backdrop-filter: blur(14px) saturate(150%);
+  box-shadow: 0 1px 2px rgba(23, 51, 44, .06), 0 14px 34px -22px rgba(23, 51, 44, .5);
+  transition: box-shadow .3s var(--ease);
+}
+.schwebeleiste.is-stuck .schwebeleiste__kachel {
+  box-shadow: 0 1px 2px rgba(23, 51, 44, .08), 0 18px 40px -20px rgba(23, 51, 44, .55);
+}
+
+.praxisname {
+  display: inline-flex; align-items: center; gap: .5rem;
+  font-family: var(--font-display); font-weight: 700;
+  font-size: 1.14rem; letter-spacing: -.01em;
+  color: var(--text); text-decoration: none;
+  white-space: nowrap;
+}
+.praxisname svg { width: 22px; height: 22px; color: var(--accent); flex: none; }
+
+/* Reiter als Pillen. Die aktive ist gefuellt, nicht unterstrichen - runde
+   Formen ziehen sich hier durch alles. */
+.pillen { display: flex; align-items: center; gap: .25rem;
+  list-style: none; margin: 0; padding: 0; }
+.pillen a {
+  display: inline-block; padding: .5rem .95rem;
+  border-radius: 999px;
+  font-family: var(--font-display); font-size: .94rem; font-weight: 500;
+  color: var(--text-soft); text-decoration: none;
+  transition: background-color .22s var(--ease), color .22s var(--ease);
+}
+.pillen a:hover { background: var(--creme-2); color: var(--text); }
+
+.schwebeleiste__cta { display: flex; align-items: center; gap: .5rem; }
+
+.schwebeleiste__burger {
+  display: none; width: 42px; height: 42px; padding: 0;
+  border: 0; border-radius: 999px;
+  background: var(--creme-2); color: var(--text); cursor: pointer; place-items: center;
+}
+.schwebeleiste__burger span {
+  display: block; width: 16px; height: 2px; border-radius: 2px; background: currentColor;
+  margin: 3.2px auto; transition: transform .3s var(--ease), opacity .2s var(--ease);
+}
+.schwebeleiste__burger[aria-expanded="true"] span:nth-child(1){transform:translateY(5.2px) rotate(45deg);}
+.schwebeleiste__burger[aria-expanded="true"] span:nth-child(2){opacity:0;}
+.schwebeleiste__burger[aria-expanded="true"] span:nth-child(3){transform:translateY(-5.2px) rotate(-45deg);}
+
+@media (max-width: 900px) {
+  .pillen, .schwebeleiste__cta .btn { display: none; }
+  .schwebeleiste__burger { display: grid; }
+}
+
+/* ---------------------------------------------------------------- Empfang */
+
+.empfang { position: relative; }
+
+.empfang__feld {
+  background: var(--tanne-900);
+  color: var(--band-text);
+  border-radius: 0 0 clamp(1.5rem, 5vw, 3.5rem) clamp(1.5rem, 5vw, 3.5rem);
+  padding: calc(var(--kachel-h) + clamp(2.5rem, 7vh, 5rem)) var(--pad-x)
+           calc(clamp(3rem, 9vh, 6rem) + clamp(2.5rem, 7vw, 5rem));
+  text-align: center;
+}
+.empfang__satz { max-width: 46rem; margin-inline: auto; }
+.empfang__satz .eyebrow { color: var(--accent-band); }
+.empfang__satz .display { color: var(--band-text); }
+.empfang__satz .lede { margin: 1.3rem auto 0; max-width: 52ch; color: var(--band-text-soft); }
+.empfang__satz .hero__actions {
+  margin-top: 2.1rem; display: flex; flex-wrap: wrap; gap: .85rem; justify-content: center;
+}
+/* Der Linienknopf ist fuer hellen Grund gebaut und waere hier unsichtbar. */
+.empfang__satz .btn--line { color: var(--band-text); border-color: var(--band-line); }
+.empfang__satz .btn--line:hover { background: var(--band-text); color: var(--tanne-900); border-color: var(--band-text); }
+
+/* Das Bild ragt in den hellen Grund hinein und verbindet beide Zonen. */
+.empfang__bild {
+  position: relative;
+  width: 100%; max-width: var(--wrap);
+  margin: calc(clamp(2.5rem, 7vw, 5rem) * -1) auto 0;
+  aspect-ratio: 16 / 9;
+  border-radius: clamp(1rem, 3vw, 1.75rem);
+  box-shadow: 0 24px 60px -34px rgba(23, 51, 44, .6);
+}
+@media (max-width: 1360px) {
+  .empfang__bild { width: calc(100% - var(--pad-x) * 2); }
+}
+
+/* ------------------------------------------------------------ Praxiskarte */
+
+.praxiskarte {
+  background: var(--tanne-900); color: var(--band-text-soft);
+  padding: clamp(2.5rem, 5vw, 4rem) var(--pad-x);
+  --accent: var(--accent-band);
+  --accent-flaeche: var(--accent-band);
+  --accent-fg: #17332c;
+}
+.praxiskarte__raster {
+  width: 100%; max-width: var(--wrap); margin-inline: auto;
+  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: clamp(1.5rem, 4vw, 3rem);
+  align-items: start;
+}
+.praxiskarte__karte {
+  background: rgba(255, 255, 255, .06);
+  border: 1px solid var(--band-line);
+  border-radius: clamp(1rem, 2.5vw, 1.5rem);
+  padding: clamp(1.5rem, 3vw, 2.2rem);
+}
+.praxiskarte__name {
+  margin: 0 0 .7rem; font-family: var(--font-display); font-weight: 700;
+  font-size: 1.3rem; color: var(--band-text);
+}
+.praxiskarte__karte p { max-width: 40ch; }
+.praxiskarte__karte .btn { margin-top: 1.4rem; }
+
+.praxiskarte__zeiten h2 {
+  font-size: .74rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase;
+  color: var(--accent-band); margin-bottom: 1rem;
+}
+.praxiskarte dl { margin: 0; display: grid; gap: 0; }
+.praxiskarte dl > div {
+  display: flex; flex-wrap: wrap; justify-content: space-between; gap: .4rem 1rem;
+  padding: .7rem 0; border-top: 1px solid var(--band-line);
+}
+.praxiskarte dl > div:last-child { border-bottom: 1px solid var(--band-line); }
+.praxiskarte dd { margin: 0; color: var(--band-text); }
+
+.praxiskarte__links {
+  display: flex; flex-wrap: wrap; gap: .8rem 1.4rem;
+  list-style: none; margin: 1.5rem 0 0; padding: 0; font-size: .9rem;
+}
+.praxiskarte__links a { text-decoration: none; }
+.praxiskarte__links a:hover { color: var(--accent-band); }
+
+.praxiskarte__note {
+  width: 100%; max-width: var(--wrap); margin: 2rem auto 0;
+  padding-top: 1.5rem; border-top: 1px solid var(--band-line);
+  font-size: .83rem; line-height: 1.6; opacity: .72;
+}
+@media (max-width: 820px) {
+  .praxiskarte__raster { grid-template-columns: 1fr; }
 }
