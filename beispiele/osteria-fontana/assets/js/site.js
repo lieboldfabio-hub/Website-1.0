@@ -34,7 +34,7 @@ window.Basis = (function () {
 
   /* -------------------------------------------------------------- Navigation */
 
-  var nav = document.querySelector(".nav");
+  var nav = document.querySelector(".firmenschild");
   if (hatGSAP && nav) {
     ScrollTrigger.create({
       start: "top -80",
@@ -43,7 +43,7 @@ window.Basis = (function () {
     });
   }
 
-  var burger = document.querySelector(".nav__burger");
+  var burger = document.querySelector(".firmenschild__burger");
   var menu = document.querySelector(".menu");
   if (burger && menu) {
     menu.hidden = false;

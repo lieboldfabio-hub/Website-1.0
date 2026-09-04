@@ -40,23 +40,37 @@
 
 <a class="demo-badge" href="../">Beispielprojekt</a>
 
-<header class="nav">
-  <div class="nav__inner">
-    <a class="brand" href="index.html">Osteria Fontana</a>
-    <nav aria-label="Hauptnavigation">
-      <ul class="nav__links">
-      <li><a href="index.html" aria-current="page">Start</a></li>
-      <li><a href="karte.html">Karte</a></li>
-      <li><a href="abend.html">Der Abend</a></li>
-      <li><a href="besuch.html">Besuch</a></li>
+<!-- ============================================================================
+     Kopf wie auf einer Speisekarte: der Name steht mittig und allein, die
+     Wege dazu links und rechts davon. Kein Knopf in der Leiste - eine
+     Reservierung ist ein Satz, kein Kauf, deshalb steht sie als
+     unterstrichener Verweis am rechten Rand.
+     ========================================================================= -->
+
+<header class="firmenschild">
+  <div class="firmenschild__zeile">
+    <nav class="wege wege--links" aria-label="Hauptnavigation">
+      <ul>
+        <li><a href="index.html" aria-current="page">Start</a></li>
+        <li><a href="karte.html">Karte</a></li>
       </ul>
     </nav>
-    <div class="nav__cta">
-      <a class="btn btn--sm" href="besuch.html">Tisch anfragen</a>
-      <button class="nav__burger" aria-label="Men&uuml; &ouml;ffnen" aria-expanded="false" aria-controls="menu">
-        <span></span><span></span><span></span>
-      </button>
-    </div>
+
+    <a class="schriftzug" href="index.html">
+      <span>Osteria</span><i>Fontana</i>
+    </a>
+
+    <nav class="wege wege--rechts" aria-label="Weitere Seiten">
+      <ul>
+        <li><a href="abend.html">Der Abend</a></li>
+        <li><a href="besuch.html">Besuch</a></li>
+        <li><a class="wege__tisch" href="besuch.html">Tisch anfragen</a></li>
+      </ul>
+    </nav>
+
+    <button class="firmenschild__burger" aria-label="Men&uuml; &ouml;ffnen" aria-expanded="false" aria-controls="menu">
+      <span></span><span></span><span></span>
+    </button>
   </div>
 </header>
 
@@ -71,29 +85,38 @@
 <main id="main">
 
 <!-- ================================================================== Hero -->
-<section class="hero" id="top">
-  <div class="wrap hero__grid">
-    <div>
-      <p class="eyebrow" data-hero="1">Trattoria seit 1998</p>
-      <h1 class="display" data-hero="2">Zwölf Gerichte. Jeden Tag neu.</h1>
-      <p class="lede" data-hero="3">
-        Was der Markt hergibt, steht am Abend auf der Karte. Mehr passt nicht darauf.
-      </p>
-      <div class="hero__actions" data-hero="4">
-        <a class="btn" href="besuch.html">
-          Tisch anfragen
-          <svg class="btn__ico" aria-hidden="true"><use href="#i-arrow-right"></use></svg>
-        </a>
-        <a class="btn btn--ghost" href="karte.html">Zur Karte</a>
-      </div>
-    </div>
+<!-- ============================================================================
+     Anschlag: ein Bild ueber die volle Flaeche, der Satz mittig darin, unten
+     die Zeiten. Symmetrisch und ruhig - eine Speisekarte haengt auch mittig
+     im Fenster und nicht links angeschlagen.
+     ========================================================================= -->
 
-    <div class="ph hero__media" data-hero="5">
-      <img src="assets/img/hero.jpg" alt="Gedeckter Tisch am Abend" width="800" height="1000">
-      <svg class="ph__mark" aria-hidden="true"><use href="#i-wine"></use></svg>
-      <p class="ph__brief"><b>Bildplatz: Hero</b>Gedeckter Tisch bei Abendlicht, Hochformat 4:5</p>
+<section class="anschlag" id="top">
+  <div class="ph anschlag__bild" data-hero="1">
+    <img src="assets/img/hero.jpg" alt="Gedeckter Tisch am Abend" width="1800" height="1200">
+    <svg class="ph__mark" aria-hidden="true"><use href="#i-wine"></use></svg>
+    <p class="ph__brief"><b>Bildplatz: Anschlag</b>Gedeckter Tisch bei Abendlicht, Querformat 3:2</p>
+  </div>
+
+  <div class="anschlag__mitte">
+    <p class="eyebrow" data-hero="2">Trattoria seit 1998</p>
+    <h1 class="display" data-hero="3">Zw&ouml;lf Gerichte.<br>Jeden Tag neu.</h1>
+    <p class="lede" data-hero="4">
+      Was der Markt hergibt, steht am Abend auf der Karte.
+      Mehr passt nicht darauf.
+    </p>
+    <div class="hero__actions" data-hero="5">
+      <a class="btn" href="besuch.html">
+        Tisch anfragen
+        <svg class="btn__ico" aria-hidden="true"><use href="#i-arrow-right"></use></svg>
+      </a>
+      <a class="btn btn--ghost" href="karte.html">Zur Karte</a>
     </div>
   </div>
+
+  <p class="anschlag__zeiten" data-hero="6">
+    Dienstag bis Samstag <i>&middot;</i> ab 17:30 Uhr <i>&middot;</i> Sonntag und Montag Ruhetag
+  </p>
 </section>
 
 <!-- =============================================================== Laufband -->
@@ -309,22 +332,43 @@
 
 </main>
 
-<footer class="footer">
-  <div class="wrap">
-    <div class="footer__grid">
-      <a class="brand" href="index.html" style="color:var(--band-text)">Osteria Fontana</a>
-      <ul class="footer__links">
-        <li><a href="abend.html">Der Abend</a></li>
-        <li><a href="karte.html">Karte</a></li>
-        <li><a href="besuch.html">Besuch</a></li>
-        <li><a href="impressum.html">Impressum</a></li>
-        <li><a href="datenschutz.html">Datenschutz</a></li>
-        <li><a href="../">Weitere Beispiele</a></li>
-      </ul>
+<!-- ============================================================================
+     Fuss wie die Rueckseite einer Karte: mittig gesetzt, Zeiten und Adresse
+     als zwei kurze Bloecke, darunter eine feine Linie.
+     ========================================================================= -->
+
+<footer class="rueckseite">
+  <div class="rueckseite__mitte">
+    <p class="rueckseite__name">Osteria Fontana</p>
+    <p class="rueckseite__satz">
+      Zw&ouml;lf Gerichte, jeden Tag neu. Was der Markt hergibt, steht am Abend
+      auf der Karte.
+    </p>
+
+    <div class="rueckseite__spalten">
+      <div>
+        <h2>Ge&ouml;ffnet</h2>
+        <p>Dienstag bis Samstag<br>ab 17:30 Uhr</p>
+      </div>
+      <div>
+        <h2>Ruhetag</h2>
+        <p>Sonntag und Montag</p>
+      </div>
+      <div>
+        <h2>Tisch</h2>
+        <p><a href="besuch.html">Anfragen</a><br><a href="karte.html">Karte ansehen</a></p>
+      </div>
     </div>
-    <p class="footer__note">
-      Beispielprojekt. Osteria Fontana ist ein erfundenes Unternehmen, sämtliche
-      Angaben auf dieser Seite dienen ausschließlich der Veranschaulichung von
+
+    <ul class="rueckseite__links">
+      <li><a href="impressum.html">Impressum</a></li>
+      <li><a href="datenschutz.html">Datenschutz</a></li>
+      <li><a href="../">Weitere Beispiele</a></li>
+    </ul>
+
+    <p class="rueckseite__note">
+      Beispielprojekt. Osteria Fontana ist ein erfundenes Unternehmen, s&auml;mtliche
+      Angaben auf dieser Seite dienen ausschlie&szlig;lich der Veranschaulichung von
       Gestaltung und Interaktion.
     </p>
   </div>
