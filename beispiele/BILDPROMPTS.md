@@ -1,9 +1,14 @@
 # Bild-Prompts für die Beispielprojekte
 
-21 Bildplätze, verteilt auf fünf Projekte. Für jedes Projekt gibt es einen
+24 Bildplätze, verteilt auf fünf Projekte. Für jedes Projekt gibt es einen
 **Stilblock**, der in jeden Prompt dieses Projekts ans Ende gehängt wird – so
 wirken die Bilder eines Projekts wie aus einer Serie und nicht wie fünf
 zusammengesuchte Stockfotos.
+
+> **Format und Dateiname stehen nur hier.** Auf der Seite selbst sagt der
+> Platzhalter „Foto folgt" und darunter, was zu sehen sein wird – damit er auch
+> in einem Kundengespräch gelesen werden kann. Die technischen Angaben brauchst
+> du beim Fotografieren, nicht der Kunde beim Anschauen.
 
 ## So benutzt du die Prompts
 
@@ -22,7 +27,7 @@ zusammengesuchte Stockfotos.
 
 ---
 
-## 1. Halbritter Haustechnik · Handwerk (3 Bilder)
+## 1. Halbritter Haustechnik · Handwerk (6 Bilder)
 
 **Stilblock** (an jeden Prompt anhängen):
 
@@ -60,6 +65,27 @@ version
 > Referenzbild ("same room, same camera angle, before renovation") mit. Firefly
 > und Gemini können das über "Bild als Referenz", Midjourney über `--cref` bzw.
 > ein vorangestelltes Bild.
+
+### `projekt-bad.jpg` — Querformat 4:3
+```
+A finished modern bathroom in a terraced house, large format grey tiles, walk-in
+shower, floating vanity, warm towels on a rail, soft daylight, photographed
+straight on from the doorway, nobody in frame
+```
+
+### `projekt-wallbox.jpg` — Querformat 4:3
+```
+A wall mounted electric car charging box on a clean garage wall, coiled charging
+cable, tidy conduit running to a small distribution box, concrete floor, even
+daylight from the open garage door, nobody in frame
+```
+
+### `projekt-zaehler.jpg` — Querformat 4:3
+```
+A newly installed electrical meter cabinet in an apartment building hallway,
+open door showing neatly arranged circuit breakers and labelled rows, clean
+wiring, cool even light, nobody in frame
+```
 
 ---
 

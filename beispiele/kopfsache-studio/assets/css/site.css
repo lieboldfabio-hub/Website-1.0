@@ -168,6 +168,8 @@ section { position: relative; }
     radial-gradient(120% 96% at 18% 8%, var(--ph-1), transparent 62%),
     radial-gradient(96% 96% at 88% 92%, var(--ph-2), transparent 58%),
     var(--ph-3);
+  /* Eine feine Innenkante macht aus der Flaeche eine gesetzte Platte. */
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.07);
   isolation: isolate;
 }
 .ph::before {
@@ -187,16 +189,20 @@ section { position: relative; }
   aspect-ratio:1; transform:translate(-50%,-50%);
   color:rgba(255,255,255,.14); transition:opacity .4s var(--ease); z-index:1;
 }
+/* Der Hinweis liest sich wie eine Bildunterschrift, nicht wie eine Notiz
+   von der Baustelle: kleine Auszeichnung in der Akzentfarbe, darunter, was
+   auf dem Foto zu sehen sein wird. Sobald eine Datei unter dem erwarteten
+   Namen liegt, blendet .is-filled ihn aus. */
 .ph__brief {
-  position:absolute; inset:auto 0 0 0; padding:1rem 1.2rem;
-  font-size:.78rem; line-height:1.4; color:rgba(255,255,255,.6);
-  border-top:1px solid rgba(255,255,255,.12);
-  background:linear-gradient(to top, rgba(0,0,0,.5), transparent);
+  position:absolute; inset:auto 0 0 0; padding:.95rem 1.1rem 1rem;
+  font-size:.8rem; line-height:1.45; color:rgba(255,255,255,.72);
+  background:linear-gradient(to top, rgba(0,0,0,.62), rgba(0,0,0,.28) 58%, transparent);
   transition:opacity .4s var(--ease); z-index:1;
 }
 .ph__brief b {
   display:block; font-family:var(--font-display); font-weight:600;
-  font-size:.84rem; color:rgba(255,255,255,.9); margin-bottom:.1rem;
+  font-size:.68rem; letter-spacing:.16em; text-transform:uppercase;
+  color:var(--accent-band); margin-bottom:.3rem;
 }
 
 /* ------------------------------------------------------------- Footer --- */
@@ -587,21 +593,25 @@ h1, h2, h3 { font-weight: 800; letter-spacing: -0.035em; }
 
 /* ------------------------------------------------------------ Tafel 01 */
 
+/* Auf breiten Schirmen duerfen Satz und Bild nicht auseinanderlaufen: die
+   beiden Spalten haben ein Hoechstmass und werden als Paar mittig gestellt,
+   statt sich ueber die ganze Breite zu verteilen. */
 .tafel--start {
   display: grid;
-  grid-template-columns: minmax(0, 1.05fr) minmax(0, .85fr);
+  grid-template-columns: minmax(0, 34rem) minmax(0, 25rem);
+  justify-content: center;
   gap: clamp(2rem, 5vw, 4.5rem);
   align-items: center;
 }
 .tafel--start > * { min-width: 0; }
-.tafel__satz { max-width: 34rem; justify-self: end; width: 100%; }
+.tafel__satz { width: 100%; }
 .tafel__satz .display { max-width: 11ch; }
 .tafel__satz .display em { font-style: normal; color: var(--accent); }
 .tafel__satz .lede { margin-top: 1.5rem; max-width: 36ch; }
 
 /* Ein .ph hat keine eigene Groesse. Ohne Breite berechnet das
    Seitenverhaeltnis aus nichts wieder nichts - der Platz waere leer. */
-.tafel__bild { aspect-ratio: 3 / 4; width: 100%; max-width: min(46vh, 420px); justify-self: start; }
+.tafel__bild { aspect-ratio: 3 / 4; width: 100%; max-height: 62svh; }
 
 /* Der Hinweis steht am linken Rand, gedreht wie ein Buchruecken - kein Pfeil,
    der in jedem zweiten Pager vorkommt. */

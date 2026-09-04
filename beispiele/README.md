@@ -240,10 +240,22 @@ Beide schalten sich auf Touchgeräten und bei `prefers-reduced-motion` ab.
 
 ## Bilder
 
-Alle Bildplätze zeigen eine Markenfläche mit Signet, solange kein Foto vorliegt.
-Legt man die Datei unter dem erwarteten Namen in `assets/img/` ab, erscheint sie
-automatisch – ohne Code-Änderung. Die erwarteten Namen stehen jeweils im
-Platzhalter selbst, die fertigen Prompts in `BILDPROMPTS.md`.
+Alle 24 Bildplätze zeigen eine Markenfläche mit Signet, solange kein Foto
+vorliegt. Legt man die Datei unter dem erwarteten Namen in `assets/img/` ab,
+erscheint sie automatisch – ohne Code-Änderung; `.is-filled` blendet den
+Platzhalter dann aus.
+
+Die Unterschrift im Platzhalter ist bewusst so gesetzt, dass sie auch **vor
+einem Kunden** gelesen werden kann: „Foto folgt" als kleine Auszeichnung,
+darunter, was auf dem Bild zu sehen sein wird. Dateiname, Format und der
+fertige Prompt stehen nicht auf der Seite, sondern in `BILDPROMPTS.md` –
+dort werden sie beim Fotografieren gebraucht.
+
+**Was nicht geht:** erzeugte Grafik statt Foto. Ein Versuch damit ist
+verworfen worden. Eine abstrakte Fläche in einem Feld, dessen Unterschrift
+„Monteur bei der Arbeit" lautet, wirft beim Kunden genau die Frage auf, die
+man nicht hören will. Ein sauber gesetzter Platzhalter sagt dagegen das
+Richtige: hier kommt Ihr Foto hin.
 
 Beim Vorher-Nachher-Schieber sind die beiden Platzhalter bewusst verschieden
 eingefärbt, damit der Effekt auch ohne Fotos erkennbar ist.
