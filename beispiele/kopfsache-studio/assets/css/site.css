@@ -441,20 +441,6 @@ h1, h2, h3 { font-weight: 800; letter-spacing: -0.035em; }
 .karte-k--dunkel p { color: var(--band-text-soft); }
 .karte-k--dunkel .karte-k__ico { color: var(--accent); }
 
-/* --------------------------------------------------------------- Team --- */
-
-.team__kopf { margin-bottom: clamp(2rem, 4vw, 3rem); max-width: 40rem; }
-.team__kopf .h2 { max-width: 15ch; }
-
-.koepfe {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
-  gap: clamp(1rem, 2vw, 1.75rem);
-}
-.kopf .ph { aspect-ratio: 3 / 4; }
-.kopf h3 { font-size: 1.15rem; margin-top: 1rem; }
-.kopf p { color: var(--band-text-soft); font-size: .93rem; margin-top: .15rem; }
-
 /* --------------------------------------------------------- Ziehharmonika */
 
 .fragen__grid {
@@ -576,7 +562,25 @@ h1, h2, h3 { font-weight: 800; letter-spacing: -0.035em; }
 /* Der Grund schlaegt hart um: dunkel, hell, dunkel, hell, dunkel. Beim
    Einrasten wechselt damit sichtbar der Ort und nicht nur der Text - das
    passt zur Schwarzweiss-Basis des Salons besser als ein weicher Verlauf. */
-.tafel--start   { background: var(--tinte); color: var(--band-text); }
+/* Der Aufschlag steht nicht auf glattem Schwarz, sondern auf einem Nebel
+   aus drei Lichtern: Limette von unten links, ein kuehler Grauton oben
+   rechts, ein warmer Schimmer dahinter. Darueber liegt Korn - ohne das
+   sieht ein weicher Verlauf nach Bildschirmschoner aus. */
+.tafel--start {
+  background:
+    radial-gradient(64% 52% at 14% 88%, rgba(201, 242, 74, .20), transparent 62%),
+    radial-gradient(52% 48% at 88% 12%, rgba(150, 170, 190, .13), transparent 66%),
+    radial-gradient(78% 64% at 52% 46%, rgba(64, 58, 40, .30), transparent 72%),
+    var(--tinte);
+  color: var(--band-text);
+}
+.tafel--start::after {
+  content: ""; position: absolute; inset: 0; z-index: 0;
+  pointer-events: none; opacity: .30; mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='k'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23k)'/%3E%3C/svg%3E"); background-size: 190px 190px;
+}
+/* Der Inhalt muss ueber dem Korn liegen, sonst legt es sich auf die Schrift. */
+.tafel--start > * { position: relative; z-index: 1; }
 .tafel--angebot { background: var(--papier); }
 .tafel--team    { background: var(--tinte); color: var(--band-text); }
 .tafel--fragen  { background: var(--papier-2); }
@@ -640,11 +644,6 @@ h1, h2, h3 { font-weight: 800; letter-spacing: -0.035em; }
    solange der Pager laeuft, wird die Spaltenzahl deshalb festgesetzt. */
 .tafel--angebot .karten { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 .tafel--angebot .karte-k p { font-size: .9rem; }
-
-/* ------------------------------------------------------------ Tafel 03 */
-
-.tafel--team .ph { aspect-ratio: 3 / 4; max-height: 38svh; }
-.tafel--team .koepfe { margin-top: clamp(1.5rem, 3vh, 2.5rem); }
 
 /* ------------------------------------------------------------ Tafel 05 */
 
@@ -800,4 +799,122 @@ h1, h2, h3 { font-weight: 800; letter-spacing: -0.035em; }
 
 @media (prefers-reduced-motion: reduce) {
   .pager { scroll-snap-type: y proximity; }
+}
+
+
+/* ============================================================================
+   4. Coverflow - die Signatur dieser Seite
+   ----------------------------------------------------------------------------
+   Vier Karten stehen wie Plattencover hintereinander: die vordere flach, die
+   anderen nach hinten weggekippt und abgedunkelt. Gerechnet wird nur mit
+   transform und opacity, damit nichts neu umbrochen werden muss.
+
+   Die Position jeder Karte ergibt sich aus ihrem Abstand zur vorderen. Den
+   Abstand setzt das Skript als --ab; alles andere steht hier.
+   ========================================================================= */
+
+.cover { margin-top: clamp(1rem, 3vh, 2rem); }
+
+.cover__buehne {
+  position: relative;
+  height: clamp(200px, 34svh, 330px);
+  perspective: 1400px;
+  transform-style: preserve-3d;
+}
+
+.cover__karte {
+  position: absolute;
+  left: 50%; top: 0;
+  width: clamp(150px, 25svh, 248px);
+  aspect-ratio: 3 / 4;
+  margin: 0; padding: 0; border: 0; background: none;
+  cursor: pointer;
+  transform-origin: center center;
+  /* --ab ist der vorzeichenbehaftete Abstand zur vorderen Karte. */
+  transform:
+    translate(-50%, 0)
+    translateX(calc(var(--ab) * clamp(96px, 15svh, 146px)))
+    translateZ(calc(var(--weg) * -108px))
+    rotateY(calc(var(--ab) * -38deg))
+    scale(calc(1 - var(--weg) * .07));
+  z-index: calc(10 - var(--weg));
+  transition: transform .62s var(--ease), opacity .62s var(--ease);
+}
+.cover__karte .ph {
+  display: block; width: 100%; height: 100%;
+  border-radius: 12px;
+  box-shadow: 0 26px 50px -26px rgba(0, 0, 0, .9);
+}
+/* Je weiter hinten, desto dunkler - das ersetzt einen Schleier ueber allem. */
+.cover__karte::after {
+  content: ""; position: absolute; inset: 0; z-index: 3;
+  border-radius: 12px; pointer-events: none;
+  background: rgba(16, 16, 16, calc(var(--weg) * .34));
+  transition: background .62s var(--ease);
+}
+.cover__karte:focus-visible { outline: 3px solid var(--accent-band); outline-offset: 6px; }
+
+/* Angaben zur vorderen Karte, mittig darunter wie auf einer Plattenhuelle. */
+.cover__tafel { text-align: center; margin-top: clamp(1rem, 2.6vh, 1.8rem); }
+.cover__name {
+  font-size: clamp(1.3rem, 1.1rem + .8vw, 1.85rem);
+  color: var(--band-text); margin: 0;
+}
+.cover__rolle { color: var(--accent-band); font-size: .95rem; margin-top: .2rem; }
+
+.cover__daten {
+  margin: clamp(.9rem, 2.2vh, 1.5rem) auto 0;
+  max-width: 24rem;
+  display: grid; gap: 0;
+  font-size: .9rem;
+}
+.cover__daten > div {
+  display: flex; justify-content: space-between; gap: 1rem;
+  padding: .5rem 0; border-top: 1px solid var(--band-line);
+}
+.cover__daten dt { color: var(--band-text-soft); }
+.cover__daten dd { margin: 0; color: var(--band-text); font-weight: 600; }
+
+.cover__punkte {
+  display: flex; justify-content: center; gap: .5rem;
+  margin-top: clamp(.9rem, 2.2vh, 1.5rem);
+}
+.cover__punkte button {
+  width: 9px; height: 9px; padding: 0; border: 0; border-radius: 999px;
+  background: rgba(247, 246, 243, .28); cursor: pointer;
+  transition: background .3s var(--ease), transform .3s var(--ease);
+}
+.cover__punkte button[aria-selected="true"] { background: var(--accent-band); transform: scale(1.35); }
+
+/* Auf niedrigen Fenstern wird das Karussell flacher und die Angaben ruecken
+   zusammen, sonst sprengt die Tafel den Bildschirm. */
+@media (max-height: 820px) {
+  .cover { margin-top: .6rem; }
+  .cover__buehne { height: clamp(170px, 30svh, 250px); }
+  .cover__karte { width: clamp(130px, 22svh, 190px); }
+  .cover__tafel { margin-top: .8rem; }
+  .cover__daten { margin-top: .7rem; font-size: .85rem; }
+  .cover__daten > div { padding: .38rem 0; }
+  .cover__punkte { margin-top: .8rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cover__karte, .cover__karte::after { transition: none; }
+}
+
+/* Auf schmalen Fenstern kippt nichts mehr: die Karten stehen dann als
+   wischbare Reihe nebeneinander, das ist mit dem Daumen bedienbar. */
+@media (max-width: 900px) {
+  .cover__buehne {
+    height: auto; perspective: none;
+    display: flex; gap: 1rem;
+    overflow-x: auto; scroll-snap-type: x mandatory;
+    padding-bottom: .5rem;
+  }
+  .cover__karte {
+    position: static; transform: none; width: 62vw; max-width: 260px;
+    flex: none; scroll-snap-align: center;
+  }
+  .cover__karte::after { background: none; }
+  .cover__punkte { display: none; }
 }

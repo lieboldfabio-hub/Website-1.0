@@ -277,3 +277,41 @@ window.Basis = (function () {
     });
   }
 })();
+
+
+/* ---------------------------------------------- Tarifblatt (Leistungen) */
+/*
+   Umschalter zwischen Jahresbetrag und Monatsrate. Getauscht wird nur Text:
+   jede Zahl traegt beide Werte als data-jahr und data-monat. Ohne
+   JavaScript steht der Jahresbetrag da und der Umschalter verschwindet -
+   dann ist die Seite immer noch vollstaendig.
+*/
+(function () {
+  "use strict";
+
+  var schalter = document.querySelector(".tarife__schalter");
+  if (!schalter) return;
+
+  var knoepfe = Array.prototype.slice.call(schalter.querySelectorAll("button"));
+  var felder  = Array.prototype.slice.call(
+                  document.querySelectorAll(".tarife [data-jahr]"));
+
+  function setzen(takt, platz) {
+    knoepfe.forEach(function (k) {
+      var an = k.getAttribute("data-takt") === takt;
+      k.classList.toggle("is-an", an);
+      k.setAttribute("aria-pressed", String(an));
+    });
+    schalter.style.setProperty("--platz", platz);
+    felder.forEach(function (f) {
+      var wert = f.getAttribute("data-" + takt);
+      if (wert) f.innerHTML = wert;
+    });
+  }
+
+  knoepfe.forEach(function (k, i) {
+    k.addEventListener("click", function () {
+      setzen(k.getAttribute("data-takt"), i);
+    });
+  });
+})();

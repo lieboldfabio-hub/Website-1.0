@@ -195,33 +195,96 @@
 <section class="section">
   <div class="wrap">
     <div class="kopf-block reveal">
-      <p class="eyebrow">Kosten</p>
-      <h2 class="h2">Was es ungef&auml;hr kostet.</h2>
+      <p class="eyebrow">Wartung</p>
+      <h2 class="h2">Drei Pakete, ein fester Betrag.</h2>
       <p class="body-copy">
-        Damit Sie vor dem ersten Telefonat einordnen k&ouml;nnen, worauf Sie sich
-        einlassen. Der verbindliche Preis steht immer erst nach der Besichtigung
-        im Angebot.
+        Wer die Wartung fest vergibt, zahlt weniger als bei jedem Einzelauftrag
+        und muss an nichts denken &ndash; wir melden uns von selbst. Einzelne
+        Auftr&auml;ge rechnen wir weiter nach Aufwand ab, mit Festpreis aus dem
+        Angebot.
       </p>
     </div>
-    <div class="preise">
-      <div class="preis reveal">
-        <span class="preis__wert">0 &euro;</span>
-        <b>Besichtigung</b>
-        <p>Anfahrt, Aufnahme vor Ort und das schriftliche Angebot berechnen wir nicht.</p>
+    <!-- ========================================================================
+         Wartungspakete als Tarifblatt. Der Umschalter rechnet zwischen
+         Jahresbetrag und Monatsrate um - die Zahlen stehen als data-Werte an
+         den Karten, das Skript tauscht nur den Text. Ohne JavaScript bleibt
+         der Jahresbetrag stehen, der Umschalter blendet sich aus.
+         ===================================================================== -->
+
+    <div class="tarife">
+      <div class="tarife__schalter" role="group" aria-label="Zahlweise">
+        <button type="button" class="is-an" data-takt="jahr" aria-pressed="true">J&auml;hrlich</button>
+        <button type="button" data-takt="monat" aria-pressed="false">Monatlich</button>
+        <span class="tarife__schieber" aria-hidden="true"></span>
       </div>
-      <div class="preis reveal">
-        <span class="preis__wert">ab 89 &euro;</span>
-        <b>Kleinauftrag</b>
-        <p>Steckdose setzen, Armatur tauschen, Sp&uuml;lkasten reparieren. Pauschal, inklusive Anfahrt und Material.</p>
+
+      <div class="tarife__reihe">
+        <article class="tarif reveal">
+          <h3>Basis</h3>
+          <p class="tarif__wofuer">Ein Ger&auml;t, einmal im Jahr.</p>
+          <p class="tarif__preis">
+            <b data-jahr="189 &euro;" data-monat="17 &euro;">189 &euro;</b>
+            <span data-jahr="/ Jahr" data-monat="/ Monat">/ Jahr</span>
+          </p>
+          <p class="tarif__takt" data-jahr="Einmal j&auml;hrlich abgerechnet"
+             data-monat="Monatlich abgerechnet, 12 Monate Laufzeit">Einmal j&auml;hrlich abgerechnet</p>
+          <ul class="tarif__liste">
+            <li>Heizungswartung inklusive Kleinteile</li>
+            <li>Terminerinnerung im Voraus</li>
+            <li>Abgasmessung nach Vorgabe</li>
+            <li>Pr&uuml;fprotokoll f&uuml;r Ihre Unterlagen</li>
+          </ul>
+          <a class="btn btn--line" href="kontakt.html">Paket anfragen</a>
+        </article>
+
+        <article class="tarif tarif--vorn reveal">
+          <p class="tarif__marke">
+            <svg aria-hidden="true"><use href="#i-shield-check"></use></svg>
+            Am h&auml;ufigsten gew&auml;hlt
+          </p>
+          <h3>Komplett</h3>
+          <p class="tarif__wofuer">Heizung, Sanit&auml;r und Elektrik zusammen.</p>
+          <p class="tarif__preis">
+            <b data-jahr="349 &euro;" data-monat="31 &euro;">349 &euro;</b>
+            <span data-jahr="/ Jahr" data-monat="/ Monat">/ Jahr</span>
+          </p>
+          <p class="tarif__takt" data-jahr="Einmal j&auml;hrlich abgerechnet"
+             data-monat="Monatlich abgerechnet, 12 Monate Laufzeit">Einmal j&auml;hrlich abgerechnet</p>
+          <ul class="tarif__liste">
+            <li>Alles aus Basis</li>
+            <li>E-Check der Hausinstallation</li>
+            <li>Sichtpr&uuml;fung Sanit&auml;r und Armaturen</li>
+            <li>Notdienst ohne Zuschlag</li>
+            <li>Kleinreparaturen bis 30 Minuten inklusive</li>
+          </ul>
+          <a class="btn" href="kontakt.html">
+            Paket anfragen
+            <svg class="btn__ico" aria-hidden="true"><use href="#i-arrow-right"></use></svg>
+          </a>
+        </article>
+
+        <article class="tarif reveal">
+          <h3>Objekt</h3>
+          <p class="tarif__wofuer">Mehrfamilienh&auml;user und Verwaltungen.</p>
+          <p class="tarif__preis"><b>Auf Anfrage</b></p>
+          <p class="tarif__takt">Nach Anzahl der Einheiten</p>
+          <ul class="tarif__liste">
+            <li>Alles aus Komplett</li>
+            <li>Sammeltermin f&uuml;r das ganze Haus</li>
+            <li>Eine Rechnung f&uuml;r die Verwaltung</li>
+            <li>Feste Ansprechperson</li>
+          </ul>
+          <a class="btn btn--line" href="kontakt.html">Angebot anfordern</a>
+        </article>
       </div>
-      <div class="preis reveal">
-        <span class="preis__wert">Festpreis</span>
-        <b>Gr&ouml;&szlig;ere Arbeiten</b>
-        <p>Badsanierung, Neuinstallation, Wallbox. Eine Summe, ein Termin, keine Nachtr&auml;ge ohne R&uuml;cksprache.</p>
-      </div>
+
+      <p class="tarife__fussnote">
+        Alle Angaben inklusive Anfahrt und Mehrwertsteuer. Ersatzteile und
+        Arbeiten &uuml;ber den Umfang hinaus werden vorher besprochen und
+        gesondert berechnet.
+      </p>
     </div>
-  </div>
-</section>
+  </section>
 
 <section class="section">
   <div class="wrap">

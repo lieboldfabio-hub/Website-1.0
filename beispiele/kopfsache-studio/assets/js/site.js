@@ -232,6 +232,81 @@ window.Basis = (function () {
     );
   }
 
+  /* ----------------------------------------------------------- Coverflow */
+  /*
+     Vier Karten, eine davon vorn. Das Skript setzt je Karte nur zwei Werte:
+     --ab  vorzeichenbehafteter Abstand zur vorderen Karte (fuer die Richtung)
+     --weg Betrag davon (fuer Tiefe, Groesse und Abdunklung)
+     Alles Uebrige rechnet das CSS. Ohne JavaScript stehen die Karten
+     nebeneinander und bleiben lesbar.
+  */
+  (function () {
+    var buehne = document.querySelector(".cover__buehne");
+    if (!buehne) return;
+
+    var karten  = Array.prototype.slice.call(buehne.querySelectorAll(".cover__karte"));
+    var punkte  = Array.prototype.slice.call(document.querySelectorAll(".cover__punkte button"));
+    var name    = document.querySelector(".cover__name");
+    var rolle   = document.querySelector(".cover__rolle");
+    var werte   = Array.prototype.slice.call(document.querySelectorAll(".cover__daten dd"));
+
+    var leute = [
+      { name: "Mira",  rolle: "Farbe und Balayage",  seit: "2016", fach: "Balayage, Blondierung",  tag: "Di bis Sa" },
+      { name: "Jonas", rolle: "Kurzhaar und Bart",   seit: "2019", fach: "Fade, Bartpflege",       tag: "Mi bis Sa" },
+      { name: "Elif",  rolle: "Locken und Curly Cut", seit: "2021", fach: "Curly Cut, Pflege",      tag: "Di bis Fr" },
+      { name: "Bene",  rolle: "Schnitt und Ausbildung", seit: "2014", fach: "Schnitt, Ausbildung",  tag: "Di bis Sa" }
+    ];
+
+    var vorn = 0;
+
+    function zeichnen() {
+      var n = karten.length;
+      karten.forEach(function (k, i) {
+        /* Umlaufend gerechnet: so steht auch bei der ersten Person eine
+           Karte links, der Faecher haengt nicht einseitig nach rechts. */
+        var d = (i - vorn + n) % n;
+        var ab = d > n / 2 ? d - n : d;
+        k.style.setProperty("--ab", ab);
+        k.style.setProperty("--weg", Math.abs(ab));
+        k.setAttribute("aria-current", i === vorn ? "true" : "false");
+        /* Verdeckte Karten sind nicht mit der Tabulatortaste erreichbar. */
+        k.tabIndex = i === vorn ? 0 : -1;
+      });
+      punkte.forEach(function (p, i) {
+        p.setAttribute("aria-selected", i === vorn ? "true" : "false");
+      });
+      var l = leute[vorn];
+      if (name)  name.textContent  = l.name;
+      if (rolle) rolle.textContent = l.rolle;
+      if (werte.length === 3) {
+        werte[0].textContent = l.seit;
+        werte[1].textContent = l.fach;
+        werte[2].textContent = l.tag;
+      }
+    }
+
+    function waehlen(i) {
+      var n = karten.length;
+      vorn = ((i % n) + n) % n;   /* blaettert ueber den Rand hinaus weiter */
+      zeichnen();
+    }
+
+    karten.forEach(function (k, i) {
+      k.addEventListener("click", function () { waehlen(i); });
+    });
+    punkte.forEach(function (p, i) {
+      p.addEventListener("click", function () { waehlen(i); karten[vorn].focus(); });
+    });
+
+    /* Pfeiltasten blaettern, solange der Zeiger im Karussell steht. */
+    document.querySelector(".cover").addEventListener("keydown", function (e) {
+      if (e.key === "ArrowRight") { e.preventDefault(); waehlen(vorn + 1); karten[vorn].focus(); }
+      if (e.key === "ArrowLeft")  { e.preventDefault(); waehlen(vorn - 1); karten[vorn].focus(); }
+    });
+
+    zeichnen();
+  })();
+
   /* ------------------------------------------------------------- Schiene */
   /*
      Welche Tafel gerade dran ist, entscheidet nicht die Scrollposition,

@@ -129,6 +129,10 @@
 </section>
 
 <!-- ============================================================= 03 Team -->
+<!-- Coverflow: die vier Handschriften stehen wie Plattencover hintereinander,
+     das vordere flach, die anderen weggekippt. Geklickt oder mit den
+     Pfeiltasten geholt; darunter stehen die Angaben zur vorderen Karte.
+     Das ist die Signatur dieser Seite - kein anderes Beispiel hat sie. -->
 <section class="tafel tafel--team" id="team" aria-labelledby="t-team">
   <div class="tafel__inhalt">
     <div class="team__kopf reveal">
@@ -136,46 +140,56 @@
       <h2 class="h2" id="t-team">Vier Leute, vier Handschriften.</h2>
     </div>
 
-    <div class="koepfe">
-      <article class="kopf reveal">
-        <div class="ph">
-          <img src="assets/img/team-1.jpg" alt="Portrait" width="600" height="800">
-          <svg class="ph__mark" aria-hidden="true"><use href="#i-scissors"></use></svg>
-          <p class="ph__brief"><b>Foto folgt</b>Portrait Mira</p>
-        </div>
-        <h3>Mira</h3>
-        <p>Farbe und Balayage</p>
-      </article>
+    <div class="cover" role="group" aria-roledescription="Karussell" aria-label="Das Team">
+      <div class="cover__buehne">
+        <button class="cover__karte" type="button" data-i="0" aria-label="Mira anzeigen">
+          <span class="ph">
+            <img src="assets/img/team-1.jpg" alt="" width="600" height="800">
+            <svg class="ph__mark" aria-hidden="true"><use href="#i-scissors"></use></svg>
+            <span class="ph__brief"><b>Foto folgt</b>Portrait Mira</span>
+          </span>
+        </button>
+        <button class="cover__karte" type="button" data-i="1" aria-label="Jonas anzeigen">
+          <span class="ph">
+            <img src="assets/img/team-2.jpg" alt="" width="600" height="800">
+            <svg class="ph__mark" aria-hidden="true"><use href="#i-scissors"></use></svg>
+            <span class="ph__brief"><b>Foto folgt</b>Portrait Jonas</span>
+          </span>
+        </button>
+        <button class="cover__karte" type="button" data-i="2" aria-label="Elif anzeigen">
+          <span class="ph">
+            <img src="assets/img/team-3.jpg" alt="" width="600" height="800">
+            <svg class="ph__mark" aria-hidden="true"><use href="#i-scissors"></use></svg>
+            <span class="ph__brief"><b>Foto folgt</b>Portrait Elif</span>
+          </span>
+        </button>
+        <button class="cover__karte" type="button" data-i="3" aria-label="Bene anzeigen">
+          <span class="ph">
+            <img src="assets/img/team-4.jpg" alt="" width="600" height="800">
+            <svg class="ph__mark" aria-hidden="true"><use href="#i-scissors"></use></svg>
+            <span class="ph__brief"><b>Foto folgt</b>Portrait Bene</span>
+          </span>
+        </button>
+      </div>
 
-      <article class="kopf reveal">
-        <div class="ph">
-          <img src="assets/img/team-2.jpg" alt="Portrait" width="600" height="800">
-          <svg class="ph__mark" aria-hidden="true"><use href="#i-scissors"></use></svg>
-          <p class="ph__brief"><b>Foto folgt</b>Portrait Jonas</p>
-        </div>
-        <h3>Jonas</h3>
-        <p>Kurzhaar und Bart</p>
-      </article>
+      <!-- Die Angaben wechseln mit der vorderen Karte. aria-live meldet den
+           Wechsel, damit er auch ohne Blick auf den Bildschirm ankommt. -->
+      <div class="cover__tafel" aria-live="polite">
+        <h3 class="cover__name">Mira</h3>
+        <p class="cover__rolle">Farbe und Balayage</p>
+        <dl class="cover__daten">
+          <div><dt>Im Salon seit</dt><dd>2016</dd></div>
+          <div><dt>Schwerpunkt</dt><dd>Balayage, Blondierung</dd></div>
+          <div><dt>Termin</dt><dd>Di bis Sa</dd></div>
+        </dl>
+      </div>
 
-      <article class="kopf reveal">
-        <div class="ph">
-          <img src="assets/img/team-3.jpg" alt="Portrait" width="600" height="800">
-          <svg class="ph__mark" aria-hidden="true"><use href="#i-scissors"></use></svg>
-          <p class="ph__brief"><b>Foto folgt</b>Portrait Elif</p>
-        </div>
-        <h3>Elif</h3>
-        <p>Locken und Curly Cut</p>
-      </article>
-
-      <article class="kopf reveal">
-        <div class="ph">
-          <img src="assets/img/team-4.jpg" alt="Portrait" width="600" height="800">
-          <svg class="ph__mark" aria-hidden="true"><use href="#i-scissors"></use></svg>
-          <p class="ph__brief"><b>Foto folgt</b>Portrait Bene</p>
-        </div>
-        <h3>Bene</h3>
-        <p>Schnitt und Ausbildung</p>
-      </article>
+      <div class="cover__punkte" role="tablist" aria-label="Person waehlen">
+        <button type="button" role="tab" aria-selected="true"  aria-label="Mira"></button>
+        <button type="button" role="tab" aria-selected="false" aria-label="Jonas"></button>
+        <button type="button" role="tab" aria-selected="false" aria-label="Elif"></button>
+        <button type="button" role="tab" aria-selected="false" aria-label="Bene"></button>
+      </div>
     </div>
   </div>
 </section>
