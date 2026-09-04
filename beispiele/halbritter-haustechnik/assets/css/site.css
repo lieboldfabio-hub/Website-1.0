@@ -135,71 +135,7 @@ section { position: relative; }
 
 .btn__ico { width: 1.05em; height: 1.05em; flex: none; }
 
-/* ------------------------------------------------------------------ Nav -- */
-
-.nav {
-  position: fixed; inset: 0 0 auto 0; z-index: 100;
-  height: 74px; display: flex; align-items: center;
-  transition: height .3s var(--ease), background-color .3s var(--ease),
-              box-shadow .3s var(--ease);
-}
-.nav__inner {
-  width: 100%; max-width: var(--wrap, 1240px); margin-inline: auto;
-  padding-inline: var(--pad-x);
-  display: flex; align-items: center; justify-content: space-between; gap: 1.5rem;
-}
-.nav.is-stuck {
-  height: 62px;
-  background: color-mix(in srgb, var(--bg) 88%, transparent);
-  backdrop-filter: blur(14px) saturate(150%);
-  -webkit-backdrop-filter: blur(14px) saturate(150%);
-  box-shadow: 0 1px 0 var(--line), 0 10px 30px -20px rgba(0,0,0,.45);
-}
-
-.brand {
-  font-family: var(--font-display);
-  font-weight: 700; font-size: 1.24rem; letter-spacing: -.01em;
-  text-decoration: none; color: var(--band-text);
-  transition: color .3s var(--ease);
-}
-.nav.is-stuck .brand { color: var(--text); }
-
-.nav__links { display: flex; align-items: center; gap: clamp(1rem,2vw,2rem);
-  list-style: none; margin: 0; padding: 0; }
-.nav__links a {
-  font-family: var(--font-display); font-size: .96rem; font-weight: 500;
-  text-decoration: none; color: var(--band-text-soft);
-  padding: .4rem 0; position: relative; transition: color .22s var(--ease);
-}
-.nav.is-stuck .nav__links a { color: var(--text); }
-.nav__links a::after {
-  content:""; position:absolute; left:0; right:0; bottom:0; height:2px;
-  background: var(--accent-flaeche); transform: scaleX(0); transform-origin: left;
-  transition: transform .28s var(--ease);
-}
-.nav__links a:hover { color: var(--accent); }
-.nav__links a:hover::after { transform: scaleX(1); }
-
-.nav__cta { display: flex; align-items: center; gap: .7rem; }
-
-.nav__burger {
-  display: none; width: 44px; height: 44px; padding: 0;
-  border: 1px solid var(--band-line); border-radius: 999px;
-  background: transparent; color: inherit; cursor: pointer; place-items: center;
-}
-.nav.is-stuck .nav__burger { border-color: var(--line); color: var(--text); }
-.nav__burger span {
-  display: block; width: 17px; height: 1.6px; background: currentColor;
-  margin: 3.2px auto; transition: transform .3s var(--ease), opacity .2s var(--ease);
-}
-.nav__burger[aria-expanded="true"] span:nth-child(1){transform:translateY(4.8px) rotate(45deg);}
-.nav__burger[aria-expanded="true"] span:nth-child(2){opacity:0;}
-.nav__burger[aria-expanded="true"] span:nth-child(3){transform:translateY(-4.8px) rotate(-45deg);}
-
-@media (max-width: 900px) {
-  .nav__links, .nav__cta .btn { display: none; }
-  .nav__burger { display: grid; }
-}
+/* ----------------------------------------------- Menue auf schmalem Fenster */
 
 .menu {
   position: fixed; inset: 0; z-index: 110;
@@ -258,25 +194,6 @@ section { position: relative; }
   font-size:.84rem; color:rgba(255,255,255,.9); margin-bottom:.1rem;
 }
 
-/* ------------------------------------------------------------- Footer --- */
-
-.footer {
-  background: var(--band); color: var(--band-text-soft);
-  padding-block: clamp(2.5rem,5vw,3.5rem);
-  border-top: 1px solid var(--band-line); font-size: .94rem;
-}
-.footer__grid {
-  display:flex; flex-wrap:wrap; gap:1.5rem 2.5rem;
-  align-items:center; justify-content:space-between;
-}
-.footer__links { display:flex; flex-wrap:wrap; gap:1.5rem; list-style:none; margin:0; padding:0; }
-.footer__links a { text-decoration:none; }
-.footer__links a:hover { color: var(--accent); }
-.footer__note {
-  margin-top:2rem; padding-top:1.5rem; border-top:1px solid var(--band-line);
-  font-size:.85rem; opacity:.75; max-width:78ch;
-}
-
 /* --------------------------------------------------- Bewegung, Grundlage */
 
 .js .reveal { opacity: 0; transform: translateY(26px); }
@@ -302,12 +219,8 @@ section { position: relative; }
    ob schon gescrollt wurde.
 */
 .seite-hell { background: var(--bg); }
-.seite-hell .nav { background: var(--bg); box-shadow: 0 1px 0 var(--line); }
-.seite-hell .nav .brand,
-.seite-hell .nav .nav__links a { color: var(--text); }
-.seite-hell .nav .nav__burger { border-color: var(--line); color: var(--text); }
 
-.legal { padding-block: calc(74px + var(--section-y)) var(--section-y); }
+.legal { padding-block: var(--section-y); }
 .legal__inner { max-width: 46rem; }
 .legal h1 { font-size: clamp(1.9rem, 1.4rem + 1.8vw, 2.7rem); margin-bottom: 2rem; }
 .legal h2 {
@@ -333,7 +246,7 @@ section { position: relative; }
 
 .fehler {
   min-height: 100dvh; display: grid; place-content: center; text-align: center;
-  padding: calc(74px + 2rem) var(--pad-x) 4rem;
+  padding: clamp(3rem, 8vh, 5rem) var(--pad-x) 4rem;
 }
 .fehler__code {
   font-family: var(--font-display); font-weight: 700; line-height: 1;
@@ -350,15 +263,15 @@ section { position: relative; }
 */
 .seitenkopf {
   background: var(--bg); color: var(--text);
-  padding-block: calc(74px + clamp(2.5rem, 6vw, 4.5rem)) clamp(2rem, 4vw, 3rem);
+  padding-block: clamp(2.5rem, 6vw, 4.5rem) clamp(2rem, 4vw, 3rem);
   border-bottom: 1px solid var(--line);
 }
 .seitenkopf h1 { font-size: clamp(2rem, 1.5rem + 2.2vw, 3.1rem); max-width: 20ch; }
 .seitenkopf .lede { margin-top: 1.1rem; }
 
 /* Aktive Seite in der Navigation */
-.nav__links a[aria-current="page"] { color: var(--accent); }
-.nav__links a[aria-current="page"]::after { transform: scaleX(1); }
+.reiter a[aria-current="page"] { color: var(--text); }
+.reiter a[aria-current="page"]::after { transform: scaleY(1); }
 .menu a[aria-current="page"] { color: var(--accent); }
 
 /* ============================================================================
@@ -661,78 +574,6 @@ h1, h2, h3 { font-weight: 700; letter-spacing: -0.02em; }
 }
 .demo-badge:hover { border-color: var(--accent); }
 
-/* Die Leiste liegt ueber hellem Grund, deshalb von Anfang an dunkler Text. */
-.nav .brand,
-.nav .nav__links a { color: var(--text); }
-.nav .nav__burger { border-color: var(--line); color: var(--text); }
-
-/* ----------------------------------------------------------------- Hero - */
-
-.hero {
-  position: relative;
-  min-height: 100dvh;
-  display: flex;
-  align-items: center;
-  padding-top: clamp(6rem, 9vh, 7rem);
-  padding-bottom: clamp(3rem, 7vh, 5rem);
-  background-color: var(--bg);
-}
-.hero::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background-image: radial-gradient(rgba(20, 24, 29, 0.13) 1px, transparent 1px);
-  background-size: 22px 22px;
-  mask-image: linear-gradient(to bottom, #000 0%, transparent 78%);
-  -webkit-mask-image: linear-gradient(to bottom, #000 0%, transparent 78%);
-  pointer-events: none;
-}
-
-.hero__grid {
-  position: relative;
-  display: grid;
-  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
-  gap: clamp(2.5rem, 5vw, 4.5rem);
-  align-items: center;
-  width: 100%;
-}
-.hero .display { max-width: 15ch; }
-.hero .lede { margin-top: 1.4rem; max-width: 42ch; }
-.hero__actions { margin-top: 2.2rem; display: flex; flex-wrap: wrap; gap: .85rem; }
-.hero__media { aspect-ratio: 4 / 5; }
-
-/* Notdienst ist das staerkste Argument im Handwerk und bekommt deshalb
-   einen eigenen, ruhigen Streifen unter dem Hero. */
-.notdienst {
-  background: var(--graphit-900);
-  color: var(--band-text);
-  padding-block: 1.15rem;
-}
-.notdienst__inner {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: .85rem 1.5rem;
-}
-.notdienst svg { width: 22px; height: 22px; color: var(--accent); flex: none; }
-.notdienst b { font-family: var(--font-display); font-weight: 700; }
-.notdienst span { color: var(--band-text-soft); }
-.notdienst a {
-  margin-left: auto;
-  font-weight: 600;
-  text-decoration: none;
-  border-bottom: 2px solid var(--accent);
-  padding-bottom: 2px;
-}
-.notdienst a:hover { color: var(--accent); }
-
-@media (max-width: 900px) {
-  .hero__grid { grid-template-columns: 1fr; gap: 2.25rem; }
-  .hero .display { max-width: none; }
-  .hero__media { aspect-ratio: 3 / 2; }
-  .notdienst a { margin-left: 0; }
-}
-
 /* ------------------------------------------------------- Leistungen ----- */
 /*
    Karten, die sich beim Scrollen aufeinander stapeln. Der Stapel zeigt,
@@ -974,10 +815,235 @@ h1, h2, h3 { font-weight: 700; letter-spacing: -0.02em; }
 
 /* In den dunklen Abschnitten uebernimmt der aufgehellte Ton. Weil --accent
    vererbt wird, genuegt es, ihn am Container zu setzen. */
-.vergleich, .notdienst, .footer, .cta-band, .band {
+.vergleich, .werkleiste__notdienst, .datenblatt, .cta-band, .band {
   --accent: var(--accent-band);
   --accent-flaeche: var(--accent-band);
   /* Ein Knopf auf dem Band traegt jetzt die helle Flaeche, also braucht er
      dunkle Schrift statt der hellen aus dem Grundzustand. */
   --accent-fg: #14181d;
+}
+
+
+/* ============================================================================
+   3. Rahmen dieser Seite
+   ----------------------------------------------------------------------------
+   Kopf, Aufmacher und Fuss von Halbritter. Bewusst nicht die uebliche Form
+   aus Leiste, zweispaltigem Hero und Namenszug mit Linkliste:
+
+   - Der Kopf steht in zwei Lagen. Oben der Notdienst, auf jeder Seite, weil
+     ein Handwerksbetrieb daran gemessen wird. Darunter die Leiste mit dem
+     Namen in einem vollen Farbblock, wie er auf dem Firmenwagen steht.
+   - Der Aufmacher ist ein Bildband ueber die volle Breite mit der Ansage
+     darin, kein Textbild-Raster.
+   - Der Fuss ist als Datenblatt gesetzt, mit Punktlinien wie in einer
+     technischen Beilage.
+   ========================================================================= */
+
+/* ------------------------------------------------------------- Werkleiste */
+
+.werkleiste {
+  position: sticky; top: 0; z-index: 100;
+  background: var(--bg);
+  box-shadow: 0 1px 0 var(--line);
+}
+.werkleiste__zeile {
+  width: 100%; max-width: var(--wrap); margin-inline: auto;
+  padding-inline: var(--pad-x);
+  display: flex; align-items: center; gap: .6rem 1.2rem;
+}
+
+/* Obere Lage: der Notdienst. */
+.werkleiste__notdienst {
+  background: var(--graphit-900);
+  color: var(--band-text-soft);
+  font-size: .86rem;
+}
+.werkleiste__notdienst .werkleiste__zeile { min-height: 40px; flex-wrap: wrap; }
+.werkleiste__notdienst svg { width: 18px; height: 18px; color: var(--accent-band); flex: none; }
+.werkleiste__notdienst b { font-family: var(--font-display); font-weight: 700; color: var(--band-text); }
+.werkleiste__notdienst a {
+  margin-left: auto; font-weight: 600; text-decoration: none;
+  color: var(--band-text); border-bottom: 2px solid var(--accent-band); padding-bottom: 1px;
+}
+.werkleiste__notdienst a:hover { color: var(--accent-band); }
+
+/* Untere Lage: Name, Reiter, Termin. */
+.werkleiste__haupt .werkleiste__zeile {
+  min-height: 66px;
+  justify-content: space-between;
+  transition: min-height .3s var(--ease);
+}
+.werkleiste.is-stuck .werkleiste__haupt .werkleiste__zeile { min-height: 56px; }
+
+/* Der Name sitzt in einem vollen Block, nicht als freier Schriftzug. */
+.marke {
+  display: inline-flex; flex-direction: column; justify-content: center;
+  align-self: stretch;
+  margin-left: calc(var(--pad-x) * -1);
+  padding: .55rem var(--pad-x);
+  background: var(--accent-flaeche); color: var(--accent-fg);
+  font-family: var(--font-display); font-weight: 800;
+  font-size: 1.2rem; line-height: 1.05; letter-spacing: -.015em;
+  text-decoration: none;
+}
+.marke i {
+  font-style: normal; font-weight: 500;
+  font-size: .66rem; letter-spacing: .16em; text-transform: uppercase;
+  opacity: .82;
+}
+
+/* Reiter mit einem Balken darunter statt einer Unterstreichung, die erst
+   beim Zeigen erscheint - so sieht man auch im Stand, wo man ist. */
+.reiter { display: flex; align-items: stretch; gap: clamp(.4rem, 1.4vw, 1.4rem);
+  list-style: none; margin: 0; padding: 0; }
+.reiter a {
+  position: relative; display: flex; align-items: center;
+  padding: .5rem .3rem;
+  font-family: var(--font-display); font-size: .96rem; font-weight: 600;
+  color: var(--text-soft); text-decoration: none;
+  transition: color .22s var(--ease);
+}
+.reiter a::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: -2px; height: 3px;
+  background: var(--accent-flaeche);
+  transform: scaleY(0); transform-origin: bottom;
+  transition: transform .24s var(--ease);
+}
+.reiter a:hover { color: var(--text); }
+.reiter a:hover::after { transform: scaleY(1); }
+
+.werkleiste__cta { display: flex; align-items: center; gap: .7rem; }
+
+.werkleiste__burger {
+  display: none; width: 44px; height: 44px; padding: 0;
+  border: 1px solid var(--line); border-radius: 4px;
+  background: transparent; color: var(--text); cursor: pointer; place-items: center;
+}
+.werkleiste__burger span {
+  display: block; width: 17px; height: 2px; background: currentColor;
+  margin: 3.2px auto; transition: transform .3s var(--ease), opacity .2s var(--ease);
+}
+.werkleiste__burger[aria-expanded="true"] span:nth-child(1){transform:translateY(5.2px) rotate(45deg);}
+.werkleiste__burger[aria-expanded="true"] span:nth-child(2){opacity:0;}
+.werkleiste__burger[aria-expanded="true"] span:nth-child(3){transform:translateY(-5.2px) rotate(-45deg);}
+
+@media (max-width: 900px) {
+  .reiter, .werkleiste__cta .btn { display: none; }
+  .werkleiste__burger { display: grid; }
+  .werkleiste__notdienst span { display: none; }
+}
+
+/* -------------------------------------------------------------- Aufmacher */
+
+.aufmacher {
+  position: relative;
+  display: grid;
+  align-items: end;
+  min-height: min(76svh, 720px);
+}
+.aufmacher > * { grid-area: 1 / 1; }
+
+.aufmacher__bild { width: 100%; height: 100%; border-radius: 0; }
+.aufmacher__bild img { width: 100%; height: 100%; object-fit: cover; }
+/* Ohne den Verlauf steht heller Text spaeter auf einem hellen Foto. */
+.aufmacher__bild::after {
+  content: ""; position: absolute; inset: 0; z-index: 1;
+  background: linear-gradient(to top,
+    rgba(20, 24, 29, .92) 0%, rgba(20, 24, 29, .72) 34%, rgba(20, 24, 29, .12) 72%);
+}
+
+.aufmacher__satz {
+  position: relative; z-index: 2;
+  width: 100%; max-width: var(--wrap); margin-inline: auto;
+  padding: 0 var(--pad-x) clamp(2.2rem, 5vh, 3.5rem);
+  color: var(--band-text);
+}
+.aufmacher__satz .eyebrow { color: var(--accent-band); }
+.aufmacher__satz .display { max-width: 17ch; color: var(--band-text); }
+.aufmacher__satz .lede { margin-top: 1.2rem; max-width: 44ch; color: var(--band-text-soft); }
+.aufmacher__satz .hero__actions { margin-top: 1.9rem; display: flex; flex-wrap: wrap; gap: .85rem; }
+/* Der Linienknopf ist fuer hellen Grund gebaut. Hier steht er auf dem
+   abgedunkelten Foto und waere mit dunkler Schrift unsichtbar. */
+.aufmacher__satz .btn--line { color: var(--band-text); border-color: var(--band-line); }
+.aufmacher__satz .btn--line:hover { background: var(--band-text); color: var(--band); border-color: var(--band-text); }
+
+/* Der Bildhinweis sitzt sonst unter dem Verlauf. */
+/* Der Hinweis sitzt auf der Fluchtlinie des Textes - und oben statt unten,
+   weil unten die Ansage und die Knoepfe stehen. */
+.aufmacher .ph__brief {
+  z-index: 2;
+  inset: 0 0 auto;
+  border-top: 0;
+  border-bottom: 1px solid rgba(255,255,255,.12);
+  background: linear-gradient(to bottom, rgba(0,0,0,.5), transparent);
+  padding-inline: max(var(--pad-x), calc((100% - var(--wrap)) / 2 + var(--pad-x)));
+}
+
+/* Drei Zusagen als Streifen direkt unter dem Bild. */
+.zusagen {
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
+  border-bottom: 1px solid var(--line);
+  width: 100%; max-width: var(--wrap); margin-inline: auto;
+  padding-inline: var(--pad-x);
+}
+.zusage {
+  display: grid; grid-template-columns: auto 1fr; grid-template-rows: auto auto;
+  column-gap: .8rem; align-items: center;
+  padding: clamp(1.1rem, 2.4vw, 1.6rem) clamp(1rem, 2vw, 1.8rem);
+  border-left: 1px solid var(--line);
+}
+.zusage:first-child { padding-left: 0; }
+.zusage:last-child { padding-right: 0; }
+.zusage:first-child { border-left: 0; }
+.zusage svg { grid-row: 1 / 3; width: 26px; height: 26px; color: var(--accent); }
+.zusage b { font-family: var(--font-display); font-size: 1.02rem; }
+.zusage span { color: var(--text-soft); font-size: .89rem; line-height: 1.4; }
+@media (max-width: 820px) {
+  .zusagen { grid-template-columns: 1fr; }
+  .zusage { border-left: 0; border-top: 1px solid var(--line); }
+  .zusage:first-child { border-top: 0; }
+}
+
+/* -------------------------------------------------------------- Datenblatt */
+
+.datenblatt {
+  background: var(--band); color: var(--band-text-soft);
+  border-top: 3px solid var(--accent-flaeche);
+  padding: clamp(2.5rem, 5vw, 3.5rem) var(--pad-x);
+  font-size: .94rem;
+}
+.datenblatt__raster {
+  width: 100%; max-width: var(--wrap); margin-inline: auto;
+  display: grid; grid-template-columns: minmax(0, 1.2fr) repeat(2, minmax(0, 1fr));
+  gap: clamp(1.6rem, 4vw, 3rem);
+}
+.datenblatt__block h2 {
+  font-size: .76rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase;
+  color: var(--accent-band); margin-bottom: .9rem;
+}
+.datenblatt__block p { max-width: 34ch; }
+.datenblatt__block ul { list-style: none; margin: 0; padding: 0; display: grid; gap: .45rem; }
+.datenblatt__block a { text-decoration: none; }
+.datenblatt__block a:hover { color: var(--accent-band); }
+
+/* Punktlinie zwischen Bezeichnung und Wert, wie in einer technischen Beilage. */
+.datenblatt dl { margin: 0; display: grid; gap: .45rem; }
+.datenblatt dl > div { display: flex; align-items: baseline; gap: .5rem; }
+.datenblatt dt { flex: none; }
+.datenblatt dl > div::before {
+  content: ""; order: 1; flex: 1 1 auto;
+  border-bottom: 1px dotted var(--band-line);
+  transform: translateY(-.25em);
+}
+.datenblatt dd { order: 2; margin: 0; flex: none; color: var(--band-text); }
+
+/* Zwei Ebenen, weil die Linie ueber die ganze Satzbreite laufen soll, der
+   Text darunter aber nur ueber eine lesbare Zeilenlaenge. */
+.datenblatt__fuss {
+  width: 100%; max-width: var(--wrap); margin: 2rem auto 0;
+  padding-top: 1.5rem; border-top: 1px solid var(--band-line);
+}
+.datenblatt__fuss p { max-width: 78ch; margin: 0; font-size: .85rem; opacity: .75; }
+@media (max-width: 820px) {
+  .datenblatt__raster { grid-template-columns: 1fr; }
 }

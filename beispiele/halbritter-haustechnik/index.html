@@ -43,22 +43,40 @@
 <a class="skip" href="#main">Zum Inhalt springen</a>
 <a class="demo-badge" href="../">Beispielprojekt</a>
 
-<header class="nav">
-  <div class="nav__inner">
-    <a class="brand" href="index.html">Halbritter</a>
-    <nav aria-label="Hauptnavigation">
-      <ul class="nav__links">
-      <li><a href="index.html" aria-current="page">Start</a></li>
-      <li><a href="leistungen.html">Leistungen</a></li>
-      <li><a href="arbeiten.html">Arbeiten</a></li>
-      <li><a href="kontakt.html">Kontakt</a></li>
-      </ul>
-    </nav>
-    <div class="nav__cta">
-      <a class="btn btn--sm" href="kontakt.html">Termin anfragen</a>
-      <button class="nav__burger" aria-label="Men&uuml; &ouml;ffnen" aria-expanded="false" aria-controls="menu">
-        <span></span><span></span><span></span>
-      </button>
+<!-- ============================================================================
+     Kopf in zwei Lagen. Oben der Notdienst: er stand vorher als Balken
+     mitten auf der Startseite, gehoert bei einem Handwerksbetrieb aber auf
+     jede Seite und ganz nach oben. Darunter die Leiste mit dem Namen in
+     einem vollen Farbblock, wie er auf dem Firmenwagen steht.
+     ========================================================================= -->
+
+<header class="werkleiste">
+  <div class="werkleiste__notdienst">
+    <div class="werkleiste__zeile">
+      <svg aria-hidden="true"><use href="#i-lightning"></use></svg>
+      <b>Notdienst rund um die Uhr</b>
+      <span>Rohrbruch, Stromausfall, defekte Heizung</span>
+      <a href="kontakt.html">Notfall melden</a>
+    </div>
+  </div>
+
+  <div class="werkleiste__haupt">
+    <div class="werkleiste__zeile">
+      <a class="marke" href="index.html">Halbritter<i>Haustechnik</i></a>
+      <nav aria-label="Hauptnavigation">
+        <ul class="reiter">
+        <li><a href="index.html" aria-current="page">Start</a></li>
+        <li><a href="leistungen.html">Leistungen</a></li>
+        <li><a href="arbeiten.html">Arbeiten</a></li>
+        <li><a href="kontakt.html">Kontakt</a></li>
+        </ul>
+      </nav>
+      <div class="werkleiste__cta">
+        <a class="btn btn--sm" href="kontakt.html">Termin anfragen</a>
+        <button class="werkleiste__burger" aria-label="Men&uuml; &ouml;ffnen" aria-expanded="false" aria-controls="menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
     </div>
   </div>
 </header>
@@ -74,41 +92,53 @@
 <main id="main">
 
 <!-- ================================================================== Hero -->
-<section class="hero" id="top">
-  <div class="wrap hero__grid">
-    <div>
-      <p class="eyebrow" data-hero="1">Elektro und Sanitär</p>
-      <h1 class="display" data-hero="2">Wir kommen, wenn wir es zusagen.</h1>
-      <p class="lede" data-hero="3">
-        Installation, Wartung und Reparatur für Haus und Wohnung.
-        Festpreis vor dem ersten Handgriff.
-      </p>
-      <div class="hero__actions" data-hero="4">
-        <a class="btn" href="kontakt.html">
-          Termin anfragen
-          <svg class="btn__ico" aria-hidden="true"><use href="#i-arrow-right"></use></svg>
-        </a>
-        <a class="btn btn--line" href="leistungen.html">Was wir machen</a>
-      </div>
-    </div>
+<!-- ============================================================================
+     Aufmacher: kein zweispaltiges Textbild-Raster, sondern ein Bildband
+     ueber die volle Breite mit der Ansage darin. Darunter drei Angaben als
+     Streifen - was ein Handwerksbetrieb zusagen kann, gehoert nach vorne.
+     ========================================================================= -->
 
-    <div class="ph hero__media" data-hero="5">
-      <img src="assets/img/hero.jpg" alt="Monteur bei der Arbeit" width="800" height="1000">
-      <svg class="ph__mark" aria-hidden="true"><use href="#i-wrench"></use></svg>
-      <p class="ph__brief"><b>Bildplatz: Hero</b>Monteur bei der Arbeit, Hochformat 4:5</p>
+<section class="aufmacher" id="top">
+  <div class="ph aufmacher__bild" data-hero="1">
+    <img src="assets/img/hero.jpg" alt="Monteur bei der Arbeit" width="1800" height="1000">
+    <svg class="ph__mark" aria-hidden="true"><use href="#i-wrench"></use></svg>
+    <p class="ph__brief"><b>Bildplatz: Aufmacher</b>Monteur bei der Arbeit, Querformat 16:9</p>
+  </div>
+
+  <div class="aufmacher__satz">
+    <p class="eyebrow" data-hero="2">Elektro und Sanit&auml;r</p>
+    <h1 class="display" data-hero="3">Wir kommen, wenn wir es zusagen.</h1>
+    <p class="lede" data-hero="4">
+      Installation, Wartung und Reparatur f&uuml;r Haus und Wohnung.
+      Festpreis vor dem ersten Handgriff.
+    </p>
+    <div class="hero__actions" data-hero="5">
+      <a class="btn" href="kontakt.html">
+        Termin anfragen
+        <svg class="btn__ico" aria-hidden="true"><use href="#i-arrow-right"></use></svg>
+      </a>
+      <a class="btn btn--line" href="leistungen.html">Was wir machen</a>
     </div>
   </div>
 </section>
 
-<!-- ============================================================ Notdienst -->
-<div class="notdienst">
-  <div class="wrap notdienst__inner">
-    <svg aria-hidden="true"><use href="#i-lightning"></use></svg>
-    <b>Notdienst rund um die Uhr</b>
-    <span>Rohrbruch, Stromausfall, defekte Heizung</span>
-    <a href="kontakt.html">Notfall melden</a>
+<div class="zusagen">
+  <div class="zusage">
+    <svg aria-hidden="true"><use href="#i-certificate"></use></svg>
+    <b>Meisterbetrieb</b><span>Elektro, Sanit&auml;r und Heizung aus einer Hand</span>
+  </div>
+  <div class="zusage">
+    <svg aria-hidden="true"><use href="#i-shield-check"></use></svg>
+    <b>Festpreis</b><span>schriftlich, vor dem ersten Handgriff</span>
+  </div>
+  <div class="zusage">
+    <svg aria-hidden="true"><use href="#i-clock"></use></svg>
+    <b>Fester Termin</b><span>mit Zeitfenster, nicht &bdquo;irgendwann&ldquo;</span>
   </div>
 </div>
+
+<!-- ============================================================ Notdienst -->
+
 
 <!-- =========================================================== Leistungen -->
 <section class="section" id="leistungen">
@@ -252,11 +282,31 @@
 
 </main>
 
-<footer class="footer">
-  <div class="wrap">
-    <div class="footer__grid">
-      <a class="brand" href="index.html" style="color:var(--band-text)">Halbritter</a>
-      <ul class="footer__links">
+<!-- ============================================================================
+     Fuss als Datenblatt: drei Spalten, Angaben mit Punktlinien wie in einer
+     technischen Beilage. Kein Namenszug mit Linkliste daneben.
+     ========================================================================= -->
+
+<footer class="datenblatt">
+  <div class="datenblatt__raster">
+    <div class="datenblatt__block">
+      <h2>Halbritter Haustechnik</h2>
+      <p>Elektro, Sanit&auml;r und Heizung f&uuml;r Augsburg und Umgebung.
+         Festpreis vor dem ersten Handgriff.</p>
+    </div>
+
+    <div class="datenblatt__block">
+      <h2>Erreichbarkeit</h2>
+      <dl>
+        <div><dt>Werkstatt</dt><dd>Mo&ndash;Fr 7&ndash;17 Uhr</dd></div>
+        <div><dt>Notdienst</dt><dd>rund um die Uhr</dd></div>
+        <div><dt>Antwort</dt><dd>am selben Werktag</dd></div>
+      </dl>
+    </div>
+
+    <div class="datenblatt__block">
+      <h2>Seiten</h2>
+      <ul>
         <li><a href="leistungen.html">Leistungen</a></li>
         <li><a href="arbeiten.html">Arbeiten</a></li>
         <li><a href="kontakt.html">Kontakt</a></li>
@@ -265,9 +315,12 @@
         <li><a href="../">Weitere Beispiele</a></li>
       </ul>
     </div>
-    <p class="footer__note">
+  </div>
+
+  <div class="datenblatt__fuss">
+    <p>
       Beispielprojekt. Halbritter Haustechnik ist ein erfundenes Unternehmen,
-      sämtliche Angaben auf dieser Seite dienen ausschließlich der
+      s&auml;mtliche Angaben auf dieser Seite dienen ausschlie&szlig;lich der
       Veranschaulichung von Gestaltung und Interaktion.
     </p>
   </div>
