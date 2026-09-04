@@ -1,11 +1,14 @@
 /* ============================================================================
-   Basis-Interaktion
+   Brenner & Kolb Rechtsanwaelte - Skript dieser Seite
    ----------------------------------------------------------------------------
-   Navigation, Menue, Bildplaetze, Scroll-Einblendungen und Zeilen-Reveals.
-   Jede Seite laedt zusaetzlich ihre eigene site.js mit der Signatur-
-   Interaktion. Ohne JavaScript bleibt alles lesbar, bei
-   prefers-reduced-motion wird direkt der Endzustand gezeigt.
+   1. Grundverhalten: Navigation, Menue, Bildplaetze, Scroll-Einblendungen
+      und Zeilen-Reveals. Stellt window.Basis fuer Abschnitt 2 bereit.
+   2. Signatur-Interaktion dieser Seite.
+   Ohne JavaScript bleibt alles lesbar, bei prefers-reduced-motion wird
+   direkt der Endzustand gezeigt.
    ========================================================================= */
+
+/* ------------------------------------------------- 1. Grundverhalten */
 
 window.Basis = (function () {
   "use strict";

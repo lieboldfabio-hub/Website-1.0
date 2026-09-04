@@ -70,8 +70,9 @@ bereits vorhanden (`beispiele/halbritter-haustechnik`, `osteria-fontana`,
 - `beispiele/zahnaerzte-koenigsplatz` – Zahnarztpraxis, eigene Marke
   (Sora / Nunito Sans, Tanne-Grün + Koralle)
 
-Beide folgen exakt dem bestehenden Muster (`basis.css`/`basis.js`/GSAP wie bei
-den ersten drei Beispielen), damit sie sich nahtlos einreihen.
+Beide sind wie die ersten drei Beispiele eigenständige Websites: alles Nötige
+liegt in ihrem eigenen Ordner, geteilte Dateien gibt es zwischen den
+Beispielen nicht. Näheres in `beispiele/README.md`.
 
 Die Testimonials auf `bewertungen.html` sind als Zitate der fiktiven
 Beispielprojekte über den Zusammenarbeitsprozess formuliert – **nicht** als

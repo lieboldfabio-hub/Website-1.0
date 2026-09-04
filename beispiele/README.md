@@ -103,8 +103,9 @@ Baukasten-Feature sitzt im Bereich „Vorschau" auf der Agenturseite.
 
 ## Aufbau
 
-Jedes Beispiel liegt eigenständig in seinem Ordner und lässt sich einzeln
-ausliefern. Geteilt wird nur die Bauweise, nicht der Code.
+Jedes Beispiel ist eine **eigenständige Website**. Es gibt keine Datei, die
+zwei Projekte gemeinsam benutzen – wer eines bearbeitet, verändert damit
+garantiert kein anderes.
 
 ```
 beispiele/<name>/
@@ -114,24 +115,29 @@ beispiele/<name>/
 ├── datenschutz.html
 ├── 404.html
 └── assets/
-    ├── css/basis.css   gemeinsames Fundament, ohne Farben
-    ├── css/site.css    Tokens und Abschnitte dieser Seite
-    ├── css/fonts.css   Schrifteinbindung
-    ├── js/basis.js     Navigation, Reveals, Bildplätze, Hilfen
-    ├── js/site.js      Signatur-Interaktion dieser Seite
+    ├── css/site.css    das komplette Aussehen dieser Seite
+    │                   1. Struktur (Raster, Abstände, Bausteine)
+    │                   2. Tokens und eigene Bausteine
+    ├── css/fonts.css   Schrifteinbindung dieser Seite
+    ├── js/site.js      das komplette Verhalten dieser Seite
+    │                   1. Grundverhalten (Navigation, Menü, Reveals)
+    │                   2. Signatur-Interaktion
     ├── js/gsap.min.js  GSAP 3.15 mit ScrollTrigger
     ├── fonts/          selbst gehostet, kein Google-Request
     └── img/            og.jpg liegt hier, hier auch die Fotos ablegen
 ```
 
-`basis.css` ist in allen fünf Projekten **byteweise identisch**. Wer daran etwas
-ändert, kopiert die Datei anschließend in die anderen vier.
+Früher lagen Struktur und Grundverhalten in geteilten Dateien `basis.css` und
+`basis.js`. Die sind aufgelöst: ihr Inhalt steht jetzt als Abschnitt 1 in
+`site.css` bzw. `site.js` jedes Projekts. Das ist bewusst etwas mehr Text pro
+Ordner – dafür ist jedes Beispiel für sich änderbar, und genau das versprechen
+wir unseren Kunden auch.
 
 ### Als Vorlage für neue Kunden
 
-`basis.css` und `basis.js` enthalten keine Farben und keine Schriftnamen. Für
-ein neues Projekt genügt es, beide zu kopieren und in `site.css` die Tokens neu
-zu setzen:
+Abschnitt 1 beider Dateien enthält keine Farben und keine Schriftnamen. Für ein
+neues Projekt kopiert man einen bestehenden Ordner und setzt in Abschnitt 2 von
+`site.css` die Tokens neu:
 
 ```css
 :root {
@@ -153,7 +159,7 @@ Tokens gefärbt:
 `.cta-band` · `.formular` mit `.feld` und `.feld-paar` · `.preise` mit `.preis` ·
 `.zwei` als zweispaltiges Raster · `.legal` für Rechtstexte · `.fehler` für 404
 
-`basis.js` stellt zusätzlich zwei Hilfen bereit:
+Abschnitt 1 von `site.js` stellt zusätzlich zwei Hilfen bereit:
 
 - `Basis.magnetisch(element, stärke)` - folgt dem Zeiger, nur mit Maus
 - `Basis.spotlight(element)` - setzt `--mx` und `--my` für Lichtkegel
