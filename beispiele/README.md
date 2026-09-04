@@ -19,7 +19,7 @@ Endung `.example` und gehen ins Leere.
 | `osteria-fontana` | Restaurant | **Mehrseiter** (4 Seiten) | Playfair Display auf Fast-Schwarz, Terrakotta |
 | `zahnaerzte-koenigsplatz` | Zahnarztpraxis | **Mehrseiter** (4 Seiten) | Sora auf Creme, Tannengrün und Koralle |
 | `kopfsache-studio` | Friseursalon | **Scroll-Pager** | Bricolage Grotesque, Schwarzweiß mit Limette |
-| `brenner-kolb-recht` | Kanzlei | **Scroll-Pager** | Frank Ruhl Libre auf Pergament, Gold |
+| `brenner-kolb-recht` | Kanzlei | **Single-Pager** | Frank Ruhl Libre auf Pergament, Gold |
 
 ### Jede Seite hat ihre eigene Form
 
@@ -30,16 +30,52 @@ dieselbe Form haben.
 | | Kopf | Aufmacher | Fuß |
 |---|---|---|---|
 | **Kopfsache** | Nummerierte Schiene rechts, Laufband unten | Erste von fünf Tafeln, Grund schlägt hart um | In der letzten Tafel |
-| **Brenner & Kolb** | Laufender Kolumnentitel mit römischer Ziffer, Haarlinie darunter | Erstes von fünf Blättern, Fußnote unten | Im Schlussblatt |
+| **Brenner & Kolb** | Laufender Kolumnentitel mit römischer Ziffer, Haarlinie darunter | Erstes von fünf Kapiteln, Fußnote unten | Im Schlusskapitel |
 | **Halbritter** | Zwei Lagen: Notdienst oben, Name im Farbblock darunter | Bildband über die volle Breite, Ansage darin | Datenblatt mit Punktlinien |
 | **Osteria** | Firmenschild: Name mittig, Wege links und rechts | Bild über die volle Fläche, Satz mittig darin | Rückseite der Karte, mittig |
 | **Zahnärzte** | Schwebende Kachel, aktive Seite als gefüllte Pille | Grünes Feld mit rundem Abschluss, Bild ragt hinein | Praxiskarte, zweispaltig |
 
-Die beiden Scroll-Pager rasten beim Scrollen ein: jede Tafel beziehungsweise
-jedes Blatt füllt genau einen Bildschirm. Auf zu niedrigen oder zu schmalen
-Fenstern schaltet sich das Einrasten ab und die Seite liest sich normal weiter
-– lieber das als Inhalt, an den man nicht herankommt. Impressum, Datenschutz
-und 404 bleiben auch dort gewöhnliche Seiten.
+### Drei Modi, und jede Seite hat genau eine Signatur
+
+Alle drei Arten, eine Website zu bauen, sind vertreten – damit im
+Kundengespräch gezeigt werden kann, wie sich das jeweils anfühlt:
+
+| Modus | Wer | Was das heißt |
+|---|---|---|
+| **Scroll-Pager** | Kopfsache | Fünf Tafeln, jede füllt den Bildschirm, das Scrollen rastet ein |
+| **Single-Pager** | Brenner & Kolb | Fünf Kapitel auf einer ruhig durchlaufenden Seite, kein Einrasten |
+| **Mehrseiter** | Halbritter, Osteria, Zahnärzte | Vier Inhaltsseiten plus Rechtstexte |
+
+Dazu bekommt jede Seite **genau einen** auffälligen Baustein. Keine bekommt
+zwei, und keine zwei bekommen denselben – sonst wäre es wieder ein Baukasten:
+
+| Signatur | Wo | Warum dort |
+|---|---|---|
+| **Coverflow** – vier Karten hintereinander, die vordere flach | Kopfsache, Tafel 03 | Ein Salon verkauft Handschriften, keine Leistungspakete |
+| **Tarifblatt mit Umschalter** – drei Pakete, jährlich/monatlich | Halbritter, `leistungen.html` | Ein Handwerksbetrieb verkauft auch Wiederkehrendes, nicht nur Aufträge |
+| **Karussell mit Seitenblick** – Gang in der Mitte scharf, Nachbarn angeschnitten | Osteria, Startseite | Ein Abend ist eine Abfolge, keine Galerie |
+| **Stimmen-Wand** – zwei gegenläufige Bänder auf einer gekippten Platte | Zahnärzte, `praxis.html` | Vertrauen entsteht über andere Patienten, nicht über Selbstlob |
+| **Bewusst keine** | Brenner & Kolb | Eine Kanzlei, die mit Effekten wirbt, wirkt unseriös – hier trägt der Satzspiegel |
+
+### Verläufe
+
+Jede Seite hat **eine** Fläche mit einem weichen Farbverlauf und feinem Korn –
+jeweils an anderer Stelle und in der eigenen Palette. Das Korn ist nicht
+Zierde: ohne es sieht ein weicher Verlauf nach Bildschirmschoner aus.
+
+| Wo | Was |
+|---|---|
+| Kopfsache, Aufschlag | Limette von unten links, kühler Grauton oben rechts |
+| Halbritter, Aufmacher | Signallicht aus der Ecke, in der die Ansage steht |
+| Osteria, Gänge | Warmes Licht hinter dem mittleren Gang |
+| Zahnärzte, Stimmen | Tannengrün und Koralle auf Creme |
+| Brenner & Kolb, Aufschlag | Sehr fein: Gold und Nachtblau auf Pergament |
+
+Der Scroll-Pager rastet beim Scrollen ein: jede Tafel füllt genau einen
+Bildschirm. Auf zu niedrigen oder zu schmalen Fenstern schaltet sich das ab
+und die Seite liest sich normal weiter – lieber das als Inhalt, an den man
+nicht herankommt. Impressum, Datenschutz und 404 bleiben überall gewöhnliche
+Seiten.
 
 Jedes Projekt hat zusätzlich `impressum.html`, `datenschutz.html` und
 `404.html`. Die Rechtstexte sind branchenspezifisch: Handwerkskammer und
@@ -63,16 +99,26 @@ einzige davon mehr stehen.
 funktioniert. Beim ersten Erscheinen zieht er kurz auf, damit erkennbar wird,
 dass man ihn bewegen kann. Er steht auf der Startseite und auf `arbeiten.html`.
 
+**Zweite Signatur:** das **Tarifblatt** auf `leistungen.html`. Drei
+Wartungspakete nebeneinander, das mittlere hervorgehoben, darüber ein
+Umschalter zwischen Jahresbetrag und Monatsrate. Getauscht wird nur Text; jede
+Zahl trägt beide Werte als `data`-Wert. Ohne JavaScript blendet sich der
+Umschalter aus und der Jahresbetrag bleibt stehen – die Seite ist vollständig.
+
 Außerdem: Leistungskarten, die sich beim Scrollen stapeln (`leistungen.html`),
-Ablauf in vier Schritten, Preisrahmen, häufige Fragen, drei Referenzen mit
-Umfang, Dauer und Art der Abrechnung, Anfrageformular mit Notdienst-Streifen.
+Ablauf in vier Schritten, häufige Fragen, drei Referenzen mit Umfang, Dauer und
+Art der Abrechnung, Anfrageformular.
 
 ### osteria-fontana
 
 `index.html` · `karte.html` · `abend.html` · `besuch.html`
 
-**Signatur:** Eine Galerie, die waagerecht läuft, während man senkrecht
-scrollt. Der Abschnitt wird dabei am Bildschirm festgehalten.
+**Signatur:** das **Gang-Karussell** auf der Startseite. Der Gang in der Mitte
+steht scharf und groß, links und rechts schaut der Nachbar hervor – abgedunkelt,
+kleiner, leicht unscharf. Pfeile, Punkte, Pfeiltasten und ein Klick auf den
+Nachbarn holen ihn nach vorn. Nur der vordere Gang zeigt seinen Text, sonst
+liest man drei Titel auf einmal. Auf schmalen Fenstern wird daraus eine
+wischbare Reihe.
 
 Außerdem: Laufband mit den Gerichten des Tages, Speisekarte mit Punktlinie
 (Auszug auf der Startseite, vollständig plus Weinkarte auf `karte.html`),
@@ -87,50 +133,74 @@ im Einzelnen ausgeführt auf `leistungen.html` samt Kosten und Kassen. `praxis.h
 zeigt Arbeitsweise, Team und Ausstattung, `termin.html` das Terminformular mit
 Sprechzeiten, Notfallzeiten und Anfahrt.
 
+**Signatur:** die **Stimmen-Wand** auf `praxis.html`. Zwei Bänder laufen
+gegenläufig, die ganze Platte steht dabei schräg im Raum – als schaute man von
+der Seite auf eine Pinnwand. Gedreht wird einmal der Container, nicht jede
+Karte. Bewegt wird per CSS-Animation statt per JavaScript, damit das Band auch
+läuft, wenn sonst nichts geladen ist. Bei `prefers-reduced-motion` und auf
+schmalen Fenstern steht stattdessen dieselbe Liste ruhig untereinander – die
+ist auch das, was Vorlesesoftware bekommt.
+
+Dass die Zitate **erfunden** sind, steht im Vorspann direkt darüber. Sie zeigen
+die Form, nicht echte Bewertungen.
+
 Das Terminformular fragt bewusst **keine Gesundheitsdaten** ab; das steht so
 auch im Formular und in der Datenschutzerklärung.
 
 ---
 
-## Die zwei Scroll-Pager
+## Der Scroll-Pager und der Single-Pager
 
-Bei beiden füllt jeder Abschnitt genau einen Bildschirm und das Scrollen rastet
-ein (`scroll-snap-type: y mandatory` an der Wurzel, weil das Dokument selbst der
-scrollende Kasten ist). Freigeschaltet wird das über `<html class="pager">`, das
-nur `index.html` trägt – die Rechtstexte bleiben gewöhnliche Seiten.
+Beide sind Einzelseiten, führen aber bewusst gegensätzlich.
 
-Die beiden führen den Leser bewusst gegensätzlich:
+### kopfsache-studio · Scroll-Pager
 
-### kopfsache-studio
+Fünf **Tafeln**, jede füllt genau einen Bildschirm, das Scrollen rastet ein
+(`scroll-snap-type: y mandatory` an der Wurzel, weil das Dokument selbst der
+scrollende Kasten ist; freigeschaltet über `<html class="pager">`).
 
-Fünf **Tafeln**. Rechts eine nummerierte Schiene; der Name eines Abschnitts
-erscheint erst, wenn er dran ist oder der Zeiger darauf liegt, sonst steht dort
-nur eine ruhige Zahlenreihe. Unten läuft dauerhaft ein Band mit den Leistungen.
-Der Grund schlägt hart um – dunkel, hell, dunkel, hell, dunkel –, damit beim
-Einrasten sichtbar eine neue Seite aufschlägt.
+Rechts eine nummerierte Schiene; der Name eines Abschnitts erscheint erst, wenn
+er dran ist oder der Zeiger darauf liegt, sonst steht dort nur eine ruhige
+Zahlenreihe. Unten läuft dauerhaft ein Band mit den Leistungen. Der Grund
+schlägt hart um – dunkel, hell, dunkel, hell, dunkel –, damit beim Einrasten
+sichtbar eine neue Seite aufschlägt.
 
-**Signatur:** Lichtkegel unter dem Zeiger auf den Leistungskarten, Ziehharmonika
-bei den Fragen, Knöpfe, die dem Zeiger folgen.
+**Signatur:** das **Coverflow-Team** auf Tafel 03. Vier Karten stehen wie
+Plattencover hintereinander, die vordere flach, die anderen weggekippt und
+abgedunkelt. Umlaufend gerechnet, damit immer links und rechts eine Karte
+steht. Klick, Punkte und Pfeiltasten wählen; darunter wechseln Name, Rolle und
+drei Angaben mit. Auf schmalen Fenstern kippt nichts mehr, dann ist es eine
+wischbare Reihe.
 
-### brenner-kolb-recht
+Dazu: Lichtkegel unter dem Zeiger auf den Leistungskarten, Ziehharmonika bei
+den Fragen.
 
-Fünf **Blätter**, römisch nummeriert. Statt einer Schiene führt ein laufender
-Kolumnentitel oben durch die Seite: Ziffer und Kapitel, darunter eine Haarlinie,
-die mit dem Fortschritt wächst. Unten links ein Register – die Kapitel
-ausgeschrieben, durch Punkte getrennt. Der Grund bleibt durchgehend Pergament,
-nur das Schlussblatt schlägt ins Nachtblau um; einmal, als Schlusszeichen.
+**Rückfall:** unter 900 Pixel Breite oder 620 Pixel Höhe schaltet sich das
+Einrasten ab, die Tafeln wachsen mit dem Inhalt, Schiene und Band verschwinden.
+Eine Tafel, die nicht auf den Bildschirm passt, darf nicht festgehalten werden.
 
-Unterschieden werden die Blätter über ihren Satzspiegel statt über Farbe:
+### brenner-kolb-recht · Single-Pager
+
+Fünf **Kapitel**, römisch nummeriert, auf einer einzigen ruhig durchlaufenden
+Seite. **Kein Einrasten** (`<html class="lauf">`) – ein Rechtstext lässt sich
+nicht in Bildschirmportionen zwingen, und wer etwas sucht, will scrollen
+dürfen, ohne dass ihn die Seite festhält. Nur das erste Kapitel füllt den
+Bildschirm einmal ganz, danach läuft die Seite normal weiter; zwischen den
+Kapiteln steht eine Haarlinie statt eines Farbwechsels.
+
+Geführt wird über den laufenden Kolumnentitel oben: Ziffer und Kapitel, darunter
+eine Haarlinie, die mit dem Fortschritt wächst. Unten links ein Register – die
+Kapitel ausgeschrieben, durch Punkte getrennt. Der Grund bleibt durchgehend
+Pergament, nur das Schlusskapitel schlägt ins Nachtblau um; einmal, als
+Schlusszeichen.
+
+Unterschieden werden die Kapitel über ihren Satzspiegel statt über Farbe:
 Aufschlag zweispaltig mit Fußnote, Rechtsgebiete als nummerierte Liste mit
 Haarlinien, Kanzlei einspaltig und mittig, Team zwei Zeilen mit Portrait links,
 Kontakt zweigeteilt.
 
-### Rückfall
-
-Unter 900 Pixel Breite – bei Brenner & Kolb zusätzlich unter 720 Pixel Höhe –
-schaltet sich das Einrasten ab, die Abschnitte wachsen mit dem Inhalt, Schiene,
-Band und Register verschwinden. Ein Abschnitt, der nicht auf den Bildschirm
-passt, darf nicht festgehalten werden.
+**Signatur: bewusst keine.** Eine Kanzlei, die mit Effekten wirbt, wirkt
+unseriös. Hier trägt der Satzspiegel, sonst nichts.
 
 ---
 
@@ -277,8 +347,10 @@ Für jedes Beispiel im echten Browser nachgestellt:
 - HTML-Verschachtelung aller 29 Seiten maschinell geprüft, keine offenen Tags
 - Alle internen Verweise lösen auf, kein `href="#"` ins Leere
 - Kein horizontaler Overflow, geprüft bei 1600, 1440, 1024, 768 und 500 Pixeln
-- Bei den Scroll-Pagern füllt jeder Abschnitt exakt das Fenster, gemessen bei
-  1920x1080, 1600x900, 1440x900, 1366x768, 1280x800 und 1100x700
+- Beim Scroll-Pager füllt jede Tafel exakt das Fenster, gemessen bei
+  1920x1080, 1600x1050, 1440x900, 1366x768, 1280x800 und 1100x700
+- Fünf Seiten mit den neuen Bausteinen auf Skriptfehler geprüft
+  (`window.onerror` und `unhandledrejection` abgefangen): alle sauber
 - Alle 29 Seiten vor und nach dem Entfernen des ungenutzten CSS gerendert und
   pixelweise verglichen: identisch
 - Signatur-Interaktionen funktional getestet: Schieber mit Ziehen und Tastatur,

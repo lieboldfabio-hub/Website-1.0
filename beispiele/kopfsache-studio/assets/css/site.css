@@ -815,14 +815,26 @@ h1, h2, h3 { font-weight: 800; letter-spacing: -0.035em; }
 
 .cover { margin-top: clamp(1rem, 3vh, 2rem); }
 
+/* Ohne JavaScript stehen die Karten als wischbare Reihe nebeneinander. Erst
+   .js (setzt site.js selbst an <html>) schaltet den gestapelten Faecher frei. */
 .cover__buehne {
+  display: flex; gap: 1rem;
+  overflow-x: auto; scroll-snap-type: x mandatory;
+  padding-bottom: .5rem;
+}
+.cover__buehne > .cover__karte { flex: none; width: 62vw; max-width: 240px; scroll-snap-align: center; }
+:not(.js) .cover__punkte { display: none; }
+
+.js .cover__buehne {
   position: relative;
+  display: block;
   height: clamp(200px, 34svh, 330px);
+  overflow: visible;
   perspective: 1400px;
   transform-style: preserve-3d;
 }
 
-.cover__karte {
+.js .cover__karte {
   position: absolute;
   left: 50%; top: 0;
   width: clamp(150px, 25svh, 248px);
@@ -846,7 +858,7 @@ h1, h2, h3 { font-weight: 800; letter-spacing: -0.035em; }
   box-shadow: 0 26px 50px -26px rgba(0, 0, 0, .9);
 }
 /* Je weiter hinten, desto dunkler - das ersetzt einen Schleier ueber allem. */
-.cover__karte::after {
+.js .cover__karte::after {
   content: ""; position: absolute; inset: 0; z-index: 3;
   border-radius: 12px; pointer-events: none;
   background: rgba(16, 16, 16, calc(var(--weg) * .34));
@@ -905,16 +917,16 @@ h1, h2, h3 { font-weight: 800; letter-spacing: -0.035em; }
 /* Auf schmalen Fenstern kippt nichts mehr: die Karten stehen dann als
    wischbare Reihe nebeneinander, das ist mit dem Daumen bedienbar. */
 @media (max-width: 900px) {
-  .cover__buehne {
+  .js .cover__buehne {
     height: auto; perspective: none;
     display: flex; gap: 1rem;
     overflow-x: auto; scroll-snap-type: x mandatory;
     padding-bottom: .5rem;
   }
-  .cover__karte {
+  .js .cover__karte {
     position: static; transform: none; width: 62vw; max-width: 260px;
     flex: none; scroll-snap-align: center;
   }
-  .cover__karte::after { background: none; }
+  .js .cover__karte::after { background: none; }
   .cover__punkte { display: none; }
 }
