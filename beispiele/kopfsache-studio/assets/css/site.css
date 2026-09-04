@@ -700,29 +700,6 @@ h1, h2, h3 { font-weight: 800; letter-spacing: -0.035em; }
   .hero__media { aspect-ratio: 3 / 2; }
 }
 
-/* ------------------------------------------------------------- Laufband - */
-
-.streifen {
-  background: var(--accent-flaeche);
-  color: var(--accent-fg);
-  padding-block: .9rem;
-  overflow: hidden;
-  white-space: nowrap;
-}
-.streifen__spur { display: inline-flex; align-items: center; gap: 2rem; will-change: transform; }
-.streifen__spur > span {
-  font-family: var(--font-display);
-  font-weight: 800;
-  font-size: clamp(.95rem, .85rem + .4vw, 1.15rem);
-  letter-spacing: -.01em;
-  text-transform: uppercase;
-}
-.streifen__punkt { width: 6px; height: 6px; border-radius: 999px; background: var(--accent-fg); flex: none; }
-@media (prefers-reduced-motion: reduce) {
-  .streifen { white-space: normal; }
-  .streifen__spur { flex-wrap: wrap; transform: none !important; }
-}
-
 /* ------------------------------------------------------- Leistungskarten */
 /*
    Unter dem Zeiger wandert ein Lichtkegel ueber die Karte. Die Position
@@ -790,7 +767,6 @@ h1, h2, h3 { font-weight: 800; letter-spacing: -0.035em; }
 
 /* --------------------------------------------------------------- Team --- */
 
-.team { background: var(--tinte); color: var(--band-text); }
 .team__kopf { margin-bottom: clamp(2rem, 4vw, 3rem); max-width: 40rem; }
 .team__kopf .h2 { max-width: 15ch; }
 
@@ -811,7 +787,7 @@ h1, h2, h3 { font-weight: 800; letter-spacing: -0.035em; }
   gap: clamp(2rem, 5vw, 4rem);
   align-items: start;
 }
-.fragen .h2 { max-width: 11ch; }
+.tafel--fragen .h2 { max-width: 11ch; }
 
 .akkordeon { border-top: 1px solid var(--line); }
 .frage { border-bottom: 1px solid var(--line); }
@@ -859,10 +835,9 @@ h1, h2, h3 { font-weight: 800; letter-spacing: -0.035em; }
 
 /* ------------------------------------------------------------- Termin --- */
 
-.termin { background: var(--tinte); color: var(--band-text); }
 .termin__inner { text-align: center; }
-.termin .h2 { max-width: 18ch; margin-inline: auto; }
-.termin .lede { margin: 1.25rem auto 0; }
+.tafel--termin .h2 { max-width: 18ch; margin-inline: auto; }
+.tafel--termin .lede { margin: 1.25rem auto 0; max-width: 46ch; }
 .termin__actions {
   margin-top: 2.25rem;
   display: flex;
@@ -890,10 +865,263 @@ h1, h2, h3 { font-weight: 800; letter-spacing: -0.035em; }
 
 /* In den dunklen Abschnitten uebernimmt der aufgehellte Ton. Weil --accent
    vererbt wird, genuegt es, ihn am Container zu setzen. */
-.team, .termin, .footer, .cta-band, .band, .marquee {
+.tafel--start, .tafel--team, .tafel--termin, .footer {
   --accent: var(--accent-band);
   --accent-flaeche: var(--accent-band);
   /* Ein Knopf auf dem Band traegt jetzt die helle Flaeche, also braucht er
      dunkle Schrift statt der hellen aus dem Grundzustand. */
   --accent-fg: #101010;
+}
+
+
+/* ============================================================================
+   3. Scroll-Pager der Startseite
+   ----------------------------------------------------------------------------
+   Nur index.html traegt <html class="pager">. Impressum, Datenschutz und 404
+   sind Lesetexte und laufen bewusst als normale Seiten weiter - ein Rechtstext
+   gehoert nicht in fuenf Bildschirmportionen zerteilt.
+
+   Das Einrasten haengt an der Wurzel, weil das Dokument selbst der scrollende
+   Kasten ist. Es schaltet sich ab, sobald das Fenster zu niedrig oder zu
+   schmal wird: eine Tafel, die nicht auf den Bildschirm passt, darf nicht
+   festgehalten werden.
+   ========================================================================= */
+
+.pager { scroll-snap-type: y mandatory; --laufband-h: 42px; }
+.pager body { background: var(--tinte); }
+
+.tafel {
+  position: relative;
+  min-height: 100svh;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  display: flex;
+  align-items: center;
+  padding: clamp(5.5rem, 9vh, 7rem) var(--pad-x) calc(var(--laufband-h) + clamp(2rem, 4vh, 3.5rem));
+  overflow: clip;
+}
+
+/* Der Grund schlaegt hart um: dunkel, hell, dunkel, hell, dunkel. Beim
+   Einrasten wechselt damit sichtbar der Ort und nicht nur der Text - das
+   passt zur Schwarzweiss-Basis des Salons besser als ein weicher Verlauf. */
+.tafel--start   { background: var(--tinte); color: var(--band-text); }
+.tafel--angebot { background: var(--papier); }
+.tafel--team    { background: var(--tinte); color: var(--band-text); }
+.tafel--fragen  { background: var(--papier-2); }
+.tafel--termin  { background: var(--tinte); color: var(--band-text); }
+
+.tafel--start h1, .tafel--start h2,
+.tafel--team h2, .tafel--team h3,
+.tafel--termin h2 { color: var(--band-text); }
+.tafel--start .lede, .tafel--team p, .tafel--termin .lede { color: var(--band-text-soft); }
+.tafel--start .eyebrow, .tafel--team .eyebrow { color: var(--accent-band); }
+.tafel--start .tafel__hinweis { color: var(--band-text-soft); }
+
+.tafel__inhalt { width: 100%; max-width: var(--wrap); margin-inline: auto; }
+
+/* ------------------------------------------------------------ Tafel 01 */
+
+.tafel--start {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, .85fr);
+  gap: clamp(2rem, 5vw, 4.5rem);
+  align-items: center;
+}
+.tafel--start > * { min-width: 0; }
+.tafel__satz { max-width: 34rem; justify-self: end; width: 100%; }
+.tafel__satz .display { max-width: 11ch; }
+.tafel__satz .display em { font-style: normal; color: var(--accent); }
+.tafel__satz .lede { margin-top: 1.5rem; max-width: 36ch; }
+
+/* Ein .ph hat keine eigene Groesse. Ohne Breite berechnet das
+   Seitenverhaeltnis aus nichts wieder nichts - der Platz waere leer. */
+.tafel__bild { aspect-ratio: 3 / 4; width: 100%; max-width: min(46vh, 420px); justify-self: start; }
+
+/* Der Hinweis steht am linken Rand, gedreht wie ein Buchruecken - kein Pfeil,
+   der in jedem zweiten Pager vorkommt. */
+.tafel__hinweis {
+  position: absolute;
+  left: calc(var(--pad-x) / 3);
+  bottom: calc(var(--laufband-h) + 3.5rem);
+  margin: 0;
+  writing-mode: vertical-rl;
+  font-size: .72rem;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--text-soft);
+}
+.tafel__hinweis::after {
+  content: "";
+  display: block;
+  width: 1px;
+  height: 3.2rem;
+  margin: .8rem auto 0;
+  background: linear-gradient(var(--accent), transparent);
+}
+
+/* Vier Karten muessen im Pager nebeneinander bleiben. Das automatische
+   Raster bricht bei 1280 auf zwei Reihen um und sprengt damit die Tafel;
+   solange der Pager laeuft, wird die Spaltenzahl deshalb festgesetzt. */
+.tafel--angebot .karten { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.tafel--angebot .karte-k p { font-size: .9rem; }
+
+/* ------------------------------------------------------------ Tafel 03 */
+
+.tafel--team .ph { aspect-ratio: 3 / 4; max-height: 38svh; }
+.tafel--team .koepfe { margin-top: clamp(1.5rem, 3vh, 2.5rem); }
+
+/* ------------------------------------------------------------ Tafel 05 */
+
+.tafel--termin { flex-direction: column; justify-content: center; }
+.tafel--termin .termin__inner { flex: 1 0 auto; display: flex; flex-direction: column; justify-content: center; }
+
+.schluss {
+  width: 100%;
+  max-width: var(--wrap);
+  margin-inline: auto;
+  padding-top: clamp(1.5rem, 3vh, 2.5rem);
+  border-top: 1px solid var(--band-line);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: .8rem clamp(1.2rem, 3vw, 2.5rem);
+}
+.schluss__links { display: flex; flex-wrap: wrap; gap: 1.2rem; list-style: none; margin: 0; padding: 0; }
+.schluss__links a { color: var(--band-text-soft); font-size: .88rem; text-decoration: none; }
+.schluss__links a:hover { color: var(--accent-band); }
+.schluss__note { flex: 1 1 22rem; margin: 0; color: var(--band-text-soft); font-size: .78rem; line-height: 1.6; opacity: .85; }
+
+/* -------------------------------------------------------- Kopf des Pagers */
+/* Kein Balken ueber die volle Breite: nur Name links, Termin rechts, beide
+   frei schwebend, damit die Tafel darunter ganz sichtbar bleibt. */
+
+.pagerkopf {
+  position: fixed;
+  inset: 0 var(--pad-x) auto;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-block: clamp(1.1rem, 2.4vh, 1.7rem);
+  pointer-events: none;
+}
+.pagerkopf > * { pointer-events: auto; }
+.pagerkopf .brand { color: var(--text); transition: color .3s var(--ease); }
+.pager.auf-dunkel .pagerkopf .brand { color: var(--band-text); }
+
+/* ----------------------------------------------------------- Schiene rechts */
+
+.schiene {
+  position: fixed;
+  right: clamp(.6rem, 1.6vw, 1.4rem);
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 40;
+}
+.schiene ol { list-style: none; margin: 0; padding: 0; display: grid; gap: .2rem; }
+.schiene a {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: .7rem;
+  padding: .45rem .5rem;
+  text-decoration: none;
+  color: var(--text-soft);
+  font-size: .74rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  transition: color .3s var(--ease);
+}
+.schiene b { font-weight: 600; font-variant-numeric: tabular-nums; }
+/* Der Name steht erst da, wenn die Tafel dran ist oder der Zeiger drauf
+   liegt. Sonst bleibt rechts nur eine ruhige Zahlenreihe stehen. */
+.schiene span {
+  max-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  opacity: 0;
+  transition: max-width .4s var(--ease), opacity .3s var(--ease);
+}
+.schiene a::after {
+  content: "";
+  width: 14px;
+  height: 2px;
+  background: currentColor;
+  opacity: .35;
+  transition: width .4s var(--ease), opacity .3s var(--ease);
+}
+.schiene a:hover span, .schiene a.is-hier span { max-width: 9rem; opacity: 1; }
+.schiene a:hover, .schiene a.is-hier { color: var(--text); }
+.schiene a.is-hier::after { width: 30px; opacity: 1; background: var(--accent); }
+
+/* Ueber den dunklen Tafeln kehrt sich die Schiene um. */
+.pager.auf-dunkel .schiene a { color: var(--band-text-soft); }
+.pager.auf-dunkel .schiene a:hover,
+.pager.auf-dunkel .schiene a.is-hier { color: var(--band-text); }
+.pager.auf-dunkel .schiene a.is-hier::after { background: var(--accent-band); }
+
+/* --------------------------------------------------------------- Laufband */
+
+.laufband {
+  position: fixed;
+  inset: auto 0 0;
+  z-index: 35;
+  height: var(--laufband-h);
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  white-space: nowrap;
+  background: var(--accent-flaeche);
+  color: var(--accent-fg);
+  border-top: 1px solid var(--tinte);
+}
+.laufband__spur { display: inline-flex; align-items: center; gap: 2rem; padding-left: 2rem; will-change: transform; }
+.laufband__spur > span {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: .82rem;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+}
+.laufband__spur > i { width: 5px; height: 5px; border-radius: 999px; background: var(--accent-fg); flex: none; }
+
+/* ------------------------------------------------------------ Rueckfall */
+/*
+   Zu niedrig oder zu schmal fuer ganze Tafeln: Einrasten aus, Tafeln wachsen
+   mit dem Inhalt, Schiene und Laufband verschwinden. Die Seite liest sich
+   dann wie eine normale lange Seite - lieber das als Inhalt, an den man
+   nicht herankommt.
+*/
+@media (max-width: 900px), (max-height: 620px) {
+  .pager { scroll-snap-type: none; }
+  .tafel {
+    min-height: 0;
+    scroll-snap-align: none;
+    display: block;
+    padding: clamp(3.5rem, 9vw, 5rem) var(--pad-x);
+    overflow: visible;
+  }
+  .tafel--start { display: block; }
+  .tafel__satz { max-width: none; }
+  /* Die vh-Deckelung stammt aus der Tafelansicht. Auf dem Telefon macht
+     sie das Dokument breiter als das Fenster, deshalb faellt sie hier weg. */
+  .tafel__bild { max-height: none; max-width: none; margin-top: 2rem; }
+  .tafel__hinweis { display: none; }
+  .schiene, .laufband { display: none; }
+  .pagerkopf {
+    position: sticky;
+    background: var(--bg);
+    border-bottom: 1px solid var(--line);
+    padding-inline: var(--pad-x);
+    inset: 0 0 auto;
+  }
+  .pager.auf-dunkel .pagerkopf .brand { color: var(--text); }
+  .tafel--angebot .karten { grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); }
+  .tafel--team .ph { max-height: none; }
+  .schluss { margin-top: 2.5rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pager { scroll-snap-type: y proximity; }
 }

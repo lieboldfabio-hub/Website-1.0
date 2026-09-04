@@ -72,8 +72,11 @@ window.Basis = (function () {
       var ziel = document.querySelector(id);
       if (!ziel) return;
       e.preventDefault();
+      /* Im Pager rastet die Tafel buendig oben ein, es gibt keine Leiste,
+         um die versetzt werden muesste. */
+      var versatz = root.classList.contains("pager") ? 0 : 70;
       window.scrollTo({
-        top: ziel.getBoundingClientRect().top + window.pageYOffset - 70,
+        top: ziel.getBoundingClientRect().top + window.pageYOffset - versatz,
         behavior: reduziert ? "auto" : "smooth"
       });
       if (history.replaceState) history.replaceState(null, "", id);
@@ -216,7 +219,7 @@ window.Basis = (function () {
   /* ------------------------------------------------------------ Laufband */
   if (window.Basis && window.Basis.gsap) {
     gsap.matchMedia().add("(prefers-reduced-motion: no-preference)", function () {
-      var spur = document.querySelector(".streifen__spur");
+      var spur = document.querySelector(".laufband__spur");
       if (!spur) return;
       spur.innerHTML += spur.innerHTML;
       var t = gsap.to(spur, { xPercent: -50, duration: 26, ease: "none", repeat: -1 });
@@ -228,6 +231,52 @@ window.Basis = (function () {
       function (b) { window.Basis.magnetisch(b, 0.24); }
     );
   }
+
+  /* ------------------------------------------------------------- Schiene */
+  /*
+     Welche Tafel gerade dran ist, entscheidet nicht die Scrollposition,
+     sondern welche Tafel die Mitte des Bildschirms belegt. Das stimmt auch
+     dann noch, wenn das Einrasten auf kleinen Fenstern abgeschaltet ist.
+
+     Nebenbei faellt dabei ab, ob der Grund hell oder dunkel ist. Danach
+     richten sich Schiene und Name, ohne dass eine zweite Messung noetig ist.
+  */
+  (function () {
+    var tafeln = Array.prototype.slice.call(document.querySelectorAll(".tafel"));
+    if (!tafeln.length) return;
+
+    var wurzel = document.documentElement;
+    var glieder = {};
+    Array.prototype.forEach.call(document.querySelectorAll(".schiene a"), function (a) {
+      glieder[a.getAttribute("href").slice(1)] = a;
+    });
+
+    var dunkel = { start: true, team: true, termin: true };
+    var aktuell = null;
+
+    function setzen(id) {
+      if (id === aktuell) return;
+      aktuell = id;
+      for (var k in glieder) glieder[k].classList.toggle("is-hier", k === id);
+      wurzel.classList.toggle("auf-dunkel", !!dunkel[id]);
+    }
+
+    var beobachter = new IntersectionObserver(function (eintraege) {
+      var beste = null;
+      eintraege.forEach(function (e) {
+        if (e.isIntersecting) beste = e.target;
+      });
+      if (beste) setzen(beste.id);
+    }, {
+      /* Ein waagerechter Streifen quer durch die Bildschirmmitte: genau eine
+         Tafel kann ihn belegen. */
+      rootMargin: "-50% 0px -50% 0px",
+      threshold: 0
+    });
+
+    tafeln.forEach(function (t) { beobachter.observe(t); });
+    setzen(tafeln[0].id);
+  })();
 
   /* ------------------------------------------------------- Ziehharmonika */
   /*
