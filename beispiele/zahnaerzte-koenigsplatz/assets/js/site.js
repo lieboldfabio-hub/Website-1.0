@@ -201,3 +201,93 @@ window.Basis = (function () {
     }
   };
 })();
+
+
+/* ------------------------------------------------------------ Atem im Empfang */
+/*
+   Der erste Bildschirm dieser Seite. Fuenf weiche Formen ziehen sehr langsam
+   ihre Bahn und schieben sich dabei ineinander. Kein Blinken, kein Zucken -
+   das Tempo ist bewusst niedriger als das, was man bewusst wahrnimmt.
+
+   Der Grund fuer die Langsamkeit: die Seite wirbt damit, Angst zu nehmen.
+   Alles, was ruckt, arbeitet dagegen.
+
+   Die Bahnen sind Lissajous-Figuren mit unrunden Verhaeltnissen - so
+   wiederholt sich das Bild praktisch nie, ohne dass Zufall im Spiel ist.
+*/
+(function () {
+  "use strict";
+
+  var leinwand = document.querySelector(".atem");
+  if (!leinwand || !leinwand.getContext) return;
+
+  var ruhig = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var stift = leinwand.getContext("2d");
+  var breite = 0, hoehe = 0, dichte = 1;
+  var formen = [];
+  var laeuft = false, bild = 0, vorher = 0, uhr = 0;
+
+  function messen() {
+    var r = leinwand.getBoundingClientRect();
+    dichte = Math.min(window.devicePixelRatio || 1, 2);
+    breite = Math.max(1, Math.round(r.width));
+    hoehe = Math.max(1, Math.round(r.height));
+    leinwand.width = Math.round(breite * dichte);
+    leinwand.height = Math.round(hoehe * dichte);
+    stift.setTransform(dichte, 0, 0, dichte, 0, 0);
+
+    formen = [
+      { ton: "154, 214, 190", kraft: .30, gross: .40, ax: .30, ay: .16, fx: 0.061, fy: 0.083, px: 0.0, py: 1.1, mx: .28, my: .42 },
+      { ton: "233, 122,  78", kraft: .22, gross: .30, ax: .26, ay: .20, fx: 0.047, fy: 0.069, px: 2.1, py: 0.4, mx: .72, my: .56 },
+      { ton: "110, 190, 160", kraft: .20, gross: .46, ax: .34, ay: .13, fx: 0.037, fy: 0.053, px: 4.2, py: 2.6, mx: .52, my: .30 },
+      { ton: "255, 236, 210", kraft: .11, gross: .26, ax: .22, ay: .18, fx: 0.073, fy: 0.041, px: 1.4, py: 3.3, mx: .40, my: .74 },
+      { ton: "233, 122,  78", kraft: .13, gross: .22, ax: .30, ay: .15, fx: 0.029, fy: 0.097, px: 3.7, py: 1.9, mx: .84, my: .24 }
+    ];
+  }
+
+  function zeichnen(jetzt) {
+    var dt = Math.min((jetzt - vorher) / 1000 || 0, 0.05);
+    vorher = jetzt;
+    if (!ruhig) uhr += dt;
+
+    stift.clearRect(0, 0, breite, hoehe);
+    stift.globalCompositeOperation = "lighter";
+
+    var kante = Math.max(breite, hoehe);
+    for (var i = 0; i < formen.length; i++) {
+      var f = formen[i];
+      var cx = (f.mx + Math.sin(uhr * f.fx * 6.283 + f.px) * f.ax) * breite;
+      var cy = (f.my + Math.cos(uhr * f.fy * 6.283 + f.py) * f.ay) * hoehe;
+      /* Der Radius atmet leicht mit - sonst wirken die Formen wie Schablonen. */
+      var rad = f.gross * kante * (1 + Math.sin(uhr * f.fx * 3.1 + f.py) * 0.09);
+      var v = stift.createRadialGradient(cx, cy, 0, cx, cy, rad);
+      v.addColorStop(0,   "rgba(" + f.ton + "," + f.kraft + ")");
+      v.addColorStop(.55, "rgba(" + f.ton + "," + (f.kraft * .22) + ")");
+      v.addColorStop(1,   "rgba(" + f.ton + ",0)");
+      stift.fillStyle = v;
+      stift.beginPath(); stift.arc(cx, cy, rad, 0, Math.PI * 2); stift.fill();
+    }
+
+    stift.globalCompositeOperation = "source-over";
+    if (laeuft && !ruhig) bild = requestAnimationFrame(zeichnen);
+  }
+
+  function anhalten() { laeuft = false; cancelAnimationFrame(bild); }
+  function anwerfen() {
+    if (laeuft) return;
+    laeuft = true; vorher = performance.now();
+    if (ruhig) zeichnen(vorher); else bild = requestAnimationFrame(zeichnen);
+  }
+
+  messen();
+  window.addEventListener("resize", function () { messen(); }, { passive: true });
+
+  var feld = leinwand.closest(".empfang__feld");
+  if ("IntersectionObserver" in window && feld) {
+    new IntersectionObserver(function (e) {
+      if (e[0].isIntersecting) anwerfen(); else anhalten();
+    }, { threshold: 0.02 }).observe(feld);
+  } else {
+    anwerfen();
+  }
+})();

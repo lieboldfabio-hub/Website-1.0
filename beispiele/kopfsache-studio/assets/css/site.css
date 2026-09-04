@@ -598,6 +598,15 @@ h1, h2, h3 { font-weight: 800; letter-spacing: -0.035em; }
 }
 /* Der Inhalt muss ueber dem Korn liegen, sonst legt es sich auf die Schrift. */
 .tafel--start > * { position: relative; z-index: 1; }
+
+/* Die Straehnen liegen zwischen Verlauf und Text: ueber dem Nebel, unter
+   der Schrift. Sie fangen keine Klicks ab. */
+.straehnen {
+  position: absolute; inset: 0; z-index: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  display: block;
+}
 .tafel--angebot { background: var(--papier); }
 .tafel--team    { background: var(--tinte); color: var(--band-text); }
 .tafel--fragen  { background: var(--papier-2); }
@@ -607,7 +616,9 @@ h1, h2, h3 { font-weight: 800; letter-spacing: -0.035em; }
 .tafel--team h2, .tafel--team h3,
 .tafel--termin h2 { color: var(--band-text); }
 .tafel--start .lede, .tafel--team p, .tafel--termin .lede { color: var(--band-text-soft); }
-.tafel--start .eyebrow, .tafel--team .eyebrow { color: var(--accent-band); }
+/* Der Zettel traegt jetzt selbst die Akzentflaeche, also bleibt die Schrift
+   darauf dunkel - auch auf den dunklen Tafeln. */
+.tafel--start .eyebrow, .tafel--team .eyebrow { color: var(--accent-fg); }
 .tafel--start .tafel__hinweis { color: var(--band-text-soft); }
 
 .tafel__inhalt { width: 100%; max-width: var(--wrap); margin-inline: auto; }

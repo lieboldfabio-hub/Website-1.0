@@ -63,6 +63,12 @@
 
 <!-- ============================================================ 01 Start -->
 <section class="tafel tafel--start" id="start" aria-labelledby="t-start">
+  <!-- Straehnen fallen langsam durchs Bild. Wo der Zeiger hinkommt, werden
+       sie geschnitten und fallen weg. Rein dekorativ, deshalb aria-hidden;
+       ohne Skript und bei prefers-reduced-motion bleibt die Flaeche leer und
+       die Tafel sieht aus wie zuvor. -->
+  <canvas class="straehnen" aria-hidden="true"></canvas>
+
   <div class="tafel__satz">
     <p class="eyebrow" data-hero="1">Friseur in Augsburg</p>
     <h1 class="display" id="t-start" data-hero="2">Kein Schnitt <em>von der Stange.</em></h1>

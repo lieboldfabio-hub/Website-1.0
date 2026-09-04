@@ -285,3 +285,122 @@ window.Basis = (function () {
     zeichnen();
   }
 })();
+
+
+/* --------------------------------------------------- Aktenwand im Aufschlag */
+/*
+   Der erste Bildschirm dieser Seite. Spalten aus kurzen Linien, die wie
+   gesetzte Textzeilen aussehen - Seite an Seite, wie in einem Aktenschrank -
+   und sehr langsam nach oben wandern.
+
+   Bewusst kein Effekt, der auffaellt: eine Kanzlei, die mit Bewegung wirbt,
+   wirkt unserioes. Es soll nur so aussehen, als stuende man vor Papier.
+
+   Damit es nach Satz aussieht und nicht nach Balkendiagramm: die letzte
+   Zeile eines Absatzes ist kuerzer, und die Absatzlaengen wechseln.
+*/
+(function () {
+  "use strict";
+
+  var leinwand = document.querySelector(".akten");
+  if (!leinwand || !leinwand.getContext) return;
+
+  var ruhig = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var stift = leinwand.getContext("2d");
+  var breite = 0, hoehe = 0, dichte = 1;
+  var spalten = [];
+  var laeuft = false, bild = 0, vorher = 0;
+
+  var ZEILE = 7;          /* Abstand von Zeile zu Zeile */
+  var TINTE = "23, 27, 40";
+
+  /* Eine Spalte ist eine Folge von Zeilenlaengen zwischen 0 und 1. */
+  function spalteBauen(hoch) {
+    var zeilen = [], rest = 0;
+    var anzahl = Math.ceil(hoch / ZEILE) + 40;
+    for (var i = 0; i < anzahl; i++) {
+      if (rest === 0) {
+        /* neuer Absatz: drei bis neun Zeilen */
+        rest = 3 + Math.floor(Math.random() * 7);
+        zeilen.push(0);          /* Leerzeile zwischen Absaetzen */
+        continue;
+      }
+      rest--;
+      /* Die letzte Zeile eines Absatzes ist kurz - daran erkennt das Auge
+         gesetzten Text. */
+      zeilen.push(rest === 0 ? 0.25 + Math.random() * 0.45 : 0.88 + Math.random() * 0.12);
+    }
+    return zeilen;
+  }
+
+  function messen() {
+    var r = leinwand.getBoundingClientRect();
+    dichte = Math.min(window.devicePixelRatio || 1, 2);
+    breite = Math.max(1, Math.round(r.width));
+    hoehe = Math.max(1, Math.round(r.height));
+    leinwand.width = Math.round(breite * dichte);
+    leinwand.height = Math.round(hoehe * dichte);
+    stift.setTransform(dichte, 0, 0, dichte, 0, 0);
+
+    var anzahl = Math.max(2, Math.min(6, Math.round(breite / 260)));
+    var luecke = 34;
+    var sb = (breite - luecke * (anzahl + 1)) / anzahl;
+    spalten = [];
+    for (var i = 0; i < anzahl; i++) {
+      spalten.push({
+        x: luecke + i * (sb + luecke),
+        breit: sb,
+        zeilen: spalteBauen(hoehe),
+        /* jede Spalte wandert etwas anders schnell */
+        bei: Math.random() * 400,
+        tempo: 3.5 + Math.random() * 4
+      });
+    }
+  }
+
+  function zeichnen(jetzt) {
+    var dt = Math.min((jetzt - vorher) / 1000 || 0, 0.05);
+    vorher = jetzt;
+    stift.clearRect(0, 0, breite, hoehe);
+
+    for (var i = 0; i < spalten.length; i++) {
+      var sp = spalten[i];
+      if (!ruhig) sp.bei += sp.tempo * dt;
+      var umlauf = sp.zeilen.length * ZEILE;
+      if (sp.bei > umlauf) sp.bei -= umlauf;
+
+      for (var j = 0; j < sp.zeilen.length; j++) {
+        var laenge = sp.zeilen[j];
+        if (!laenge) continue;
+        var y = j * ZEILE - sp.bei;
+        if (y < -ZEILE || y > hoehe) continue;
+        /* Oben und unten ausblenden, damit nichts hart abreisst. */
+        var rand = Math.min(y / 120, (hoehe - y) / 120, 1);
+        if (rand <= 0) continue;
+        stift.fillStyle = "rgba(" + TINTE + "," + (0.055 * rand) + ")";
+        stift.fillRect(sp.x, y, sp.breit * laenge, 2);
+      }
+    }
+
+    if (laeuft && !ruhig) bild = requestAnimationFrame(zeichnen);
+  }
+
+  function anhalten() { laeuft = false; cancelAnimationFrame(bild); }
+  function anwerfen() {
+    if (laeuft) return;
+    laeuft = true; vorher = performance.now();
+    if (ruhig) zeichnen(vorher); else bild = requestAnimationFrame(zeichnen);
+  }
+
+  messen();
+  window.addEventListener("resize", function () { messen(); }, { passive: true });
+
+  var blatt = leinwand.closest(".blatt");
+  if ("IntersectionObserver" in window && blatt) {
+    new IntersectionObserver(function (e) {
+      if (e[0].isIntersecting) anwerfen(); else anhalten();
+    }, { threshold: 0.02 }).observe(blatt);
+  } else {
+    anwerfen();
+  }
+})();

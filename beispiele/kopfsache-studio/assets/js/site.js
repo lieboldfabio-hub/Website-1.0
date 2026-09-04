@@ -393,3 +393,152 @@ window.Basis = (function () {
     });
   });
 })();
+
+
+/* ------------------------------------------------------ Straehnen im Hero */
+/*
+   Der erste Bildschirm dieser Seite. Feine Straehnen fallen langsam durchs
+   Bild; wo der Zeiger hinkommt, werden sie durchtrennt, das untere Stueck
+   faellt schneller weg und verblasst. Oben waechst eine neue nach.
+
+   Warum selbst gezeichnet und nicht als Video: es reagiert auf den Zeiger,
+   es kostet ein paar Kilobyte statt einiger Megabyte, und es haelt jede
+   Fenstergroesse aus.
+
+   Gerechnet wird bewusst sparsam:
+   - hoechstens 2x Bildpunktdichte, sonst zeichnet ein 4K-Schirm sich tot
+   - die Zahl der Straehnen haengt an der Flaeche, nicht an einer festen Zahl
+   - laeuft nur, solange die Tafel sichtbar ist (IntersectionObserver)
+   - bei prefers-reduced-motion laeuft gar nichts
+*/
+(function () {
+  "use strict";
+
+  var leinwand = document.querySelector(".straehnen");
+  if (!leinwand || !leinwand.getContext) return;
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+  var stift = leinwand.getContext("2d");
+  var breite = 0, hoehe = 0, dichte = 1;
+  var straehnen = [];
+  var zeiger = { x: -9999, y: -9999, da: false };
+  var laeuft = false, bild = 0;
+
+  var LIMETTE = "201, 242, 74";
+
+  function neu(oben) {
+    var laenge = 110 + Math.random() * 320;
+    return {
+      x: Math.random() * breite,
+      y: oben ? -laenge - Math.random() * hoehe : Math.random() * hoehe,
+      laenge: laenge,
+      /* Fallgeschwindigkeit in Bildpunkten je Sekunde. */
+      tempo: 14 + Math.random() * 26,
+      /* Seitliches Wiegen: Ausschlag und Phase. */
+      wiege: 6 + Math.random() * 18,
+      phase: Math.random() * Math.PI * 2,
+      dicke: 0.6 + Math.random() * 1.1,
+      /* Jede sechste Straehne traegt die Akzentfarbe. */
+      hell: Math.random() < 0.17,
+      /* Wird beim Schnitt gesetzt: das Stueck faellt schneller und verblasst. */
+      ab: 0,
+      deckung: 0.14 + Math.random() * 0.34
+    };
+  }
+
+  function messen() {
+    var r = leinwand.getBoundingClientRect();
+    dichte = Math.min(window.devicePixelRatio || 1, 2);
+    breite = Math.max(1, Math.round(r.width));
+    hoehe = Math.max(1, Math.round(r.height));
+    leinwand.width = Math.round(breite * dichte);
+    leinwand.height = Math.round(hoehe * dichte);
+    stift.setTransform(dichte, 0, 0, dichte, 0, 0);
+
+    /* Etwa eine Straehne je 9000 Bildpunkten Flaeche, gedeckelt. */
+    var soll = Math.max(40, Math.min(190, Math.round(breite * hoehe / 6800)));
+    straehnen = [];
+    for (var i = 0; i < soll; i++) straehnen.push(neu(false));
+  }
+
+  function schneiden(s) {
+    /* Der Schnitt trennt die Straehne dort, wo der Zeiger sie kreuzt. */
+    s.ab = 1;
+    s.tempo *= 3.4;
+  }
+
+  var vorher = 0;
+  function zeichnen(jetzt) {
+    if (!laeuft) return;
+    bild = requestAnimationFrame(zeichnen);
+    var dt = Math.min((jetzt - vorher) / 1000 || 0, 0.05);
+    vorher = jetzt;
+
+    stift.clearRect(0, 0, breite, hoehe);
+
+    for (var i = 0; i < straehnen.length; i++) {
+      var s = straehnen[i];
+      s.y += s.tempo * dt;
+      s.phase += dt * 0.6;
+
+      var x = s.x + Math.sin(s.phase) * s.wiege;
+
+      /* Zeiger als Schere: was ihm zu nahe kommt, wird durchtrennt. */
+      if (zeiger.da && !s.ab) {
+        var dx = x - zeiger.x;
+        if (dx * dx < 2600 && zeiger.y > s.y && zeiger.y < s.y + s.laenge) {
+          schneiden(s);
+        }
+      }
+
+      if (s.ab) {
+        s.deckung -= dt * 0.55;
+        if (s.deckung <= 0) { straehnen[i] = neu(true); continue; }
+      }
+      if (s.y - s.laenge > hoehe) { straehnen[i] = neu(true); continue; }
+
+      stift.beginPath();
+      stift.moveTo(x, s.y);
+      /* Leichte Kruemmung, damit es Haar bleibt und kein Regen wird. */
+      stift.quadraticCurveTo(
+        x + Math.sin(s.phase + 1) * s.wiege * 0.7, s.y + s.laenge * 0.55,
+        x, s.y + s.laenge);
+      stift.strokeStyle = s.hell
+        ? "rgba(" + LIMETTE + "," + s.deckung + ")"
+        : "rgba(247, 246, 243," + (s.deckung * 0.55) + ")";
+      stift.lineWidth = s.dicke;
+      stift.stroke();
+    }
+  }
+
+  function anhalten() { laeuft = false; cancelAnimationFrame(bild); }
+  function anwerfen() {
+    if (laeuft) return;
+    laeuft = true; vorher = performance.now();
+    bild = requestAnimationFrame(zeichnen);
+  }
+
+  messen();
+  window.addEventListener("resize", function () { messen(); }, { passive: true });
+
+  var tafel = leinwand.closest(".tafel");
+  if ("IntersectionObserver" in window && tafel) {
+    new IntersectionObserver(function (e) {
+      if (e[0].isIntersecting) anwerfen(); else anhalten();
+    }, { threshold: 0.02 }).observe(tafel);
+  } else {
+    anwerfen();
+  }
+
+  /* Nur mit Maus oder Stift - auf dem Telefon gibt es keinen Zeiger, der
+     ueber der Flaeche schwebt, und ein Schnitt beim Scrollen waere Unfug. */
+  if (!window.matchMedia("(pointer: coarse)").matches && tafel) {
+    tafel.addEventListener("pointermove", function (e) {
+      var r = leinwand.getBoundingClientRect();
+      zeiger.x = e.clientX - r.left;
+      zeiger.y = e.clientY - r.top;
+      zeiger.da = true;
+    });
+    tafel.addEventListener("pointerleave", function () { zeiger.da = false; });
+  }
+})();

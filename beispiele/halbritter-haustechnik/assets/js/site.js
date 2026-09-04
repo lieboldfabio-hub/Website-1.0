@@ -315,3 +315,168 @@ window.Basis = (function () {
     });
   });
 })();
+
+
+/* ----------------------------------------------------- Leitungen im Aufmacher */
+/*
+   Der erste Bildschirm dieser Seite. Rechtwinklige Wege ueber ein Raster,
+   wie in einem Installationsplan; darauf laufen Impulse entlang und
+   erhellen die Strecke kurz hinter sich. An den Knicken sitzen Punkte.
+
+   Warum rechtwinklig: eine Leitung im Haus laeuft an der Wand entlang und
+   nicht diagonal durch den Raum. Das ist der ganze Trick daran.
+
+   Sparsam gerechnet: hoechstens 2x Bildpunktdichte, Anzahl der Wege haengt
+   an der Breite, laeuft nur solange sichtbar, und bei
+   prefers-reduced-motion wird einmal gezeichnet und dann angehalten.
+*/
+(function () {
+  "use strict";
+
+  var leinwand = document.querySelector(".leitungen");
+  if (!leinwand || !leinwand.getContext) return;
+
+  var ruhig = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var stift = leinwand.getContext("2d");
+  var breite = 0, hoehe = 0, dichte = 1;
+  var wege = [], impulse = [];
+  var laeuft = false, bild = 0, vorher = 0;
+
+  var RASTER = 46;      /* Kantenlaenge des Rasters in Bildpunkten */
+  var BLAU = "47, 109, 240";
+
+  /* Ein Weg ist eine Folge von Punkten, die nur waagerecht oder senkrecht
+     voneinander abweichen. Erzeugt wird er als Irrfahrt auf dem Raster. */
+  function wegBauen() {
+    var spalten = Math.ceil(breite / RASTER);
+    var zeilen = Math.ceil(hoehe / RASTER);
+    var x = Math.floor(Math.random() * spalten);
+    var y = Math.floor(Math.random() * zeilen);
+    var punkte = [[x, y]];
+    var waagerecht = Math.random() < 0.5;
+    var schritte = 5 + Math.floor(Math.random() * 6);
+
+    for (var i = 0; i < schritte; i++) {
+      var weite = 1 + Math.floor(Math.random() * 4);
+      var richtung = Math.random() < 0.5 ? -1 : 1;
+      if (waagerecht) x = Math.max(0, Math.min(spalten, x + weite * richtung));
+      else            y = Math.max(0, Math.min(zeilen,  y + weite * richtung));
+      punkte.push([x, y]);
+      waagerecht = !waagerecht;   /* nach jedem Stueck rechtwinklig abbiegen */
+    }
+    return punkte;
+  }
+
+  /* Gesamtlaenge und Streckenanteile - damit ein Impuls gleichmaessig
+     schnell laeuft und nicht in kurzen Stuecken beschleunigt. */
+  function vermessen(punkte) {
+    var teile = [], gesamt = 0;
+    for (var i = 1; i < punkte.length; i++) {
+      var l = (Math.abs(punkte[i][0] - punkte[i-1][0]) +
+               Math.abs(punkte[i][1] - punkte[i-1][1])) * RASTER;
+      teile.push(l); gesamt += l;
+    }
+    return { teile: teile, gesamt: gesamt };
+  }
+
+  function ortAuf(weg, strecke) {
+    var rest = strecke;
+    for (var i = 0; i < weg.mass.teile.length; i++) {
+      if (rest <= weg.mass.teile[i]) {
+        var a = weg.punkte[i], b = weg.punkte[i+1];
+        var t = weg.mass.teile[i] ? rest / weg.mass.teile[i] : 0;
+        return [ (a[0] + (b[0]-a[0]) * t) * RASTER,
+                 (a[1] + (b[1]-a[1]) * t) * RASTER ];
+      }
+      rest -= weg.mass.teile[i];
+    }
+    var e = weg.punkte[weg.punkte.length-1];
+    return [e[0]*RASTER, e[1]*RASTER];
+  }
+
+  function messen() {
+    var r = leinwand.getBoundingClientRect();
+    dichte = Math.min(window.devicePixelRatio || 1, 2);
+    breite = Math.max(1, Math.round(r.width));
+    hoehe = Math.max(1, Math.round(r.height));
+    leinwand.width = Math.round(breite * dichte);
+    leinwand.height = Math.round(hoehe * dichte);
+    stift.setTransform(dichte, 0, 0, dichte, 0, 0);
+
+    var soll = Math.max(4, Math.min(12, Math.round(breite / 190)));
+    wege = [];
+    for (var i = 0; i < soll; i++) {
+      var punkte = wegBauen();
+      wege.push({ punkte: punkte, mass: vermessen(punkte) });
+    }
+    impulse = wege.map(function (w, i) {
+      return { weg: i, bei: Math.random() * w.mass.gesamt,
+               tempo: 90 + Math.random() * 110 };
+    });
+  }
+
+  function zeichnen(jetzt) {
+    var dt = Math.min((jetzt - vorher) / 1000 || 0, 0.05);
+    vorher = jetzt;
+    stift.clearRect(0, 0, breite, hoehe);
+
+    /* Erst die Wege selbst, sehr zurueckhaltend. */
+    stift.lineWidth = 1;
+    stift.strokeStyle = "rgba(" + BLAU + ", .16)";
+    for (var i = 0; i < wege.length; i++) {
+      var p = wege[i].punkte;
+      stift.beginPath();
+      stift.moveTo(p[0][0]*RASTER, p[0][1]*RASTER);
+      for (var j = 1; j < p.length; j++) stift.lineTo(p[j][0]*RASTER, p[j][1]*RASTER);
+      stift.stroke();
+
+      /* Punkte an den Knicken, wie Dosen im Plan. */
+      stift.fillStyle = "rgba(" + BLAU + ", .26)";
+      for (var k = 1; k < p.length - 1; k++) {
+        stift.beginPath();
+        stift.arc(p[k][0]*RASTER, p[k][1]*RASTER, 2.2, 0, Math.PI*2);
+        stift.fill();
+      }
+    }
+
+    /* Dann die Impulse: ein kurzer heller Schweif entlang der Strecke. */
+    for (var m = 0; m < impulse.length; m++) {
+      var imp = impulse[m], weg = wege[imp.weg];
+      if (!ruhig) imp.bei += imp.tempo * dt;
+      if (imp.bei > weg.mass.gesamt + 120) imp.bei = -Math.random() * 200;
+
+      for (var s = 0; s < 14; s++) {
+        var stelle = imp.bei - s * 7;
+        if (stelle < 0 || stelle > weg.mass.gesamt) continue;
+        var o = ortAuf(weg, stelle);
+        var staerke = (1 - s / 14);
+        stift.fillStyle = "rgba(" + BLAU + "," + (staerke * 0.85) + ")";
+        stift.beginPath();
+        stift.arc(o[0], o[1], 1.6 + staerke * 1.6, 0, Math.PI*2);
+        stift.fill();
+      }
+    }
+
+    if (laeuft && !ruhig) bild = requestAnimationFrame(zeichnen);
+  }
+
+  function anhalten() { laeuft = false; cancelAnimationFrame(bild); }
+  function anwerfen() {
+    if (laeuft) return;
+    laeuft = true; vorher = performance.now();
+    if (ruhig) zeichnen(vorher);          /* einmal zeichnen, dann stehen */
+    else bild = requestAnimationFrame(zeichnen);
+  }
+
+  messen();
+  window.addEventListener("resize", function () { messen(); }, { passive: true });
+
+  var band = leinwand.closest(".aufmacher");
+  if ("IntersectionObserver" in window && band) {
+    new IntersectionObserver(function (e) {
+      if (e[0].isIntersecting) anwerfen(); else anhalten();
+    }, { threshold: 0.02 }).observe(band);
+  } else {
+    anwerfen();
+  }
+})();

@@ -298,3 +298,123 @@ window.Basis = (function () {
 
   zeichnen();
 })();
+
+
+/* -------------------------------------------------------- Kerzenlicht im Anschlag */
+/*
+   Der erste Bildschirm dieser Seite. Zwei bis drei warme Lichtinseln, die
+   unabhaengig voneinander flackern, dazu langsam aufsteigende Partikel wie
+   Staub im Gegenlicht.
+
+   Das Flackern ist bewusst kein Zufallsrauschen, sondern die Summe dreier
+   Sinuskurven mit unrunden Verhaeltnissen. Reiner Zufall zappelt; so atmet
+   es. Bei prefers-reduced-motion steht das Licht still.
+*/
+(function () {
+  "use strict";
+
+  var leinwand = document.querySelector(".kerzen");
+  if (!leinwand || !leinwand.getContext) return;
+
+  var ruhig = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var stift = leinwand.getContext("2d");
+  var breite = 0, hoehe = 0, dichte = 1;
+  var lichter = [], staub = [];
+  var laeuft = false, bild = 0, vorher = 0, uhr = 0;
+
+  function messen() {
+    var r = leinwand.getBoundingClientRect();
+    dichte = Math.min(window.devicePixelRatio || 1, 2);
+    breite = Math.max(1, Math.round(r.width));
+    hoehe = Math.max(1, Math.round(r.height));
+    leinwand.width = Math.round(breite * dichte);
+    leinwand.height = Math.round(hoehe * dichte);
+    stift.setTransform(dichte, 0, 0, dichte, 0, 0);
+
+    lichter = [
+      { x: .30, y: .62, gross: .48, ton: "214, 122, 78",  kraft: .34, takt: 1.00 },
+      { x: .72, y: .40, gross: .40, ton: "226, 168, 104", kraft: .26, takt: 1.37 },
+      { x: .52, y: .84, gross: .55, ton: "180,  92,  56", kraft: .20, takt: 0.71 }
+    ];
+
+    var soll = Math.max(20, Math.min(90, Math.round(breite * hoehe / 22000)));
+    staub = [];
+    for (var i = 0; i < soll; i++) {
+      staub.push({
+        x: Math.random() * breite,
+        y: Math.random() * hoehe,
+        r: 0.5 + Math.random() * 1.4,
+        steigt: 5 + Math.random() * 16,
+        seite: (Math.random() - .5) * 7,
+        phase: Math.random() * Math.PI * 2,
+        deckung: 0.06 + Math.random() * 0.22
+      });
+    }
+  }
+
+  /* Drei Sinuskurven mit unrunden Verhaeltnissen ergeben ein Flackern, das
+     sich nicht hoerbar wiederholt. */
+  function flackern(t, takt) {
+    return 0.82
+      + Math.sin(t * 1.7 * takt) * 0.07
+      + Math.sin(t * 3.1 * takt + 1.3) * 0.06
+      + Math.sin(t * 5.9 * takt + 2.7) * 0.05;
+  }
+
+  function zeichnen(jetzt) {
+    var dt = Math.min((jetzt - vorher) / 1000 || 0, 0.05);
+    vorher = jetzt;
+    if (!ruhig) uhr += dt;
+
+    stift.clearRect(0, 0, breite, hoehe);
+    stift.globalCompositeOperation = "lighter";
+
+    for (var i = 0; i < lichter.length; i++) {
+      var L = lichter[i];
+      var f = ruhig ? 0.82 : flackern(uhr, L.takt);
+      var cx = L.x * breite, cy = L.y * hoehe;
+      var rad = L.gross * Math.max(breite, hoehe) * f;
+      var v = stift.createRadialGradient(cx, cy, 0, cx, cy, rad);
+      v.addColorStop(0,   "rgba(" + L.ton + "," + (L.kraft * f) + ")");
+      v.addColorStop(.45, "rgba(" + L.ton + "," + (L.kraft * f * .28) + ")");
+      v.addColorStop(1,   "rgba(" + L.ton + ",0)");
+      stift.fillStyle = v;
+      stift.beginPath(); stift.arc(cx, cy, rad, 0, Math.PI * 2); stift.fill();
+    }
+
+    for (var j = 0; j < staub.length; j++) {
+      var s = staub[j];
+      if (!ruhig) {
+        s.y -= s.steigt * dt;
+        s.phase += dt * .5;
+        if (s.y < -8) { s.y = hoehe + 8; s.x = Math.random() * breite; }
+      }
+      stift.fillStyle = "rgba(255, 226, 190," + s.deckung + ")";
+      stift.beginPath();
+      stift.arc(s.x + Math.sin(s.phase) * s.seite, s.y, s.r, 0, Math.PI * 2);
+      stift.fill();
+    }
+
+    stift.globalCompositeOperation = "source-over";
+    if (laeuft && !ruhig) bild = requestAnimationFrame(zeichnen);
+  }
+
+  function anhalten() { laeuft = false; cancelAnimationFrame(bild); }
+  function anwerfen() {
+    if (laeuft) return;
+    laeuft = true; vorher = performance.now();
+    if (ruhig) zeichnen(vorher); else bild = requestAnimationFrame(zeichnen);
+  }
+
+  messen();
+  window.addEventListener("resize", function () { messen(); }, { passive: true });
+
+  var raum = leinwand.closest(".anschlag");
+  if ("IntersectionObserver" in window && raum) {
+    new IntersectionObserver(function (e) {
+      if (e[0].isIntersecting) anwerfen(); else anhalten();
+    }, { threshold: 0.02 }).observe(raum);
+  } else {
+    anwerfen();
+  }
+})();
