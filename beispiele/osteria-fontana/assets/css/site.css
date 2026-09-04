@@ -36,6 +36,13 @@ h1, h2, h3, h4 {
 }
 
 p { margin: 0; text-wrap: pretty; }
+
+/* Die ganze Seite ist mittig gesetzt wie eine Karte. Nur was man abfaehrt -
+   Speisenliste, Formular, zweispaltige Bloecke - bleibt linksbuendig. */
+.section { text-align: center; }
+.section .karte__gruppen, .section .formular, .section .gericht,
+.section .zwei, .section .kueche__grid, .section .besuch__grid { text-align: left; }
+.lede, .body-copy { margin-inline: auto; }
 a { color: inherit; }
 img { max-width: 100%; display: block; }
 
@@ -69,8 +76,14 @@ section { position: relative; }
 
 /* ---------------------------------------------------------------- Typo --- */
 
-.display { font-size: clamp(2.35rem, 1.5rem + 2.9vw, 3.7rem); }
-.h2      { font-size: clamp(1.9rem, 1.25rem + 2.6vw, 3.1rem); }
+/* Groesser und mit mehr Durchschuss als anderswo: eine Karte liest man
+   langsam. */
+.display {
+  font-size: clamp(2.5rem, 1.5rem + 3.4vw, 4.1rem);
+  line-height: 1.08;
+  letter-spacing: -.005em;
+}
+.h2 { font-size: clamp(1.85rem, 1.2rem + 2.4vw, 3rem); line-height: 1.14; }
 
 
 .lede {
@@ -84,39 +97,52 @@ section { position: relative; }
 .body-copy { color: var(--text-soft); max-width: 62ch; }
 .band .body-copy { color: var(--band-text-soft); }
 
+/* Mittige Zierzeile mit Strichen links und rechts - die Gliederung einer
+   Speisekarte, nicht das Label eines Web-Abschnitts. */
 .eyebrow {
+  display: flex; align-items: center; justify-content: center; gap: 1rem;
   font-family: var(--font-display);
-  font-size: 0.76rem;
-  font-weight: 600;
-  letter-spacing: 0.16em;
+  font-size: 0.78rem;
+  font-weight: 500;
+  font-style: italic;
+  letter-spacing: 0.24em;
   text-transform: uppercase;
   color: var(--accent);
-  margin: 0 0 1.1rem;
+  margin: 0 0 1.3rem;
+}
+.eyebrow::before, .eyebrow::after {
+  content: ""; width: clamp(18px, 4vw, 46px); height: 1px;
+  background: currentColor; opacity: .55;
 }
 
 /* -------------------------------------------------------------- Buttons -- */
 
+/* Kein gefuellter Knopf: ein gesetzter Rahmen mit weit gesperrten Versalien,
+   wie die Zeile "Tischreservierung" unten auf einer gedruckten Karte. Erst
+   beim Zeigen laeuft die Flaeche voll. */
 .btn {
   display: inline-flex; align-items: center; justify-content: center;
-  gap: 0.6rem; white-space: nowrap;
-  font-family: var(--font-display);
-  font-size: 1rem; font-weight: 600; line-height: 1;
-  padding: 1.02rem 1.8rem;
-  border-radius: 999px;
-  border: 1px solid transparent;
-  background: var(--accent-flaeche); color: var(--accent-fg);
+  gap: 0.7rem; white-space: nowrap;
+  font-family: var(--font-body);
+  font-size: .8rem; font-weight: 500; line-height: 1;
+  letter-spacing: .22em; text-transform: uppercase;
+  padding: 1.05rem 2.1rem;
+  border-radius: 0;
+  border: 1px solid var(--accent-flaeche);
+  background: transparent; color: var(--accent-flaeche);
   text-decoration: none; cursor: pointer;
-  transition: transform .18s var(--ease), background-color .22s var(--ease),
-              border-color .22s var(--ease), color .22s var(--ease);
+  transition: background-color .3s var(--ease), color .3s var(--ease),
+              letter-spacing .3s var(--ease);
 }
-.btn:active { transform: translateY(1px) scale(.985); }
+.btn:hover { background: var(--accent-flaeche); color: var(--accent-fg); letter-spacing: .26em; }
 
-
+/* Der zweite Weg ist gar kein Knopf, sondern eine unterstrichene Zeile. */
 .btn--ghost {
-  background: transparent; color: var(--band-text);
-  border-color: var(--band-line);
+  border: 0; border-bottom: 1px solid var(--accent-band);
+  padding: 0 0 .55rem; background: none;
+  color: var(--band-text);
 }
-.btn--ghost:hover { background: rgba(255,255,255,.09); border-color: rgba(255,255,255,.34); }
+.btn--ghost:hover { background: none; color: var(--accent-band); letter-spacing: .26em; }
 
 
 .btn__ico { width: 1.05em; height: 1.05em; flex: none; }
@@ -467,10 +493,10 @@ section { position: relative; }
   --font-display: "Playfair Display", Georgia, serif;
   --font-body: Karla, ui-sans-serif, system-ui, sans-serif;
 
-  --r: 4px;
+  --r: 0px;              /* Eine gedruckte Karte hat keine runden Ecken. */
   --pad-x: clamp(1.25rem, 5vw, 5rem);
   --section-y: clamp(5rem, 10vw, 8.5rem);
-  --wrap: 1280px;
+  --wrap: 1080px;        /* Schmaler Satzspiegel wie auf einer Karte. */
   --ease: cubic-bezier(0.16, 1, 0.3, 1);
 
   color-scheme: dark;
@@ -1079,4 +1105,52 @@ body::after {
 }
 @media (max-width: 720px) {
   .rueckseite__spalten { grid-template-columns: 1fr; }
+}
+
+
+/* ---------------------------------------------------- Der Abend, ausfuehrlich */
+/*
+   Auf der Startseite steht der Abend als Karussell. Hier, auf der eigenen
+   Seite, soll er nicht ein zweites Mal so aussehen - also laeuft er als
+   Folge untereinander: Bild und Text im Wechsel links und rechts, dazwischen
+   eine Haarlinie. Man liest ihn ab, statt ihn zu blaettern.
+
+   Beim Umbau der Startseite sind die alten Galerie-Regeln entfallen; diese
+   Seite stand seither ohne. Das ist der Ersatz.
+*/
+.galerie { padding-block: clamp(3rem, 6vw, 5rem); }
+.galerie__kopf { width: 100%; max-width: var(--wrap); margin-inline: auto;
+  padding-inline: var(--pad-x); text-align: center;
+  margin-bottom: clamp(2rem, 4vw, 3rem); }
+.galerie__kopf .h2 { max-width: 20ch; margin-inline: auto; }
+
+.galerie__spur {
+  width: 100%; max-width: 62rem; margin-inline: auto;
+  padding-inline: var(--pad-x);
+  display: grid; gap: 0;
+}
+.platte {
+  display: grid;
+  grid-template-columns: minmax(0, 15rem) minmax(0, 1fr);
+  gap: clamp(1.4rem, 3vw, 2.6rem);
+  align-items: center;
+  padding-block: clamp(1.6rem, 3vw, 2.4rem);
+  border-top: 1px solid var(--band-line);
+  text-align: left;
+}
+.platte:last-child { border-bottom: 1px solid var(--band-line); }
+/* Jede zweite Folge dreht sich um - so entsteht ein Wechsel statt einer Liste. */
+.platte:nth-child(even) { grid-template-columns: minmax(0, 1fr) minmax(0, 15rem); }
+.platte:nth-child(even) .ph { order: 2; }
+.platte:nth-child(even) .platte__text { order: 1; text-align: right; }
+
+.platte .ph { aspect-ratio: 4 / 5; }
+.platte--hoch .ph { aspect-ratio: 1 / 1; }
+.platte__text h3 { font-size: clamp(1.3rem, 1.1rem + .8vw, 1.85rem); }
+.platte__text p { color: var(--band-text-soft); margin-top: .5rem; }
+
+@media (max-width: 700px) {
+  .platte, .platte:nth-child(even) { grid-template-columns: 1fr; }
+  .platte:nth-child(even) .ph { order: 0; }
+  .platte:nth-child(even) .platte__text { order: 0; text-align: left; }
 }

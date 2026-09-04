@@ -69,8 +69,18 @@ section { position: relative; }
 
 /* ---------------------------------------------------------------- Typo --- */
 
-.display { font-size: clamp(2.35rem, 1.5rem + 2.9vw, 3.7rem); }
-.h2      { font-size: clamp(1.9rem, 1.25rem + 2.6vw, 3.1rem); }
+/* Enger gesetzt und in Versalien - der Ton eines Typenschilds. */
+.display {
+  font-size: clamp(2.1rem, 1.4rem + 2.4vw, 3.3rem);
+  letter-spacing: -.015em;
+  line-height: 1.02;
+}
+.h2 {
+  font-size: clamp(1.35rem, 1rem + 1.5vw, 2.05rem);
+  letter-spacing: .01em;
+  text-transform: uppercase;
+  line-height: 1.12;
+}
 
 
 .lede {
@@ -84,33 +94,49 @@ section { position: relative; }
 .body-copy { color: var(--text-soft); max-width: 62ch; }
 .band .body-copy { color: var(--band-text-soft); }
 
+/* Statt eines kleinen Labels ueber der Ueberschrift: eine Zeile mit
+   Positionsstrich, wie die Kopfzeile einer technischen Zeichnung. Der Strich
+   laeuft bis zum Satzrand durch. */
 .eyebrow {
+  display: flex; align-items: center; gap: .9rem;
   font-family: var(--font-display);
-  font-size: 0.76rem;
-  font-weight: 600;
-  letter-spacing: 0.16em;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
+  font-variant-numeric: tabular-nums;
   color: var(--accent);
-  margin: 0 0 1.1rem;
+  margin: 0 0 1.4rem;
+}
+.eyebrow::before {
+  content: ""; flex: none; width: 26px; height: 2px; background: currentColor;
+}
+.eyebrow::after {
+  content: ""; flex: 1 1 auto; height: 1px; background: var(--line);
 }
 
 /* -------------------------------------------------------------- Buttons -- */
 
+/* Rechteckig, versalgesetzt, mit einem harten Schlagschatten statt eines
+   weichen. Ein Handwerksbetrieb schreibt auf Schilder, nicht auf Pillen. */
 .btn {
   display: inline-flex; align-items: center; justify-content: center;
-  gap: 0.6rem; white-space: nowrap;
+  gap: 0.55rem; white-space: nowrap;
   font-family: var(--font-display);
-  font-size: 1rem; font-weight: 600; line-height: 1;
-  padding: 1.02rem 1.8rem;
-  border-radius: 999px;
-  border: 1px solid transparent;
+  font-size: .84rem; font-weight: 700; line-height: 1;
+  letter-spacing: .09em; text-transform: uppercase;
+  padding: 1.05rem 1.7rem;
+  border-radius: 0;
+  border: 2px solid var(--accent-flaeche);
   background: var(--accent-flaeche); color: var(--accent-fg);
   text-decoration: none; cursor: pointer;
-  transition: transform .18s var(--ease), background-color .22s var(--ease),
-              border-color .22s var(--ease), color .22s var(--ease);
+  box-shadow: 4px 4px 0 var(--graphit-900);
+  transition: transform .14s var(--ease), box-shadow .14s var(--ease),
+              background-color .2s var(--ease), color .2s var(--ease);
 }
-.btn:active { transform: translateY(1px) scale(.985); }
-.btn--sm { padding: .7rem 1.25rem; font-size: .94rem; }
+.btn:hover { transform: translate(2px, 2px); box-shadow: 2px 2px 0 var(--graphit-900); }
+.btn:active { transform: translate(4px, 4px); box-shadow: 0 0 0 var(--graphit-900); }
+.btn--sm { padding: .72rem 1.15rem; font-size: .76rem; box-shadow: 3px 3px 0 var(--graphit-900); }
 
 .btn--ghost {
   background: transparent; color: var(--band-text);
@@ -518,9 +544,9 @@ section { position: relative; }
   --font-display: Archivo, ui-sans-serif, system-ui, sans-serif;
   --font-body: Barlow, ui-sans-serif, system-ui, sans-serif;
 
-  --r: 6px;
+  --r: 0px;              /* Nichts ist hier rund. Siehe Grammatik unten. */
   --pad-x: clamp(1.25rem, 5vw, 5rem);
-  --section-y: clamp(4.5rem, 9vw, 7.5rem);
+  --section-y: clamp(3.2rem, 6vw, 5.2rem);   /* dichter als ueblich, siehe Grammatik */
   --wrap: 1240px;
   --ease: cubic-bezier(0.16, 1, 0.3, 1);
 

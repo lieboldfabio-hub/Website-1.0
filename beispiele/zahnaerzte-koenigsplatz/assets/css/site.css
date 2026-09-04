@@ -70,7 +70,7 @@ section { position: relative; }
 /* ---------------------------------------------------------------- Typo --- */
 
 .display { font-size: clamp(2.35rem, 1.5rem + 2.9vw, 3.7rem); }
-.h2      { font-size: clamp(1.9rem, 1.25rem + 2.6vw, 3.1rem); }
+.h2 { font-size: clamp(1.8rem, 1.2rem + 2.3vw, 2.9rem); line-height: 1.12; }
 
 
 .lede {
@@ -84,33 +84,53 @@ section { position: relative; }
 .body-copy { color: var(--text-soft); max-width: 62ch; }
 .band .body-copy { color: var(--band-text-soft); }
 
+/* Eine weiche Kachel mit getoentem Grund und einem Punkt davor - kein
+   Versalienlabel und kein aufgeklebter Zettel, sondern etwas Ruhiges. */
 .eyebrow {
+  display: inline-flex; align-items: center; gap: .5rem;
   font-family: var(--font-display);
-  font-size: 0.76rem;
+  font-size: 0.8rem;
   font-weight: 600;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  text-transform: none;
   color: var(--accent);
-  margin: 0 0 1.1rem;
+  background: color-mix(in srgb, var(--accent-flaeche) 16%, transparent);
+  padding: .42rem .95rem .42rem .8rem;
+  border-radius: 999px;
+  margin: 0 0 1.2rem;
+}
+.eyebrow::before {
+  content: ""; width: 7px; height: 7px; border-radius: 999px;
+  background: var(--accent-flaeche); flex: none;
 }
 
 /* -------------------------------------------------------------- Buttons -- */
 
+/* Gross, weich und ohne Kante. Der Knopf hebt sich ueber einen Schatten ab,
+   nicht ueber einen Rahmen; beim Zeigen steigt er ein Stueck. */
 .btn {
   display: inline-flex; align-items: center; justify-content: center;
   gap: 0.6rem; white-space: nowrap;
   font-family: var(--font-display);
-  font-size: 1rem; font-weight: 600; line-height: 1;
-  padding: 1.02rem 1.8rem;
+  font-size: 1.02rem; font-weight: 600; line-height: 1;
+  padding: 1.15rem 2rem;
   border-radius: 999px;
-  border: 1px solid transparent;
+  border: 0;
   background: var(--accent-flaeche); color: var(--accent-fg);
   text-decoration: none; cursor: pointer;
-  transition: transform .18s var(--ease), background-color .22s var(--ease),
-              border-color .22s var(--ease), color .22s var(--ease);
+  box-shadow: var(--schatten);
+  transition: transform .24s var(--ease), box-shadow .24s var(--ease),
+              background-color .22s var(--ease);
 }
-.btn:active { transform: translateY(1px) scale(.985); }
-.btn--sm { padding: .7rem 1.25rem; font-size: .94rem; }
+.btn:hover { transform: translateY(-2px); box-shadow: var(--schatten-hoch); }
+.btn:active { transform: translateY(0); }
+.btn--sm { padding: .78rem 1.35rem; font-size: .92rem; }
+/* Der zweite Weg ist eine helle Flaeche, keine Umrandung. */
+.btn--line {
+  background: var(--surface); color: var(--text); border: 0;
+  box-shadow: var(--schatten);
+}
+.btn--line:hover { background: var(--surface); color: var(--accent); }
 
 .btn--ghost {
   background: transparent; color: var(--band-text);
@@ -419,7 +439,11 @@ section { position: relative; }
 
   --bg: var(--creme);
   --surface: #fffdf8;
-  --line: rgba(23, 51, 44, 0.13);
+  /* Diese Seite zeichnet keine Rahmen. Wo anderswo eine Linie steht, steht
+     hier ein weicher Schatten. --line bleibt nur fuer Tabellenzeilen. */
+  --line: rgba(23, 51, 44, 0.10);
+  --schatten: 0 2px 4px rgba(23,51,44,.04), 0 14px 30px -18px rgba(23,51,44,.28);
+  --schatten-hoch: 0 4px 8px rgba(23,51,44,.05), 0 26px 50px -22px rgba(23,51,44,.34);
   --text: var(--tanne-900);
   --text-soft: #4d5f58;
   /* Der Akzent hat drei Rollen. Ein einziger Ton kann nicht gleichzeitig
@@ -441,7 +465,7 @@ section { position: relative; }
   --font-display: 'Sora', ui-sans-serif, system-ui, sans-serif;
   --font-body: 'Nunito Sans', ui-sans-serif, system-ui, sans-serif;
 
-  --r: 20px;
+  --r: 30px;             /* Runder als alles andere hier - siehe Grammatik. */
   --pad-x: clamp(1.25rem, 5vw, 5rem);
   --section-y: clamp(4.5rem, 9vw, 7.5rem);
   --wrap: 1220px;
@@ -813,4 +837,64 @@ h1, h2, h3 { font-weight: 600; letter-spacing: -0.01em; }
 @media (max-width: 860px), (prefers-reduced-motion: reduce) {
   .stimmen__raum { display: none; }
   .stimmen__liste { display: grid; }
+}
+
+
+/* ============================================================================
+   Grammatik: diese Seite zeichnet keine Rahmen
+   ----------------------------------------------------------------------------
+   Alle vier anderen Beispiele arbeiten mit Linien - Haarlinien, Punktlinien,
+   Rahmen um Karten. Hier steht an derselben Stelle ein weicher Schatten.
+   Flaechen schweben also, statt umrandet zu sein. Das ist der Grund, warum
+   die Seite freundlich wirkt, ohne dass eine einzige Farbe daran beteiligt
+   waere.
+   ========================================================================= */
+
+.angebot, .person, .weg, .einzug, .preis, .zitat, .teaser, .projekt,
+.feld input, .feld select, .feld textarea, .stimme, .praxiskarte__karte {
+  border: 0 !important;
+  box-shadow: var(--schatten);
+}
+.angebot:hover, .person:hover, .weg:hover, .teaser:hover, .projekt:hover {
+  box-shadow: var(--schatten-hoch);
+}
+/* Innerhalb der dunklen Abschnitte traegt der Schatten nicht - dort hebt
+   eine leicht aufgehellte Flaeche ab. */
+.band .angebot, .band .weg, .band .einzug, .praxiskarte__karte {
+  box-shadow: none;
+  background: rgba(255, 255, 255, .07);
+}
+
+
+/* ------------------------------------------------------------- Notfallband */
+/*
+   Der Hinweis auf die Wochenend-Sprechstunde. Beim Umbau des Rahmens sind
+   seine Regeln mit dem alten Hero-Block verlorengegangen; hier stehen sie
+   wieder - in der weichen Sprache dieser Seite: gerundete Flaeche, getoenter
+   Grund, kein Rahmen.
+*/
+.notfall {
+  padding-inline: var(--pad-x);
+  margin-block: clamp(1.5rem, 3vw, 2.5rem);
+}
+.notfall__inner {
+  display: flex; flex-wrap: wrap; align-items: center;
+  gap: .7rem 1.1rem;
+  padding: clamp(1rem, 2.2vw, 1.4rem) clamp(1.2rem, 2.6vw, 1.9rem);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent-flaeche) 14%, var(--surface));
+  box-shadow: var(--schatten);
+}
+.notfall svg { width: 22px; height: 22px; color: var(--accent); flex: none; }
+.notfall b { font-family: var(--font-display); font-weight: 700; }
+.notfall span { color: var(--text-soft); }
+.notfall a {
+  margin-left: auto; font-weight: 600; text-decoration: none;
+  color: var(--accent); white-space: nowrap;
+  border-bottom: 2px solid currentColor; padding-bottom: 1px;
+}
+.notfall a:hover { color: var(--text); }
+@media (max-width: 720px) {
+  .notfall__inner { border-radius: 26px; }
+  .notfall a { margin-left: 0; }
 }
