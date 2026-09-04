@@ -182,14 +182,14 @@ wall, a single leather armchair, tall window with a sheer curtain, soft daylight
 brass detailing, quiet and orderly, nobody in frame
 ```
 
-### `brenner.jpg` — Querformat 4:3
+### `brenner.jpg` — Hochformat 4:5
 ```
 Business portrait of a female lawyer in her late thirties in a dark blazer,
 seated at a desk with her hands folded, neutral friendly expression, soft window
 light from the side, blurred office background in navy tones
 ```
 
-### `kolb.jpg` — Querformat 4:3
+### `kolb.jpg` — Hochformat 4:5
 ```
 Business portrait of a male lawyer in his mid forties in a dark suit without a
 tie, standing with relaxed arms, calm confident expression, soft window light,

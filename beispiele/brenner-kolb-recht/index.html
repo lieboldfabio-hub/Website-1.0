@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="de" class="pager">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -43,113 +43,122 @@
 <a class="skip" href="#main">Zum Inhalt springen</a>
 <a class="demo-badge" href="../">Beispielprojekt</a>
 
-<header class="nav">
-  <div class="nav__inner">
-    <a class="brand" href="#top">Brenner &amp; Kolb</a>
-    <nav aria-label="Hauptnavigation">
-      <ul class="nav__links">
-        <li><a href="#rechtsgebiete">Rechtsgebiete</a></li>
-        <li><a href="#kanzlei">Kanzlei</a></li>
-        <li><a href="#team">Team</a></li>
-        <li><a href="#kontakt">Kontakt</a></li>
-      </ul>
-    </nav>
-    <div class="nav__cta">
-      <a class="btn btn--sm" href="#kontakt">Ersteinschätzung anfragen</a>
-      <button class="nav__burger" aria-label="Menü öffnen" aria-expanded="false" aria-controls="menu">
-        <span></span><span></span><span></span>
-      </button>
-    </div>
-  </div>
-</header>
+<!-- ============================================================================
+     Brenner & Kolb liest sich wie ein Schriftsatz: fuenf Blaetter, jedes
+     fuellt den Bildschirm, das Scrollen rastet ein. Gefuehrt wird nicht ueber
+     eine Leiste oder Punkte, sondern ueber den laufenden Kolumnentitel oben -
+     roemische Ziffer und Kapitelname, darunter eine Haarlinie, die mitwaechst.
+     Der Grund bleibt durchgehend Pergament; nur das letzte Blatt schlaegt ins
+     Nachtblau um. Unterschieden werden die Blaetter ueber ihren Satzspiegel,
+     nicht ueber Farbe - das ist der ruhigere Weg und der, der zu einer
+     Kanzlei passt.
+     ========================================================================= -->
 
-<div class="menu" id="menu" hidden>
-  <a href="#rechtsgebiete">Rechtsgebiete</a>
-  <a href="#kanzlei">Kanzlei</a>
-  <a href="#team">Team</a>
-  <a href="#kontakt">Kontakt</a>
-  <a class="btn" href="#kontakt">Ersteinschätzung anfragen</a>
+<div class="kolumne">
+  <a class="brand" href="#aufschlag">Brenner &amp; Kolb</a>
+  <p class="kolumne__ort" aria-live="polite">
+    <b>I</b><span>Aufschlag</span>
+  </p>
+  <a class="btn btn--sm" href="#kontakt">Ersteinschätzung</a>
 </div>
+<div class="fortschritt" aria-hidden="true"><i></i></div>
 
-<main id="main">
+<nav class="register" aria-label="Kapitel dieser Seite">
+  <ul>
+    <li><a href="#aufschlag">Aufschlag</a></li>
+    <li><a href="#rechtsgebiete">Rechtsgebiete</a></li>
+    <li><a href="#kanzlei">Kanzlei</a></li>
+    <li><a href="#team">Team</a></li>
+    <li><a href="#kontakt">Kontakt</a></li>
+  </ul>
+</nav>
 
-<!-- ================================================================== Hero -->
-<section class="hero" id="top">
-  <div class="wrap hero__grid">
-    <div>
-      <p class="eyebrow" data-hero="1">Rechtsanwälte in Augsburg</p>
-      <h1 class="display" data-hero="2">Klarheit, bevor es kompliziert wird.</h1>
-      <p class="lede" data-hero="3">
-        Wir vertreten Sie in Arbeits-, Miet- und Familienrecht – mit einer
-        Ersteinschätzung, die nichts kostet, und einer Kanzlei, die Ihren
-        Fall nicht wie einen von hundert behandelt.
-      </p>
-      <div class="hero__actions" data-hero="4">
-        <a class="btn" href="#kontakt">
-          Ersteinschätzung anfragen
-          <svg class="btn__ico" aria-hidden="true"><use href="#i-arrow-right"></use></svg>
-        </a>
-        <a class="btn btn--line" href="#rechtsgebiete">Rechtsgebiete</a>
-      </div>
-    </div>
+<main class="blaetter" id="main">
 
-    <div class="ph hero__media" data-hero="5">
-      <img src="assets/img/hero.jpg" alt="Empfangsbereich der Kanzlei" width="800" height="1000">
-      <svg class="ph__mark" aria-hidden="true"><use href="#i-scales"></use></svg>
-      <p class="ph__brief"><b>Bildplatz: Hero</b>Empfangsbereich, Hochformat 4:5</p>
+<!-- ========================================================= I Aufschlag -->
+<section class="blatt blatt--aufschlag" id="aufschlag" data-ziffer="I" data-kapitel="Aufschlag">
+  <div class="blatt__satz">
+    <p class="eyebrow" data-hero="1">Rechtsanwälte in Augsburg</p>
+    <h1 class="display" data-hero="2">Klarheit, bevor es kompliziert wird.</h1>
+    <p class="lede" data-hero="3">
+      Wir vertreten Sie in Arbeits-, Miet- und Familienrecht – mit einer
+      Ersteinschätzung, die nichts kostet, und einer Kanzlei, die Ihren
+      Fall nicht wie einen von hundert behandelt.
+    </p>
+    <div class="hero__actions" data-hero="4">
+      <a class="btn" href="#kontakt">
+        Ersteinschätzung anfragen
+        <svg class="btn__ico" aria-hidden="true"><use href="#i-arrow-right"></use></svg>
+      </a>
+      <a class="btn btn--line" href="#rechtsgebiete">Rechtsgebiete</a>
     </div>
   </div>
+
+  <div class="ph blatt__bild" data-hero="5">
+    <img src="assets/img/hero.jpg" alt="Empfangsbereich der Kanzlei" width="800" height="1000">
+    <svg class="ph__mark" aria-hidden="true"><use href="#i-scales"></use></svg>
+    <p class="ph__brief"><b>Bildplatz: Hero</b>Empfangsbereich, Hochformat 4:5</p>
+  </div>
+
+  <!-- Steht auf dem ersten Blatt unten, wo in einem Schriftsatz die
+       Fussnote steht - der Hinweis auf die Schweigepflicht gehoert dorthin
+       und nicht in einen eigenen Balken quer durch die Seite. -->
+  <p class="fussnote" data-hero="6">
+    <svg aria-hidden="true"><use href="#i-seal-check"></use></svg>
+    <b>Vertraulich von der ersten Minute an.</b>
+    Schweigepflicht, ohne dass Sie danach fragen müssen.
+  </p>
 </section>
 
-<!-- =============================================================== Diskret -->
-<div class="diskret">
-  <div class="wrap diskret__inner">
-    <svg aria-hidden="true"><use href="#i-seal-check"></use></svg>
-    <b>Vertraulich von der ersten Minute an</b>
-    <span>Schweigepflicht, ohne dass Sie danach fragen müssen</span>
-    <a href="#kontakt">Termin vereinbaren</a>
-  </div>
-</div>
-
-<!-- ======================================================== Rechtsgebiete -->
-<section class="section" id="rechtsgebiete">
-  <div class="wrap">
-    <div class="leistungen__kopf reveal">
+<!-- ===================================================== II Rechtsgebiete -->
+<!-- Als nummerierte Liste mit Trennlinien gesetzt, nicht als Karten: vier
+     Fachbereiche sind eine Aufzaehlung, keine vier Angebote. -->
+<section class="blatt blatt--gebiete" id="rechtsgebiete" data-ziffer="II" data-kapitel="Rechtsgebiete">
+  <div class="blatt__inhalt">
+    <div class="blatt__kopf reveal">
       <p class="eyebrow">Rechtsgebiete</p>
       <h2 class="h2 reveal-lines">Vier Fachbereiche, ein direkter Draht zu Ihrer Anwältin oder Ihrem Anwalt.</h2>
     </div>
 
-    <div class="gebiete">
-      <article class="gebiet reveal">
-        <svg aria-hidden="true"><use href="#i-house-line"></use></svg>
+    <ol class="gebiete">
+      <li class="gebiet reveal">
+        <span class="gebiet__nr">01</span>
         <h3>Mietrecht</h3>
         <p>Kündigung, Mängel, Mieterhöhung – wir prüfen, ob sie rechtens ist, bevor Sie unterschreiben oder zahlen.</p>
-      </article>
-      <article class="gebiet reveal">
-        <svg aria-hidden="true"><use href="#i-briefcase"></use></svg>
+        <svg class="gebiet__ico" aria-hidden="true"><use href="#i-house-line"></use></svg>
+      </li>
+      <li class="gebiet reveal">
+        <span class="gebiet__nr">02</span>
         <h3>Arbeitsrecht</h3>
         <p>Kündigungsschutzklage, Abfindung, Aufhebungsvertrag. Wir lesen das Kleingedruckte, damit Sie es nicht müssen.</p>
-      </article>
-      <article class="gebiet reveal">
-        <svg aria-hidden="true"><use href="#i-users-three"></use></svg>
+        <svg class="gebiet__ico" aria-hidden="true"><use href="#i-briefcase"></use></svg>
+      </li>
+      <li class="gebiet reveal">
+        <span class="gebiet__nr">03</span>
         <h3>Familienrecht</h3>
         <p>Trennung, Unterhalt, Sorgerecht – sachlich begleitet, auch wenn die Lage es gerade nicht ist.</p>
-      </article>
-      <article class="gebiet reveal">
-        <svg aria-hidden="true"><use href="#i-file-text"></use></svg>
+        <svg class="gebiet__ico" aria-hidden="true"><use href="#i-users-three"></use></svg>
+      </li>
+      <li class="gebiet reveal">
+        <span class="gebiet__nr">04</span>
         <h3>Vertragsrecht</h3>
         <p>Verträge prüfen, bevor Sie unterschreiben, oder durchsetzen, wenn sich die Gegenseite nicht daran hält.</p>
-      </article>
-    </div>
+        <svg class="gebiet__ico" aria-hidden="true"><use href="#i-file-text"></use></svg>
+      </li>
+    </ol>
   </div>
 </section>
 
-<!-- ============================================================ Grundsätze -->
-<section class="section grundsaetze" id="kanzlei">
-  <div class="wrap">
-    <div class="grundsaetze__kopf reveal">
+<!-- ========================================================== III Kanzlei -->
+<section class="blatt blatt--kanzlei" id="kanzlei" data-ziffer="III" data-kapitel="Kanzlei">
+  <div class="blatt__inhalt kanzlei__satz">
+    <div class="blatt__kopf reveal">
       <p class="eyebrow">Kanzlei</p>
       <h2 class="h2">Warum Mandate bei uns bleiben.</h2>
+      <p class="body-copy">
+        Vier Zusagen, an denen wir uns messen lassen. Sie stehen hier, damit
+        Sie im Erstgespräch danach fragen können.
+      </p>
     </div>
 
     <ul class="punkte">
@@ -185,10 +194,10 @@
   </div>
 </section>
 
-<!-- ================================================================== Team -->
-<section class="section" id="team">
-  <div class="wrap">
-    <div class="leistungen__kopf reveal">
+<!-- ============================================================= IV Team -->
+<section class="blatt blatt--team" id="team" data-ziffer="IV" data-kapitel="Team">
+  <div class="blatt__inhalt">
+    <div class="blatt__kopf reveal">
       <p class="eyebrow">Team</p>
       <h2 class="h2 reveal-lines">Zwei Anwälte, ein Anspruch.</h2>
     </div>
@@ -196,9 +205,9 @@
     <div class="team__grid">
       <article class="person reveal">
         <div class="ph">
-          <img src="assets/img/brenner.jpg" alt="Corinna Brenner" width="800" height="600">
+          <img src="assets/img/brenner.jpg" alt="Corinna Brenner" width="800" height="1000">
           <svg class="ph__mark" aria-hidden="true"><use href="#i-briefcase"></use></svg>
-          <p class="ph__brief"><b>Bildplatz: Portrait</b>Corinna Brenner, Querformat 4:3</p>
+          <p class="ph__brief"><b>Bildplatz: Portrait</b>Corinna Brenner, Hochformat 4:5</p>
         </div>
         <div>
           <h3>Corinna Brenner</h3>
@@ -213,9 +222,9 @@
 
       <article class="person reveal">
         <div class="ph">
-          <img src="assets/img/kolb.jpg" alt="Matthias Kolb" width="800" height="600">
+          <img src="assets/img/kolb.jpg" alt="Matthias Kolb" width="800" height="1000">
           <svg class="ph__mark" aria-hidden="true"><use href="#i-house-line"></use></svg>
-          <p class="ph__brief"><b>Bildplatz: Portrait</b>Matthias Kolb, Querformat 4:3</p>
+          <p class="ph__brief"><b>Bildplatz: Portrait</b>Matthias Kolb, Hochformat 4:5</p>
         </div>
         <div>
           <h3>Matthias Kolb</h3>
@@ -231,9 +240,11 @@
   </div>
 </section>
 
-<!-- ============================================================== Kontakt -->
-<section class="section kontakt" id="kontakt">
-  <div class="wrap kontakt__grid">
+<!-- ============================================================ V Kontakt -->
+<!-- Das einzige Blatt im Nachtblau. Der Farbwechsel ist hier ein Schluss-
+     zeichen und keine Abwechslung - deshalb kommt er genau einmal vor. -->
+<section class="blatt blatt--kontakt" id="kontakt" data-ziffer="V" data-kapitel="Kontakt">
+  <div class="blatt__inhalt kontakt__grid">
     <div class="reveal">
       <p class="eyebrow">Kontakt</p>
       <h2 class="h2">Schildern Sie uns Ihren Fall.</h2>
@@ -272,30 +283,22 @@
       </dl>
     </div>
   </div>
-</section>
 
-</main>
-
-<footer class="footer">
-  <div class="wrap">
-    <div class="footer__grid">
-      <a class="brand" href="#top" style="color:var(--band-text)">Brenner &amp; Kolb</a>
-      <ul class="footer__links">
-        <li><a href="#rechtsgebiete">Rechtsgebiete</a></li>
-        <li><a href="#team">Team</a></li>
-        <li><a href="#kontakt">Kontakt</a></li>
-        <li><a href="impressum.html">Impressum</a></li>
-        <li><a href="datenschutz.html">Datenschutz</a></li>
-        <li><a href="../">Weitere Beispiele</a></li>
-      </ul>
-    </div>
-    <p class="footer__note">
+  <footer class="schlusszeile">
+    <ul>
+      <li><a href="impressum.html">Impressum</a></li>
+      <li><a href="datenschutz.html">Datenschutz</a></li>
+      <li><a href="../">Weitere Beispiele</a></li>
+    </ul>
+    <p>
       Beispielprojekt. Brenner &amp; Kolb Rechtsanwälte ist ein erfundenes
       Unternehmen, sämtliche Angaben auf dieser Seite dienen ausschließlich
       der Veranschaulichung von Gestaltung und Interaktion.
     </p>
-  </div>
-</footer>
+  </footer>
+</section>
+
+</main>
 
 <script src="assets/js/gsap.min.js"></script>
 <script src="assets/js/ScrollTrigger.min.js"></script>

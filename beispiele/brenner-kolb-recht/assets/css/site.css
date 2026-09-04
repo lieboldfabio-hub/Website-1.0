@@ -670,60 +670,84 @@ h1, h2, h3 { font-weight: 600; letter-spacing: -0.01em; }
 }
 
 /* Diskretions-Hinweis statt Notdienst-Leiste */
-.diskret { background: var(--tinte-900); color: var(--band-text); padding-block: 1.15rem; }
-.diskret__inner { display: flex; flex-wrap: wrap; align-items: center; gap: 0.85rem 1.5rem; }
-.diskret svg { width: 22px; height: 22px; color: var(--accent); flex: none; }
-.diskret b { font-family: var(--font-display); font-weight: 600; }
-.diskret span { color: var(--band-text-soft); }
-.diskret a { margin-left: auto; font-weight: 600; text-decoration: none; border-bottom: 2px solid var(--accent); padding-bottom: 2px; }
-.diskret a:hover { color: var(--accent); }
-@media (max-width: 700px) { .diskret a { margin-left: 0; } }
 
 /* -------------------------------------------------------- Rechtsgebiete - */
 .leistungen__kopf { max-width: 46rem; margin-bottom: clamp(2rem, 4vw, 3rem); }
 .leistungen__kopf .h2 { max-width: 22ch; }
 
-.gebiete { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.25rem; }
+.gebiete { list-style: none; margin: 0; padding: 0; }
 @media (max-width: 760px) { .gebiete { grid-template-columns: 1fr; } }
 
+/* Eine Zeile je Fachbereich, mit haengender Ziffer im Rand und einer
+   Haarlinie darueber - so setzt man eine Aufzaehlung in einem Schriftsatz.
+   Vier Kaesten mit Rahmen waeren hier vier Angebote, und das sind sie nicht. */
 .gebiet {
-  padding: clamp(1.5rem, 3vw, 2.1rem); border: 1px solid var(--line); border-radius: var(--r);
-  background: var(--surface); display: grid; gap: 0.9rem;
-  transition: border-color 0.22s var(--ease), transform 0.22s var(--ease);
+  display: grid;
+  grid-template-columns: 3rem minmax(0, 21ch) minmax(0, 1fr) 2rem;
+  gap: clamp(.9rem, 2.4vw, 2.2rem);
+  align-items: baseline;
+  padding: clamp(.85rem, 1.9vh, 1.45rem) 0;
+  border-top: 1px solid var(--line);
+  transition: border-color .22s var(--ease);
 }
-.gebiet:hover { border-color: var(--accent); transform: translateY(-2px); }
-.gebiet svg { width: 34px; height: 34px; color: var(--accent); }
-.gebiet h3 { font-size: 1.2rem; }
+.gebiet:last-child { border-bottom: 1px solid var(--line); }
+.gebiet:hover { border-color: var(--accent); }
+.gebiet__nr {
+  font-family: var(--font-display); font-weight: 600;
+  font-size: .92rem; letter-spacing: .1em; color: var(--accent);
+}
+.gebiet h3 { font-size: clamp(1.15rem, 1rem + .6vw, 1.5rem); }
 .gebiet p { color: var(--text-soft); }
+.gebiet__ico {
+  width: 24px; height: 24px; color: var(--accent);
+  opacity: .45; justify-self: end; align-self: center;
+  transition: opacity .22s var(--ease);
+}
+.gebiet:hover .gebiet__ico { opacity: 1; }
+@media (max-width: 980px) {
+  .gebiet { grid-template-columns: 2.4rem minmax(0, 1fr); }
+  .gebiet p { grid-column: 2; }
+  .gebiet__ico { display: none; }
+}
 
 /* ------------------------------------------------------------ Grundsätze */
-.grundsaetze { background: var(--tinte-900); color: var(--band-text); }
 .grundsaetze__kopf { max-width: 34rem; margin-bottom: clamp(2rem, 4vw, 3rem); }
 .grundsaetze__kopf .h2 { max-width: 18ch; }
 
 .punkte { margin: 0; padding: 0; list-style: none; display: grid; gap: 0; }
-.punkte li { display: grid; grid-template-columns: auto 1fr; gap: 1.1rem; align-items: start; padding: 1.4rem 0; border-top: 1px solid var(--band-line); }
-.punkte li:last-child { border-bottom: 1px solid var(--band-line); }
+.punkte li { display: grid; grid-template-columns: auto 1fr; gap: 1.1rem; align-items: start; padding: 1.25rem 0; border-top: 1px solid var(--line); }
+.punkte li:last-child { border-bottom: 1px solid var(--line); }
 .punkte svg { width: 22px; height: 22px; color: var(--accent); margin-top: 3px; }
 .punkte b { display: block; font-family: var(--font-display); font-size: 1.08rem; margin-bottom: 0.2rem; }
-.punkte p { color: var(--band-text-soft); max-width: 52ch; }
+.punkte p { color: var(--text-soft); max-width: 52ch; }
 
 /* ------------------------------------------------------------------ Team */
-.team__grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
+/* Zwei Zeilen statt zwei Kaesten: Portrait links, Text rechts, dazwischen
+   eine Haarlinie - dieselbe Sprache wie die Rechtsgebiete, und sie passt
+   auf ein liegendes Blatt, was zwei hohe Karten nicht taeten. */
+.team__grid { display: grid; grid-template-columns: 1fr; }
 @media (max-width: 700px) { .team__grid { grid-template-columns: 1fr; } }
 .person {
-  border: 1px solid var(--line); border-radius: var(--r); background: var(--surface);
-  padding: clamp(1.5rem, 3vw, 2rem); display: grid; gap: 1.1rem;
+  display: grid;
+  grid-template-columns: minmax(0, 11rem) minmax(0, 1fr);
+  gap: clamp(1.2rem, 3vw, 2.5rem);
+  align-items: center;
+  padding: clamp(.9rem, 2.2vh, 1.7rem) 0;
+  border-top: 1px solid var(--line);
 }
-.person .ph { aspect-ratio: 4/3; }
+.person:last-child { border-bottom: 1px solid var(--line); }
+.person .ph { aspect-ratio: 4 / 5; }
+@media (max-width: 720px) {
+  .person { grid-template-columns: 1fr; align-items: start; }
+  .person .ph { aspect-ratio: 4 / 3; }
+}
 .person h3 { font-size: 1.25rem; }
 .person__rolle { color: var(--accent); font-weight: 600; font-size: 0.9rem; margin-top: 0.15rem; }
 .person p.body-copy { margin-top: 0.6rem; }
 
 /* ---------------------------------------------------------------- Kontakt */
-.kontakt { background: var(--pergament-2); }
 .kontakt__grid { display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 5fr); gap: clamp(2.5rem, 6vw, 5rem); align-items: start; }
-.kontakt .h2 { max-width: 15ch; }
+.blatt--kontakt .h2 { max-width: 15ch; }
 @media (max-width: 860px) { .kontakt__grid { grid-template-columns: 1fr; gap: 2.5rem; } }
 
 .wege { display: grid; gap: 1rem; margin-top: 2rem; }
@@ -748,10 +772,250 @@ h1, h2, h3 { font-weight: 600; letter-spacing: -0.01em; }
 
 /* In den dunklen Abschnitten uebernimmt der aufgehellte Ton. Weil --accent
    vererbt wird, genuegt es, ihn am Container zu setzen. */
-.diskret, .grundsaetze, .footer, .cta-band, .band {
+.blatt--kontakt, .footer {
   --accent: var(--accent-band);
   --accent-flaeche: var(--accent-band);
   /* Ein Knopf auf dem Band traegt jetzt die helle Flaeche, also braucht er
      dunkle Schrift statt der hellen aus dem Grundzustand. */
   --accent-fg: #171b28;
+}
+
+
+/* ============================================================================
+   3. Scroll-Pager der Startseite
+   ----------------------------------------------------------------------------
+   Nur index.html traegt <html class="pager">. Die Rechtstexte bleiben normale
+   Seiten - ein Datenschutzhinweis in Bildschirmportionen waere albern.
+
+   Gefuehrt wird ueber den laufenden Kolumnentitel oben: roemische Ziffer und
+   Kapitelname, darunter eine Haarlinie, die mit dem Fortschritt waechst. Der
+   Grund bleibt durchgehend Pergament, nur das Schlussblatt schlaegt ins
+   Nachtblau um. Unterschieden werden die Blaetter ueber ihren Satzspiegel:
+   Aufschlag zweispaltig, Rechtsgebiete als Liste, Kanzlei einspaltig und
+   schmal, Team zwei grosse Portraits, Kontakt geteilt.
+   ========================================================================= */
+
+.pager { scroll-snap-type: y mandatory; --kolumne-h: 62px; }
+
+.blatt {
+  position: relative;
+  min-height: 100svh;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  display: flex;
+  align-items: center;
+  padding: calc(var(--kolumne-h) + clamp(2rem, 5vh, 3.5rem)) var(--pad-x)
+           clamp(4.5rem, 10vh, 6.5rem);
+  overflow: clip;
+}
+.blatt__inhalt { width: 100%; max-width: var(--wrap); margin-inline: auto; }
+.blatt__kopf { max-width: 46rem; margin-bottom: clamp(1.5rem, 4vh, 3rem); }
+.blatt__kopf .h2 { max-width: 22ch; }
+.blatt__kopf .body-copy { margin-top: 1rem; }
+
+/* ------------------------------------------------------- I Aufschlag ---- */
+
+.blatt--aufschlag {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, .8fr);
+  grid-template-rows: 1fr auto;
+  gap: clamp(2rem, 5vw, 4.5rem);
+  align-items: center;
+  max-width: none;
+}
+.blatt__satz { max-width: 38rem; justify-self: end; width: 100%; }
+.blatt__satz .display { max-width: 16ch; }
+.blatt__satz .lede { margin-top: 1.4rem; max-width: 42ch; }
+.blatt__bild { aspect-ratio: 4 / 5; width: 100%; max-width: min(40vh, 380px); justify-self: start; }
+
+/* Fussnote im Wortsinn: sie sitzt unter dem Satzspiegel, ueber die ganze
+   Breite, abgesetzt durch eine Linie - wie in einem Schriftsatz. */
+.fussnote {
+  grid-column: 1 / -1;
+  margin: 0;
+  padding-top: clamp(1rem, 2.4vh, 1.6rem);
+  border-top: 1px solid var(--line);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .5rem .9rem;
+  font-size: .92rem;
+  color: var(--text-soft);
+}
+.fussnote svg { width: 19px; height: 19px; color: var(--accent); flex: none; }
+.fussnote b { font-family: var(--font-display); font-weight: 600; color: var(--text); }
+
+/* ------------------------------------------------------- III Kanzlei ---- */
+/* Schmaler Satzspiegel, mittig - der einzige Ort auf der Seite, an dem
+   der Text so steht. Damit unterscheidet sich das Kapitel vom vorigen
+   ohne einen einzigen Farbwechsel. */
+.kanzlei__satz { max-width: 60rem; }
+.kanzlei__satz .blatt__kopf { margin-inline: auto; text-align: center; max-width: 40rem; }
+.kanzlei__satz .blatt__kopf .h2 { max-width: none; }
+.kanzlei__satz .blatt__kopf .body-copy { margin-inline: auto; }
+
+/* --------------------------------------------------------- V Kontakt ---- */
+
+.blatt--kontakt { background: var(--tinte-900); color: var(--band-text); flex-direction: column; }
+/* Nicht auf Flex umstellen: dieses Element traegt zugleich .kontakt__grid.
+   Ein display:flex hier wuerde das zweispaltige Raster plattdruecken. */
+.blatt--kontakt .blatt__inhalt { flex: 1 0 auto; align-content: center; }
+.blatt--kontakt h2, .blatt--kontakt h3 { color: var(--band-text); }
+.blatt--kontakt .body-copy { color: var(--band-text-soft); }
+.blatt--kontakt .weg {
+  background: rgba(255, 255, 255, .045);
+  border-color: var(--band-line);
+}
+.blatt--kontakt .weg:hover { border-color: var(--accent); }
+.blatt--kontakt .weg span { color: var(--band-text-soft); }
+.blatt--kontakt .einzug {
+  background: rgba(255, 255, 255, .045);
+  border-color: var(--band-line);
+}
+.blatt--kontakt .einzug p, .blatt--kontakt .einzug dt { color: var(--band-text-soft); }
+.blatt--kontakt .einzug .zeile { border-top-color: var(--band-line); }
+
+.schlusszeile {
+  width: 100%; max-width: var(--wrap); margin-inline: auto;
+  padding-top: clamp(1.2rem, 3vh, 2rem);
+  border-top: 1px solid var(--band-line);
+  display: flex; flex-wrap: wrap; align-items: baseline;
+  gap: .7rem clamp(1.2rem, 3vw, 2.5rem);
+}
+.schlusszeile ul { display: flex; flex-wrap: wrap; gap: 1.2rem; list-style: none; margin: 0; padding: 0; }
+.schlusszeile a { color: var(--band-text-soft); font-size: .88rem; text-decoration: none; }
+.schlusszeile a:hover { color: var(--accent-band); }
+.schlusszeile p { flex: 1 1 24rem; margin: 0; color: var(--band-text-soft); font-size: .78rem; line-height: 1.6; opacity: .85; }
+
+/* ---------------------------------------------------- Laufender Titel ---- */
+
+.kolumne {
+  position: fixed; inset: 0 0 auto; z-index: 60;
+  height: var(--kolumne-h);
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 1rem;
+  padding-inline: var(--pad-x);
+  background: color-mix(in srgb, var(--pergament) 90%, transparent);
+  backdrop-filter: blur(12px) saturate(140%);
+  -webkit-backdrop-filter: blur(12px) saturate(140%);
+  transition: background-color .4s var(--ease), color .4s var(--ease);
+}
+.kolumne .brand { color: var(--text); font-size: 1.14rem; }
+.kolumne .btn { justify-self: end; }
+
+/* Mitte: Ziffer und Kapitel, wie der Kolumnentitel eines Buches. */
+.kolumne__ort {
+  margin: 0; display: flex; align-items: baseline; gap: .7rem;
+  font-family: var(--font-display);
+  font-size: .82rem; letter-spacing: .14em; text-transform: uppercase;
+  color: var(--text-soft);
+  white-space: nowrap;
+}
+.kolumne__ort b { color: var(--accent); font-weight: 600; font-variant-numeric: tabular-nums; }
+
+/* Auf dem Schlussblatt dreht der Titel mit ins Dunkle. */
+.pager.auf-dunkel .kolumne {
+  background: color-mix(in srgb, var(--tinte-900) 90%, transparent);
+  color: var(--band-text);
+}
+.pager.auf-dunkel .kolumne .brand { color: var(--band-text); }
+.pager.auf-dunkel .kolumne__ort { color: var(--band-text-soft); }
+.pager.auf-dunkel .kolumne__ort b { color: var(--accent-band); }
+
+/* Haarlinie unter dem Titel, waechst mit dem Fortschritt. */
+.fortschritt {
+  position: fixed; top: var(--kolumne-h); left: 0; right: 0; z-index: 61;
+  height: 1px; background: var(--line);
+}
+.fortschritt i {
+  display: block; height: 100%; width: 100%;
+  transform: scaleX(0); transform-origin: left;
+  background: var(--accent-flaeche);
+}
+
+/* ----------------------------------------------------- Register unten ---- */
+/* Kein Punktraster, sondern eine gesetzte Zeile am Fuss - die Kapitel
+   stehen ausgeschrieben da, getrennt durch Punkte wie in einem Register. */
+
+.register {
+  position: fixed; left: var(--pad-x); bottom: clamp(1rem, 2.5vh, 1.7rem);
+  z-index: 60;
+}
+.register ul { display: flex; flex-wrap: wrap; align-items: baseline; gap: .55rem;
+  list-style: none; margin: 0; padding: 0; }
+.register li + li::before { content: "·"; margin-right: .55rem; color: var(--text-soft); opacity: .5; }
+.register a {
+  font-family: var(--font-display);
+  font-size: .78rem; letter-spacing: .06em;
+  color: var(--text-soft); text-decoration: none;
+  padding-bottom: 2px; border-bottom: 1px solid transparent;
+  transition: color .25s var(--ease), border-color .25s var(--ease);
+}
+.register a:hover { color: var(--text); }
+.register a.is-hier { color: var(--accent); border-bottom-color: var(--accent); }
+
+.pager.auf-dunkel .register a { color: var(--band-text-soft); }
+.pager.auf-dunkel .register li + li::before { color: var(--band-text-soft); }
+.pager.auf-dunkel .register a:hover { color: var(--band-text); }
+.pager.auf-dunkel .register a.is-hier { color: var(--accent-band); border-bottom-color: var(--accent-band); }
+
+/* ----------------------------------------------------- Mass halten ------ */
+/*
+   Ein Blatt muss auf einen Bildschirm passen, sonst rastet nichts mehr
+   sauber ein. Die senkrechten Masse haengen deshalb im Pager an der
+   Fensterhoehe, nicht nur an der Breite.
+*/
+.pager .h2 { font-size: clamp(1.7rem, 1.1rem + 1.7vw, 2.6rem); }
+.pager .blatt__kopf { margin-bottom: clamp(1.1rem, 3.2vh, 2.4rem); }
+.pager .punkte li { padding: clamp(.65rem, 1.5vh, 1.2rem) 0; }
+.pager .gebiet { padding: clamp(.65rem, 1.5vh, 1.3rem) 0; }
+
+/* Auf niedrigen Fenstern - Laptops mit 768 oder 800 Punkten Hoehe sind der
+   Normalfall, nicht die Ausnahme - wird der ganze Satz eine Stufe kleiner.
+   Lieber etwas kleinere Schrift als ein Blatt, das nicht mehr einrastet. */
+@media (max-height: 870px) {
+  .pager { --kolumne-h: 54px; }
+  .pager .blatt { padding-block: calc(var(--kolumne-h) + 1.5rem) 3.4rem; }
+  .pager .display { font-size: clamp(1.95rem, 1.3rem + 2.1vw, 2.9rem); }
+  .pager .h2 { font-size: clamp(1.45rem, 1rem + 1.4vw, 2.15rem); }
+  .pager .lede { font-size: 1.02rem; margin-top: 1rem; }
+  .pager .body-copy, .pager .punkte p, .pager .gebiet p { font-size: .95rem; }
+  .pager .hero__actions { margin-top: 1.5rem; }
+  .pager .wege { margin-top: 1.4rem; gap: .7rem; }
+  .pager .weg { padding: .9rem 1.1rem; }
+  .pager .einzug { padding: 1.4rem; }
+  .pager .einzug dl { margin-top: 1rem; }
+  .pager .einzug .zeile { padding: .6rem 0; }
+  .pager .register { bottom: .9rem; }
+}
+
+/* -------------------------------------------------------------- Rueckfall */
+/*
+   Zu niedrig oder zu schmal: Einrasten aus, Blaetter wachsen mit dem Inhalt,
+   das Register verschwindet. Der Kolumnentitel bleibt und wird zur Leiste -
+   ohne ihn gaebe es auf schmalen Fenstern gar keine Navigation mehr.
+*/
+@media (max-width: 900px), (max-height: 720px) {
+  .pager { scroll-snap-type: none; }
+  .blatt {
+    min-height: 0; scroll-snap-align: none; display: block;
+    padding: clamp(3.5rem, 9vw, 5rem) var(--pad-x);
+    overflow: visible;
+  }
+  .blatt:first-child { padding-top: calc(var(--kolumne-h) + 2.5rem); }
+  .blatt--aufschlag { display: block; }
+  .blatt__satz { max-width: none; }
+  .blatt__bild { max-width: none; max-height: none; margin-top: 2rem; }
+  .fussnote { margin-top: 2rem; }
+  .register { display: none; }
+  .kolumne { grid-template-columns: 1fr auto; }
+  .kolumne__ort { display: none; }
+  .schlusszeile { margin-top: 2.5rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pager { scroll-snap-type: y proximity; }
+  .fortschritt i { transition: none; }
 }

@@ -3,7 +3,8 @@
    ----------------------------------------------------------------------------
    1. Grundverhalten: Navigation, Menue, Bildplaetze, Scroll-Einblendungen
       und Zeilen-Reveals. Stellt window.Basis fuer Abschnitt 2 bereit.
-   2. Signatur-Interaktion dieser Seite.
+   2. Der Scroll-Pager der Startseite: Kolumnentitel, Fortschrittslinie
+      und Register.
    Ohne JavaScript bleibt alles lesbar, bei prefers-reduced-motion wird
    direkt der Endzustand gezeigt.
    ========================================================================= */
@@ -72,8 +73,11 @@ window.Basis = (function () {
       var ziel = document.querySelector(id);
       if (!ziel) return;
       e.preventDefault();
+      /* Im Pager rastet das Blatt buendig oben ein; der Kolumnentitel ist im
+         Innenabstand der Blaetter schon beruecksichtigt. */
+      var versatz = root.classList.contains("pager") ? 0 : 70;
       window.scrollTo({
-        top: ziel.getBoundingClientRect().top + window.pageYOffset - 70,
+        top: ziel.getBoundingClientRect().top + window.pageYOffset - versatz,
         behavior: reduziert ? "auto" : "smooth"
       });
       if (history.replaceState) history.replaceState(null, "", id);
@@ -200,4 +204,83 @@ window.Basis = (function () {
       });
     }
   };
+})();
+
+
+/* --------------------------------------- 2. Signatur-Interaktion */
+/*
+   Der Pager der Startseite. Drei Dinge haengen am Scrollen:
+     - welches Kapitel im Kolumnentitel steht,
+     - wie weit die Haarlinie darunter gewachsen ist,
+     - ob der Grund hell oder dunkel ist.
+   Alles drei kommt aus derselben Beobachtung, damit nichts auseinanderlaeuft.
+*/
+
+(function () {
+  "use strict";
+
+  var blaetter = Array.prototype.slice.call(document.querySelectorAll(".blatt"));
+  if (!blaetter.length) return;
+
+  var wurzel  = document.documentElement;
+  var ziffer  = document.querySelector(".kolumne__ort b");
+  var kapitel = document.querySelector(".kolumne__ort span");
+  var balken  = document.querySelector(".fortschritt i");
+
+  var glieder = {};
+  Array.prototype.forEach.call(document.querySelectorAll(".register a"), function (a) {
+    glieder[a.getAttribute("href").slice(1)] = a;
+  });
+
+  /* ------------------------------------------------- Welches Kapitel gilt */
+
+  var aktuell = null;
+
+  function setzen(el) {
+    if (!el || el.id === aktuell) return;
+    aktuell = el.id;
+    if (ziffer)  ziffer.textContent  = el.getAttribute("data-ziffer") || "";
+    if (kapitel) kapitel.textContent = el.getAttribute("data-kapitel") || "";
+    for (var k in glieder) glieder[k].classList.toggle("is-hier", k === aktuell);
+    /* Das Schlussblatt ist das einzige dunkle. */
+    wurzel.classList.toggle("auf-dunkel", el.classList.contains("blatt--kontakt"));
+  }
+
+  var beobachter = new IntersectionObserver(function (eintraege) {
+    var treffer = null;
+    eintraege.forEach(function (e) { if (e.isIntersecting) treffer = e.target; });
+    setzen(treffer);
+  }, {
+    /* Ein Streifen quer durch die Bildschirmmitte: genau ein Blatt belegt ihn. */
+    rootMargin: "-50% 0px -50% 0px",
+    threshold: 0
+  });
+
+  blaetter.forEach(function (b) { beobachter.observe(b); });
+  setzen(blaetter[0]);
+
+  /* --------------------------------------------------------- Haarlinie -- */
+  /*
+     Nur eine Transform, kein Layout. Gemessen wird gegen die scrollbare
+     Strecke; ist die Seite kuerzer als das Fenster (Rueckfall auf sehr
+     grossen Bildschirmen), steht die Linie voll.
+  */
+  if (balken) {
+    var laeuft = false;
+
+    function zeichnen() {
+      laeuft = false;
+      var strecke = wurzel.scrollHeight - window.innerHeight;
+      var anteil = strecke > 0 ? window.pageYOffset / strecke : 1;
+      balken.style.transform = "scaleX(" + Math.min(1, Math.max(0, anteil)) + ")";
+    }
+
+    window.addEventListener("scroll", function () {
+      if (laeuft) return;
+      laeuft = true;
+      requestAnimationFrame(zeichnen);
+    }, { passive: true });
+    window.addEventListener("resize", zeichnen);
+    zeichnen();
+  }
 })();
