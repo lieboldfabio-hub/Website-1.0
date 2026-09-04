@@ -1,15 +1,4 @@
-/* ============================================================================
-   Osteria Fontana - Beispielprojekt
-   ----------------------------------------------------------------------------
-   Richtung   Dunkel, editorial, bildgetrieben. Die Karte ist kurz, das soll
-              die Seite auch ausstrahlen: wenig Elemente, viel Ruhe, grosse
-              Typografie.
-   Palette    Warmes Fast-Schwarz, Creme, ein Akzent in Terrakotta.
-   Typografie Playfair Display (Display) + Karla (Fliesstext).
-              Serif ist hier begruendet: Gastronomie mit Handschrift, die
-              Karte liest sich wie ein redaktioneller Text.
-   Signatur   Waagerecht gescrollte Galerie, an den Viewport geheftet.
-   ========================================================================= */
+
 
 @import url("fonts.css");
 
@@ -82,7 +71,7 @@ section { position: relative; }
 
 .display { font-size: clamp(2.35rem, 1.5rem + 2.9vw, 3.7rem); }
 .h2      { font-size: clamp(1.9rem, 1.25rem + 2.6vw, 3.1rem); }
-.h3      { font-size: clamp(1.15rem, 1.02rem + 0.55vw, 1.45rem); line-height: 1.22; }
+
 
 .lede {
   font-size: clamp(1.06rem, 1rem + 0.4vw, 1.28rem);
@@ -121,7 +110,7 @@ section { position: relative; }
               border-color .22s var(--ease), color .22s var(--ease);
 }
 .btn:active { transform: translateY(1px) scale(.985); }
-.btn--sm { padding: .7rem 1.25rem; font-size: .94rem; }
+
 
 .btn--ghost {
   background: transparent; color: var(--band-text);
@@ -129,10 +118,6 @@ section { position: relative; }
 }
 .btn--ghost:hover { background: rgba(255,255,255,.09); border-color: rgba(255,255,255,.34); }
 
-.btn--line {
-  background: transparent; color: var(--text); border-color: var(--line);
-}
-.btn--line:hover { background: var(--text); color: var(--bg); border-color: var(--text); }
 
 .btn__ico { width: 1.05em; height: 1.05em; flex: none; }
 
@@ -153,7 +138,7 @@ section { position: relative; }
 .menu a:hover { color: var(--accent); }
 .menu .btn { margin-top: 1.4rem; justify-self: start; }
 
-/* -------------------------------------------------------- Bildplatzhalter */
+
 /*
    Zeigt eine Markenflaeche, solange kein Foto vorliegt. Sobald die Datei
    unter assets/img/ liegt, blendet sie sich darueber. Kein Markup aendern.
@@ -213,7 +198,7 @@ section { position: relative; }
   }
 }
 
-/* ------------------------------------------------ Helle Innenseiten ------ */
+
 /*
    Rechtstexte und Fehlerseite haben keinen dunklen Hero. Die Leiste startet
    dort deshalb sofort in Textfarbe statt in Band-Farbe, unabhaengig davon,
@@ -262,7 +247,7 @@ section { position: relative; }
 .fehler h1 { font-size: clamp(1.5rem, 1.2rem + 1.4vw, 2.1rem); margin: .8rem 0 .9rem; }
 .fehler p { color: var(--text-soft); max-width: 44ch; margin: 0 auto 2rem; }
 
-/* ------------------------------------------------------- Seitenkopf ------ */
+
 /*
    Kopfbereich der Unterseiten. Uebernimmt die Grundflaeche der Seite, damit
    die feste Leiste darueber lesbar bleibt. Projekte mit dunklem Hero setzen
@@ -281,13 +266,6 @@ section { position: relative; }
 .wege a[aria-current="page"]::after { transform: scaleX(1); }
 .menu a[aria-current="page"] { color: var(--accent); }
 
-/* ============================================================================
-   Bausteine fuer Unterseiten
-   ----------------------------------------------------------------------------
-   Alles hier arbeitet ausschliesslich mit den Marken-Variablen aus site.css.
-   Dadurch sieht derselbe Baustein in jedem Projekt anders aus, ohne dass er
-   pro Projekt neu geschrieben werden muss.
-   ========================================================================= */
 
 /* ------------------------------------------------------- Abschnittskopf -- */
 
@@ -316,17 +294,12 @@ section { position: relative; }
   transition: border-color .2s ease, transform .2s ease;
 }
 .teaser:hover { border-color: var(--accent); transform: translateY(-3px); }
-.band .teaser b, .band .projekt h3, .band .zitat b, .band .preis b { color: var(--text); }
+.band .teaser b, .band .zitat b { color: var(--text); }
 .teaser > svg { width: 26px; height: 26px; color: var(--accent); }
 .teaser b { font-family: var(--font-display); font-size: 1.12rem; font-weight: 700; }
 .teaser p { color: var(--text-soft); font-size: .96rem; margin: 0; }
-.teaser__mehr {
-  margin-top: auto; padding-top: .5rem;
-  display: inline-flex; align-items: center; gap: .45rem;
-  font-weight: 600; font-size: .93rem; color: var(--accent);
-}
-.teaser__mehr svg { width: 1em; height: 1em; transition: transform .15s ease; }
-.teaser:hover .teaser__mehr svg { transform: translateX(3px); }
+
+
 @media (max-width: 880px) { .teaser-grid { grid-template-columns: 1fr; } }
 
 /* --------------------------------------------------------------- Ablauf -- */
@@ -358,35 +331,6 @@ section { position: relative; }
 @media (max-width: 880px) { .ablauf { grid-template-columns: 1fr 1fr; } }
 @media (max-width: 560px) { .ablauf { grid-template-columns: 1fr; } }
 
-/* -------------------------------------------------------------- Projekte -- */
-
-.projekte { display: grid; gap: clamp(1.25rem, 2.4vw, 2rem); }
-.projekt {
-  color: var(--text);
-  display: grid; grid-template-columns: 1fr 1.15fr;
-  gap: clamp(1.25rem, 3vw, 2.5rem);
-  align-items: center;
-  padding: clamp(1.4rem, 2.6vw, 2.25rem);
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: var(--r);
-}
-.projekt:nth-child(even) .projekt__bild { order: 2; }
-.projekt__bild { aspect-ratio: 4 / 3; }
-.projekt h3 { font-size: clamp(1.2rem, 1.05rem + .7vw, 1.6rem); margin-bottom: .55rem; }
-.projekt p { color: var(--text-soft); }
-.fakten { margin: 1.4rem 0 0; display: grid; gap: 0; }
-.fakten .zeile {
-  display: flex; justify-content: space-between; gap: 1rem;
-  padding: .6rem 0; border-top: 1px solid var(--line);
-  font-size: .95rem;
-}
-.fakten dt { color: var(--text-soft); }
-.fakten dd { margin: 0; font-weight: 600; text-align: right; }
-@media (max-width: 780px) {
-  .projekt { grid-template-columns: 1fr; }
-  .projekt:nth-child(even) .projekt__bild { order: 0; }
-}
 
 /* ------------------------------------------------------------- Zitate --- */
 
@@ -476,24 +420,6 @@ section { position: relative; }
 .zwei--schmal-rechts { grid-template-columns: 1.25fr .95fr; }
 @media (max-width: 880px) { .zwei, .zwei--schmal-rechts { grid-template-columns: 1fr; } }
 
-/* ------------------------------------------------------------- Preise ---- */
-
-.preise { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(1rem, 2vw, 1.5rem); }
-.preis {
-  color: var(--text);
-  padding: clamp(1.4rem, 2.4vw, 2rem);
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: var(--r);
-}
-.preis__wert {
-  font-family: var(--font-display); font-weight: 700;
-  font-size: clamp(1.6rem, 1.3rem + 1.2vw, 2.2rem);
-  color: var(--accent); line-height: 1;
-}
-.preis b { display: block; font-family: var(--font-display); margin: .8rem 0 .35rem; }
-.preis p { color: var(--text-soft); font-size: .95rem; margin: 0; }
-@media (max-width: 880px) { .preise { grid-template-columns: 1fr; } }
 
 /* ============================================================================
    2. Tokens und eigene Bausteine
@@ -565,7 +491,6 @@ body::after {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='.32'/%3E%3C/svg%3E");
 }
 
-/* ------------------------------------------------------------- Beispiel - */
 
 /* Rechts unten statt links: die Inhalte sind linksbuendig, dort waere der
    Hinweis staendig im Weg. */
@@ -599,7 +524,7 @@ body::after {
 }
 .demo-badge:hover { border-color: var(--accent); }
 
-/* -------------------------------------------------------------- Marquee - */
+
 /*
    Ein einziges Laufband auf der Seite. Es traegt die Gerichte des Tages und
    hat damit eine Aufgabe, es ist keine Dekoration.
@@ -679,7 +604,7 @@ body::after {
   .kueche__media { aspect-ratio: 3 / 2; }
 }
 
-/* ------------------------------------------------------ Galerie waagrecht */
+
 /*
    Signatur der Seite. Der Abschnitt wird am Viewport geheftet, die Spur
    darin wandert waagerecht mit dem Scrollen. Erzaehlt den Abend von der
@@ -810,15 +735,6 @@ body::after {
 
 /* ------------------------------------------------------------- Besuch --- */
 
-.besuch { background: var(--nacht-2); }
-
-.besuch__grid {
-  display: grid;
-  grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
-  gap: clamp(2.5rem, 6vw, 5rem);
-  align-items: start;
-}
-.besuch .h2 { max-width: 12ch; }
 
 .zeiten { display: grid; gap: 0; margin-top: 2rem; }
 .zeit {
@@ -833,15 +749,6 @@ body::after {
 .zeit dd { margin: 0; font-variant-numeric: tabular-nums; }
 .zeit--zu dd { color: var(--text-soft); }
 
-.karte-box {
-  border: 1px solid var(--line);
-  border-radius: var(--r);
-  padding: clamp(1.5rem, 3vw, 2.25rem);
-  background: var(--nacht);
-}
-.karte-box h3 { font-size: 1.3rem; margin-bottom: 0.6rem; }
-.karte-box p { color: var(--text-soft); }
-.karte-box .btn { margin-top: 1.5rem; }
 
 .adresse {
   margin-top: 2rem;
@@ -858,18 +765,11 @@ body::after {
 .adresse a { text-decoration: none; }
 .adresse a:hover { color: var(--accent); }
 
-@media (max-width: 860px) {
-  .besuch__grid { grid-template-columns: 1fr; gap: 2.5rem; }
-}
 
 /* Unterseiten-Kopf in der dunklen Grundflaeche, passend zum Hero. */
 .seitenkopf { background: var(--nacht); color: var(--creme); border-bottom-color: var(--band-line); }
 .seitenkopf .lede { color: var(--band-text-soft); }
 
-
-/* ============================================================================
-   Akzent im dunklen Abschnitt
-   ========================================================================= */
 
 /* In den dunklen Abschnitten uebernimmt der aufgehellte Ton. Weil --accent
    vererbt wird, genuegt es, ihn am Container zu setzen. */

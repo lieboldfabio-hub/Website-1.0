@@ -1,12 +1,4 @@
-/* ============================================================================
-   Zahnärzte am Königsplatz - Beispielprojekt
-   ----------------------------------------------------------------------------
-   Richtung   Freundlich, ruhig, ohne klinische Kälte. Vertrauen über Wärme
-              und klare Erklärung statt Weißkittel-Distanz.
-   Palette    Tiefes Tannengrün, warmes Creme, ein Akzent in Koralle.
-   Typografie Sora (Display) + Nunito Sans (Fliesstext). Beide mit weichen,
-              runden Formen.
-   ========================================================================= */
+
 
 @import url("fonts.css");
 
@@ -79,7 +71,7 @@ section { position: relative; }
 
 .display { font-size: clamp(2.35rem, 1.5rem + 2.9vw, 3.7rem); }
 .h2      { font-size: clamp(1.9rem, 1.25rem + 2.6vw, 3.1rem); }
-.h3      { font-size: clamp(1.15rem, 1.02rem + 0.55vw, 1.45rem); line-height: 1.22; }
+
 
 .lede {
   font-size: clamp(1.06rem, 1rem + 0.4vw, 1.28rem);
@@ -150,7 +142,7 @@ section { position: relative; }
 .menu a:hover { color: var(--accent); }
 .menu .btn { margin-top: 1.4rem; justify-self: start; }
 
-/* -------------------------------------------------------- Bildplatzhalter */
+
 /*
    Zeigt eine Markenflaeche, solange kein Foto vorliegt. Sobald die Datei
    unter assets/img/ liegt, blendet sie sich darueber. Kein Markup aendern.
@@ -210,7 +202,7 @@ section { position: relative; }
   }
 }
 
-/* ------------------------------------------------ Helle Innenseiten ------ */
+
 /*
    Rechtstexte und Fehlerseite haben keinen dunklen Hero. Die Leiste startet
    dort deshalb sofort in Textfarbe statt in Band-Farbe, unabhaengig davon,
@@ -255,7 +247,7 @@ section { position: relative; }
 .fehler h1 { font-size: clamp(1.5rem, 1.2rem + 1.4vw, 2.1rem); margin: .8rem 0 .9rem; }
 .fehler p { color: var(--text-soft); max-width: 44ch; margin: 0 auto 2rem; }
 
-/* ------------------------------------------------------- Seitenkopf ------ */
+
 /*
    Kopfbereich der Unterseiten. Uebernimmt die Grundflaeche der Seite, damit
    die feste Leiste darueber lesbar bleibt. Projekte mit dunklem Hero setzen
@@ -273,13 +265,6 @@ section { position: relative; }
 .pillen a[aria-current="page"] { background: var(--tanne-900); color: var(--band-text); }
 .menu a[aria-current="page"] { color: var(--accent); }
 
-/* ============================================================================
-   Bausteine fuer Unterseiten
-   ----------------------------------------------------------------------------
-   Alles hier arbeitet ausschliesslich mit den Marken-Variablen aus site.css.
-   Dadurch sieht derselbe Baustein in jedem Projekt anders aus, ohne dass er
-   pro Projekt neu geschrieben werden muss.
-   ========================================================================= */
 
 /* ------------------------------------------------------- Abschnittskopf -- */
 
@@ -308,92 +293,14 @@ section { position: relative; }
   transition: border-color .2s ease, transform .2s ease;
 }
 .teaser:hover { border-color: var(--accent); transform: translateY(-3px); }
-.band .teaser b, .band .projekt h3, .band .zitat b, .band .preis b { color: var(--text); }
+.band .teaser b, .band .preis b { color: var(--text); }
 .teaser > svg { width: 26px; height: 26px; color: var(--accent); }
 .teaser b { font-family: var(--font-display); font-size: 1.12rem; font-weight: 700; }
 .teaser p { color: var(--text-soft); font-size: .96rem; margin: 0; }
-.teaser__mehr {
-  margin-top: auto; padding-top: .5rem;
-  display: inline-flex; align-items: center; gap: .45rem;
-  font-weight: 600; font-size: .93rem; color: var(--accent);
-}
-.teaser__mehr svg { width: 1em; height: 1em; transition: transform .15s ease; }
-.teaser:hover .teaser__mehr svg { transform: translateX(3px); }
+
+
 @media (max-width: 880px) { .teaser-grid { grid-template-columns: 1fr; } }
 
-/* --------------------------------------------------------------- Ablauf -- */
-
-.ablauf {
-  list-style: none; margin: 0; padding: 0;
-  display: grid; grid-template-columns: repeat(4, 1fr);
-  gap: clamp(1rem, 2vw, 1.75rem);
-  counter-reset: schritt;
-}
-.ablauf li {
-  position: relative;
-  padding-top: 1.4rem;
-  border-top: 2px solid var(--line);
-  counter-increment: schritt;
-}
-.ablauf li::before {
-  content: counter(schritt, decimal-leading-zero);
-  display: block;
-  font-family: var(--font-display); font-weight: 700;
-  font-size: .82rem; letter-spacing: .1em;
-  color: var(--accent);
-  margin-bottom: .6rem;
-}
-.ablauf b { display: block; font-family: var(--font-display); font-size: 1.08rem; margin-bottom: .35rem; }
-.ablauf p { color: var(--text-soft); font-size: .96rem; margin: 0; }
-.band .ablauf li { border-top-color: var(--band-line); }
-.band .ablauf p { color: var(--band-text-soft); }
-@media (max-width: 880px) { .ablauf { grid-template-columns: 1fr 1fr; } }
-@media (max-width: 560px) { .ablauf { grid-template-columns: 1fr; } }
-
-/* -------------------------------------------------------------- Projekte -- */
-
-.projekte { display: grid; gap: clamp(1.25rem, 2.4vw, 2rem); }
-.projekt {
-  color: var(--text);
-  display: grid; grid-template-columns: 1fr 1.15fr;
-  gap: clamp(1.25rem, 3vw, 2.5rem);
-  align-items: center;
-  padding: clamp(1.4rem, 2.6vw, 2.25rem);
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: var(--r);
-}
-.projekt:nth-child(even) .projekt__bild { order: 2; }
-.projekt__bild { aspect-ratio: 4 / 3; }
-.projekt h3 { font-size: clamp(1.2rem, 1.05rem + .7vw, 1.6rem); margin-bottom: .55rem; }
-.projekt p { color: var(--text-soft); }
-.fakten { margin: 1.4rem 0 0; display: grid; gap: 0; }
-.fakten .zeile {
-  display: flex; justify-content: space-between; gap: 1rem;
-  padding: .6rem 0; border-top: 1px solid var(--line);
-  font-size: .95rem;
-}
-.fakten dt { color: var(--text-soft); }
-.fakten dd { margin: 0; font-weight: 600; text-align: right; }
-@media (max-width: 780px) {
-  .projekt { grid-template-columns: 1fr; }
-  .projekt:nth-child(even) .projekt__bild { order: 0; }
-}
-
-/* ------------------------------------------------------------- Zitate --- */
-
-.zitate { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(1rem, 2vw, 1.75rem); }
-.zitat {
-  color: var(--text);
-  padding: clamp(1.4rem, 2.4vw, 2rem);
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: var(--r);
-}
-.zitat blockquote { margin: 0; font-size: 1.05rem; line-height: 1.55; }
-.zitat figcaption { margin-top: 1rem; color: var(--text-soft); font-size: .92rem; }
-.zitat figcaption b { color: var(--text); font-family: var(--font-display); display: block; }
-@media (max-width: 780px) { .zitate { grid-template-columns: 1fr; } }
 
 /* ----------------------------------------------------------------- FAQ --- */
 
@@ -595,10 +502,7 @@ h1, h2, h3 { font-weight: 600; letter-spacing: -0.01em; }
 .person p.body-copy { margin-top: 0.6rem; }
 
 /* ---------------------------------------------------------------- Kontakt */
-.kontakt { background: var(--creme-2); }
-.kontakt__grid { display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 5fr); gap: clamp(2.5rem, 6vw, 5rem); align-items: start; }
-.kontakt .h2 { max-width: 15ch; }
-@media (max-width: 860px) { .kontakt__grid { grid-template-columns: 1fr; gap: 2.5rem; } }
+
 
 .wege { display: grid; gap: 1rem; margin-top: 2rem; }
 .weg { display: grid; grid-template-columns: auto 1fr; gap: 1rem; align-items: center; padding: 1.25rem 1.4rem; border: 1px solid var(--line); border-radius: var(--r); background: var(--surface); text-decoration: none; transition: border-color 0.22s var(--ease), transform 0.22s var(--ease); }
@@ -615,10 +519,6 @@ h1, h2, h3 { font-weight: 600; letter-spacing: -0.01em; }
 .einzug dt { color: var(--text-soft); }
 .einzug dd { margin: 0; }
 
-
-/* ============================================================================
-   Akzent im dunklen Abschnitt
-   ========================================================================= */
 
 /* In den dunklen Abschnitten uebernimmt der aufgehellte Ton. Weil --accent
    vererbt wird, genuegt es, ihn am Container zu setzen. */

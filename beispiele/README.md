@@ -18,8 +18,28 @@ Endung `.example` und gehen ins Leere.
 | `halbritter-haustechnik` | Handwerk, Elektro und Sanitär | **Mehrseiter** (4 Seiten) | Archivo auf Knochenweiß, Signalblau |
 | `osteria-fontana` | Restaurant | **Mehrseiter** (4 Seiten) | Playfair Display auf Fast-Schwarz, Terrakotta |
 | `zahnaerzte-koenigsplatz` | Zahnarztpraxis | **Mehrseiter** (4 Seiten) | Sora auf Creme, Tannengrün und Koralle |
-| `kopfsache-studio` | Friseursalon | Einseiter | Bricolage Grotesque, Schwarzweiß mit Limette |
-| `brenner-kolb-recht` | Kanzlei | Einseiter | Frank Ruhl Libre auf Pergament, Gold |
+| `kopfsache-studio` | Friseursalon | **Scroll-Pager** | Bricolage Grotesque, Schwarzweiß mit Limette |
+| `brenner-kolb-recht` | Kanzlei | **Scroll-Pager** | Frank Ruhl Libre auf Pergament, Gold |
+
+### Jede Seite hat ihre eigene Form
+
+Kopf, Aufmacher und Fuß sind bei allen fünf verschieden gebaut. Das ist der
+Punkt: wir werben mit individuellen Websites, also darf keine zwei Mal
+dieselbe Form haben.
+
+| | Kopf | Aufmacher | Fuß |
+|---|---|---|---|
+| **Kopfsache** | Nummerierte Schiene rechts, Laufband unten | Erste von fünf Tafeln, Grund schlägt hart um | In der letzten Tafel |
+| **Brenner & Kolb** | Laufender Kolumnentitel mit römischer Ziffer, Haarlinie darunter | Erstes von fünf Blättern, Fußnote unten | Im Schlussblatt |
+| **Halbritter** | Zwei Lagen: Notdienst oben, Name im Farbblock darunter | Bildband über die volle Breite, Ansage darin | Datenblatt mit Punktlinien |
+| **Osteria** | Firmenschild: Name mittig, Wege links und rechts | Bild über die volle Fläche, Satz mittig darin | Rückseite der Karte, mittig |
+| **Zahnärzte** | Schwebende Kachel, aktive Seite als gefüllte Pille | Grünes Feld mit rundem Abschluss, Bild ragt hinein | Praxiskarte, zweispaltig |
+
+Die beiden Scroll-Pager rasten beim Scrollen ein: jede Tafel beziehungsweise
+jedes Blatt füllt genau einen Bildschirm. Auf zu niedrigen oder zu schmalen
+Fenstern schaltet sich das Einrasten ab und die Seite liest sich normal weiter
+– lieber das als Inhalt, an den man nicht herankommt. Impressum, Datenschutz
+und 404 bleiben auch dort gewöhnliche Seiten.
 
 Jedes Projekt hat zusätzlich `impressum.html`, `datenschutz.html` und
 `404.html`. Die Rechtstexte sind branchenspezifisch: Handwerkskammer und
@@ -72,6 +92,48 @@ auch im Formular und in der Datenschutzerklärung.
 
 ---
 
+## Die zwei Scroll-Pager
+
+Bei beiden füllt jeder Abschnitt genau einen Bildschirm und das Scrollen rastet
+ein (`scroll-snap-type: y mandatory` an der Wurzel, weil das Dokument selbst der
+scrollende Kasten ist). Freigeschaltet wird das über `<html class="pager">`, das
+nur `index.html` trägt – die Rechtstexte bleiben gewöhnliche Seiten.
+
+Die beiden führen den Leser bewusst gegensätzlich:
+
+### kopfsache-studio
+
+Fünf **Tafeln**. Rechts eine nummerierte Schiene; der Name eines Abschnitts
+erscheint erst, wenn er dran ist oder der Zeiger darauf liegt, sonst steht dort
+nur eine ruhige Zahlenreihe. Unten läuft dauerhaft ein Band mit den Leistungen.
+Der Grund schlägt hart um – dunkel, hell, dunkel, hell, dunkel –, damit beim
+Einrasten sichtbar eine neue Seite aufschlägt.
+
+**Signatur:** Lichtkegel unter dem Zeiger auf den Leistungskarten, Ziehharmonika
+bei den Fragen, Knöpfe, die dem Zeiger folgen.
+
+### brenner-kolb-recht
+
+Fünf **Blätter**, römisch nummeriert. Statt einer Schiene führt ein laufender
+Kolumnentitel oben durch die Seite: Ziffer und Kapitel, darunter eine Haarlinie,
+die mit dem Fortschritt wächst. Unten links ein Register – die Kapitel
+ausgeschrieben, durch Punkte getrennt. Der Grund bleibt durchgehend Pergament,
+nur das Schlussblatt schlägt ins Nachtblau um; einmal, als Schlusszeichen.
+
+Unterschieden werden die Blätter über ihren Satzspiegel statt über Farbe:
+Aufschlag zweispaltig mit Fußnote, Rechtsgebiete als nummerierte Liste mit
+Haarlinien, Kanzlei einspaltig und mittig, Team zwei Zeilen mit Portrait links,
+Kontakt zweigeteilt.
+
+### Rückfall
+
+Unter 900 Pixel Breite – bei Brenner & Kolb zusätzlich unter 720 Pixel Höhe –
+schaltet sich das Einrasten ab, die Abschnitte wachsen mit dem Inhalt, Schiene,
+Band und Register verschwinden. Ein Abschnitt, der nicht auf den Bildschirm
+passt, darf nicht festgehalten werden.
+
+---
+
 ## Der Akzent hat drei Rollen
 
 Ursprünglich gab es einen einzigen `--accent` für alles. Derselbe Ton kann aber
@@ -118,10 +180,11 @@ beispiele/<name>/
     ├── css/site.css    das komplette Aussehen dieser Seite
     │                   1. Struktur (Raster, Abstände, Bausteine)
     │                   2. Tokens und eigene Bausteine
+    │                   3. Rahmen bzw. Pager dieser Seite
     ├── css/fonts.css   Schrifteinbindung dieser Seite
     ├── js/site.js      das komplette Verhalten dieser Seite
-    │                   1. Grundverhalten (Navigation, Menü, Reveals)
-    │                   2. Signatur-Interaktion
+    │                   1. Grundverhalten (Menü, Bildplätze, Reveals)
+    │                   2. Signatur-Interaktion bzw. Pager
     ├── js/gsap.min.js  GSAP 3.15 mit ScrollTrigger
     ├── fonts/          selbst gehostet, kein Google-Request
     └── img/            og.jpg liegt hier, hier auch die Fotos ablegen
@@ -133,11 +196,23 @@ Früher lagen Struktur und Grundverhalten in geteilten Dateien `basis.css` und
 Ordner – dafür ist jedes Beispiel für sich änderbar, und genau das versprechen
 wir unseren Kunden auch.
 
+### Nur noch, was die Seite wirklich benutzt
+
+In jeder `site.css` steht ausschließlich, was das eigene HTML auch anspricht.
+Beim Umbau auf die fünf eigenen Formen sind rund 325 Regelköpfe entfernt
+worden, die zu Bausteinen gehörten, die es in dem Projekt gar nicht gibt –
+Preistabellen bei der Kanzlei etwa oder Zitatkästen beim Friseur. Dadurch gibt
+es keine gemeinsame Bausteinliste mehr, an der man sich entlanghangeln könnte,
+und genau das ist die Absicht: wer eine Datei öffnet, sieht nur Regeln, die
+diese Seite betreffen.
+
+Nachgewiesen ist das über einen Vergleich: alle 29 Seiten wurden vor und nach
+dem Entfernen gerendert und pixelweise verglichen. Kein Unterschied.
+
 ### Als Vorlage für neue Kunden
 
-Abschnitt 1 beider Dateien enthält keine Farben und keine Schriftnamen. Für ein
-neues Projekt kopiert man einen bestehenden Ordner und setzt in Abschnitt 2 von
-`site.css` die Tokens neu:
+Für ein neues Projekt kopiert man den Ordner, der inhaltlich am nächsten liegt,
+und setzt in Abschnitt 2 von `site.css` die Tokens neu:
 
 ```css
 :root {
@@ -150,14 +225,9 @@ neues Projekt kopiert man einen bestehenden Ordner und setzt in Abschnitt 2 von
 }
 ```
 
-Damit stehen Navigation, Menü, Bildplätze, Scroll-Einblendungen und
-Zeilen-Reveals bereits. Für Unterseiten kommen dazu, ebenfalls rein über die
-Tokens gefärbt:
-
-`.seitenkopf` · `.kopf-block` · `.teaser-grid` mit `.teaser` · `.ablauf` ·
-`.projekte` mit `.projekt` und `.fakten` · `.zitate` mit `.zitat` · `.faq` ·
-`.cta-band` · `.formular` mit `.feld` und `.feld-paar` · `.preise` mit `.preis` ·
-`.zwei` als zweispaltiges Raster · `.legal` für Rechtstexte · `.fehler` für 404
+Welche Bausteine dabei mitkommen, hängt vom kopierten Ordner ab. Fester
+Bestandteil aller fünf sind nur `.legal` für die Rechtstexte, `.fehler` für die
+404-Seite und die Bildplätze.
 
 Abschnitt 1 von `site.js` stellt zusätzlich zwei Hilfen bereit:
 
@@ -194,7 +264,11 @@ Für jedes Beispiel im echten Browser nachgestellt:
 
 - HTML-Verschachtelung aller 29 Seiten maschinell geprüft, keine offenen Tags
 - Alle internen Verweise lösen auf, kein `href="#"` ins Leere
-- Kein horizontaler Overflow, geprüft bei 1440 und 390 Pixeln Breite
+- Kein horizontaler Overflow, geprüft bei 1600, 1440, 1024, 768 und 500 Pixeln
+- Bei den Scroll-Pagern füllt jeder Abschnitt exakt das Fenster, gemessen bei
+  1920x1080, 1600x900, 1440x900, 1366x768, 1280x800 und 1100x700
+- Alle 29 Seiten vor und nach dem Entfernen des ungenutzten CSS gerendert und
+  pixelweise verglichen: identisch
 - Signatur-Interaktionen funktional getestet: Schieber mit Ziehen und Tastatur,
   Ziehharmonika mit Öffnen, Schließen und Wechseln
 - Waagerechte Galerie fällt unter 820 Pixel auf eine wischbare Reihe zurück

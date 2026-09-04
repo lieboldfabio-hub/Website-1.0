@@ -1,14 +1,4 @@
-/* ============================================================================
-   Halbritter Haustechnik - Beispielprojekt
-   ----------------------------------------------------------------------------
-   Richtung   Hell, technisch, aufgeraeumt. Handwerk verkauft sich ueber
-              Verlaesslichkeit, nicht ueber Effekte. Klare Kanten, ruhiges
-              Raster, ein einziger kraeftiger Akzent.
-   Palette    Graphit, Knochenweiss, ein Akzent in Signalblau.
-   Typografie Archivo (Display) + Barlow (Fliesstext). Beide sachlich,
-              gut lesbar auch in kleinen Groessen.
-   Signatur   Vorher-Nachher-Schieber, mit Zeiger und Tastatur bedienbar.
-   ========================================================================= */
+
 
 @import url("fonts.css");
 
@@ -81,7 +71,7 @@ section { position: relative; }
 
 .display { font-size: clamp(2.35rem, 1.5rem + 2.9vw, 3.7rem); }
 .h2      { font-size: clamp(1.9rem, 1.25rem + 2.6vw, 3.1rem); }
-.h3      { font-size: clamp(1.15rem, 1.02rem + 0.55vw, 1.45rem); line-height: 1.22; }
+
 
 .lede {
   font-size: clamp(1.06rem, 1rem + 0.4vw, 1.28rem);
@@ -152,7 +142,7 @@ section { position: relative; }
 .menu a:hover { color: var(--accent); }
 .menu .btn { margin-top: 1.4rem; justify-self: start; }
 
-/* -------------------------------------------------------- Bildplatzhalter */
+
 /*
    Zeigt eine Markenflaeche, solange kein Foto vorliegt. Sobald die Datei
    unter assets/img/ liegt, blendet sie sich darueber. Kein Markup aendern.
@@ -212,7 +202,7 @@ section { position: relative; }
   }
 }
 
-/* ------------------------------------------------ Helle Innenseiten ------ */
+
 /*
    Rechtstexte und Fehlerseite haben keinen dunklen Hero. Die Leiste startet
    dort deshalb sofort in Textfarbe statt in Band-Farbe, unabhaengig davon,
@@ -255,7 +245,7 @@ section { position: relative; }
 .fehler h1 { font-size: clamp(1.5rem, 1.2rem + 1.4vw, 2.1rem); margin: .8rem 0 .9rem; }
 .fehler p { color: var(--text-soft); max-width: 44ch; margin: 0 auto 2rem; }
 
-/* ------------------------------------------------------- Seitenkopf ------ */
+
 /*
    Kopfbereich der Unterseiten. Uebernimmt die Grundflaeche der Seite, damit
    die feste Leiste darueber lesbar bleibt. Projekte mit dunklem Hero setzen
@@ -274,13 +264,6 @@ section { position: relative; }
 .reiter a[aria-current="page"]::after { transform: scaleY(1); }
 .menu a[aria-current="page"] { color: var(--accent); }
 
-/* ============================================================================
-   Bausteine fuer Unterseiten
-   ----------------------------------------------------------------------------
-   Alles hier arbeitet ausschliesslich mit den Marken-Variablen aus site.css.
-   Dadurch sieht derselbe Baustein in jedem Projekt anders aus, ohne dass er
-   pro Projekt neu geschrieben werden muss.
-   ========================================================================= */
 
 /* ------------------------------------------------------- Abschnittskopf -- */
 
@@ -541,11 +524,6 @@ section { position: relative; }
 h1, h2, h3 { font-weight: 700; letter-spacing: -0.02em; }
 .btn:hover { background: var(--signal-dunkel); }
 
-/* Feines Punktraster als Grundflaeche. Technisch, ohne aufdringlich zu sein. */
-.raster {
-  background-image: radial-gradient(rgba(20, 24, 29, 0.13) 1px, transparent 1px);
-  background-size: 22px 22px;
-}
 
 /* ------------------------------------------------------------- Beispiel - */
 
@@ -574,7 +552,7 @@ h1, h2, h3 { font-weight: 700; letter-spacing: -0.02em; }
 }
 .demo-badge:hover { border-color: var(--accent); }
 
-/* ------------------------------------------------------- Leistungen ----- */
+
 /*
    Karten, die sich beim Scrollen aufeinander stapeln. Der Stapel zeigt,
    dass die Gewerke zusammengehoeren, statt sie nebeneinander zu stellen.
@@ -635,7 +613,7 @@ h1, h2, h3 { font-weight: 700; letter-spacing: -0.02em; }
   .karte-l__ico { display: none; }
 }
 
-/* ----------------------------------------------- Vorher-Nachher-Schieber */
+
 /*
    Signatur der Seite. Zwei Bildplaetze liegen uebereinander, der obere wird
    beschnitten. Ziehen, Klicken und die Pfeiltasten steuern die Kante.
@@ -761,14 +739,6 @@ h1, h2, h3 { font-weight: 700; letter-spacing: -0.02em; }
 
 /* ---------------------------------------------------------- Kontakt ----- */
 
-.kontakt { background: var(--knochen-2); }
-.kontakt__grid {
-  display: grid;
-  grid-template-columns: minmax(0, 6fr) minmax(0, 5fr);
-  gap: clamp(2.5rem, 6vw, 5rem);
-  align-items: start;
-}
-.kontakt .h2 { max-width: 14ch; }
 
 .wege { display: grid; gap: 1rem; margin-top: 2rem; }
 .weg {
@@ -804,14 +774,6 @@ h1, h2, h3 { font-weight: 700; letter-spacing: -0.02em; }
 .einzug dt { color: var(--text-soft); }
 .einzug dd { margin: 0; font-variant-numeric: tabular-nums; }
 
-@media (max-width: 860px) {
-  .kontakt__grid { grid-template-columns: 1fr; gap: 2.5rem; }
-}
-
-
-/* ============================================================================
-   Akzent im dunklen Abschnitt
-   ========================================================================= */
 
 /* In den dunklen Abschnitten uebernimmt der aufgehellte Ton. Weil --accent
    vererbt wird, genuegt es, ihn am Container zu setzen. */
@@ -823,21 +785,6 @@ h1, h2, h3 { font-weight: 700; letter-spacing: -0.02em; }
   --accent-fg: #14181d;
 }
 
-
-/* ============================================================================
-   3. Rahmen dieser Seite
-   ----------------------------------------------------------------------------
-   Kopf, Aufmacher und Fuss von Halbritter. Bewusst nicht die uebliche Form
-   aus Leiste, zweispaltigem Hero und Namenszug mit Linkliste:
-
-   - Der Kopf steht in zwei Lagen. Oben der Notdienst, auf jeder Seite, weil
-     ein Handwerksbetrieb daran gemessen wird. Darunter die Leiste mit dem
-     Namen in einem vollen Farbblock, wie er auf dem Firmenwagen steht.
-   - Der Aufmacher ist ein Bildband ueber die volle Breite mit der Ansage
-     darin, kein Textbild-Raster.
-   - Der Fuss ist als Datenblatt gesetzt, mit Punktlinien wie in einer
-     technischen Beilage.
-   ========================================================================= */
 
 /* ------------------------------------------------------------- Werkleiste */
 
@@ -967,7 +914,7 @@ h1, h2, h3 { font-weight: 700; letter-spacing: -0.02em; }
 .aufmacher__satz .btn--line { color: var(--band-text); border-color: var(--band-line); }
 .aufmacher__satz .btn--line:hover { background: var(--band-text); color: var(--band); border-color: var(--band-text); }
 
-/* Der Bildhinweis sitzt sonst unter dem Verlauf. */
+
 /* Der Hinweis sitzt auf der Fluchtlinie des Textes - und oben statt unten,
    weil unten die Ansage und die Knoepfe stehen. */
 .aufmacher .ph__brief {
