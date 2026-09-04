@@ -73,9 +73,10 @@ window.Basis = (function () {
       var ziel = document.querySelector(id);
       if (!ziel) return;
       e.preventDefault();
-      /* Im Pager rastet das Blatt buendig oben ein; der Kolumnentitel ist im
-         Innenabstand der Blaetter schon beruecksichtigt. */
-      var versatz = root.classList.contains("pager") ? 0 : 70;
+      /* Auf der laufenden Seite muss der Sprung um den Kolumnentitel
+         versetzt werden, sonst verschwindet die Kapitelueberschrift
+         darunter. */
+      var versatz = root.classList.contains("lauf") ? 78 : 70;
       window.scrollTo({
         top: ziel.getBoundingClientRect().top + window.pageYOffset - versatz,
         behavior: reduziert ? "auto" : "smooth"

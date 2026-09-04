@@ -171,77 +171,101 @@
 </section>
 
 <!-- ====================================================== Galerie waagrecht -->
-<section class="galerie" id="abend">
-  <div class="galerie__kopf">
-    <div class="wrap">
-      <p class="eyebrow">Der Abend</p>
-      <h2 class="h2">Von der Vorspeise bis zum Digestif.</h2>
-      <p class="body-copy" style="margin-top:1rem">
-        <a href="abend.html" style="color:var(--accent)">Den ganzen Abend ansehen</a>
-      </p>
-    </div>
+<!-- ============================================================================
+     Der Abend als Karussell: der Gang in der Mitte steht scharf und gross,
+     links und rechts schaut der vorige und der naechste hervor. Geblaettert
+     wird mit den Pfeilen, den Punkten oder den Pfeiltasten. Das ist die
+     Signatur dieser Seite - kein anderes Beispiel hat sie.
+     ========================================================================= -->
+
+<section class="gaenge" id="abend" aria-labelledby="t-abend">
+  <div class="gaenge__kopf">
+    <p class="eyebrow">Der Abend</p>
+    <h2 class="h2" id="t-abend">Von der Vorspeise bis zum Digestif.</h2>
   </div>
 
-  <div class="galerie__spur">
-    <article class="platte">
-      <div class="ph">
-        <img src="assets/img/abend-1.jpg" alt="Antipasti" width="600" height="800">
-        <svg class="ph__mark" aria-hidden="true"><use href="#i-fork-knife"></use></svg>
-        <p class="ph__brief"><b>Foto folgt</b>Antipasti</p>
-      </div>
-      <div class="platte__text">
-        <h3>Zum Ankommen</h3>
-        <p>Caponata, Oliven, Focaccia aus dem Ofen.</p>
-      </div>
-    </article>
+  <div class="gaenge__buehne" role="group" aria-roledescription="Karussell" aria-label="Der Abend">
+    <button class="gaenge__pfeil gaenge__pfeil--zurueck" type="button" aria-label="Vorheriger Gang">
+      <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M15 4 7 12l8 8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
 
-    <article class="platte platte--hoch">
-      <div class="ph">
-        <img src="assets/img/abend-2.jpg" alt="Pasta" width="800" height="800">
-        <svg class="ph__mark" aria-hidden="true"><use href="#i-fork-knife"></use></svg>
-        <p class="ph__brief"><b>Foto folgt</b>Primi</p>
-      </div>
-      <div class="platte__text">
-        <h3>Der erste Gang</h3>
-        <p>Pasta, jeden Morgen von Hand gemacht.</p>
-      </div>
-    </article>
+    <div class="gaenge__reihe">
+        <article class="gang" data-i="0">
+          <div class="ph">
+            <img src="assets/img/abend-1.jpg" alt="Antipasti" width="800" height="1000">
+            <svg class="ph__mark" aria-hidden="true"><use href="#i-fork-knife"></use></svg>
+            <p class="ph__brief"><b>Foto folgt</b>Antipasti</p>
+          </div>
+          <div class="gang__text">
+            <p class="gang__nr">01</p>
+            <h3>Zum Ankommen</h3>
+            <p>Caponata, Oliven, Focaccia aus dem Ofen.</p>
+          </div>
+        </article>
+        <article class="gang" data-i="1">
+          <div class="ph">
+            <img src="assets/img/abend-2.jpg" alt="Pasta" width="800" height="1000">
+            <svg class="ph__mark" aria-hidden="true"><use href="#i-fork-knife"></use></svg>
+            <p class="ph__brief"><b>Foto folgt</b>Primi</p>
+          </div>
+          <div class="gang__text">
+            <p class="gang__nr">02</p>
+            <h3>Der erste Gang</h3>
+            <p>Pasta, jeden Morgen von Hand gemacht.</p>
+          </div>
+        </article>
+        <article class="gang" data-i="2">
+          <div class="ph">
+            <img src="assets/img/abend-3.jpg" alt="Hauptgang" width="800" height="1000">
+            <svg class="ph__mark" aria-hidden="true"><use href="#i-chef-hat"></use></svg>
+            <p class="ph__brief"><b>Foto folgt</b>Secondi</p>
+          </div>
+          <div class="gang__text">
+            <p class="gang__nr">03</p>
+            <h3>Vom Feuer</h3>
+            <p>Fisch und Fleisch &uuml;ber Holzkohle.</p>
+          </div>
+        </article>
+        <article class="gang" data-i="3">
+          <div class="ph">
+            <img src="assets/img/abend-4.jpg" alt="Weinausschank" width="800" height="1000">
+            <svg class="ph__mark" aria-hidden="true"><use href="#i-wine"></use></svg>
+            <p class="ph__brief"><b>Foto folgt</b>Weinausschank</p>
+          </div>
+          <div class="gang__text">
+            <p class="gang__nr">04</p>
+            <h3>Dazu</h3>
+            <p>Offene Weine, glasweise empfohlen.</p>
+          </div>
+        </article>
+        <article class="gang" data-i="4">
+          <div class="ph">
+            <img src="assets/img/abend-5.jpg" alt="Der Raum" width="800" height="1000">
+            <svg class="ph__mark" aria-hidden="true"><use href="#i-sparkle"></use></svg>
+            <p class="ph__brief"><b>Foto folgt</b>Der Raum</p>
+          </div>
+          <div class="gang__text">
+            <p class="gang__nr">05</p>
+            <h3>Und danach</h3>
+            <p>Amaro, Espresso, noch eine halbe Stunde.</p>
+          </div>
+        </article>
+    </div>
 
-    <article class="platte">
-      <div class="ph">
-        <img src="assets/img/abend-3.jpg" alt="Hauptgang" width="600" height="800">
-        <svg class="ph__mark" aria-hidden="true"><use href="#i-chef-hat"></use></svg>
-        <p class="ph__brief"><b>Foto folgt</b>Secondi</p>
-      </div>
-      <div class="platte__text">
-        <h3>Vom Feuer</h3>
-        <p>Fisch und Fleisch über Holzkohle.</p>
-      </div>
-    </article>
+    <button class="gaenge__pfeil gaenge__pfeil--vor" type="button" aria-label="N&auml;chster Gang">
+      <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M9 4l8 8-8 8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+  </div>
 
-    <article class="platte">
-      <div class="ph">
-        <img src="assets/img/abend-4.jpg" alt="Weinausschank" width="600" height="800">
-        <svg class="ph__mark" aria-hidden="true"><use href="#i-wine"></use></svg>
-        <p class="ph__brief"><b>Foto folgt</b>Weinausschank</p>
-      </div>
-      <div class="platte__text">
-        <h3>Dazu</h3>
-        <p>Offene Weine, glasweise empfohlen.</p>
-      </div>
-    </article>
-
-    <article class="platte platte--hoch">
-      <div class="ph">
-        <img src="assets/img/abend-5.jpg" alt="Der Raum" width="800" height="800">
-        <svg class="ph__mark" aria-hidden="true"><use href="#i-sparkle"></use></svg>
-        <p class="ph__brief"><b>Foto folgt</b>Der Raum</p>
-      </div>
-      <div class="platte__text">
-        <h3>Und danach</h3>
-        <p>Amaro, Espresso, noch eine halbe Stunde.</p>
-      </div>
-    </article>
+  <div class="gaenge__fuss">
+    <div class="gaenge__punkte" role="tablist" aria-label="Gang w&auml;hlen">
+      <button type="button" role="tab" aria-selected="true"  aria-label="Zum Ankommen"></button>
+      <button type="button" role="tab" aria-selected="false" aria-label="Der erste Gang"></button>
+      <button type="button" role="tab" aria-selected="false" aria-label="Vom Feuer"></button>
+      <button type="button" role="tab" aria-selected="false" aria-label="Dazu"></button>
+      <button type="button" role="tab" aria-selected="false" aria-label="Und danach"></button>
+    </div>
+    <a class="gaenge__mehr" href="abend.html">Den ganzen Abend ansehen</a>
   </div>
 </section>
 

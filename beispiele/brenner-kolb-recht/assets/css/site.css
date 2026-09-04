@@ -467,32 +467,39 @@ h1, h2, h3 { font-weight: 600; letter-spacing: -0.01em; }
 
 
 /* ============================================================================
-   3. Scroll-Pager der Startseite
+   3. Single-Pager der Startseite
    ----------------------------------------------------------------------------
-   Nur index.html traegt <html class="pager">. Die Rechtstexte bleiben normale
-   Seiten - ein Datenschutzhinweis in Bildschirmportionen waere albern.
+   Nur index.html traegt <html class="lauf">. Fuenf Kapitel auf einer einzigen,
+   ruhig durchlaufenden Seite - kein Einrasten. Ein Rechtstext laesst sich
+   nicht in Bildschirmportionen zwingen, und wer etwas sucht, will scrollen
+   duerfen, ohne dass ihn die Seite festhaelt. Das ist die Gegenrichtung zu
+   Kopfsache, wo jede Tafel einrastet.
 
    Gefuehrt wird ueber den laufenden Kolumnentitel oben: roemische Ziffer und
    Kapitelname, darunter eine Haarlinie, die mit dem Fortschritt waechst. Der
-   Grund bleibt durchgehend Pergament, nur das Schlussblatt schlaegt ins
-   Nachtblau um. Unterschieden werden die Blaetter ueber ihren Satzspiegel:
+   Grund bleibt durchgehend Pergament, nur das Schlusskapitel schlaegt ins
+   Nachtblau um. Unterschieden werden die Kapitel ueber ihren Satzspiegel:
    Aufschlag zweispaltig, Rechtsgebiete als Liste, Kanzlei einspaltig und
-   schmal, Team zwei grosse Portraits, Kontakt geteilt.
+   schmal, Team zwei Zeilen, Kontakt geteilt.
    ========================================================================= */
 
-.pager { scroll-snap-type: y mandatory; --kolumne-h: 62px; }
+.lauf { --kolumne-h: 62px; scroll-padding-top: calc(var(--kolumne-h) + 1.5rem); }
 
 .blatt {
   position: relative;
-  min-height: 100svh;
-  scroll-snap-align: start;
-  scroll-snap-stop: always;
-  display: flex;
-  align-items: center;
-  padding: calc(var(--kolumne-h) + clamp(2rem, 5vh, 3.5rem)) var(--pad-x)
-           clamp(4.5rem, 10vh, 6.5rem);
+  padding: clamp(3.5rem, 8vw, 6.5rem) var(--pad-x);
   overflow: clip;
 }
+/* Das erste Kapitel fuellt den Bildschirm einmal ganz - danach laeuft die
+   Seite normal weiter. */
+.blatt--aufschlag {
+  min-height: 100svh;
+  padding-top: calc(var(--kolumne-h) + clamp(2rem, 5vh, 3.5rem));
+  padding-bottom: clamp(4.5rem, 10vh, 6.5rem);
+}
+/* Zwischen den Kapiteln eine Haarlinie statt eines Farbwechsels. */
+.blatt + .blatt { border-top: 1px solid var(--line); }
+.blatt--kontakt { border-top: 0; }
 .blatt__inhalt { width: 100%; max-width: var(--wrap); margin-inline: auto; }
 .blatt__kopf { max-width: 46rem; margin-bottom: clamp(1.5rem, 4vh, 3rem); }
 .blatt__kopf .h2 { max-width: 22ch; }
@@ -509,7 +516,18 @@ h1, h2, h3 { font-weight: 600; letter-spacing: -0.01em; }
   justify-content: center;
   gap: clamp(2rem, 5vw, 4.5rem);
   align-items: center;
+  /* Ein feiner Nebel aus Gold und Nachtblau auf dem Pergament, dazu Korn.
+     Sehr zurueckhaltend - eine Kanzlei traegt kein Leuchten. */
+  background:
+    radial-gradient(52% 46% at 82% 16%, rgba(163, 129, 47, .14), transparent 68%),
+    radial-gradient(58% 50% at 12% 92%, rgba(23, 27, 40, .10), transparent 70%);
 }
+.blatt--aufschlag::after {
+  content: ""; position: absolute; inset: 0; z-index: 0;
+  pointer-events: none; opacity: .22; mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='k'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.92' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23k)'/%3E%3C/svg%3E"); background-size: 200px 200px;
+}
+.blatt--aufschlag > * { position: relative; z-index: 1; }
 .blatt__satz { width: 100%; }
 .blatt__satz .display { max-width: 16ch; }
 .blatt__satz .lede { margin-top: 1.4rem; max-width: 42ch; }
@@ -543,7 +561,7 @@ h1, h2, h3 { font-weight: 600; letter-spacing: -0.01em; }
 
 /* --------------------------------------------------------- V Kontakt ---- */
 
-.blatt--kontakt { background: var(--tinte-900); color: var(--band-text); flex-direction: column; }
+.blatt--kontakt { background: var(--tinte-900); color: var(--band-text); display: flex; flex-direction: column; }
 /* Nicht auf Flex umstellen: dieses Element traegt zugleich .kontakt__grid.
    Ein display:flex hier wuerde das zweispaltige Raster plattdruecken. */
 .blatt--kontakt .blatt__inhalt { flex: 1 0 auto; align-content: center; }
@@ -603,13 +621,13 @@ h1, h2, h3 { font-weight: 600; letter-spacing: -0.01em; }
 .kolumne__ort b { color: var(--accent); font-weight: 600; font-variant-numeric: tabular-nums; }
 
 /* Auf dem Schlussblatt dreht der Titel mit ins Dunkle. */
-.pager.auf-dunkel .kolumne {
+.lauf.auf-dunkel .kolumne {
   background: color-mix(in srgb, var(--tinte-900) 90%, transparent);
   color: var(--band-text);
 }
-.pager.auf-dunkel .kolumne .brand { color: var(--band-text); }
-.pager.auf-dunkel .kolumne__ort { color: var(--band-text-soft); }
-.pager.auf-dunkel .kolumne__ort b { color: var(--accent-band); }
+.lauf.auf-dunkel .kolumne .brand { color: var(--band-text); }
+.lauf.auf-dunkel .kolumne__ort { color: var(--band-text-soft); }
+.lauf.auf-dunkel .kolumne__ort b { color: var(--accent-band); }
 
 /* Haarlinie unter dem Titel, waechst mit dem Fortschritt. */
 .fortschritt {
@@ -643,56 +661,33 @@ h1, h2, h3 { font-weight: 600; letter-spacing: -0.01em; }
 .register a:hover { color: var(--text); }
 .register a.is-hier { color: var(--accent); border-bottom-color: var(--accent); }
 
-.pager.auf-dunkel .register a { color: var(--band-text-soft); }
-.pager.auf-dunkel .register li + li::before { color: var(--band-text-soft); }
-.pager.auf-dunkel .register a:hover { color: var(--band-text); }
-.pager.auf-dunkel .register a.is-hier { color: var(--accent-band); border-bottom-color: var(--accent-band); }
+.lauf.auf-dunkel .register a { color: var(--band-text-soft); }
+.lauf.auf-dunkel .register li + li::before { color: var(--band-text-soft); }
+.lauf.auf-dunkel .register a:hover { color: var(--band-text); }
+.lauf.auf-dunkel .register a.is-hier { color: var(--accent-band); border-bottom-color: var(--accent-band); }
 
 
 /*
-   Ein Blatt muss auf einen Bildschirm passen, sonst rastet nichts mehr
-   sauber ein. Die senkrechten Masse haengen deshalb im Pager an der
-   Fensterhoehe, nicht nur an der Breite.
+   Auf der laufenden Seite muss kein Kapitel mehr in einen Bildschirm passen.
+   Die senkrechten Masse duerfen deshalb wieder atmen und haengen nur noch an
+   der Breite.
 */
-.pager .h2 { font-size: clamp(1.7rem, 1.1rem + 1.7vw, 2.6rem); }
-.pager .blatt__kopf { margin-bottom: clamp(1.1rem, 3.2vh, 2.4rem); }
-.pager .punkte li { padding: clamp(.65rem, 1.5vh, 1.2rem) 0; }
-.pager .gebiet { padding: clamp(.65rem, 1.5vh, 1.3rem) 0; }
-
-/* Auf niedrigen Fenstern - Laptops mit 768 oder 800 Punkten Hoehe sind der
-   Normalfall, nicht die Ausnahme - wird der ganze Satz eine Stufe kleiner.
-   Lieber etwas kleinere Schrift als ein Blatt, das nicht mehr einrastet. */
-@media (max-height: 870px) {
-  .pager { --kolumne-h: 54px; }
-  .pager .blatt { padding-block: calc(var(--kolumne-h) + 1.5rem) 3.4rem; }
-  .pager .display { font-size: clamp(1.95rem, 1.3rem + 2.1vw, 2.9rem); }
-  .pager .h2 { font-size: clamp(1.45rem, 1rem + 1.4vw, 2.15rem); }
-  .pager .lede { font-size: 1.02rem; margin-top: 1rem; }
-  .pager .body-copy, .pager .punkte p, .pager .gebiet p { font-size: .95rem; }
-  .pager .hero__actions { margin-top: 1.5rem; }
-  .pager .wege { margin-top: 1.4rem; gap: .7rem; }
-  .pager .weg { padding: .9rem 1.1rem; }
-  .pager .einzug { padding: 1.4rem; }
-  .pager .einzug dl { margin-top: 1rem; }
-  .pager .einzug .zeile { padding: .6rem 0; }
-  .pager .register { bottom: .9rem; }
-}
-
+.lauf .h2 { font-size: clamp(1.75rem, 1.15rem + 1.8vw, 2.7rem); }
+.lauf .blatt__kopf { margin-bottom: clamp(1.4rem, 3vw, 2.6rem); }
+.lauf .punkte li { padding: clamp(1rem, 1.8vw, 1.5rem) 0; }
+.lauf .gebiet { padding: clamp(1rem, 1.8vw, 1.6rem) 0; }
 
 /*
-   Zu niedrig oder zu schmal: Einrasten aus, Blaetter wachsen mit dem Inhalt,
-   das Register verschwindet. Der Kolumnentitel bleibt und wird zur Leiste -
-   ohne ihn gaebe es auf schmalen Fenstern gar keine Navigation mehr.
+   Auf schmalen Fenstern faellt das zweispaltige Aufschlagkapitel auf eine
+   Spalte und das Register verschwindet. Der Kolumnentitel bleibt und wird zur
+   Leiste - ohne ihn gaebe es dort gar keine Navigation mehr.
 */
-@media (max-width: 900px), (max-height: 720px) {
-  .pager { scroll-snap-type: none; }
-  .blatt {
-    min-height: 0; scroll-snap-align: none; display: block;
-    padding: clamp(3.5rem, 9vw, 5rem) var(--pad-x);
-    overflow: visible;
+@media (max-width: 900px) {
+  .blatt { padding: clamp(3.5rem, 9vw, 5rem) var(--pad-x); overflow: visible; }
+  .blatt--aufschlag {
+    display: block; min-height: 0;
+    padding-top: calc(var(--kolumne-h) + 2.5rem);
   }
-  .blatt:first-child { padding-top: calc(var(--kolumne-h) + 2.5rem); }
-  .blatt--aufschlag { display: block; }
   .blatt__satz { max-width: none; }
   .blatt__bild { max-width: none; max-height: none; margin-top: 2rem; }
   .fussnote { margin-top: 2rem; }
@@ -703,6 +698,5 @@ h1, h2, h3 { font-weight: 600; letter-spacing: -0.01em; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .pager { scroll-snap-type: y proximity; }
   .fortschritt i { transition: none; }
 }

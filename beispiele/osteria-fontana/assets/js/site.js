@@ -235,42 +235,66 @@ window.Basis = (function () {
     return function () { tween.kill(); };
   });
 
-  /* ------------------------------------------------------------- Galerie */
-  /*
-     Der Abschnitt wird geheftet, sobald seine Oberkante den oberen Rand
-     erreicht. Die Spur wandert dann genau um ihre Ueberlaenge nach links.
-     Die Scrollstrecke entspricht dieser Ueberlaenge, damit sich Scrollen
-     und Bewegung eins zu eins anfuehlen.
-  */
-  mm.add("(min-width: 821px) and (prefers-reduced-motion: no-preference)", function () {
-    var rahmen = document.querySelector(".galerie");
-    var spur = document.querySelector(".galerie__spur");
-    if (!rahmen || !spur) return;
-
-    var tween = gsap.to(spur, {
-      x: function () { return -(spur.scrollWidth - window.innerWidth); },
-      ease: "none",
-      scrollTrigger: {
-        trigger: rahmen,
-        start: "top top",
-        end: function () { return "+=" + (spur.scrollWidth - window.innerWidth); },
-        pin: true,
-        scrub: 1,
-        invalidateOnRefresh: true,
-        anticipatePin: 1
-      }
-    });
-
-    return function () {
-      if (tween.scrollTrigger) tween.scrollTrigger.kill();
-      tween.kill();
-      gsap.set(spur, { clearProps: "transform" });
-    };
-  });
-
   /* Knoepfe folgen dem Zeiger leicht. */
   Array.prototype.forEach.call(
     document.querySelectorAll(".hero__actions .btn"),
     function (b) { window.Basis.magnetisch(b, 0.22); }
   );
+})();
+
+
+/* ------------------------------------------------------- Gaenge (Karussell) */
+/*
+   Fuenf Gaenge, einer davon vorn. Das Skript setzt je Karte nur:
+     --ab   Abstand mit Vorzeichen (Richtung)
+     --weg  Betrag davon (Groesse, Deckkraft, Unschaerfe)
+     data-vorn / data-fern  fuer Text und Ausblenden
+   Alles Uebrige rechnet das CSS. Umlaufend, damit die Pfeile nie ins Leere
+   fuehren. Ohne JavaScript stehen die Karten nebeneinander und sind lesbar.
+*/
+(function () {
+  "use strict";
+
+  var reihe = document.querySelector(".gaenge__reihe");
+  if (!reihe) return;
+
+  var karten = Array.prototype.slice.call(reihe.querySelectorAll(".gang"));
+  var punkte = Array.prototype.slice.call(document.querySelectorAll(".gaenge__punkte button"));
+  var zurueck = document.querySelector(".gaenge__pfeil--zurueck");
+  var vor     = document.querySelector(".gaenge__pfeil--vor");
+  var n = karten.length;
+  var vorn = 0;
+
+  function zeichnen() {
+    karten.forEach(function (k, i) {
+      var d = (i - vorn + n) % n;
+      var ab = d > n / 2 ? d - n : d;
+      var weg = Math.abs(ab);
+      k.style.setProperty("--ab", ab);
+      k.style.setProperty("--weg", weg);
+      k.setAttribute("data-vorn", weg === 0 ? "ja" : "nein");
+      k.setAttribute("data-fern", weg > 1 ? "ja" : "nein");
+      /* Was man nicht sieht, soll auch nicht vorgelesen werden. */
+      k.setAttribute("aria-hidden", weg > 1 ? "true" : "false");
+    });
+    punkte.forEach(function (p, i) {
+      p.setAttribute("aria-selected", i === vorn ? "true" : "false");
+    });
+  }
+
+  function waehlen(i) { vorn = ((i % n) + n) % n; zeichnen(); }
+
+  if (zurueck) zurueck.addEventListener("click", function () { waehlen(vorn - 1); });
+  if (vor)     vor.addEventListener("click",     function () { waehlen(vorn + 1); });
+  punkte.forEach(function (p, i) { p.addEventListener("click", function () { waehlen(i); }); });
+
+  /* Ein Klick auf den Nachbarn holt ihn nach vorn. */
+  karten.forEach(function (k, i) { k.addEventListener("click", function () { waehlen(i); }); });
+
+  document.querySelector(".gaenge").addEventListener("keydown", function (e) {
+    if (e.key === "ArrowRight") { e.preventDefault(); waehlen(vorn + 1); }
+    if (e.key === "ArrowLeft")  { e.preventDefault(); waehlen(vorn - 1); }
+  });
+
+  zeichnen();
 })();
