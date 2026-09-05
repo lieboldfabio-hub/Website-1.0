@@ -218,14 +218,42 @@ section { position: relative; }
 
 /* --------------------------------------------------- Bewegung, Grundlage */
 
-.js .reveal { opacity: 0; transform: translateY(26px); }
+/*
+   Halbritter deckt seitlich auf: die Bloecke fahren von links herein, ohne
+   Hoehenversatz - wie ein Plan, der aufgezogen wird. Kurz (--takt 170 ms),
+   gerade, ohne Ueberschwingen. Den Takt zwischen den Bloecken setzt das
+   Skript als --verzug; das Wie steht hier.
+*/
+.js .reveal,
+.js [data-hero] {
+  opacity: 0;
+  transform: translate3d(-26px, 0, 0);
+  transition: opacity calc(var(--takt) * 2) var(--ease),
+              transform calc(var(--takt) * 3) var(--ease);
+  transition-delay: var(--verzug, 0ms);
+}
+.js .reveal.ist-da,
+.js [data-hero].ist-da { opacity: 1; transform: none; }
+
+/* Der Balken vor dem Kapitelzeichen zieht sich mit auf. */
+.js .reveal .eyebrow::before {
+  transform: scaleX(0); transform-origin: left center;
+  transition: transform calc(var(--takt) * 2.4) var(--ease);
+  transition-delay: calc(var(--verzug, 0ms) + var(--takt));
+}
+.js .reveal.ist-da .eyebrow::before { transform: scaleX(1); }
 
 /* Zeilenweises Aufdecken von Text. Jede Zeile liegt in einer Maske. */
 .js .reveal-lines .zeile { overflow: hidden; }
-.js .reveal-lines .zeile > span { display: block; transform: translateY(102%); }
+.js .reveal-lines .zeile > span {
+  display: block; transform: translateY(102%);
+  transition: transform calc(var(--takt) * 3.6) var(--ease);
+  transition-delay: var(--verzug, 0ms);
+}
+.js .reveal-lines.ist-da .zeile > span { transform: none; }
 
 @media (prefers-reduced-motion: reduce) {
-  .js .reveal { opacity: 1; transform: none; }
+  .js .reveal, .js [data-hero] { opacity: 1; transform: none; filter: none; }
   .js .reveal-lines .zeile > span { transform: none; }
   *, *::before, *::after {
     animation-duration: .01ms !important;
@@ -548,7 +576,9 @@ section { position: relative; }
   --pad-x: clamp(1.25rem, 5vw, 5rem);
   --section-y: clamp(3.2rem, 6vw, 5.2rem);   /* dichter als ueblich, siehe Grammatik */
   --wrap: 1240px;
-  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  /* Eigene Bewegungssprache - siehe Abschnitt 'Bewegung' unten. */
+  --ease: cubic-bezier(.2, .85, .25, 1);
+  --takt: 170ms;
 
   color-scheme: light;
 }
@@ -967,16 +997,13 @@ h1, h2, h3 { font-weight: 700; letter-spacing: -0.02em; }
 .aufmacher__satz .btn--line:hover { background: var(--band-text); color: var(--band); border-color: var(--band-text); }
 
 
-/* Der Hinweis sitzt auf der Fluchtlinie des Textes - und oben statt unten,
-   weil unten die Ansage und die Knoepfe stehen. */
-.aufmacher .ph__brief {
-  z-index: 2;
-  inset: 0 0 auto;
-  border-top: 0;
-  border-bottom: 1px solid rgba(255,255,255,.12);
-  background: linear-gradient(to bottom, rgba(0,0,0,.5), transparent);
-  padding-inline: max(var(--pad-x), calc((100% - var(--wrap)) / 2 + var(--pad-x)));
-}
+/* Im Aufmacher steht kein Hinweis. Das Band traegt den Leitungsplan, den
+   Verlauf und das Korn und ist damit fertig anzusehen - ein Zettel "Foto
+   folgt" quer ueber dem Kopf der Seite wuerde es zur Baustelle machen.
+   Sobald hero.jpg im Ordner liegt, legt es sich darunter. Auf den kleineren
+   Platten weiter unten bleibt der Hinweis stehen: dort waere ein leeres
+   Rechteck sonst nicht zu deuten. */
+.aufmacher .ph__brief, .aufmacher .ph__mark { display: none; }
 
 /* Drei Zusagen als Streifen direkt unter dem Bild. */
 .zusagen {
@@ -1200,3 +1227,48 @@ h1, h2, h3 { font-weight: 700; letter-spacing: -0.02em; }
 @media (prefers-reduced-motion: reduce) {
   .tarife__schieber { transition: none; }
 }
+
+
+/* ============================================================================
+   Bewegung: mechanisch
+   ----------------------------------------------------------------------------
+   Kurz, praezise, mit hartem Ausklang - wie ein Schalter, der einrastet.
+   --takt ist die Grundlaenge; laengere Wege bekommen ein Vielfaches davon,
+   nie eine frei gewaehlte Zahl. So bleibt das Tempo der ganzen Seite gleich.
+
+   Beim Zeigen faehrt eine Linie ueber das Bild, als wuerde es abgetastet.
+   Kein weiches Aufblenden - das waere die Sprache der anderen Seiten.
+   ========================================================================= */
+
+.ph { overflow: hidden; }
+.ph img { transition: transform calc(var(--takt) * 2.4) var(--ease); }
+.projekt:hover .ph img, .teaser:hover .ph img, .aufmacher:hover .aufmacher__bild img {
+  transform: scale(1.045);
+}
+
+/* Die Abtastlinie. Sie faehrt einmal durch und bleibt dann weg. */
+.projekt .ph::after, .teaser .ph::after {
+  content: ""; position: absolute; left: 0; right: 0; top: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--accent-flaeche), transparent);
+  transform: translateY(-4px); opacity: 0;
+  transition: transform calc(var(--takt) * 3.5) linear, opacity var(--takt) linear;
+  z-index: 3; pointer-events: none;
+}
+.projekt:hover .ph::after, .teaser:hover .ph::after {
+  transform: translateY(var(--ph-hoehe, 320px)); opacity: 1;
+}
+
+/* Reiter und Knoepfe rasten ein statt zu gleiten. */
+.reiter a::after { transition: transform var(--takt) var(--ease); }
+
+/* --------------------------------------------------- Vorhang beim Wechsel */
+/* Ein Balken, der quer durchs Bild faehrt. Er liegt ueber allem, faengt aber
+   keine Klicks ab, sobald er draussen ist. */
+.wechsel {
+  position: fixed; inset: 0; z-index: 300;
+  background: var(--accent-flaeche);
+  transform: translateX(-100%);
+  pointer-events: none;
+}
+body.ist-da .wechsel { transform: translateX(100%); transition: transform 420ms var(--ease); }
+body.geht   .wechsel { transform: translateX(0);    transition: transform 260ms var(--ease); }

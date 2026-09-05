@@ -214,14 +214,48 @@ section { position: relative; }
 
 /* --------------------------------------------------- Bewegung, Grundlage */
 
-.js .reveal { opacity: 0; transform: translateY(26px); }
+/*
+   Die Osteria bewegt nichts von der Stelle. Ein Block kommt, indem das Licht
+   hochgedreht wird: leicht ueberscharf gestellt, minimal zu gross, dann
+   ruhig auf seinen Platz. Lang (--takt 660 ms) und einzeln - das Skript
+   loest hier bewusst nicht gebuendelt aus.
+*/
+.js .reveal,
+.js [data-hero] {
+  opacity: 0;
+  /* Nach innen, nie nach aussen: eine Vergroesserung wuerde am Rand des
+     Fensters eine Querleiste erzeugen. */
+  transform: scale(.982);
+  filter: blur(10px);
+  transition: opacity calc(var(--takt) * 1.6) var(--ease),
+              transform calc(var(--takt) * 1.9) var(--ease),
+              filter calc(var(--takt) * 1.5) var(--ease);
+  transition-delay: var(--verzug, 0ms);
+}
+.js .reveal.ist-da,
+.js [data-hero].ist-da { opacity: 1; transform: none; filter: none; }
+
+/* Die Zierlinien links und rechts der Kapitelzeile wachsen nach aussen. */
+.js .reveal .eyebrow::before,
+.js .reveal .eyebrow::after {
+  transform: scaleX(0);
+  transition: transform calc(var(--takt) * 2.2) var(--ease);
+  transition-delay: calc(var(--verzug, 0ms) + var(--takt) * .6);
+}
+.js .reveal.ist-da .eyebrow::before,
+.js .reveal.ist-da .eyebrow::after { transform: scaleX(1); }
 
 /* Zeilenweises Aufdecken von Text. Jede Zeile liegt in einer Maske. */
 .js .reveal-lines .zeile { overflow: hidden; }
-.js .reveal-lines .zeile > span { display: block; transform: translateY(102%); }
+.js .reveal-lines .zeile > span {
+  display: block; transform: translateY(102%);
+  transition: transform calc(var(--takt) * 1.8) var(--ease);
+  transition-delay: var(--verzug, 0ms);
+}
+.js .reveal-lines.ist-da .zeile > span { transform: none; }
 
 @media (prefers-reduced-motion: reduce) {
-  .js .reveal { opacity: 1; transform: none; }
+  .js .reveal, .js [data-hero] { opacity: 1; transform: none; filter: none; }
   .js .reveal-lines .zeile > span { transform: none; }
   *, *::before, *::after {
     animation-duration: .01ms !important;
@@ -497,7 +531,9 @@ section { position: relative; }
   --pad-x: clamp(1.25rem, 5vw, 5rem);
   --section-y: clamp(5rem, 10vw, 8.5rem);
   --wrap: 1080px;        /* Schmaler Satzspiegel wie auf einer Karte. */
-  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  /* Eigene Bewegungssprache - siehe Abschnitt 'Bewegung' unten. */
+  --ease: cubic-bezier(.22, .61, .24, 1);
+  --takt: 660ms;
 
   color-scheme: dark;
 }
@@ -572,7 +608,19 @@ body::after {
   display: inline-flex;
   align-items: center;
   gap: 2.5rem;
+}
+/* Die Spur ist vom Skript verdoppelt worden; sie faehrt genau eine Haelfte
+   weit und beginnt dann von vorn - dadurch ist der Uebergang nahtlos.
+   Geschoben wird von CSS, damit die Bewegung im Compositor bleibt. */
+.marquee__spur.laeuft {
   will-change: transform;
+  animation: marquee 34s linear infinite;
+}
+/* Beim Zeigen bleibt das Band stehen, damit man in Ruhe lesen kann. */
+.marquee.is-ruhig .marquee__spur.laeuft { animation-play-state: paused; }
+@keyframes marquee {
+  from { transform: translate3d(0, 0, 0); }
+  to   { transform: translate3d(-50%, 0, 0); }
 }
 .marquee__spur > span {
   font-family: var(--font-display);
@@ -1036,14 +1084,11 @@ body::after {
   pointer-events: none; display: block;
 }
 
-.anschlag .ph__brief {
-  z-index: 2;
-  inset: 0 0 auto;
-  border-top: 0;
-  border-bottom: 1px solid rgba(255,255,255,.12);
-  background: linear-gradient(to bottom, rgba(0,0,0,.5), transparent);
-  padding-top: calc(var(--schild-h) + .6rem);
-}
+/* Im Anschlag steht kein Hinweis. Kerzenlicht, Verlauf und Korn tragen das
+   Band; ein Zettel "Foto folgt" quer ueber dem Kopf der Seite wuerde daraus
+   eine Baustelle machen. Sobald hero.jpg im Ordner liegt, legt es sich
+   darunter. Auf den kleineren Platten bleibt der Hinweis stehen. */
+.anschlag .ph__brief, .anschlag .ph__mark { display: none; }
 
 .anschlag__mitte {
   position: relative;
@@ -1161,3 +1206,47 @@ body::after {
   .platte:nth-child(even) .ph { order: 0; }
   .platte:nth-child(even) .platte__text { order: 0; text-align: left; }
 }
+
+
+/* ============================================================================
+   Bewegung: langsam
+   ----------------------------------------------------------------------------
+   Alles hier braucht Zeit. Der Zoom auf einem Bild laeuft ueber mehr als eine
+   Sekunde und wird nie fertig, solange man hinsieht - das ist der Punkt: es
+   soll wirken wie ein Blick, der laenger auf dem Teller bleibt.
+   ========================================================================= */
+
+.ph { overflow: hidden; }
+.ph img {
+  transition: transform calc(var(--takt) * 2), filter calc(var(--takt) * 2);
+  transition-timing-function: var(--ease);
+}
+.platte:hover .ph img, .gang[data-vorn="ja"]:hover .ph img, .kueche__media:hover img {
+  transform: scale(1.07);
+  filter: brightness(1.06);
+}
+
+/* Die Zierzeile der Abschnitte zieht ihre Striche beim Erscheinen auseinander. */
+.reveal .eyebrow::before, .reveal .eyebrow::after {
+  transition: width calc(var(--takt) * 1.6) var(--ease);
+}
+
+/* Der Rahmenknopf laeuft von der Mitte nach aussen voll, nicht von links. */
+.btn { background-image: linear-gradient(var(--accent-flaeche), var(--accent-flaeche));
+  background-repeat: no-repeat; background-position: 50% 50%; background-size: 0% 100%;
+  transition: background-size calc(var(--takt) * .8) var(--ease),
+              color calc(var(--takt) * .6) var(--ease),
+              letter-spacing calc(var(--takt) * .8) var(--ease); }
+.btn:hover { background-size: 100% 100%; background-color: transparent; }
+.btn--ghost { background-image: none; }
+
+
+/* --------------------------------------------------- Schleier beim Wechsel */
+/* Kein Balken, sondern ein warmer Schleier, der auf- und wieder abblendet. */
+.wechsel {
+  position: fixed; inset: 0; z-index: 300;
+  background: radial-gradient(120% 100% at 50% 50%, #2a1d16, #14100e 70%);
+  opacity: 1; pointer-events: none;
+}
+body.ist-da .wechsel { opacity: 0; transition: opacity 620ms var(--ease); }
+body.geht   .wechsel { opacity: 1; transition: opacity 420ms var(--ease); }

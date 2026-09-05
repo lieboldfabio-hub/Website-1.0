@@ -212,14 +212,42 @@ section { position: relative; }
 
 /* --------------------------------------------------- Bewegung, Grundlage */
 
-.js .reveal { opacity: 0; transform: translateY(26px); }
+/*
+   In der Praxis soll nichts erschrecken. Die Bloecke fahren nicht herein,
+   sie wachsen aus sich heraus auf ihre Groesse - aus 94 Prozent, mit einem
+   kleinen Weg nach oben und einem grossen Takt (--takt 480 ms), damit nie
+   zwei Dinge gleichzeitig passieren.
+*/
+.js .reveal,
+.js [data-hero] {
+  opacity: 0;
+  transform: translate3d(0, 20px, 0) scale(.94);
+  transition: opacity calc(var(--takt) * 1.5) var(--ease),
+              transform calc(var(--takt) * 1.8) var(--ease);
+  transition-delay: var(--verzug, 0ms);
+}
+.js .reveal.ist-da,
+.js [data-hero].ist-da { opacity: 1; transform: none; }
+
+/* Der Punkt im Kapitelzeichen setzt sich zuletzt. */
+.js .reveal .eyebrow::before {
+  transform: scale(0);
+  transition: transform calc(var(--takt) * 1.6) var(--ease);
+  transition-delay: calc(var(--verzug, 0ms) + var(--takt));
+}
+.js .reveal.ist-da .eyebrow::before { transform: scale(1); }
 
 /* Zeilenweises Aufdecken von Text. Jede Zeile liegt in einer Maske. */
 .js .reveal-lines .zeile { overflow: hidden; }
-.js .reveal-lines .zeile > span { display: block; transform: translateY(102%); }
+.js .reveal-lines .zeile > span {
+  display: block; transform: translateY(102%);
+  transition: transform calc(var(--takt) * 2) var(--ease);
+  transition-delay: var(--verzug, 0ms);
+}
+.js .reveal-lines.ist-da .zeile > span { transform: none; }
 
 @media (prefers-reduced-motion: reduce) {
-  .js .reveal { opacity: 1; transform: none; }
+  .js .reveal, .js [data-hero] { opacity: 1; transform: none; filter: none; }
   .js .reveal-lines .zeile > span { transform: none; }
   *, *::before, *::after {
     animation-duration: .01ms !important;
@@ -469,7 +497,9 @@ section { position: relative; }
   --pad-x: clamp(1.25rem, 5vw, 5rem);
   --section-y: clamp(4.5rem, 9vw, 7.5rem);
   --wrap: 1220px;
-  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  /* Eigene Bewegungssprache - siehe Abschnitt 'Bewegung' unten. */
+  --ease: cubic-bezier(.16, .84, .28, 1);
+  --takt: 480ms;
 
   color-scheme: light;
 }
@@ -906,3 +936,42 @@ h1, h2, h3 { font-weight: 600; letter-spacing: -0.01em; }
   .notfall__inner { border-radius: 26px; }
   .notfall a { margin-left: 0; }
 }
+
+
+/* ============================================================================
+   Bewegung: weich auslaufend
+   ----------------------------------------------------------------------------
+   Lange Ausklangphase, kein harter Halt. Zusammen mit den Schatten statt
+   Rahmen ergibt das den Eindruck, dass sich Flaechen heben und wieder
+   setzen, statt zu springen.
+   ========================================================================= */
+
+.ph { overflow: hidden; }
+.ph img { transition: transform calc(var(--takt) * 2.2) var(--ease); }
+.angebot:hover .ph img, .person:hover .ph img, .empfang__bild:hover img {
+  transform: scale(1.04);
+}
+
+/* Karten heben sich beim Zeigen leicht an - der Schatten waechst mit. */
+.angebot, .person, .weg, .teaser {
+  transition: transform calc(var(--takt) * .9) var(--ease),
+              box-shadow calc(var(--takt) * .9) var(--ease);
+}
+.angebot:hover, .person:hover, .weg:hover, .teaser:hover { transform: translateY(-3px); }
+
+/* Die Kachel der Abschnittsmarke atmet beim Erscheinen einmal auf. */
+.eyebrow { transition: transform calc(var(--takt) * 1.4) var(--ease); }
+
+
+/* ------------------------------------------------------ Feld beim Wechsel */
+/* Steigt von unten auf, mit runder Oberkante - dieselbe Form wie das gruene
+   Feld im Empfang. */
+.wechsel {
+  position: fixed; inset: 0; z-index: 300;
+  background: var(--tanne-900);
+  border-radius: clamp(2rem, 8vw, 5rem) clamp(2rem, 8vw, 5rem) 0 0;
+  transform: translateY(100%);
+  pointer-events: none;
+}
+body.ist-da .wechsel { transform: translateY(-101%); transition: transform 560ms var(--ease); }
+body.geht   .wechsel { transform: translateY(0);     transition: transform 360ms var(--ease); }

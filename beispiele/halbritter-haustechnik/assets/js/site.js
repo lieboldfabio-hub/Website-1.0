@@ -16,10 +16,8 @@ window.Basis = (function () {
   var root = document.documentElement;
   root.classList.add("js");
 
-  var hatGSAP = typeof window.gsap !== "undefined";
-  if (hatGSAP && typeof window.ScrollTrigger !== "undefined") {
-    gsap.registerPlugin(ScrollTrigger);
-  }
+  var reduziert = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var grob      = window.matchMedia("(pointer: coarse)").matches;
 
   /* ------------------------------------------------------------ Bildplaetze */
 
@@ -33,14 +31,22 @@ window.Basis = (function () {
   });
 
   /* -------------------------------------------------------------- Navigation */
+  /*
+     Die Leiste wird schmal, sobald die ersten 80 Pixel weggescrollt sind.
+     Statt bei jedem Scrollschritt zu rechnen, liegt oben eine 80 Pixel hohe
+     Marke; verlaesst sie das Bild, schaltet die Leiste um. Das kostet im
+     laufenden Betrieb nichts.
+  */
 
   var nav = document.querySelector(".werkleiste");
-  if (hatGSAP && nav) {
-    ScrollTrigger.create({
-      start: "top -80",
-      end: 99999,
-      onToggle: function (self) { nav.classList.toggle("is-stuck", self.isActive); }
-    });
+  if (nav && "IntersectionObserver" in window) {
+    var marke = document.createElement("span");
+    marke.setAttribute("aria-hidden", "true");
+    marke.style.cssText = "position:absolute;top:0;left:0;width:1px;height:80px;pointer-events:none";
+    document.body.appendChild(marke);
+    new IntersectionObserver(function (e) {
+      nav.classList.toggle("is-stuck", !e[0].isIntersecting);
+    }).observe(marke);
   }
 
   var burger = document.querySelector(".werkleiste__burger");
@@ -64,7 +70,6 @@ window.Basis = (function () {
   }
 
   /* Ankerlinks um die fixierte Leiste versetzen */
-  var reduziert = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   Array.prototype.forEach.call(document.querySelectorAll('a[href^="#"]'), function (a) {
     a.addEventListener("click", function (e) {
       var id = a.getAttribute("href");
@@ -108,91 +113,111 @@ window.Basis = (function () {
     });
 
     el.textContent = "";
-    var traeger = [];
-    zeilen.forEach(function (gruppe) {
+    zeilen.forEach(function (gruppe, i) {
       var aussen = document.createElement("span");
       aussen.className = "zeile";
+      aussen.style.setProperty("--verzug", (i * 70) + "ms");
       var innen = document.createElement("span");
       innen.textContent = gruppe.map(function (s) { return s.textContent; }).join("");
       aussen.appendChild(innen);
       el.appendChild(aussen);
-      traeger.push(innen);
     });
-    return traeger;
   }
 
-  /* ---------------------------------------------------------- Bewegung ---- */
+  /* ------------------------------------------------------------- Bewegung */
+  /*
+     Handwerk heisst hier: kurz, gerade, ohne Schnoerkel. Die Bloecke werden
+     nicht eingeblendet, sondern von links freigelegt - wie ein Bauplan, der
+     aufgerollt wird. Getaktet wird in Vielfachen von --takt (170 ms), das
+     Aufdecken selbst macht die CSS-Transition.
 
-  if (hatGSAP) {
-    var mm = gsap.matchMedia();
+     Beobachtet wird mit einem IntersectionObserver, nicht mit einem
+     Scroll-Listener: waehrend des Scrollens laeuft dadurch kein eigener
+     Code mit.
+  */
 
-    mm.add("(prefers-reduced-motion: no-preference)", function () {
-      /* Hero baut sich gestaffelt auf und fuehrt zum Knopf */
-      var heroTeile = gsap.utils.toArray("[data-hero]");
-      if (heroTeile.length) {
-        gsap.set(heroTeile, { opacity: 0, y: 22 });
-        gsap.to(heroTeile, {
-          opacity: 1, y: 0, duration: .85, ease: "power3.out",
-          stagger: .09, delay: .12
-        });
-      }
-
-      /* Abschnitte blenden beim Lesen ein */
-      ScrollTrigger.batch(".reveal", {
-        start: "top 86%",
-        once: true,
-        onEnter: function (batch) {
-          gsap.to(batch, {
-            opacity: 1, y: 0, duration: .7, ease: "power2.out",
-            stagger: .08, overwrite: true
+  function aufdecken(liste, schritt) {
+    if (!("IntersectionObserver" in window)) {
+      Array.prototype.forEach.call(liste, function (el) { el.classList.add("ist-da"); });
+      return;
+    }
+    var stapel = [], leer = null;
+    var beobachter = new IntersectionObserver(function (eintraege) {
+      eintraege.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        beobachter.unobserve(e.target);
+        stapel.push(e.target);
+        clearTimeout(leer);
+        leer = setTimeout(function () {
+          stapel.forEach(function (el, i) {
+            el.style.setProperty("--verzug", (i * schritt) + "ms");
+            el.classList.add("ist-da");
           });
-        }
+          stapel = [];
+        }, 40);
       });
+    }, { rootMargin: "0px 0px -12% 0px", threshold: 0.05 });
+    Array.prototype.forEach.call(liste, function (el) { beobachter.observe(el); });
+  }
 
-      /* Ueberschriften zeilenweise aufdecken */
-      gsap.utils.toArray(".reveal-lines").forEach(function (el) {
-        var traeger = zeilenAufbauen(el);
-        gsap.to(traeger, {
-          y: "0%",
-          duration: .9,
-          ease: "power3.out",
-          stagger: .08,
-          scrollTrigger: { trigger: el, start: "top 88%", once: true }
-        });
-      });
-    });
-
-    mm.add("(prefers-reduced-motion: reduce)", function () {
-      gsap.set(".reveal, [data-hero]", { opacity: 1, y: 0 });
-    });
+  if (reduziert) {
+    root.classList.add("ohne-bewegung");
   } else {
-    root.classList.remove("js");
+    Array.prototype.forEach.call(document.querySelectorAll(".reveal-lines"), zeilenAufbauen);
+
+    /* Der Aufmacher baut sich sofort auf, Teil fuer Teil. */
+    var heroTeile = document.querySelectorAll("[data-hero]");
+    Array.prototype.forEach.call(heroTeile, function (el, i) {
+      el.style.setProperty("--verzug", (120 + i * 90) + "ms");
+    });
+    requestAnimationFrame(function () {
+      requestAnimationFrame(function () {
+        Array.prototype.forEach.call(heroTeile, function (el) { el.classList.add("ist-da"); });
+      });
+    });
+
+    aufdecken(document.querySelectorAll(".reveal"), 55);
+    aufdecken(document.querySelectorAll(".reveal-lines"), 0);
   }
 
   /* --------------------------------------------------- Hilfen fuer Seiten */
 
   return {
-    gsap: hatGSAP,
+    bewegt: !reduziert,
     reduziert: reduziert,
 
-    /* Knopf, der dem Zeiger leicht folgt. Laeuft ueber Motion-Werte statt
-       ueber Zustand, damit kein Layout neu berechnet wird. */
+    /* Knopf, der dem Zeiger leicht folgt. Der Zielwert wird beim Bewegen nur
+       gemerkt, gezeichnet wird einmal pro Bild - so bleibt es ruhig, auch
+       wenn die Maus schnell ist. */
     magnetisch: function (el, staerke) {
-      if (!hatGSAP || reduziert || window.matchMedia("(pointer: coarse)").matches) return;
+      if (reduziert || grob) return;
       staerke = staerke || 0.32;
-      var qx = gsap.quickTo(el, "x", { duration: .4, ease: "power3" });
-      var qy = gsap.quickTo(el, "y", { duration: .4, ease: "power3" });
+      var zx = 0, zy = 0, x = 0, y = 0, laeuft = false;
+
+      function schritt() {
+        x += (zx - x) * 0.16;
+        y += (zy - y) * 0.16;
+        el.style.transform = "translate3d(" + x.toFixed(2) + "px," + y.toFixed(2) + "px,0)";
+        if (Math.abs(zx - x) > 0.1 || Math.abs(zy - y) > 0.1) { requestAnimationFrame(schritt); return; }
+        laeuft = false;
+        /* Steht der Knopf wieder in der Mitte, wird der Stil ganz entfernt -
+           sonst blockiert er die Transform aus dem CSS beim Ueberfahren. */
+        if (!zx && !zy) { x = 0; y = 0; el.style.transform = ""; }
+      }
+      function anwerfen() { if (!laeuft) { laeuft = true; requestAnimationFrame(schritt); } }
+
       el.addEventListener("pointermove", function (e) {
         var r = el.getBoundingClientRect();
-        qx((e.clientX - (r.left + r.width / 2)) * staerke);
-        qy((e.clientY - (r.top + r.height / 2)) * staerke);
+        zx = (e.clientX - (r.left + r.width / 2)) * staerke;
+        zy = (e.clientY - (r.top + r.height / 2)) * staerke;
+        anwerfen();
       });
-      el.addEventListener("pointerleave", function () { qx(0); qy(0); });
+      el.addEventListener("pointerleave", function () { zx = 0; zy = 0; anwerfen(); });
     },
 
     /* Lichtkegel, der unter dem Zeiger ueber eine Karte wandert. */
     spotlight: function (el) {
-      if (window.matchMedia("(pointer: coarse)").matches) return;
+      if (grob) return;
       el.addEventListener("pointermove", function (e) {
         var r = el.getBoundingClientRect();
         el.style.setProperty("--mx", (e.clientX - r.left) + "px");
@@ -261,20 +286,26 @@ window.Basis = (function () {
 
   /* Beim ersten Erscheinen einmal kurz aufziehen, damit sichtbar wird, dass
      sich hier etwas bewegen laesst. */
-  if (window.Basis && window.Basis.gsap && !window.Basis.reduziert) {
-    ScrollTrigger.create({
-      trigger: schieber,
-      start: "top 75%",
-      once: true,
-      onEnter: function () {
-        gsap.fromTo({ v: 50 },
-          { v: 50 },
-          {
-            v: 78, duration: 1.1, ease: "power2.inOut", yoyo: true, repeat: 1,
-            onUpdate: function () { setzen(this.targets()[0].v); }
-          });
+  if (window.Basis && window.Basis.bewegt && "IntersectionObserver" in window) {
+    var gezeigt = new IntersectionObserver(function (e) {
+      if (!e[0].isIntersecting) return;
+      gezeigt.disconnect();
+
+      /* Ein Hin und Zurueck ueber 2,2 Sekunden, gerechnet aus der Zeit statt
+         aus Bildzaehlern - dadurch laeuft es auf jedem Geraet gleich lang. */
+      var start = null, dauer = 2200;
+      function bild(jetzt) {
+        if (start === null) start = jetzt;
+        var t = Math.min((jetzt - start) / dauer, 1);
+        /* Dreieck: 0 -> 1 -> 0, danach weich gemacht wie die Knoepfe. */
+        var w = t < .5 ? t * 2 : (1 - t) * 2;
+        var weich = w < .5 ? 2 * w * w : 1 - Math.pow(-2 * w + 2, 2) / 2;
+        setzen(50 + weich * 28);
+        if (t < 1) requestAnimationFrame(bild); else setzen(50);
       }
-    });
+      requestAnimationFrame(bild);
+    }, { threshold: 0.35 });
+    gezeigt.observe(schieber);
   }
 })();
 
@@ -479,4 +510,77 @@ window.Basis = (function () {
   } else {
     anwerfen();
   }
+})();
+
+/* ------------------------------------------------------ Tiefe im Aufmacher */
+/*
+   Das Bild im Aufmacher laeuft beim Scrollen etwas langsamer als die Seite.
+   Nur eine Transform, kein Layout - und nur, solange das Band sichtbar ist.
+   Auf Touch und bei prefers-reduced-motion bleibt es stehen: dort ist das
+   Ruckelrisiko hoch und der Gewinn klein.
+*/
+(function () {
+  "use strict";
+  var bild = document.querySelector(".aufmacher__bild img");
+  var band = document.querySelector(".aufmacher");
+  if (!bild || !band) return;
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  if (window.matchMedia("(pointer: coarse)").matches) return;
+
+  var sichtbar = false, laeuft = false;
+  bild.style.willChange = "transform";
+  bild.style.transform = "scale(1.12)";   /* Reserve, damit nichts abreisst */
+
+  function zeichnen() {
+    laeuft = false;
+    var r = band.getBoundingClientRect();
+    var anteil = (r.top + r.height / 2) / window.innerHeight - 0.5;
+    bild.style.transform = "translate3d(0," + (anteil * 46).toFixed(1) + "px,0) scale(1.12)";
+  }
+  function planen() { if (!laeuft && sichtbar) { laeuft = true; requestAnimationFrame(zeichnen); } }
+
+  new IntersectionObserver(function (e) {
+    sichtbar = e[0].isIntersecting; if (sichtbar) planen();
+  }).observe(band);
+  window.addEventListener("scroll", planen, { passive: true });
+  window.addEventListener("resize", planen);
+  planen();
+})();
+
+/* ---------------------------------------------------------- Seitenwechsel */
+/*
+   Beim Wechsel auf eine andere Seite dieser Website faehrt ein blauer Balken
+   von links durchs Bild, dann wird geladen; auf der neuen Seite faehrt er
+   nach rechts hinaus. Kurz und hart - dieselbe Sprache wie die Knoepfe.
+
+   Ohne JavaScript passiert schlicht nichts Besonderes, die Verweise
+   funktionieren normal. Wer mit gedrueckter Steuerungstaste oder mittlerer
+   Maustaste klickt, will einen neuen Tab und wird nicht aufgehalten.
+*/
+(function () {
+  "use strict";
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+  var vorhang = document.createElement("div");
+  vorhang.className = "wechsel";
+  vorhang.setAttribute("aria-hidden", "true");
+  document.body.appendChild(vorhang);
+
+  /* Hereinkommen: der Balken faehrt hinaus. */
+  requestAnimationFrame(function () { document.body.classList.add("ist-da"); });
+
+  document.addEventListener("click", function (e) {
+    var a = e.target.closest("a");
+    if (!a || e.defaultPrevented) return;
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+    if (a.target && a.target !== "_self") return;
+    var ziel = a.getAttribute("href") || "";
+    if (!ziel || ziel.charAt(0) === "#" || /^(https?:|mailto:|tel:)/.test(ziel)) return;
+    if (ziel === "../") return;          /* zurueck zur Uebersicht: ohne Effekt */
+
+    e.preventDefault();
+    document.body.classList.remove("ist-da");
+    document.body.classList.add("geht");
+    setTimeout(function () { window.location.href = ziel; }, 260);
+  });
 })();

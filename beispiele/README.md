@@ -13,13 +13,17 @@ Endung `.example` und gehen ins Leere.
 
 ## Übersicht
 
-| Ordner | Branche | Umfang | Gestaltung |
-|---|---|---|---|
-| `halbritter-haustechnik` | Handwerk, Elektro und Sanitär | **Mehrseiter** (4 Seiten) | Archivo auf Knochenweiß, Signalblau |
-| `osteria-fontana` | Restaurant | **Mehrseiter** (4 Seiten) | Playfair Display auf Fast-Schwarz, Terrakotta |
-| `zahnaerzte-koenigsplatz` | Zahnarztpraxis | **Mehrseiter** (4 Seiten) | Sora auf Creme, Tannengrün und Koralle |
-| `kopfsache-studio` | Friseursalon | **Scroll-Pager** | Bricolage Grotesque, Schwarzweiß mit Limette |
-| `brenner-kolb-recht` | Kanzlei | **Single-Pager** | Frank Ruhl Libre auf Pergament, Gold |
+| Ordner | Branche | Richtung | Umfang | Gestaltung |
+|---|---|---|---|---|
+| `halbritter-haustechnik` | Handwerk, Elektro und Sanitär | **Modern Business** | **Mehrseiter** (4 Seiten) | Archivo auf Knochenweiß, Signalblau |
+| `osteria-fontana` | Restaurant | **Premium & Elegant** | **Mehrseiter** (4 Seiten) | Playfair Display auf Fast-Schwarz, Terrakotta |
+| `zahnaerzte-koenigsplatz` | Zahnarztpraxis | **Lokal & Vertrauenswürdig** | **Mehrseiter** (4 Seiten) | Sora auf Creme, Tannengrün und Koralle |
+| `kopfsache-studio` | Friseursalon | **Kreativ & Auffällig** | **Scroll-Pager** | Bricolage Grotesque, Schwarzweiß mit Limette |
+| `brenner-kolb-recht` | Kanzlei | **Modern & Minimalistisch** | **Single-Pager** | Frank Ruhl Libre auf Pergament, Gold |
+
+Die fünf Richtungen sind bewusst je einmal vergeben. Wer zwei Beispiele
+nebeneinander öffnet, soll nicht dieselbe Website in zwei Farben sehen,
+sondern zwei Häuser mit verschiedener Haltung.
 
 ### Jede Seite hat ihre eigene Form
 
@@ -204,6 +208,72 @@ unseriös. Hier trägt der Satzspiegel, sonst nichts.
 
 ---
 
+## Jede Seite bewegt sich anders
+
+Die Gestaltung allein reicht nicht: zwei Websites mit verschiedenen Farben,
+die sich gleich verhalten, fühlen sich trotzdem gleich an. Deshalb hat jedes
+Projekt **eine eigene Bewegungssprache**, festgelegt über zwei Werte am Anfang
+seiner `site.css`:
+
+```css
+--ease   /* die Kurve: wie etwas beschleunigt und abbremst */
+--takt   /* die Grundlänge; längere Wege bekommen ein Vielfaches davon */
+```
+
+Alles Weitere - Reveals, Knöpfe, Bilder, Übergänge - rechnet daraus.
+Wer den Takt ändert, ändert das Tempo der ganzen Seite an einer Stelle.
+
+| | Kurve | Takt | Wie ein Block hereinkommt |
+|---|---|---|---|
+| **Halbritter** | `.2, .85, .25, 1` – kurz, gerade | 170 ms | Von links freigelegt, ohne Höhenversatz. Der Balken vor dem Kapitelzeichen zieht sich mit auf |
+| **Osteria** | `.22, .61, .24, 1` – lang, ruhig | 660 ms | Gar nicht von der Stelle: aus der Unschärfe scharf gestellt, einzeln, nicht gebündelt |
+| **Kopfsache** | `.34, 1.4, .64, 1` – schießt über | 280 ms | Abwechselnd von links und rechts, leicht gedreht; der Aufkleber richtet sich zuletzt aus |
+| **Brenner & Kolb** | `.4, 0, .2, 1` – neutral | 240 ms | Zehn Pixel nachgezogen, sonst nichts. Die Haarlinie über dem Kapitelzeichen wird gezogen |
+| **Zahnärzte** | `.16, .84, .28, 1` – weich | 480 ms | Wächst aus 94 Prozent auf seine Größe, der Punkt im Kapitelzeichen setzt sich zuletzt |
+
+Dieselbe Trennung gilt bei den Bildern: Halbritter fährt eine Abtastlinie
+durch die Platte, Kopfsache zoomt hart, Osteria zieht langsam auf, die Praxis
+hebt die Karte an – und die Kanzlei zoomt **nicht**, dort wird die Aufnahme
+nur einen Hauch klarer und die Haarlinie darunter zieht nach.
+
+### Seitenübergänge
+
+Die drei Mehrseiter blenden beim Wechsel auf eine andere Seite desselben
+Projekts einen Vorhang ein, jeder in der Form seiner Marke:
+
+| | Vorhang | Dauer |
+|---|---|---|
+| **Halbritter** | Ein blauer Balken fährt von links durch und auf der neuen Seite nach rechts hinaus | 260 ms |
+| **Osteria** | Der Raum wird dunkel, wie wenn im Saal das Licht heruntergeht | 420 ms |
+| **Zahnärzte** | Ein grünes Feld steigt von unten auf, mit derselben runden Oberkante wie im Empfang | 360 ms |
+
+Der Scroll-Pager und der Single-Pager haben keinen – dort gibt es keinen
+Seitenwechsel. Klicks mit Steuerungstaste oder mittlerer Maustaste, externe
+Verweise, `mailto:`, `tel:` und der Weg zurück zur Übersicht laufen ohne
+Vorhang; ohne JavaScript ebenfalls.
+
+### Ohne Bibliothek
+
+Bewegt wurde das früher mit GSAP und ScrollTrigger, 115 kB je Projekt.
+Gebraucht wurden davon fünf Dinge: Reveals bündeln, den Aufmacher staffeln,
+die Leiste umschalten, Knöpfe dem Zeiger folgen lassen und ein Laufband
+schieben. Das steht jetzt in jeder `site.js` selbst – Reveals über einen
+`IntersectionObserver`, der Rest über CSS-Übergänge mit `--ease`/`--takt`,
+die Laufbänder über `@keyframes`. Das spart je Seite rund 115 kB und war
+zugleich das letzte Stück gemeinsame Mechanik zwischen den fünf Projekten.
+
+| Projekt | HTML | CSS | JS | Schriften | gesamt |
+|---|---|---|---|---|---|
+| `brenner-kolb-recht` | 18,5 | 32,2 | 15,0 | 147,8 | **213,5 kB** |
+| `halbritter-haustechnik` | 19,8 | 46,5 | 21,4 | 101,6 | **189,3 kB** |
+| `kopfsache-studio` | 16,7 | 37,3 | 21,0 | 112,5 | **187,5 kB** |
+| `osteria-fontana` | 20,9 | 45,9 | 18,6 | 93,6 | **179,0 kB** |
+| `zahnaerzte-koenigsplatz` | 17,5 | 39,7 | 14,3 | 94,2 | **165,6 kB** |
+
+Vorher lagen dieselben Seiten bei 279 bis 326 kB.
+
+---
+
 ## Der Akzent hat drei Rollen
 
 Ursprünglich gab es einen einzigen `--accent` für alles. Derselbe Ton kann aber
@@ -255,7 +325,6 @@ beispiele/<name>/
     ├── js/site.js      das komplette Verhalten dieser Seite
     │                   1. Grundverhalten (Menü, Bildplätze, Reveals)
     │                   2. Signatur-Interaktion bzw. Pager
-    ├── js/gsap.min.js  GSAP 3.15 mit ScrollTrigger
     ├── fonts/          selbst gehostet, kein Google-Request
     └── img/            og.jpg liegt hier, hier auch die Fotos ablegen
 ```
@@ -303,8 +372,12 @@ Abschnitt 1 von `site.js` stellt zusätzlich zwei Hilfen bereit:
 
 - `Basis.magnetisch(element, stärke)` - folgt dem Zeiger, nur mit Maus
 - `Basis.spotlight(element)` - setzt `--mx` und `--my` für Lichtkegel
+- `Basis.bewegt` - `false`, wenn `prefers-reduced-motion` gesetzt ist
 
-Beide schalten sich auf Touchgeräten und bei `prefers-reduced-motion` ab.
+Die ersten beiden schalten sich auf Touchgeräten und bei
+`prefers-reduced-motion` ab. Wie stark `magnetisch` nachzieht, ist je Projekt
+verschieden gerechnet - bei Kopfsache schwingt der Knopf nach, bei Brenner ist
+die Bewegung so klein, dass sie eher gespürt als gesehen wird.
 
 ---
 
@@ -320,6 +393,14 @@ einem Kunden** gelesen werden kann: „Foto folgt" als kleine Auszeichnung,
 darunter, was auf dem Bild zu sehen sein wird. Dateiname, Format und der
 fertige Prompt stehen nicht auf der Seite, sondern in `BILDPROMPTS.md` –
 dort werden sie beim Fotografieren gebraucht.
+
+**In den beiden vollflächigen Aufmachern steht keine Unterschrift.** Bei
+Halbritter und der Osteria füllt das Bildfeld den ganzen Kopf der Seite; ein
+„Foto folgt" quer darüber macht aus dem Aufmacher eine Baustelle. Dort tragen
+Leitungsplan bzw. Kerzenlicht, Verlauf und Korn die Fläche allein, und sie
+sieht fertig aus. Sobald `hero.jpg` im Ordner liegt, legt es sich darunter.
+Auf den kleineren Platten weiter unten bleibt die Unterschrift stehen – dort
+wäre ein leeres Rechteck sonst nicht zu deuten.
 
 **Was nicht geht:** erzeugte Grafik statt Foto. Ein Versuch damit ist
 verworfen worden. Eine abstrakte Fläche in einem Feld, dessen Unterschrift
@@ -358,3 +439,25 @@ Für jedes Beispiel im echten Browser nachgestellt:
 - Waagerechte Galerie fällt unter 820 Pixel auf eine wischbare Reihe zurück
 - Bei `prefers-reduced-motion` entfallen Laufband, Heftung und alle Reveals
 - Die aktive Seite ist in der Navigation mit `aria-current="page"` markiert
+
+### Nach dem Umbau auf eigene Bewegung
+
+Alle 29 Seiten laufen seither in einem echten Browser (Playwright, Chromium)
+durch, bei vier Fenstergrößen – Handy 390 × 844, Tablet 834 × 1112,
+Laptop 1280 × 800, Desktop 1600 × 1000. Jede Seite wird dabei in Schritten
+von oben nach unten gefahren. Geprüft wird an jeder Stelle:
+
+- **Querleiste**: `scrollWidth` gegen `innerWidth`, auch im Ausgangszustand
+  der Blöcke, solange der seitliche Versatz noch anliegt
+- **Nichts bleibt unsichtbar**: nach der Fahrt hat jeder Block, jede
+  Überschriftenzeile und jeder Teil des Aufmachers `opacity ≥ 0.9`
+- **Abgeschnittener Text**: Kästen, die ihren Inhalt verstecken, ohne dass
+  Scrollen vorgesehen ist
+- **Konsole**: Skriptfehler, abgewiesene Zusagen, fehlgeschlagene Anfragen
+
+Dabei aufgefallen und behoben: Bei Kopfsache kommen die Blöcke abwechselnd von
+links **und rechts** herein; der Versatz nach rechts stand auf schmalen
+Fenstern über dem Rand. `overflow-x: hidden` am `<body>` half nicht – dieser
+Wert wird an das Ansichtsfenster weitergereicht, der Körper schneidet dann
+selbst nichts mehr ab. Jetzt steht `overflow-x: clip` am `<html>`; `clip`
+lässt die senkrechte Achse unberührt, das Einrasten des Pagers bleibt.

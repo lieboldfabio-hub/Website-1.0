@@ -14,7 +14,12 @@
 
 *, *::before, *::after { box-sizing: border-box; }
 
-html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+/* clip statt hidden, und am Wurzelelement statt am Koerper: overflow am
+   <body> wird an das Ansichtsfenster weitergereicht und schneidet dann
+   nichts mehr ab - der seitliche Versatz beim Aufdecken haette sonst eine
+   Querleiste erzeugt. clip laesst die senkrechte Achse unberuehrt, das
+   Einrasten des Pagers bleibt. */
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; overflow-x: clip; }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
 
 body {
@@ -241,14 +246,43 @@ section { position: relative; }
 
 /* --------------------------------------------------- Bewegung, Grundlage */
 
-.js .reveal { opacity: 0; transform: translateY(26px); }
+/*
+   Kopfsache kommt abwechselnd von links und rechts herein und schiesst
+   dabei leicht ueber das Ziel hinaus - das steckt in --ease. Welche Seite
+   dran ist, legt das Skript als --seite ab (1 oder -1), gedreht wird in
+   dieselbe Richtung.
+*/
+.js .reveal,
+.js [data-hero] {
+  opacity: 0;
+  transform: translate3d(calc(var(--seite, -1) * 44px), 22px, 0)
+             rotate(calc(var(--seite, -1) * 1.6deg));
+  transition: opacity calc(var(--takt) * 1.4) var(--ease),
+              transform calc(var(--takt) * 2.4) var(--ease);
+  transition-delay: var(--verzug, 0ms);
+}
+.js .reveal.ist-da,
+.js [data-hero].ist-da { opacity: 1; transform: none; }
+
+/* Der schraege Aufkleber richtet sich beim Ankommen erst aus. */
+.js .reveal .eyebrow {
+  transform: rotate(calc(var(--seite, -1) * 7deg)) scale(.86);
+  transition: transform calc(var(--takt) * 2.6) var(--ease);
+  transition-delay: calc(var(--verzug, 0ms) + var(--takt) * .5);
+}
+.js .reveal.ist-da .eyebrow { transform: rotate(-1.4deg) scale(1); }
 
 /* Zeilenweises Aufdecken von Text. Jede Zeile liegt in einer Maske. */
 .js .reveal-lines .zeile { overflow: hidden; }
-.js .reveal-lines .zeile > span { display: block; transform: translateY(102%); }
+.js .reveal-lines .zeile > span {
+  display: block; transform: translateY(102%);
+  transition: transform calc(var(--takt) * 2.6) var(--ease);
+  transition-delay: var(--verzug, 0ms);
+}
+.js .reveal-lines.ist-da .zeile > span { transform: none; }
 
 @media (prefers-reduced-motion: reduce) {
-  .js .reveal { opacity: 1; transform: none; }
+  .js .reveal, .js [data-hero] { opacity: 1; transform: none; filter: none; }
   .js .reveal-lines .zeile > span { transform: none; }
   *, *::before, *::after {
     animation-duration: .01ms !important;
@@ -349,7 +383,9 @@ section { position: relative; }
   --pad-x: clamp(1.25rem, 5vw, 5rem);
   --section-y: clamp(4.5rem, 9vw, 7.5rem);
   --wrap: 1240px;
-  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  /* Eigene Bewegungssprache - siehe Abschnitt 'Bewegung' unten. */
+  --ease: cubic-bezier(.34, 1.4, .64, 1);
+  --takt: 280ms;
 
   color-scheme: light;
 }
@@ -779,7 +815,19 @@ h1, h2, h3 { font-weight: 800; letter-spacing: -0.035em; }
   color: var(--accent-fg);
   border-top: 1px solid var(--tinte);
 }
-.laufband__spur { display: inline-flex; align-items: center; gap: 2rem; padding-left: 2rem; will-change: transform; }
+.laufband__spur { display: inline-flex; align-items: center; gap: 2rem; padding-left: 2rem; }
+/* Die Spur ist vom Skript verdoppelt worden; sie faehrt genau eine Haelfte
+   weit und faengt dann von vorn an - deshalb ist der Uebergang nahtlos.
+   Geschoben wird von CSS, damit die Bewegung im Compositor bleibt. */
+.laufband__spur.laeuft {
+  will-change: transform;
+  animation: laufband 26s linear infinite;
+}
+.laufband:hover .laufband__spur.laeuft { animation-play-state: paused; }
+@keyframes laufband {
+  from { transform: translate3d(0, 0, 0); }
+  to   { transform: translate3d(-50%, 0, 0); }
+}
 .laufband__spur > span {
   font-family: var(--font-display);
   font-weight: 600;
@@ -958,3 +1006,26 @@ h1, h2, h3 { font-weight: 800; letter-spacing: -0.035em; }
   .js .cover__karte::after { background: none; }
   .cover__punkte { display: none; }
 }
+
+
+/* ============================================================================
+   Bewegung: mit Ueberschwinger
+   ----------------------------------------------------------------------------
+   Die Kurve schiesst kurz ueber das Ziel hinaus und faellt zurueck. Das ist
+   der Grund, warum sich hier alles etwas frech anfuehlt - und der Grund,
+   warum dieselbe Kurve bei der Kanzlei verboten waere.
+   ========================================================================= */
+
+.ph { overflow: hidden; }
+.ph img { transition: transform calc(var(--takt) * 2) var(--ease); }
+.karte-k:hover .ph img, .cover__karte:hover .ph img { transform: scale(1.06); }
+
+/* Die Karten kippen ihre Ecken mit, wenn man sie anfasst. */
+.karte-k { transition: transform var(--takt) var(--ease),
+                       border-radius calc(var(--takt) * 1.4) var(--ease),
+                       border-color var(--takt) var(--ease); }
+.karte-k:hover { border-radius: 26px 0 26px 0; }
+
+/* Der aufgeklebte Zettel richtet sich beim Erscheinen kurz auf. */
+.reveal .eyebrow { transition: transform calc(var(--takt) * 2) var(--ease); }
+.reveal .eyebrow:hover { transform: rotate(0deg) scale(1.04); }

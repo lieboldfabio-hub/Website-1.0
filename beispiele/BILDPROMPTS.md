@@ -9,6 +9,11 @@ zusammengesuchte Stockfotos.
 > Platzhalter „Foto folgt" und darunter, was zu sehen sein wird – damit er auch
 > in einem Kundengespräch gelesen werden kann. Die technischen Angaben brauchst
 > du beim Fotografieren, nicht der Kunde beim Anschauen.
+>
+> **Ausnahme: die beiden vollflächigen Aufmacher** (Halbritter `hero.jpg`,
+> Osteria `hero.jpg`). Dort steht keine Unterschrift auf der Fläche – ein
+> „Foto folgt" quer über dem Kopf der Seite lässt die ganze Website nach
+> Baustelle aussehen. Der Platz ist trotzdem da und wartet auf die Datei.
 
 ## So benutzt du die Prompts
 

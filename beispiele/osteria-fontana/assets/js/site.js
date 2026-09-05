@@ -16,10 +16,8 @@ window.Basis = (function () {
   var root = document.documentElement;
   root.classList.add("js");
 
-  var hatGSAP = typeof window.gsap !== "undefined";
-  if (hatGSAP && typeof window.ScrollTrigger !== "undefined") {
-    gsap.registerPlugin(ScrollTrigger);
-  }
+  var reduziert = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var grob      = window.matchMedia("(pointer: coarse)").matches;
 
   /* ------------------------------------------------------------ Bildplaetze */
 
@@ -35,12 +33,14 @@ window.Basis = (function () {
   /* -------------------------------------------------------------- Navigation */
 
   var nav = document.querySelector(".firmenschild");
-  if (hatGSAP && nav) {
-    ScrollTrigger.create({
-      start: "top -80",
-      end: 99999,
-      onToggle: function (self) { nav.classList.toggle("is-stuck", self.isActive); }
-    });
+  if (nav && "IntersectionObserver" in window) {
+    var marke = document.createElement("span");
+    marke.setAttribute("aria-hidden", "true");
+    marke.style.cssText = "position:absolute;top:0;left:0;width:1px;height:80px;pointer-events:none";
+    document.body.appendChild(marke);
+    new IntersectionObserver(function (e) {
+      nav.classList.toggle("is-stuck", !e[0].isIntersecting);
+    }).observe(marke);
   }
 
   var burger = document.querySelector(".firmenschild__burger");
@@ -63,8 +63,7 @@ window.Basis = (function () {
     });
   }
 
-  /* Ankerlinks um die fixierte Leiste versetzen */
-  var reduziert = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  /* Ankerlinks um das fixierte Firmenschild versetzen */
   Array.prototype.forEach.call(document.querySelectorAll('a[href^="#"]'), function (a) {
     a.addEventListener("click", function (e) {
       var id = a.getAttribute("href");
@@ -82,9 +81,9 @@ window.Basis = (function () {
 
   /* --------------------------------------------------------- Zeilen-Reveal */
   /*
-     Zerlegt eine Ueberschrift in echte Zeilen und legt jede in eine Maske,
-     damit sie von unten hereinfahren kann. Nach dem Messen bleibt der Text
-     als normaler Fliesstext im DOM und damit fuer Vorlesesoftware intakt.
+     Ueberschriften werden zeilenweise aufgedeckt. Jede Zeile liegt in einer
+     Maske; der Text selbst bleibt zusammenhaengender Fliesstext und damit
+     fuer Vorlesesoftware unveraendert lesbar.
   */
   function zeilenAufbauen(el) {
     var text = el.textContent.trim();
@@ -108,91 +107,110 @@ window.Basis = (function () {
     });
 
     el.textContent = "";
-    var traeger = [];
-    zeilen.forEach(function (gruppe) {
+    zeilen.forEach(function (gruppe, i) {
       var aussen = document.createElement("span");
       aussen.className = "zeile";
+      aussen.style.setProperty("--verzug", (i * 150) + "ms");
       var innen = document.createElement("span");
       innen.textContent = gruppe.map(function (s) { return s.textContent; }).join("");
       aussen.appendChild(innen);
       el.appendChild(aussen);
-      traeger.push(innen);
     });
-    return traeger;
   }
 
-  /* ---------------------------------------------------------- Bewegung ---- */
+  /* ------------------------------------------------------------- Bewegung */
+  /*
+     Das Haus hat keine Eile. Nichts springt herein: die Bloecke kommen
+     einzeln, spaet und langsam - erst wenn sie wirklich im Blick sind
+     (threshold 0.28), nicht schon am unteren Rand. Deshalb wird hier auch
+     nicht gebuendelt wie anderswo; jeder Block hat seinen eigenen Moment.
+     Die Laenge steckt in --takt (660 ms), die Kurve in --ease.
+  */
 
-  if (hatGSAP) {
-    var mm = gsap.matchMedia();
-
-    mm.add("(prefers-reduced-motion: no-preference)", function () {
-      /* Hero baut sich gestaffelt auf und fuehrt zum Knopf */
-      var heroTeile = gsap.utils.toArray("[data-hero]");
-      if (heroTeile.length) {
-        gsap.set(heroTeile, { opacity: 0, y: 22 });
-        gsap.to(heroTeile, {
-          opacity: 1, y: 0, duration: .85, ease: "power3.out",
-          stagger: .09, delay: .12
-        });
-      }
-
-      /* Abschnitte blenden beim Lesen ein */
-      ScrollTrigger.batch(".reveal", {
-        start: "top 86%",
-        once: true,
-        onEnter: function (batch) {
-          gsap.to(batch, {
-            opacity: 1, y: 0, duration: .7, ease: "power2.out",
-            stagger: .08, overwrite: true
-          });
-        }
+  function aufdecken(liste, schritt) {
+    if (!("IntersectionObserver" in window)) {
+      Array.prototype.forEach.call(liste, function (el) { el.classList.add("ist-da"); });
+      return;
+    }
+    var beobachter = new IntersectionObserver(function (eintraege) {
+      eintraege.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        beobachter.unobserve(e.target);
+        e.target.style.setProperty("--verzug", schritt + "ms");
+        e.target.classList.add("ist-da");
       });
-
-      /* Ueberschriften zeilenweise aufdecken */
-      gsap.utils.toArray(".reveal-lines").forEach(function (el) {
-        var traeger = zeilenAufbauen(el);
-        gsap.to(traeger, {
-          y: "0%",
-          duration: .9,
-          ease: "power3.out",
-          stagger: .08,
-          scrollTrigger: { trigger: el, start: "top 88%", once: true }
-        });
-      });
+    }, { rootMargin: "0px 0px -14% 0px", threshold: 0.28 });
+    Array.prototype.forEach.call(liste, function (el) {
+      /* Sehr hohe Bloecke erreichen 28 Prozent nie am Stueck - fuer sie
+         wird der Schwellenwert zurueckgenommen. */
+      if (el.offsetHeight > window.innerHeight * 0.8) {
+        var einzeln = new IntersectionObserver(function (ee) {
+          if (!ee[0].isIntersecting) return;
+          einzeln.disconnect();
+          ee[0].target.classList.add("ist-da");
+        }, { threshold: 0.04 });
+        einzeln.observe(el);
+      } else beobachter.observe(el);
     });
+  }
 
-    mm.add("(prefers-reduced-motion: reduce)", function () {
-      gsap.set(".reveal, [data-hero]", { opacity: 1, y: 0 });
-    });
+  if (reduziert) {
+    root.classList.add("ohne-bewegung");
   } else {
-    root.classList.remove("js");
+    Array.prototype.forEach.call(document.querySelectorAll(".reveal-lines"), zeilenAufbauen);
+
+    /* Der Aufmacher kommt wie Licht, das langsam hochgedreht wird. */
+    var heroTeile = document.querySelectorAll("[data-hero]");
+    Array.prototype.forEach.call(heroTeile, function (el, i) {
+      el.style.setProperty("--verzug", (220 + i * 170) + "ms");
+    });
+    requestAnimationFrame(function () {
+      requestAnimationFrame(function () {
+        Array.prototype.forEach.call(heroTeile, function (el) { el.classList.add("ist-da"); });
+      });
+    });
+
+    aufdecken(document.querySelectorAll(".reveal"), 0);
+    aufdecken(document.querySelectorAll(".reveal-lines"), 0);
   }
 
   /* --------------------------------------------------- Hilfen fuer Seiten */
 
   return {
-    gsap: hatGSAP,
+    bewegt: !reduziert,
     reduziert: reduziert,
 
-    /* Knopf, der dem Zeiger leicht folgt. Laeuft ueber Motion-Werte statt
-       ueber Zustand, damit kein Layout neu berechnet wird. */
+    /* Der Knopf folgt dem Zeiger, aber weich und traege - passend zum Haus.
+       Gezeichnet wird nur einmal je Bild, nicht bei jeder Mausbewegung. */
     magnetisch: function (el, staerke) {
-      if (!hatGSAP || reduziert || window.matchMedia("(pointer: coarse)").matches) return;
+      if (reduziert || grob) return;
       staerke = staerke || 0.32;
-      var qx = gsap.quickTo(el, "x", { duration: .4, ease: "power3" });
-      var qy = gsap.quickTo(el, "y", { duration: .4, ease: "power3" });
+      var zx = 0, zy = 0, x = 0, y = 0, laeuft = false;
+
+      function schritt() {
+        x += (zx - x) * 0.09;
+        y += (zy - y) * 0.09;
+        el.style.transform = "translate3d(" + x.toFixed(2) + "px," + y.toFixed(2) + "px,0)";
+        if (Math.abs(zx - x) > 0.1 || Math.abs(zy - y) > 0.1) { requestAnimationFrame(schritt); return; }
+        laeuft = false;
+        /* Steht der Knopf wieder in der Mitte, wird der Stil ganz entfernt -
+           sonst blockiert er die Transform aus dem CSS beim Ueberfahren. */
+        if (!zx && !zy) { x = 0; y = 0; el.style.transform = ""; }
+      }
+      function anwerfen() { if (!laeuft) { laeuft = true; requestAnimationFrame(schritt); } }
+
       el.addEventListener("pointermove", function (e) {
         var r = el.getBoundingClientRect();
-        qx((e.clientX - (r.left + r.width / 2)) * staerke);
-        qy((e.clientY - (r.top + r.height / 2)) * staerke);
+        zx = (e.clientX - (r.left + r.width / 2)) * staerke;
+        zy = (e.clientY - (r.top + r.height / 2)) * staerke;
+        anwerfen();
       });
-      el.addEventListener("pointerleave", function () { qx(0); qy(0); });
+      el.addEventListener("pointerleave", function () { zx = 0; zy = 0; anwerfen(); });
     },
 
     /* Lichtkegel, der unter dem Zeiger ueber eine Karte wandert. */
     spotlight: function (el) {
-      if (window.matchMedia("(pointer: coarse)").matches) return;
+      if (grob) return;
       el.addEventListener("pointermove", function (e) {
         var r = el.getBoundingClientRect();
         el.style.setProperty("--mx", (e.clientX - r.left) + "px");
@@ -207,33 +225,23 @@ window.Basis = (function () {
 
 (function () {
   "use strict";
-  if (!window.Basis || !window.Basis.gsap) return;
-
-  var mm = gsap.matchMedia();
+  if (!window.Basis || !window.Basis.bewegt) return;
 
   /* ------------------------------------------------------------- Laufband */
   /*
      Die Spur wird verdoppelt und um genau eine Haelfte verschoben. Dadurch
      ist der Uebergang nahtlos, ohne Sprung und ohne Rechnerei bei Resize.
+     Geschoben wird von CSS; beim Zeigen wird nur die Dauer hochgesetzt,
+     dann laeuft das Band aus statt abrupt zu stehen.
   */
-  mm.add("(prefers-reduced-motion: no-preference)", function () {
-    var spur = document.querySelector(".marquee__spur");
-    if (!spur) return;
-
+  var spur = document.querySelector(".marquee__spur");
+  if (spur) {
     spur.innerHTML += spur.innerHTML;
-    var tween = gsap.to(spur, {
-      xPercent: -50,
-      duration: 34,
-      ease: "none",
-      repeat: -1
-    });
-
-    /* Beim Zeigen anhalten, damit man in Ruhe lesen kann. */
-    spur.parentElement.addEventListener("pointerenter", function () { tween.timeScale(0.15); });
-    spur.parentElement.addEventListener("pointerleave", function () { tween.timeScale(1); });
-
-    return function () { tween.kill(); };
-  });
+    spur.classList.add("laeuft");
+    var band = spur.parentElement;
+    band.addEventListener("pointerenter", function () { band.classList.add("is-ruhig"); });
+    band.addEventListener("pointerleave", function () { band.classList.remove("is-ruhig"); });
+  }
 
   /* Knoepfe folgen dem Zeiger leicht. */
   Array.prototype.forEach.call(
@@ -417,4 +425,75 @@ window.Basis = (function () {
   } else {
     anwerfen();
   }
+})();
+
+
+/* ------------------------------------------------------------- Tiefe im Anschlag */
+/*
+   Das Bild im Anschlag laeuft beim Scrollen deutlich langsamer als die
+   Seite - mehr Weg als bei den anderen, weil hier alles langsamer ist.
+   Nur eine Transform, und nur solange der Anschlag sichtbar ist.
+*/
+(function () {
+  "use strict";
+  var bild = document.querySelector(".anschlag__bild img");
+  var band = document.querySelector(".anschlag");
+  if (!bild || !band) return;
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  if (window.matchMedia("(pointer: coarse)").matches) return;
+
+  var sichtbar = false, laeuft = false;
+  bild.style.willChange = "transform";
+  bild.style.transform = "scale(1.12)";
+
+  function zeichnen() {
+    laeuft = false;
+    var r = band.getBoundingClientRect();
+    var anteil = (r.top + r.height / 2) / window.innerHeight - 0.5;
+    bild.style.transform = "translate3d(0," + (anteil * 60).toFixed(1) + "px,0) scale(1.12)";
+  }
+  function planen() { if (!laeuft && sichtbar) { laeuft = true; requestAnimationFrame(zeichnen); } }
+
+  new IntersectionObserver(function (e) {
+    sichtbar = e[0].isIntersecting; if (sichtbar) planen();
+  }).observe(band);
+  window.addEventListener("scroll", planen, { passive: true });
+  window.addEventListener("resize", planen);
+  planen();
+})();
+
+/* ---------------------------------------------------------- Seitenwechsel */
+/*
+   Beim Wechsel senkt sich ein warmer Schleier ueber die Seite und hebt
+   sich drueben wieder - langsam, wie das Licht im Raum. Kein Balken,
+   kein Wischen; das waere zu ruppig fuer dieses Haus.
+
+   Ohne JavaScript passiert nichts Besonderes, die Verweise funktionieren
+   normal. Wer mit gedrueckter Steuerungstaste oder mittlerer Maustaste
+   klickt, will einen neuen Tab und wird nicht aufgehalten.
+*/
+(function () {
+  "use strict";
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+  var vorhang = document.createElement("div");
+  vorhang.className = "wechsel";
+  vorhang.setAttribute("aria-hidden", "true");
+  document.body.appendChild(vorhang);
+  requestAnimationFrame(function () { document.body.classList.add("ist-da"); });
+
+  document.addEventListener("click", function (e) {
+    var a = e.target.closest("a");
+    if (!a || e.defaultPrevented) return;
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+    if (a.target && a.target !== "_self") return;
+    var ziel = a.getAttribute("href") || "";
+    if (!ziel || ziel.charAt(0) === "#" || /^(https?:|mailto:|tel:)/.test(ziel)) return;
+    if (ziel === "../") return;
+
+    e.preventDefault();
+    document.body.classList.remove("ist-da");
+    document.body.classList.add("geht");
+    setTimeout(function () { window.location.href = ziel; }, 420);
+  });
 })();
