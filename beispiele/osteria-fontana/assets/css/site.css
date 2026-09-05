@@ -131,10 +131,14 @@ section { position: relative; }
   border: 1px solid var(--accent-flaeche);
   background: transparent; color: var(--accent-flaeche);
   text-decoration: none; cursor: pointer;
-  transition: background-color .3s var(--ease), color .3s var(--ease),
-              letter-spacing .3s var(--ease);
+  /* Kein letter-spacing beim Ueberfahren: das setzt bei jedem Bild den
+     Zeilenumbruch neu. Die weite Sperrung steht ohnehin schon fest, sie
+     ist die Handschrift des Hauses - passieren muss beim Zeigen die
+     Fuellung, nicht die Schrift. */
+  transition: background-color 180ms var(--ease), color 180ms var(--ease),
+              border-color 180ms var(--ease);
 }
-.btn:hover { background: var(--accent-flaeche); color: var(--accent-fg); letter-spacing: .26em; }
+.btn:hover { background: var(--accent-flaeche); color: var(--accent-fg); }
 
 /* Der zweite Weg ist gar kein Knopf, sondern eine unterstrichene Zeile. */
 .btn--ghost {
@@ -142,7 +146,7 @@ section { position: relative; }
   padding: 0 0 .55rem; background: none;
   color: var(--band-text);
 }
-.btn--ghost:hover { background: none; color: var(--accent-band); letter-spacing: .26em; }
+.btn--ghost:hover { background: none; color: var(--accent-band); }
 
 
 .btn__ico { width: 1.05em; height: 1.05em; flex: none; }
@@ -470,8 +474,29 @@ section { position: relative; }
   transition: border-color .15s ease;
 }
 .feld textarea { resize: vertical; min-height: 7.5rem; }
+/*
+   Beim Tippen mit der Maus genuegt die farbige Kante. Wer sich mit der
+   Tastatur durch das Formular bewegt, braucht dagegen den Ring - sonst
+   weiss er nicht, in welchem Feld er steht. Frueher stand hier
+   outline: none fuer beide Faelle; das hat den globalen Fokusring auf
+   genau den Feldern abgeschaltet, auf denen er am wichtigsten ist.
+*/
 .feld input:focus, .feld textarea:focus, .feld select:focus {
-  outline: none; border-color: var(--accent);
+  border-color: var(--accent);
+}
+.feld input:focus:not(:focus-visible),
+.feld textarea:focus:not(:focus-visible),
+.feld select:focus:not(:focus-visible) {
+  outline: none;
+}
+/* Ein Datumsfeld besteht innen aus drei Teilen - Tag, Monat, Jahr - und
+   die Tabulatortaste laeuft sie einzeln ab. Am Feld selbst greift
+   :focus-visible dabei nur beim ersten Sprung, danach blinkt der Ring weg,
+   waehrend man noch mitten im Datum steht. Deshalb haengt er hier am
+   umgebenden Feld: einmal an, solange irgendetwas darin den Fokus hat. */
+.feld:focus-within input[type="date"] {
+  outline: 3px solid var(--accent);
+  outline-offset: 3px;
 }
 .formular__hinweis { color: var(--text-soft); font-size: .85rem; margin-top: .9rem; }
 @media (max-width: 560px) { .feld-paar { grid-template-columns: 1fr; } }
@@ -761,14 +786,15 @@ body::after {
 }
 .js .gang[data-fern="ja"] { opacity: 0; }
 
-.gang .ph { height: 100%; border-radius: 16px; box-shadow: 0 36px 70px -34px rgba(0, 0, 0, .95); }
+/* var(--r): das Haus setzt rechtwinklig, von der Speisekarte bis zum
+   Knopf. Die Gaenge waren die einzigen runden Flaechen. */
+.gang .ph { height: 100%; border-radius: var(--r); box-shadow: 0 36px 70px -34px rgba(0, 0, 0, .95); }
 /* Unten steht der Name des Gangs, also sitzt der Bildhinweis oben. */
 .gang .ph__brief {
   inset: 0 0 auto;
   border-top: 0;
   border-bottom: 1px solid rgba(255,255,255,.12);
   background: linear-gradient(to bottom, rgba(0,0,0,.55), transparent);
-  border-radius: 16px 16px 0 0;
 }
 
 /* Der Text sitzt im Bild, unten, wie eine Karte am Teller. */
@@ -777,7 +803,6 @@ body::after {
   padding: clamp(1.2rem, 2.4vw, 1.9rem);
   text-align: center;
   background: linear-gradient(to top, rgba(20, 16, 14, .92), rgba(20, 16, 14, .5) 55%, transparent);
-  border-radius: 0 0 16px 16px;
   transition: opacity .5s var(--ease);
 }
 .js .gang__text { opacity: 0; }
@@ -972,7 +997,7 @@ body::after {
   position: fixed; inset: 0 0 auto; z-index: 100;
   height: var(--schild-h);
   display: flex; align-items: center;
-  transition: height .3s var(--ease), background-color .3s var(--ease),
+  transition: height 200ms var(--ease), background-color 200ms var(--ease),
               box-shadow .3s var(--ease);
 }
 .firmenschild__zeile {
@@ -1226,17 +1251,13 @@ body::after {
   filter: brightness(1.06);
 }
 
-/* Die Zierzeile der Abschnitte zieht ihre Striche beim Erscheinen auseinander. */
-.reveal .eyebrow::before, .reveal .eyebrow::after {
-  transition: width calc(var(--takt) * 1.6) var(--ease);
-}
-
 /* Der Rahmenknopf laeuft von der Mitte nach aussen voll, nicht von links. */
 .btn { background-image: linear-gradient(var(--accent-flaeche), var(--accent-flaeche));
   background-repeat: no-repeat; background-position: 50% 50%; background-size: 0% 100%;
-  transition: background-size calc(var(--takt) * .8) var(--ease),
-              color calc(var(--takt) * .6) var(--ease),
-              letter-spacing calc(var(--takt) * .8) var(--ease); }
+  /* Die Fuellung laeuft von der Mitte nach aussen. 200 ms - ein Knopf muss
+     sofort antworten, auch in einem Haus, das sich sonst Zeit laesst. */
+  transition: background-size 200ms var(--ease),
+              color 180ms var(--ease); }
 .btn:hover { background-size: 100% 100%; background-color: transparent; }
 .btn--ghost { background-image: none; }
 

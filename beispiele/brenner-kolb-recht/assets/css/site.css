@@ -119,7 +119,7 @@ section { position: relative; }
   border-radius: 0;
   background: none; color: var(--text);
   text-decoration: none; cursor: pointer;
-  transition: border-color .25s var(--ease), color .25s var(--ease);
+  transition: border-color 200ms var(--ease), color 200ms var(--ease);
 }
 .btn:hover { color: var(--accent); border-bottom-color: var(--accent); }
 .btn__ico { align-self: center; }
@@ -141,7 +141,7 @@ section { position: relative; }
 .nav {
   position: fixed; inset: 0 0 auto 0; z-index: 100;
   height: 74px; display: flex; align-items: center;
-  transition: height .3s var(--ease), background-color .3s var(--ease),
+  transition: height 200ms var(--ease), background-color 200ms var(--ease),
               box-shadow .3s var(--ease);
 }
 .nav__inner {

@@ -461,3 +461,62 @@ Fenstern über dem Rand. `overflow-x: hidden` am `<body>` half nicht – dieser
 Wert wird an das Ansichtsfenster weitergereicht, der Körper schneidet dann
 selbst nichts mehr ab. Jetzt steht `overflow-x: clip` am `<html>`; `clip`
 lässt die senkrechte Achse unberührt, das Einrasten des Pagers bleibt.
+
+### Bedienbarkeit mit der Tastatur
+
+Ein Skript geht auf jeder Seite mit der Tabulatortaste durch alle Stationen
+und prüft, ob jede einen sichtbaren Fokus bekommt: **492 Stationen, alle mit
+Ring.**
+
+Zwei Sachen sind dabei aufgefallen:
+
+- Die Formularfelder standen auf `outline: none` bei `:focus`. Das hat den
+  globalen Fokusring auf genau den Elementen abgeschaltet, auf denen er am
+  wichtigsten ist. Jetzt gilt die Ausnahme nur für `:focus:not(:focus-visible)`,
+  also für die Maus – wer tippt, sieht den Ring.
+- Das Datumsfeld der Osteria besteht innen aus drei Teilen, die die
+  Tabulatortaste einzeln abläuft. Am Feld selbst greift `:focus-visible` nur
+  beim ersten Sprung; danach blinkte der Ring weg, während man noch mitten im
+  Datum stand. Er hängt jetzt am umgebenden `.feld` über `:focus-within`.
+
+### Kontrast, an den echten Bildpunkten gemessen
+
+Kontrast aus CSS-Werten zu rechnen geht bei Verläufen, Leinwänden und
+durchscheinenden Flächen schief – der Wert im Token ist nicht der, der auf dem
+Schirm liegt. Deshalb wird jeder Textknoten einzeln ausgeschnitten und aus den
+Bildpunkten gemessen: **488 Textstellen, ein echter Verstoß.**
+
+Der eine war ernst: Im Notdienst-Kasten der Praxis stand „Jetzt anrufen" mit
+**2,02:1** – die Nummer, die im Schmerzfall gewählt wird. Ursache war eine
+Zeile weiter oben: `.notfall` stand in der Gruppe der dunklen Abschnitte, die
+den aufgehellten Akzentton übernehmen. Der Kasten ist aber eine sehr helle
+Fläche. Er ist jetzt aus der Gruppe heraus.
+
+Der zweite Treffer war ein Fehler der Messung, kein Fehler der Seite: Im
+Kapitelzeichen der Praxis liegt neben der Schrift ein farbiger Punkt, und der
+ist dunkler als sie. Nachgerechnet: Schrift **4,80:1**, Punkt **3,86:1** – die
+Schrift erfüllt ihre 4,5, der Punkt als reine Zierde seine 3,0.
+
+### Bewegung nachgeschärft
+
+- Kein Übergang läuft mehr auf einer Layout-Eigenschaft, wo es vermeidbar war.
+  Der Knopf der Osteria spreizte beim Überfahren seine Buchstaben
+  (`letter-spacing`) – das rechnet den Umbruch bei jedem Bild neu. Die Schiene
+  bei Kopfsache fuhr `max-width` und `width`; beides läuft jetzt über
+  Deckkraft und Transform.
+- Bedienelemente antworten in **180 bis 220 ms**. Vorher brauchte der Knopf
+  der Osteria 528 ms, bis er gefüllt war.
+- Der Stagger ist nach dem fünften Element gedeckelt. Ohne Deckel wartet die
+  letzte Karte einer großen Gruppe eine halbe Sekunde auf ihren Auftritt, und
+  die Seite wirkt langsam, obwohl sie es nicht ist.
+- Die Beobachter bauen sich ab, sobald alle Blöcke durch sind.
+
+### Grammatik nachgezogen
+
+Drei Stellen widersprachen der Formensprache ihres eigenen Projekts. Halbritter
+und die Osteria setzen durchgehend rechtwinklig (`--r: 0px`) – trotzdem waren
+dort die Tarifkarten (14 px), die Gänge im Karussell (16 px) sowie die
+Vorher-Nachher-Schilder, der Tarif-Umschalter und das Tarif-Abzeichen
+(Pillenform) abgerundet. Alle tragen jetzt `var(--r)`. Rund bleiben nur die
+Punkte in Listen und der Griff des Schiebers – ein Griff darf wie ein Griff
+aussehen.

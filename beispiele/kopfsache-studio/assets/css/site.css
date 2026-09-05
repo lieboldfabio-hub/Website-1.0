@@ -114,7 +114,7 @@ section { position: relative; }
   border: 0;
   background: var(--accent-flaeche); color: var(--accent-fg);
   text-decoration: none; cursor: pointer;
-  transition: border-radius .3s var(--ease), background-color .22s var(--ease),
+  transition: border-radius .22s var(--ease), background-color .22s var(--ease),
               color .22s var(--ease);
 }
 .btn:hover { border-radius: 26px 0 26px 0; }
@@ -144,7 +144,7 @@ section { position: relative; }
 .nav {
   position: fixed; inset: 0 0 auto 0; z-index: 100;
   height: 74px; display: flex; align-items: center;
-  transition: height .3s var(--ease), background-color .3s var(--ease),
+  transition: height 200ms var(--ease), background-color 200ms var(--ease),
               box-shadow .3s var(--ease);
 }
 .nav__inner {
@@ -775,24 +775,36 @@ h1, h2, h3 { font-weight: 800; letter-spacing: -0.035em; }
 .schiene b { font-weight: 600; font-variant-numeric: tabular-nums; }
 /* Der Name steht erst da, wenn die Tafel dran ist oder der Zeiger drauf
    liegt. Sonst bleibt rechts nur eine ruhige Zahlenreihe stehen. */
+/* Der Platz springt einmal auf, die Bewegung selbst laeuft ueber Deckkraft
+   und Transform. Frueher wanderte hier max-width - das rechnet bei jedem
+   Bild den Umbruch neu, fuer nichts. */
 .schiene span {
+  display: inline-block;
   max-width: 0;
   overflow: hidden;
   white-space: nowrap;
   opacity: 0;
-  transition: max-width .4s var(--ease), opacity .3s var(--ease);
+  transform: translateX(8px);
+  transition: opacity 180ms var(--ease), transform 180ms var(--ease);
 }
+/* Der Strich steht auf voller Laenge und wird gestaucht gezeigt - so
+   waechst er ueber eine Transform statt ueber width. */
 .schiene a::after {
   content: "";
-  width: 14px;
+  width: 30px;
   height: 2px;
   background: currentColor;
   opacity: .35;
-  transition: width .4s var(--ease), opacity .3s var(--ease);
+  transform: scaleX(.47);
+  transform-origin: right center;
+  transition: transform 180ms var(--ease), opacity 180ms var(--ease),
+              background-color 180ms var(--ease);
 }
-.schiene a:hover span, .schiene a.is-hier span { max-width: 9rem; opacity: 1; }
+.schiene a:hover span, .schiene a.is-hier span {
+  max-width: 9rem; opacity: 1; transform: none;
+}
 .schiene a:hover, .schiene a.is-hier { color: var(--text); }
-.schiene a.is-hier::after { width: 30px; opacity: 1; background: var(--accent); }
+.schiene a.is-hier::after { transform: none; opacity: 1; background: var(--accent); }
 
 /* Ueber den dunklen Tafeln kehrt sich die Schiene um. */
 .pager.auf-dunkel .schiene a { color: var(--band-text-soft); }

@@ -496,8 +496,20 @@ section { position: relative; }
   transition: border-color .15s ease;
 }
 .feld textarea { resize: vertical; min-height: 7.5rem; }
+/*
+   Beim Tippen mit der Maus genuegt die farbige Kante. Wer sich mit der
+   Tastatur durch das Formular bewegt, braucht dagegen den Ring - sonst
+   weiss er nicht, in welchem Feld er steht. Frueher stand hier
+   outline: none fuer beide Faelle; das hat den globalen Fokusring auf
+   genau den Feldern abgeschaltet, auf denen er am wichtigsten ist.
+*/
 .feld input:focus, .feld textarea:focus, .feld select:focus {
-  outline: none; border-color: var(--accent);
+  border-color: var(--accent);
+}
+.feld input:focus:not(:focus-visible),
+.feld textarea:focus:not(:focus-visible),
+.feld select:focus:not(:focus-visible) {
+  outline: none;
 }
 .formular__hinweis { color: var(--text-soft); font-size: .85rem; margin-top: .9rem; }
 @media (max-width: 560px) { .feld-paar { grid-template-columns: 1fr; } }
@@ -880,7 +892,7 @@ h1, h2, h3 { font-weight: 700; letter-spacing: -0.02em; }
 .werkleiste__haupt .werkleiste__zeile {
   min-height: 66px;
   justify-content: space-between;
-  transition: min-height .3s var(--ease);
+  transition: min-height 200ms var(--ease);
 }
 .werkleiste.is-stuck .werkleiste__haupt .werkleiste__zeile { min-height: 56px; }
 
@@ -1102,7 +1114,7 @@ h1, h2, h3 { font-weight: 700; letter-spacing: -0.02em; }
   width: fit-content;
   margin: 0 auto clamp(3.2rem, 5vw, 4.2rem);
   padding: 4px;
-  border-radius: 999px;
+  border-radius: var(--r);
   background: var(--graphit-900);
   isolation: isolate;
 }
@@ -1121,7 +1133,7 @@ h1, h2, h3 { font-weight: 700; letter-spacing: -0.02em; }
   position: absolute; z-index: 0;
   top: 4px; bottom: 4px; left: 4px;
   width: calc((100% - 8px) / 2);
-  border-radius: 999px;
+  border-radius: var(--r);
   background: var(--accent-flaeche);
   transform: translateX(calc(var(--platz, 0) * 100%));
   transition: transform .34s var(--ease);
@@ -1141,7 +1153,11 @@ h1, h2, h3 { font-weight: 700; letter-spacing: -0.02em; }
   display: flex; flex-direction: column;
   padding: clamp(1.6rem, 3vw, 2.2rem);
   border: 1px solid var(--line);
-  border-radius: 14px;
+  /* var(--r), nicht 14px: die Tarifkarten waren die einzigen runden
+     Flaechen im ganzen Projekt. Halbritter ist rechtwinklig, vom Knopf
+     bis zum Bildplatz - eine Ausnahme macht daraus keinen Akzent,
+     sondern einen Fehler. */
+  border-radius: var(--r);
   background: var(--surface);
 }
 /* Die mittlere Karte steht vorn: dunkler Grund, etwas hoeher, mit Marke. */
@@ -1163,7 +1179,7 @@ h1, h2, h3 { font-weight: 700; letter-spacing: -0.02em; }
   transform: translate(-50%, -50%);
   display: inline-flex; align-items: center; gap: .4rem;
   padding: .4rem .9rem;
-  border-radius: 999px;
+  border-radius: var(--r);
   background: var(--accent-flaeche); color: var(--accent-fg);
   font-family: var(--font-display); font-size: .78rem; font-weight: 700;
   white-space: nowrap;

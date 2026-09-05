@@ -132,10 +132,12 @@ window.Basis = (function () {
       Array.prototype.forEach.call(liste, function (el) { el.classList.add("ist-da"); });
       return;
     }
+    var offen = 0;
     var beobachter = new IntersectionObserver(function (eintraege) {
       eintraege.forEach(function (e) {
         if (!e.isIntersecting) return;
         beobachter.unobserve(e.target);
+        if (--offen <= 0) beobachter.disconnect();
         e.target.style.setProperty("--verzug", schritt + "ms");
         e.target.classList.add("ist-da");
       });
@@ -150,7 +152,7 @@ window.Basis = (function () {
           ee[0].target.classList.add("ist-da");
         }, { threshold: 0.04 });
         einzeln.observe(el);
-      } else beobachter.observe(el);
+      } else { offen++; beobachter.observe(el); }
     });
   }
 

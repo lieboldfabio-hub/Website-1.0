@@ -119,8 +119,8 @@ section { position: relative; }
   background: var(--accent-flaeche); color: var(--accent-fg);
   text-decoration: none; cursor: pointer;
   box-shadow: var(--schatten);
-  transition: transform .24s var(--ease), box-shadow .24s var(--ease),
-              background-color .22s var(--ease);
+  transition: transform 200ms var(--ease), box-shadow 200ms var(--ease),
+              background-color 200ms var(--ease);
 }
 .btn:hover { transform: translateY(-2px); box-shadow: var(--schatten-hoch); }
 .btn:active { transform: translateY(0); }
@@ -413,8 +413,20 @@ section { position: relative; }
   transition: border-color .15s ease;
 }
 .feld textarea { resize: vertical; min-height: 7.5rem; }
+/*
+   Beim Tippen mit der Maus genuegt die farbige Kante. Wer sich mit der
+   Tastatur durch das Formular bewegt, braucht dagegen den Ring - sonst
+   weiss er nicht, in welchem Feld er steht. Frueher stand hier
+   outline: none fuer beide Faelle; das hat den globalen Fokusring auf
+   genau den Feldern abgeschaltet, auf denen er am wichtigsten ist.
+*/
 .feld input:focus, .feld textarea:focus, .feld select:focus {
-  outline: none; border-color: var(--accent);
+  border-color: var(--accent);
+}
+.feld input:focus:not(:focus-visible),
+.feld textarea:focus:not(:focus-visible),
+.feld select:focus:not(:focus-visible) {
+  outline: none;
 }
 .formular__hinweis { color: var(--text-soft); font-size: .85rem; margin-top: .9rem; }
 @media (max-width: 560px) { .feld-paar { grid-template-columns: 1fr; } }
@@ -581,8 +593,14 @@ h1, h2, h3 { font-weight: 600; letter-spacing: -0.01em; }
 
 
 /* In den dunklen Abschnitten uebernimmt der aufgehellte Ton. Weil --accent
-   vererbt wird, genuegt es, ihn am Container zu setzen. */
-.notfall, .praxis, .cta-band, .band {
+   vererbt wird, genuegt es, ihn am Container zu setzen.
+
+   .notfall stand hier faelschlich mit drin. Der Notdienst-Kasten ist aber
+   kein dunkler Abschnitt, sondern eine sehr helle Flaeche - der
+   aufgehellte Ton machte "Jetzt anrufen" darauf praktisch unlesbar
+   (2,02:1 gemessen, gefordert sind 4,5:1). Ausgerechnet die Nummer, die
+   im Schmerzfall gewaehlt wird. */
+.praxis, .cta-band, .band {
   --accent: var(--accent-band);
   --accent-flaeche: var(--accent-band);
   /* Ein Knopf auf dem Band traegt jetzt die helle Flaeche, also braucht er

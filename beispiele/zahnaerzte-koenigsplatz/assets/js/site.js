@@ -132,16 +132,21 @@ window.Basis = (function () {
       Array.prototype.forEach.call(liste, function (el) { el.classList.add("ist-da"); });
       return;
     }
-    var stapel = [], leer = null;
+    var stapel = [], leer = null, offen = liste.length;
     var beobachter = new IntersectionObserver(function (eintraege) {
       eintraege.forEach(function (e) {
         if (!e.isIntersecting) return;
         beobachter.unobserve(e.target);
+        if (--offen === 0) beobachter.disconnect();
         stapel.push(e.target);
         clearTimeout(leer);
         leer = setTimeout(function () {
           stapel.forEach(function (el, i) {
-            el.style.setProperty("--verzug", (i * schritt) + "ms");
+            /* Nach dem fuenften Element wird nicht weiter gestaffelt.
+               Sonst wartet die letzte Karte einer grossen Gruppe eine
+               halbe Sekunde auf ihren Auftritt, und die Seite wirkt
+               langsam, obwohl sie es nicht ist. */
+            el.style.setProperty("--verzug", (Math.min(i, 5) * schritt) + "ms");
             el.classList.add("ist-da");
           });
           stapel = [];
