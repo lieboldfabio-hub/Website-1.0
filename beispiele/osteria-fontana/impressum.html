@@ -38,23 +38,37 @@
 <a class="skip" href="#main">Zum Inhalt springen</a>
 <a class="demo-badge" href="../">Beispielprojekt</a>
 
-<header class="nav">
-  <div class="nav__inner">
-    <a class="brand" href="index.html">Osteria Fontana</a>
-    <nav aria-label="Hauptnavigation">
-      <ul class="nav__links">
-      <li><a href="index.html">Start</a></li>
-      <li><a href="karte.html">Karte</a></li>
-      <li><a href="abend.html">Der Abend</a></li>
-      <li><a href="besuch.html">Besuch</a></li>
+<!-- ============================================================================
+     Kopf wie auf einer Speisekarte: der Name steht mittig und allein, die
+     Wege dazu links und rechts davon. Kein Knopf in der Leiste - eine
+     Reservierung ist ein Satz, kein Kauf, deshalb steht sie als
+     unterstrichener Verweis am rechten Rand.
+     ========================================================================= -->
+
+<header class="firmenschild">
+  <div class="firmenschild__zeile">
+    <nav class="wege wege--links" aria-label="Hauptnavigation">
+      <ul>
+        <li><a href="index.html">Start</a></li>
+        <li><a href="karte.html">Karte</a></li>
       </ul>
     </nav>
-    <div class="nav__cta">
-      <a class="btn btn--sm" href="besuch.html">Tisch anfragen</a>
-      <button class="nav__burger" aria-label="Men&uuml; &ouml;ffnen" aria-expanded="false" aria-controls="menu">
-        <span></span><span></span><span></span>
-      </button>
-    </div>
+
+    <a class="schriftzug" href="index.html">
+      <span>Osteria</span><i>Fontana</i>
+    </a>
+
+    <nav class="wege wege--rechts" aria-label="Weitere Seiten">
+      <ul>
+        <li><a href="abend.html">Der Abend</a></li>
+        <li><a href="besuch.html">Besuch</a></li>
+        <li><a class="wege__tisch" href="besuch.html">Tisch anfragen</a></li>
+      </ul>
+    </nav>
+
+    <button class="firmenschild__burger" aria-label="Men&uuml; &ouml;ffnen" aria-expanded="false" aria-controls="menu">
+      <span></span><span></span><span></span>
+    </button>
   </div>
 </header>
 
@@ -130,30 +144,48 @@
 
 </main>
 
-<footer class="footer">
-  <div class="wrap">
-    <div class="footer__grid">
-      <a class="brand" href="index.html" style="color:var(--band-text)">Osteria Fontana</a>
-      <ul class="footer__links">
-        <li><a href="abend.html">Der Abend</a></li>
-        <li><a href="karte.html">Karte</a></li>
-        <li><a href="besuch.html">Besuch</a></li>
-        <li><a href="impressum.html">Impressum</a></li>
-        <li><a href="datenschutz.html">Datenschutz</a></li>
-        <li><a href="../">Weitere Beispiele</a></li>
-      </ul>
+<!-- ============================================================================
+     Fuss wie die Rueckseite einer Karte: mittig gesetzt, Zeiten und Adresse
+     als zwei kurze Bloecke, darunter eine feine Linie.
+     ========================================================================= -->
+
+<footer class="rueckseite">
+  <div class="rueckseite__mitte">
+    <p class="rueckseite__name">Osteria Fontana</p>
+    <p class="rueckseite__satz">
+      Zw&ouml;lf Gerichte, jeden Tag neu. Was der Markt hergibt, steht am Abend
+      auf der Karte.
+    </p>
+
+    <div class="rueckseite__spalten">
+      <div>
+        <h2>Ge&ouml;ffnet</h2>
+        <p>Dienstag bis Samstag<br>ab 17:30 Uhr</p>
+      </div>
+      <div>
+        <h2>Ruhetag</h2>
+        <p>Sonntag und Montag</p>
+      </div>
+      <div>
+        <h2>Tisch</h2>
+        <p><a href="besuch.html">Anfragen</a><br><a href="karte.html">Karte ansehen</a></p>
+      </div>
     </div>
-    <p class="footer__note">
-      Beispielprojekt. Osteria Fontana ist ein erfundenes Unternehmen, sämtliche
-      Angaben auf dieser Seite dienen ausschließlich der Veranschaulichung von
+
+    <ul class="rueckseite__links">
+      <li><a href="impressum.html">Impressum</a></li>
+      <li><a href="datenschutz.html">Datenschutz</a></li>
+      <li><a href="../">Weitere Beispiele</a></li>
+    </ul>
+
+    <p class="rueckseite__note">
+      Beispielprojekt. Osteria Fontana ist ein erfundenes Unternehmen, s&auml;mtliche
+      Angaben auf dieser Seite dienen ausschlie&szlig;lich der Veranschaulichung von
       Gestaltung und Interaktion.
     </p>
   </div>
 </footer>
 
-<script src="assets/js/gsap.min.js"></script>
-<script src="assets/js/ScrollTrigger.min.js"></script>
-<script src="assets/js/basis.js"></script>
 <script src="assets/js/site.js"></script>
 </body>
 </html>

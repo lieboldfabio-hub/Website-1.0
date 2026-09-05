@@ -1,9 +1,19 @@
 # Bild-Prompts für die Beispielprojekte
 
-21 Bildplätze, verteilt auf fünf Projekte. Für jedes Projekt gibt es einen
+24 Bildplätze, verteilt auf fünf Projekte. Für jedes Projekt gibt es einen
 **Stilblock**, der in jeden Prompt dieses Projekts ans Ende gehängt wird – so
 wirken die Bilder eines Projekts wie aus einer Serie und nicht wie fünf
 zusammengesuchte Stockfotos.
+
+> **Format und Dateiname stehen nur hier.** Auf der Seite selbst sagt der
+> Platzhalter „Foto folgt" und darunter, was zu sehen sein wird – damit er auch
+> in einem Kundengespräch gelesen werden kann. Die technischen Angaben brauchst
+> du beim Fotografieren, nicht der Kunde beim Anschauen.
+>
+> **Ausnahme: die beiden vollflächigen Aufmacher** (Halbritter `hero.jpg`,
+> Osteria `hero.jpg`). Dort steht keine Unterschrift auf der Fläche – ein
+> „Foto folgt" quer über dem Kopf der Seite lässt die ganze Website nach
+> Baustelle aussehen. Der Platz ist trotzdem da und wartet auf die Datei.
 
 ## So benutzt du die Prompts
 
@@ -22,7 +32,7 @@ zusammengesuchte Stockfotos.
 
 ---
 
-## 1. Halbritter Haustechnik · Handwerk (3 Bilder)
+## 1. Halbritter Haustechnik · Handwerk (6 Bilder)
 
 **Stilblock** (an jeden Prompt anhängen):
 
@@ -60,6 +70,27 @@ version
 > Referenzbild ("same room, same camera angle, before renovation") mit. Firefly
 > und Gemini können das über "Bild als Referenz", Midjourney über `--cref` bzw.
 > ein vorangestelltes Bild.
+
+### `projekt-bad.jpg` — Querformat 4:3
+```
+A finished modern bathroom in a terraced house, large format grey tiles, walk-in
+shower, floating vanity, warm towels on a rail, soft daylight, photographed
+straight on from the doorway, nobody in frame
+```
+
+### `projekt-wallbox.jpg` — Querformat 4:3
+```
+A wall mounted electric car charging box on a clean garage wall, coiled charging
+cable, tidy conduit running to a small distribution box, concrete floor, even
+daylight from the open garage door, nobody in frame
+```
+
+### `projekt-zaehler.jpg` — Querformat 4:3
+```
+A newly installed electrical meter cabinet in an apartment building hallway,
+open door showing neatly arranged circuit breakers and labelled rows, clean
+wiring, cool even light, nobody in frame
+```
 
 ---
 
@@ -182,14 +213,14 @@ wall, a single leather armchair, tall window with a sheer curtain, soft daylight
 brass detailing, quiet and orderly, nobody in frame
 ```
 
-### `brenner.jpg` — Querformat 4:3
+### `brenner.jpg` — Hochformat 4:5
 ```
 Business portrait of a female lawyer in her late thirties in a dark blazer,
 seated at a desk with her hands folded, neutral friendly expression, soft window
 light from the side, blurred office background in navy tones
 ```
 
-### `kolb.jpg` — Querformat 4:3
+### `kolb.jpg` — Hochformat 4:5
 ```
 Business portrait of a male lawyer in his mid forties in a dark suit without a
 tie, standing with relaxed arms, calm confident expression, soft window light,
@@ -209,7 +240,7 @@ warm cream palette with a soft coral accent, calm and reassuring, clean but not
 sterile, 35mm lens, realistic, no text, no logos, no watermark
 ```
 
-### `hero.jpg` — Hochformat 4:5
+### `hero.jpg` — Querformat 16:9
 ```
 A modern dental treatment room, treatment chair beside a large window with
 plants, warm wood and deep green surfaces, soft daylight, welcoming rather than

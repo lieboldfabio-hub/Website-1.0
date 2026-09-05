@@ -1,10 +1,241 @@
 /* ============================================================================
-   Kopfsache - Signatur-Interaktionen
+   Kopfsache Studio - Skript dieser Seite
    ----------------------------------------------------------------------------
-   1. Lichtkegel unter dem Zeiger auf den Leistungskarten
-   2. Laufband mit den Leistungen
-   3. Ziehharmonika fuer haeufige Fragen, mit weicher Hoehe und ohne Sprung
+   1. Grundverhalten: Navigation, Menue, Bildplaetze, Scroll-Einblendungen
+      und Zeilen-Reveals. Stellt window.Basis fuer Abschnitt 2 bereit.
+   2. Signatur-Interaktion dieser Seite.
+   Ohne JavaScript bleibt alles lesbar, bei prefers-reduced-motion wird
+   direkt der Endzustand gezeigt.
    ========================================================================= */
+
+/* ------------------------------------------------- 1. Grundverhalten */
+
+window.Basis = (function () {
+  "use strict";
+
+  var root = document.documentElement;
+  root.classList.add("js");
+
+  var reduziert = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var grob      = window.matchMedia("(pointer: coarse)").matches;
+
+  /* ------------------------------------------------------------ Bildplaetze */
+
+  Array.prototype.forEach.call(document.querySelectorAll(".ph img"), function (img) {
+    function fuellen() {
+      img.classList.add("is-loaded");
+      img.closest(".ph").classList.add("is-filled");
+    }
+    if (img.complete && img.naturalWidth > 0) fuellen();
+    else img.addEventListener("load", fuellen, { once: true });
+  });
+
+  /* -------------------------------------------------------------- Navigation */
+
+  var nav = document.querySelector(".nav");
+  if (nav && "IntersectionObserver" in window) {
+    var marke = document.createElement("span");
+    marke.setAttribute("aria-hidden", "true");
+    marke.style.cssText = "position:absolute;top:0;left:0;width:1px;height:80px;pointer-events:none";
+    document.body.appendChild(marke);
+    new IntersectionObserver(function (e) {
+      nav.classList.toggle("is-stuck", !e[0].isIntersecting);
+    }).observe(marke);
+  }
+
+  var burger = document.querySelector(".nav__burger");
+  var menu = document.querySelector(".menu");
+  if (burger && menu) {
+    menu.hidden = false;
+    var offen = false;
+    function setzeMenu(neu) {
+      offen = neu;
+      menu.classList.toggle("is-open", offen);
+      burger.setAttribute("aria-expanded", String(offen));
+      burger.setAttribute("aria-label", offen ? "Menü schließen" : "Menü öffnen");
+      document.body.style.overflow = offen ? "hidden" : "";
+      if (offen) menu.querySelector("a").focus();
+    }
+    burger.addEventListener("click", function () { setzeMenu(!offen); });
+    menu.addEventListener("click", function (e) { if (e.target.closest("a")) setzeMenu(false); });
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && offen) { setzeMenu(false); burger.focus(); }
+    });
+  }
+
+  /* Ankerlinks versetzen */
+  Array.prototype.forEach.call(document.querySelectorAll('a[href^="#"]'), function (a) {
+    a.addEventListener("click", function (e) {
+      var id = a.getAttribute("href");
+      if (id === "#" || id.length < 2) return;
+      var ziel = document.querySelector(id);
+      if (!ziel) return;
+      e.preventDefault();
+      /* Im Pager rastet die Tafel buendig oben ein, es gibt keine Leiste,
+         um die versetzt werden muesste. */
+      var versatz = root.classList.contains("pager") ? 0 : 70;
+      window.scrollTo({
+        top: ziel.getBoundingClientRect().top + window.pageYOffset - versatz,
+        behavior: reduziert ? "auto" : "smooth"
+      });
+      if (history.replaceState) history.replaceState(null, "", id);
+    });
+  });
+
+  /* --------------------------------------------------------- Zeilen-Reveal */
+  /*
+     Ueberschriften werden zeilenweise aufgedeckt. Jede Zeile liegt in einer
+     Maske; der Text bleibt danach normaler Fliesstext und damit fuer
+     Vorlesesoftware unveraendert.
+  */
+  function zeilenAufbauen(el) {
+    var text = el.textContent.trim();
+    var woerter = text.split(/\s+/);
+    el.textContent = "";
+    var spans = woerter.map(function (w, i) {
+      var s = document.createElement("span");
+      s.className = "wort";
+      s.textContent = w + (i < woerter.length - 1 ? " " : "");
+      el.appendChild(s);
+      return s;
+    });
+
+    var zeilen = [], aktuell = null, letztesTop = null;
+    spans.forEach(function (s) {
+      var top = Math.round(s.offsetTop);
+      if (letztesTop === null || Math.abs(top - letztesTop) > 4) {
+        aktuell = []; zeilen.push(aktuell); letztesTop = top;
+      }
+      aktuell.push(s);
+    });
+
+    el.textContent = "";
+    zeilen.forEach(function (gruppe, i) {
+      var aussen = document.createElement("span");
+      aussen.className = "zeile";
+      aussen.style.setProperty("--verzug", (i * 80) + "ms");
+      var innen = document.createElement("span");
+      innen.textContent = gruppe.map(function (s) { return s.textContent; }).join("");
+      aussen.appendChild(innen);
+      el.appendChild(aussen);
+    });
+  }
+
+  /* ------------------------------------------------------------- Bewegung */
+  /*
+     Der Laden ist laut, die Bewegung darf es auch sein. Die Bloecke kommen
+     abwechselnd von links und rechts herein und schiessen dabei leicht
+     ueber das Ziel hinaus - das macht die Kurve in --ease. Welche Seite
+     dran ist, entscheidet hier das Skript und legt sie als --seite ab; das
+     Wie steht komplett im CSS.
+
+     Im Pager wird tafelweise ausgeloest: sobald eine Tafel einrastet, faellt
+     ihr Inhalt hinein.
+  */
+
+  function aufdecken(liste, schritt) {
+    if (!("IntersectionObserver" in window)) {
+      Array.prototype.forEach.call(liste, function (el) { el.classList.add("ist-da"); });
+      return;
+    }
+    var stapel = [], leer = null, offen = liste.length;
+    var beobachter = new IntersectionObserver(function (eintraege) {
+      eintraege.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        beobachter.unobserve(e.target);
+        if (--offen === 0) beobachter.disconnect();
+        stapel.push(e.target);
+        clearTimeout(leer);
+        leer = setTimeout(function () {
+          stapel.forEach(function (el, i) {
+            /* Nach dem fuenften Element wird nicht weiter gestaffelt.
+               Sonst wartet die letzte Karte einer grossen Gruppe eine
+               halbe Sekunde auf ihren Auftritt, und die Seite wirkt
+               langsam, obwohl sie es nicht ist. */
+            el.style.setProperty("--verzug", (Math.min(i, 5) * schritt) + "ms");
+            el.classList.add("ist-da");
+          });
+          stapel = [];
+        }, 50);
+      });
+    }, { rootMargin: "0px 0px -8% 0px", threshold: 0.06 });
+
+    Array.prototype.forEach.call(liste, function (el, i) {
+      el.style.setProperty("--seite", i % 2 ? "1" : "-1");
+      beobachter.observe(el);
+    });
+  }
+
+  if (reduziert) {
+    root.classList.add("ohne-bewegung");
+  } else {
+    Array.prototype.forEach.call(document.querySelectorAll(".reveal-lines"), zeilenAufbauen);
+
+    var heroTeile = document.querySelectorAll("[data-hero]");
+    Array.prototype.forEach.call(heroTeile, function (el, i) {
+      el.style.setProperty("--verzug", (100 + i * 75) + "ms");
+      el.style.setProperty("--seite", i % 2 ? "1" : "-1");
+    });
+    requestAnimationFrame(function () {
+      requestAnimationFrame(function () {
+        Array.prototype.forEach.call(heroTeile, function (el) { el.classList.add("ist-da"); });
+      });
+    });
+
+    aufdecken(document.querySelectorAll(".reveal"), 65);
+    aufdecken(document.querySelectorAll(".reveal-lines"), 0);
+  }
+
+  /* --------------------------------------------------- Hilfen fuer Seiten */
+
+  return {
+    bewegt: !reduziert,
+    reduziert: reduziert,
+
+    /* Knopf, der dem Zeiger folgt - hier schnell und mit Nachschwingen. */
+    magnetisch: function (el, staerke) {
+      if (reduziert || grob) return;
+      staerke = staerke || 0.32;
+      var zx = 0, zy = 0, x = 0, y = 0, vx = 0, vy = 0, laeuft = false;
+
+      function schritt() {
+        /* Feder statt einfacher Annaeherung: der Knopf schwingt nach. */
+        vx = (vx + (zx - x) * 0.24) * 0.72;
+        vy = (vy + (zy - y) * 0.24) * 0.72;
+        x += vx; y += vy;
+        el.style.transform = "translate3d(" + x.toFixed(2) + "px," + y.toFixed(2) + "px,0)";
+        if (Math.abs(zx - x) > 0.1 || Math.abs(vx) > 0.1 ||
+            Math.abs(zy - y) > 0.1 || Math.abs(vy) > 0.1) { requestAnimationFrame(schritt); return; }
+        laeuft = false;
+        /* Steht der Knopf wieder in der Mitte, wird der Stil ganz entfernt -
+           sonst blockiert er die Transform aus dem CSS beim Ueberfahren. */
+        if (!zx && !zy) { x = 0; y = 0; vx = 0; vy = 0; el.style.transform = ""; }
+      }
+      function anwerfen() { if (!laeuft) { laeuft = true; requestAnimationFrame(schritt); } }
+
+      el.addEventListener("pointermove", function (e) {
+        var r = el.getBoundingClientRect();
+        zx = (e.clientX - (r.left + r.width / 2)) * staerke;
+        zy = (e.clientY - (r.top + r.height / 2)) * staerke;
+        anwerfen();
+      });
+      el.addEventListener("pointerleave", function () { zx = 0; zy = 0; anwerfen(); });
+    },
+
+    /* Lichtkegel, der unter dem Zeiger ueber eine Karte wandert. */
+    spotlight: function (el) {
+      if (grob) return;
+      el.addEventListener("pointermove", function (e) {
+        var r = el.getBoundingClientRect();
+        el.style.setProperty("--mx", (e.clientX - r.left) + "px");
+        el.style.setProperty("--my", (e.clientY - r.top) + "px");
+      });
+    }
+  };
+})();
+
+
+/* --------------------------------------- 2. Signatur-Interaktion */
 
 (function () {
   "use strict";
@@ -15,20 +246,145 @@
   });
 
   /* ------------------------------------------------------------ Laufband */
-  if (window.Basis && window.Basis.gsap) {
-    gsap.matchMedia().add("(prefers-reduced-motion: no-preference)", function () {
-      var spur = document.querySelector(".streifen__spur");
-      if (!spur) return;
+  /*
+     Die Spur wird verdoppelt und dann um genau eine Haelfte verschoben.
+     Dadurch ist der Uebergang nahtlos, ohne Sprung und ohne Rechnerei bei
+     Groessenaenderung. Geschoben wird von CSS (@keyframes laufband), damit
+     die Bewegung im Compositor bleibt und beim Scrollen nichts kostet.
+  */
+  if (window.Basis && window.Basis.bewegt) {
+    var spur = document.querySelector(".laufband__spur");
+    if (spur) {
       spur.innerHTML += spur.innerHTML;
-      var t = gsap.to(spur, { xPercent: -50, duration: 26, ease: "none", repeat: -1 });
-      return function () { t.kill(); };
-    });
+      spur.classList.add("laeuft");
+    }
 
     Array.prototype.forEach.call(
       document.querySelectorAll(".termin__actions .btn, .hero__actions .btn"),
       function (b) { window.Basis.magnetisch(b, 0.24); }
     );
   }
+
+  /* ----------------------------------------------------------- Coverflow */
+  /*
+     Vier Karten, eine davon vorn. Das Skript setzt je Karte nur zwei Werte:
+     --ab  vorzeichenbehafteter Abstand zur vorderen Karte (fuer die Richtung)
+     --weg Betrag davon (fuer Tiefe, Groesse und Abdunklung)
+     Alles Uebrige rechnet das CSS. Ohne JavaScript stehen die Karten
+     nebeneinander und bleiben lesbar.
+  */
+  (function () {
+    var buehne = document.querySelector(".cover__buehne");
+    if (!buehne) return;
+
+    var karten  = Array.prototype.slice.call(buehne.querySelectorAll(".cover__karte"));
+    var punkte  = Array.prototype.slice.call(document.querySelectorAll(".cover__punkte button"));
+    var name    = document.querySelector(".cover__name");
+    var rolle   = document.querySelector(".cover__rolle");
+    var werte   = Array.prototype.slice.call(document.querySelectorAll(".cover__daten dd"));
+
+    var leute = [
+      { name: "Mira",  rolle: "Farbe und Balayage",  seit: "2016", fach: "Balayage, Blondierung",  tag: "Di bis Sa" },
+      { name: "Jonas", rolle: "Kurzhaar und Bart",   seit: "2019", fach: "Fade, Bartpflege",       tag: "Mi bis Sa" },
+      { name: "Elif",  rolle: "Locken und Curly Cut", seit: "2021", fach: "Curly Cut, Pflege",      tag: "Di bis Fr" },
+      { name: "Bene",  rolle: "Schnitt und Ausbildung", seit: "2014", fach: "Schnitt, Ausbildung",  tag: "Di bis Sa" }
+    ];
+
+    var vorn = 0;
+
+    function zeichnen() {
+      var n = karten.length;
+      karten.forEach(function (k, i) {
+        /* Umlaufend gerechnet: so steht auch bei der ersten Person eine
+           Karte links, der Faecher haengt nicht einseitig nach rechts. */
+        var d = (i - vorn + n) % n;
+        var ab = d > n / 2 ? d - n : d;
+        k.style.setProperty("--ab", ab);
+        k.style.setProperty("--weg", Math.abs(ab));
+        k.setAttribute("aria-current", i === vorn ? "true" : "false");
+        /* Verdeckte Karten sind nicht mit der Tabulatortaste erreichbar. */
+        k.tabIndex = i === vorn ? 0 : -1;
+      });
+      punkte.forEach(function (p, i) {
+        p.setAttribute("aria-selected", i === vorn ? "true" : "false");
+      });
+      var l = leute[vorn];
+      if (name)  name.textContent  = l.name;
+      if (rolle) rolle.textContent = l.rolle;
+      if (werte.length === 3) {
+        werte[0].textContent = l.seit;
+        werte[1].textContent = l.fach;
+        werte[2].textContent = l.tag;
+      }
+    }
+
+    function waehlen(i) {
+      var n = karten.length;
+      vorn = ((i % n) + n) % n;   /* blaettert ueber den Rand hinaus weiter */
+      zeichnen();
+    }
+
+    karten.forEach(function (k, i) {
+      k.addEventListener("click", function () { waehlen(i); });
+    });
+    punkte.forEach(function (p, i) {
+      p.addEventListener("click", function () { waehlen(i); karten[vorn].focus(); });
+    });
+
+    /* Pfeiltasten blaettern, solange der Zeiger im Karussell steht. */
+    document.querySelector(".cover").addEventListener("keydown", function (e) {
+      if (e.key === "ArrowRight") { e.preventDefault(); waehlen(vorn + 1); karten[vorn].focus(); }
+      if (e.key === "ArrowLeft")  { e.preventDefault(); waehlen(vorn - 1); karten[vorn].focus(); }
+    });
+
+    zeichnen();
+  })();
+
+  /* ------------------------------------------------------------- Schiene */
+  /*
+     Welche Tafel gerade dran ist, entscheidet nicht die Scrollposition,
+     sondern welche Tafel die Mitte des Bildschirms belegt. Das stimmt auch
+     dann noch, wenn das Einrasten auf kleinen Fenstern abgeschaltet ist.
+
+     Nebenbei faellt dabei ab, ob der Grund hell oder dunkel ist. Danach
+     richten sich Schiene und Name, ohne dass eine zweite Messung noetig ist.
+  */
+  (function () {
+    var tafeln = Array.prototype.slice.call(document.querySelectorAll(".tafel"));
+    if (!tafeln.length) return;
+
+    var wurzel = document.documentElement;
+    var glieder = {};
+    Array.prototype.forEach.call(document.querySelectorAll(".schiene a"), function (a) {
+      glieder[a.getAttribute("href").slice(1)] = a;
+    });
+
+    var dunkel = { start: true, team: true, termin: true };
+    var aktuell = null;
+
+    function setzen(id) {
+      if (id === aktuell) return;
+      aktuell = id;
+      for (var k in glieder) glieder[k].classList.toggle("is-hier", k === id);
+      wurzel.classList.toggle("auf-dunkel", !!dunkel[id]);
+    }
+
+    var beobachter = new IntersectionObserver(function (eintraege) {
+      var beste = null;
+      eintraege.forEach(function (e) {
+        if (e.isIntersecting) beste = e.target;
+      });
+      if (beste) setzen(beste.id);
+    }, {
+      /* Ein waagerechter Streifen quer durch die Bildschirmmitte: genau eine
+         Tafel kann ihn belegen. */
+      rootMargin: "-50% 0px -50% 0px",
+      threshold: 0
+    });
+
+    tafeln.forEach(function (t) { beobachter.observe(t); });
+    setzen(tafeln[0].id);
+  })();
 
   /* ------------------------------------------------------- Ziehharmonika */
   /*
@@ -69,4 +425,153 @@
       });
     });
   });
+})();
+
+
+/* ------------------------------------------------------ Straehnen im Hero */
+/*
+   Der erste Bildschirm dieser Seite. Feine Straehnen fallen langsam durchs
+   Bild; wo der Zeiger hinkommt, werden sie durchtrennt, das untere Stueck
+   faellt schneller weg und verblasst. Oben waechst eine neue nach.
+
+   Warum selbst gezeichnet und nicht als Video: es reagiert auf den Zeiger,
+   es kostet ein paar Kilobyte statt einiger Megabyte, und es haelt jede
+   Fenstergroesse aus.
+
+   Gerechnet wird bewusst sparsam:
+   - hoechstens 2x Bildpunktdichte, sonst zeichnet ein 4K-Schirm sich tot
+   - die Zahl der Straehnen haengt an der Flaeche, nicht an einer festen Zahl
+   - laeuft nur, solange die Tafel sichtbar ist (IntersectionObserver)
+   - bei prefers-reduced-motion laeuft gar nichts
+*/
+(function () {
+  "use strict";
+
+  var leinwand = document.querySelector(".straehnen");
+  if (!leinwand || !leinwand.getContext) return;
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+  var stift = leinwand.getContext("2d");
+  var breite = 0, hoehe = 0, dichte = 1;
+  var straehnen = [];
+  var zeiger = { x: -9999, y: -9999, da: false };
+  var laeuft = false, bild = 0;
+
+  var LIMETTE = "201, 242, 74";
+
+  function neu(oben) {
+    var laenge = 110 + Math.random() * 320;
+    return {
+      x: Math.random() * breite,
+      y: oben ? -laenge - Math.random() * hoehe : Math.random() * hoehe,
+      laenge: laenge,
+      /* Fallgeschwindigkeit in Bildpunkten je Sekunde. */
+      tempo: 14 + Math.random() * 26,
+      /* Seitliches Wiegen: Ausschlag und Phase. */
+      wiege: 6 + Math.random() * 18,
+      phase: Math.random() * Math.PI * 2,
+      dicke: 0.6 + Math.random() * 1.1,
+      /* Jede sechste Straehne traegt die Akzentfarbe. */
+      hell: Math.random() < 0.17,
+      /* Wird beim Schnitt gesetzt: das Stueck faellt schneller und verblasst. */
+      ab: 0,
+      deckung: 0.14 + Math.random() * 0.34
+    };
+  }
+
+  function messen() {
+    var r = leinwand.getBoundingClientRect();
+    dichte = Math.min(window.devicePixelRatio || 1, 2);
+    breite = Math.max(1, Math.round(r.width));
+    hoehe = Math.max(1, Math.round(r.height));
+    leinwand.width = Math.round(breite * dichte);
+    leinwand.height = Math.round(hoehe * dichte);
+    stift.setTransform(dichte, 0, 0, dichte, 0, 0);
+
+    /* Etwa eine Straehne je 9000 Bildpunkten Flaeche, gedeckelt. */
+    var soll = Math.max(40, Math.min(190, Math.round(breite * hoehe / 6800)));
+    straehnen = [];
+    for (var i = 0; i < soll; i++) straehnen.push(neu(false));
+  }
+
+  function schneiden(s) {
+    /* Der Schnitt trennt die Straehne dort, wo der Zeiger sie kreuzt. */
+    s.ab = 1;
+    s.tempo *= 3.4;
+  }
+
+  var vorher = 0;
+  function zeichnen(jetzt) {
+    if (!laeuft) return;
+    bild = requestAnimationFrame(zeichnen);
+    var dt = Math.min((jetzt - vorher) / 1000 || 0, 0.05);
+    vorher = jetzt;
+
+    stift.clearRect(0, 0, breite, hoehe);
+
+    for (var i = 0; i < straehnen.length; i++) {
+      var s = straehnen[i];
+      s.y += s.tempo * dt;
+      s.phase += dt * 0.6;
+
+      var x = s.x + Math.sin(s.phase) * s.wiege;
+
+      /* Zeiger als Schere: was ihm zu nahe kommt, wird durchtrennt. */
+      if (zeiger.da && !s.ab) {
+        var dx = x - zeiger.x;
+        if (dx * dx < 2600 && zeiger.y > s.y && zeiger.y < s.y + s.laenge) {
+          schneiden(s);
+        }
+      }
+
+      if (s.ab) {
+        s.deckung -= dt * 0.55;
+        if (s.deckung <= 0) { straehnen[i] = neu(true); continue; }
+      }
+      if (s.y - s.laenge > hoehe) { straehnen[i] = neu(true); continue; }
+
+      stift.beginPath();
+      stift.moveTo(x, s.y);
+      /* Leichte Kruemmung, damit es Haar bleibt und kein Regen wird. */
+      stift.quadraticCurveTo(
+        x + Math.sin(s.phase + 1) * s.wiege * 0.7, s.y + s.laenge * 0.55,
+        x, s.y + s.laenge);
+      stift.strokeStyle = s.hell
+        ? "rgba(" + LIMETTE + "," + s.deckung + ")"
+        : "rgba(247, 246, 243," + (s.deckung * 0.55) + ")";
+      stift.lineWidth = s.dicke;
+      stift.stroke();
+    }
+  }
+
+  function anhalten() { laeuft = false; cancelAnimationFrame(bild); }
+  function anwerfen() {
+    if (laeuft) return;
+    laeuft = true; vorher = performance.now();
+    bild = requestAnimationFrame(zeichnen);
+  }
+
+  messen();
+  window.addEventListener("resize", function () { messen(); }, { passive: true });
+
+  var tafel = leinwand.closest(".tafel");
+  if ("IntersectionObserver" in window && tafel) {
+    new IntersectionObserver(function (e) {
+      if (e[0].isIntersecting) anwerfen(); else anhalten();
+    }, { threshold: 0.02 }).observe(tafel);
+  } else {
+    anwerfen();
+  }
+
+  /* Nur mit Maus oder Stift - auf dem Telefon gibt es keinen Zeiger, der
+     ueber der Flaeche schwebt, und ein Schnitt beim Scrollen waere Unfug. */
+  if (!window.matchMedia("(pointer: coarse)").matches && tafel) {
+    tafel.addEventListener("pointermove", function (e) {
+      var r = leinwand.getBoundingClientRect();
+      zeiger.x = e.clientX - r.left;
+      zeiger.y = e.clientY - r.top;
+      zeiger.da = true;
+    });
+    tafel.addEventListener("pointerleave", function () { zeiger.da = false; });
+  }
 })();

@@ -41,20 +41,33 @@
 <a class="skip" href="#main">Zum Inhalt springen</a>
 <a class="demo-badge" href="../">Beispielprojekt</a>
 
-<header class="nav">
-  <div class="nav__inner">
-    <a class="brand" href="index.html">Königsplatz</a>
+<!-- ============================================================================
+     Die Leiste schwebt als abgerundete Kachel ueber dem Inhalt, statt als
+     Balken quer durch die Seite zu gehen. Weiche Formen sind bei einer
+     Zahnarztpraxis kein Schmuck, sondern die Ansage: hier ist es nicht
+     klinisch. Die aktive Seite traegt eine gefuellte Pille, kein Striche
+     darunter.
+     ========================================================================= -->
+
+<header class="schwebeleiste">
+  <div class="schwebeleiste__kachel">
+    <a class="praxisname" href="index.html">
+      <svg aria-hidden="true"><use href="#i-tooth"></use></svg>
+      K&ouml;nigsplatz
+    </a>
+
     <nav aria-label="Hauptnavigation">
-      <ul class="nav__links">
-      <li><a href="index.html">Start</a></li>
-      <li><a href="leistungen.html">Leistungen</a></li>
-      <li><a href="praxis.html">Praxis</a></li>
-      <li><a href="termin.html" aria-current="page">Termin</a></li>
+      <ul class="pillen">
+        <li><a href="index.html">Start</a></li>
+        <li><a href="leistungen.html">Leistungen</a></li>
+        <li><a href="praxis.html">Praxis</a></li>
+        <li><a href="termin.html" aria-current="page">Termin</a></li>
       </ul>
     </nav>
-    <div class="nav__cta">
+
+    <div class="schwebeleiste__cta">
       <a class="btn btn--sm" href="termin.html">Termin buchen</a>
-      <button class="nav__burger" aria-label="Men&uuml; &ouml;ffnen" aria-expanded="false" aria-controls="menu">
+      <button class="schwebeleiste__burger" aria-label="Men&uuml; &ouml;ffnen" aria-expanded="false" aria-controls="menu">
         <span></span><span></span><span></span>
       </button>
     </div>
@@ -206,29 +219,47 @@
 
 </main>
 
-<footer class="footer">
-  <div class="wrap">
-    <div class="footer__grid">
-      <a class="brand" href="index.html" style="color:var(--band-text)">Königsplatz</a>
-      <ul class="footer__links">
+<!-- ============================================================================
+     Fuss als Praxiskarte: links eine helle Karte mit den Angaben, rechts die
+     Sprechzeiten als Tabelle. Kein Namenszug mit Linkliste daneben.
+     ========================================================================= -->
+
+<footer class="praxiskarte">
+  <div class="praxiskarte__raster">
+    <div class="praxiskarte__karte">
+      <p class="praxiskarte__name">Zahn&auml;rzte am K&ouml;nigsplatz</p>
+      <p>
+        Von der Kontrolle bis zur Implantatplanung. Wir erkl&auml;ren jeden
+        Schritt, bevor wir ihn tun.
+      </p>
+      <a class="btn btn--sm" href="termin.html">Termin buchen</a>
+    </div>
+
+    <div class="praxiskarte__zeiten">
+      <h2>Sprechzeiten</h2>
+      <dl>
+        <div><dt>Montag bis Donnerstag</dt><dd>8&ndash;18 Uhr</dd></div>
+        <div><dt>Freitag</dt><dd>8&ndash;14 Uhr</dd></div>
+        <div><dt>Notfall-Sprechstunde</dt><dd>Sa und So nach Anruf</dd></div>
+      </dl>
+
+      <ul class="praxiskarte__links">
         <li><a href="leistungen.html">Leistungen</a></li>
-        <li><a href="praxis.html">Praxis &amp; Team</a></li>
-        <li><a href="termin.html">Termin</a></li>
+        <li><a href="praxis.html">Praxis</a></li>
         <li><a href="impressum.html">Impressum</a></li>
         <li><a href="datenschutz.html">Datenschutz</a></li>
         <li><a href="../">Weitere Beispiele</a></li>
       </ul>
     </div>
-    <p class="footer__note">
-      Beispielprojekt. Zahnärzte am Königsplatz ist ein erfundenes
-      Unternehmen, sämtliche Angaben auf dieser Seite dienen ausschließlich
-      der Veranschaulichung von Gestaltung und Interaktion.
-    </p>
   </div>
+
+  <p class="praxiskarte__note">
+    Beispielprojekt. Zahn&auml;rzte am K&ouml;nigsplatz ist eine erfundene Praxis,
+    s&auml;mtliche Angaben auf dieser Seite dienen ausschlie&szlig;lich der
+    Veranschaulichung von Gestaltung und Interaktion.
+  </p>
 </footer>
 
-<script src="assets/js/gsap.min.js"></script>
-<script src="assets/js/ScrollTrigger.min.js"></script>
-<script src="assets/js/basis.js"></script>
+<script src="assets/js/site.js"></script>
 </body>
 </html>

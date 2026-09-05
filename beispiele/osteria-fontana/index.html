@@ -40,23 +40,37 @@
 
 <a class="demo-badge" href="../">Beispielprojekt</a>
 
-<header class="nav">
-  <div class="nav__inner">
-    <a class="brand" href="index.html">Osteria Fontana</a>
-    <nav aria-label="Hauptnavigation">
-      <ul class="nav__links">
-      <li><a href="index.html" aria-current="page">Start</a></li>
-      <li><a href="karte.html">Karte</a></li>
-      <li><a href="abend.html">Der Abend</a></li>
-      <li><a href="besuch.html">Besuch</a></li>
+<!-- ============================================================================
+     Kopf wie auf einer Speisekarte: der Name steht mittig und allein, die
+     Wege dazu links und rechts davon. Kein Knopf in der Leiste - eine
+     Reservierung ist ein Satz, kein Kauf, deshalb steht sie als
+     unterstrichener Verweis am rechten Rand.
+     ========================================================================= -->
+
+<header class="firmenschild">
+  <div class="firmenschild__zeile">
+    <nav class="wege wege--links" aria-label="Hauptnavigation">
+      <ul>
+        <li><a href="index.html" aria-current="page">Start</a></li>
+        <li><a href="karte.html">Karte</a></li>
       </ul>
     </nav>
-    <div class="nav__cta">
-      <a class="btn btn--sm" href="besuch.html">Tisch anfragen</a>
-      <button class="nav__burger" aria-label="Men&uuml; &ouml;ffnen" aria-expanded="false" aria-controls="menu">
-        <span></span><span></span><span></span>
-      </button>
-    </div>
+
+    <a class="schriftzug" href="index.html">
+      <span>Osteria</span><i>Fontana</i>
+    </a>
+
+    <nav class="wege wege--rechts" aria-label="Weitere Seiten">
+      <ul>
+        <li><a href="abend.html">Der Abend</a></li>
+        <li><a href="besuch.html">Besuch</a></li>
+        <li><a class="wege__tisch" href="besuch.html">Tisch anfragen</a></li>
+      </ul>
+    </nav>
+
+    <button class="firmenschild__burger" aria-label="Men&uuml; &ouml;ffnen" aria-expanded="false" aria-controls="menu">
+      <span></span><span></span><span></span>
+    </button>
   </div>
 </header>
 
@@ -71,29 +85,43 @@
 <main id="main">
 
 <!-- ================================================================== Hero -->
-<section class="hero" id="top">
-  <div class="wrap hero__grid">
-    <div>
-      <p class="eyebrow" data-hero="1">Trattoria seit 1998</p>
-      <h1 class="display" data-hero="2">Zwölf Gerichte. Jeden Tag neu.</h1>
-      <p class="lede" data-hero="3">
-        Was der Markt hergibt, steht am Abend auf der Karte. Mehr passt nicht darauf.
-      </p>
-      <div class="hero__actions" data-hero="4">
-        <a class="btn" href="besuch.html">
-          Tisch anfragen
-          <svg class="btn__ico" aria-hidden="true"><use href="#i-arrow-right"></use></svg>
-        </a>
-        <a class="btn btn--ghost" href="karte.html">Zur Karte</a>
-      </div>
-    </div>
+<!-- ============================================================================
+     Anschlag: ein Bild ueber die volle Flaeche, der Satz mittig darin, unten
+     die Zeiten. Symmetrisch und ruhig - eine Speisekarte haengt auch mittig
+     im Fenster und nicht links angeschlagen.
+     ========================================================================= -->
 
-    <div class="ph hero__media" data-hero="5">
-      <img src="assets/img/hero.jpg" alt="Gedeckter Tisch am Abend" width="800" height="1000">
-      <svg class="ph__mark" aria-hidden="true"><use href="#i-wine"></use></svg>
-      <p class="ph__brief"><b>Bildplatz: Hero</b>Gedeckter Tisch bei Abendlicht, Hochformat 4:5</p>
+<section class="anschlag" id="top">
+  <!-- Kerzenlicht: zwei, drei warme Lichtinseln, die unabhaengig voneinander
+       flackern, dazu aufsteigende Partikel. Rein dekorativ, deshalb
+       aria-hidden; ohne Skript bleibt die Flaeche leer. -->
+  <canvas class="kerzen" aria-hidden="true"></canvas>
+
+  <div class="ph anschlag__bild" data-hero="1">
+    <img src="assets/img/hero.jpg" alt="Gedeckter Tisch am Abend" width="1800" height="1200">
+    <svg class="ph__mark" aria-hidden="true"><use href="#i-wine"></use></svg>
+    <p class="ph__brief"><b>Foto folgt</b>Gedeckter Tisch bei Abendlicht</p>
+  </div>
+
+  <div class="anschlag__mitte">
+    <p class="eyebrow" data-hero="2">Trattoria seit 1998</p>
+    <h1 class="display" data-hero="3">Zw&ouml;lf Gerichte.<br>Jeden Tag neu.</h1>
+    <p class="lede" data-hero="4">
+      Was der Markt hergibt, steht am Abend auf der Karte.
+      Mehr passt nicht darauf.
+    </p>
+    <div class="hero__actions" data-hero="5">
+      <a class="btn" href="besuch.html">
+        Tisch anfragen
+        <svg class="btn__ico" aria-hidden="true"><use href="#i-arrow-right"></use></svg>
+      </a>
+      <a class="btn btn--ghost" href="karte.html">Zur Karte</a>
     </div>
   </div>
+
+  <p class="anschlag__zeiten" data-hero="6">
+    Dienstag bis Samstag <i>&middot;</i> ab 17:30 Uhr <i>&middot;</i> Sonntag und Montag Ruhetag
+  </p>
 </section>
 
 <!-- =============================================================== Laufband -->
@@ -114,7 +142,7 @@
     <div class="ph kueche__media reveal">
       <img src="assets/img/kueche.jpg" alt="In der Küche" width="800" height="960">
       <svg class="ph__mark" aria-hidden="true"><use href="#i-chef-hat"></use></svg>
-      <p class="ph__brief"><b>Bildplatz: Küche</b>Arbeit am Herd, Hochformat 5:6</p>
+      <p class="ph__brief"><b>Foto folgt</b>Arbeit am Herd</p>
     </div>
 
     <div>
@@ -148,77 +176,101 @@
 </section>
 
 <!-- ====================================================== Galerie waagrecht -->
-<section class="galerie" id="abend">
-  <div class="galerie__kopf">
-    <div class="wrap">
-      <p class="eyebrow">Der Abend</p>
-      <h2 class="h2">Von der Vorspeise bis zum Digestif.</h2>
-      <p class="body-copy" style="margin-top:1rem">
-        <a href="abend.html" style="color:var(--accent)">Den ganzen Abend ansehen</a>
-      </p>
-    </div>
+<!-- ============================================================================
+     Der Abend als Karussell: der Gang in der Mitte steht scharf und gross,
+     links und rechts schaut der vorige und der naechste hervor. Geblaettert
+     wird mit den Pfeilen, den Punkten oder den Pfeiltasten. Das ist die
+     Signatur dieser Seite - kein anderes Beispiel hat sie.
+     ========================================================================= -->
+
+<section class="gaenge" id="abend" aria-labelledby="t-abend">
+  <div class="gaenge__kopf">
+    <p class="eyebrow">Der Abend</p>
+    <h2 class="h2" id="t-abend">Von der Vorspeise bis zum Digestif.</h2>
   </div>
 
-  <div class="galerie__spur">
-    <article class="platte">
-      <div class="ph">
-        <img src="assets/img/abend-1.jpg" alt="Antipasti" width="600" height="800">
-        <svg class="ph__mark" aria-hidden="true"><use href="#i-fork-knife"></use></svg>
-        <p class="ph__brief"><b>Antipasti</b>Hochformat 3:4</p>
-      </div>
-      <div class="platte__text">
-        <h3>Zum Ankommen</h3>
-        <p>Caponata, Oliven, Focaccia aus dem Ofen.</p>
-      </div>
-    </article>
+  <div class="gaenge__buehne" role="group" aria-roledescription="Karussell" aria-label="Der Abend">
+    <button class="gaenge__pfeil gaenge__pfeil--zurueck" type="button" aria-label="Vorheriger Gang">
+      <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M15 4 7 12l8 8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
 
-    <article class="platte platte--hoch">
-      <div class="ph">
-        <img src="assets/img/abend-2.jpg" alt="Pasta" width="800" height="800">
-        <svg class="ph__mark" aria-hidden="true"><use href="#i-fork-knife"></use></svg>
-        <p class="ph__brief"><b>Primi</b>Querformat, breite Kachel</p>
-      </div>
-      <div class="platte__text">
-        <h3>Der erste Gang</h3>
-        <p>Pasta, jeden Morgen von Hand gemacht.</p>
-      </div>
-    </article>
+    <div class="gaenge__reihe">
+        <article class="gang" data-i="0">
+          <div class="ph">
+            <img src="assets/img/abend-1.jpg" alt="Antipasti" width="800" height="1000">
+            <svg class="ph__mark" aria-hidden="true"><use href="#i-fork-knife"></use></svg>
+            <p class="ph__brief"><b>Foto folgt</b>Antipasti</p>
+          </div>
+          <div class="gang__text">
+            <p class="gang__nr">01</p>
+            <h3>Zum Ankommen</h3>
+            <p>Caponata, Oliven, Focaccia aus dem Ofen.</p>
+          </div>
+        </article>
+        <article class="gang" data-i="1">
+          <div class="ph">
+            <img src="assets/img/abend-2.jpg" alt="Pasta" width="800" height="1000">
+            <svg class="ph__mark" aria-hidden="true"><use href="#i-fork-knife"></use></svg>
+            <p class="ph__brief"><b>Foto folgt</b>Primi</p>
+          </div>
+          <div class="gang__text">
+            <p class="gang__nr">02</p>
+            <h3>Der erste Gang</h3>
+            <p>Pasta, jeden Morgen von Hand gemacht.</p>
+          </div>
+        </article>
+        <article class="gang" data-i="2">
+          <div class="ph">
+            <img src="assets/img/abend-3.jpg" alt="Hauptgang" width="800" height="1000">
+            <svg class="ph__mark" aria-hidden="true"><use href="#i-chef-hat"></use></svg>
+            <p class="ph__brief"><b>Foto folgt</b>Secondi</p>
+          </div>
+          <div class="gang__text">
+            <p class="gang__nr">03</p>
+            <h3>Vom Feuer</h3>
+            <p>Fisch und Fleisch &uuml;ber Holzkohle.</p>
+          </div>
+        </article>
+        <article class="gang" data-i="3">
+          <div class="ph">
+            <img src="assets/img/abend-4.jpg" alt="Weinausschank" width="800" height="1000">
+            <svg class="ph__mark" aria-hidden="true"><use href="#i-wine"></use></svg>
+            <p class="ph__brief"><b>Foto folgt</b>Weinausschank</p>
+          </div>
+          <div class="gang__text">
+            <p class="gang__nr">04</p>
+            <h3>Dazu</h3>
+            <p>Offene Weine, glasweise empfohlen.</p>
+          </div>
+        </article>
+        <article class="gang" data-i="4">
+          <div class="ph">
+            <img src="assets/img/abend-5.jpg" alt="Der Raum" width="800" height="1000">
+            <svg class="ph__mark" aria-hidden="true"><use href="#i-sparkle"></use></svg>
+            <p class="ph__brief"><b>Foto folgt</b>Der Raum</p>
+          </div>
+          <div class="gang__text">
+            <p class="gang__nr">05</p>
+            <h3>Und danach</h3>
+            <p>Amaro, Espresso, noch eine halbe Stunde.</p>
+          </div>
+        </article>
+    </div>
 
-    <article class="platte">
-      <div class="ph">
-        <img src="assets/img/abend-3.jpg" alt="Hauptgang" width="600" height="800">
-        <svg class="ph__mark" aria-hidden="true"><use href="#i-chef-hat"></use></svg>
-        <p class="ph__brief"><b>Secondi</b>Hochformat 3:4</p>
-      </div>
-      <div class="platte__text">
-        <h3>Vom Feuer</h3>
-        <p>Fisch und Fleisch über Holzkohle.</p>
-      </div>
-    </article>
+    <button class="gaenge__pfeil gaenge__pfeil--vor" type="button" aria-label="N&auml;chster Gang">
+      <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M9 4l8 8-8 8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+  </div>
 
-    <article class="platte">
-      <div class="ph">
-        <img src="assets/img/abend-4.jpg" alt="Weinausschank" width="600" height="800">
-        <svg class="ph__mark" aria-hidden="true"><use href="#i-wine"></use></svg>
-        <p class="ph__brief"><b>Wein</b>Hochformat 3:4</p>
-      </div>
-      <div class="platte__text">
-        <h3>Dazu</h3>
-        <p>Offene Weine, glasweise empfohlen.</p>
-      </div>
-    </article>
-
-    <article class="platte platte--hoch">
-      <div class="ph">
-        <img src="assets/img/abend-5.jpg" alt="Der Raum" width="800" height="800">
-        <svg class="ph__mark" aria-hidden="true"><use href="#i-sparkle"></use></svg>
-        <p class="ph__brief"><b>Der Raum</b>Querformat, breite Kachel</p>
-      </div>
-      <div class="platte__text">
-        <h3>Und danach</h3>
-        <p>Amaro, Espresso, noch eine halbe Stunde.</p>
-      </div>
-    </article>
+  <div class="gaenge__fuss">
+    <div class="gaenge__punkte" role="tablist" aria-label="Gang w&auml;hlen">
+      <button type="button" role="tab" aria-selected="true"  aria-label="Zum Ankommen"></button>
+      <button type="button" role="tab" aria-selected="false" aria-label="Der erste Gang"></button>
+      <button type="button" role="tab" aria-selected="false" aria-label="Vom Feuer"></button>
+      <button type="button" role="tab" aria-selected="false" aria-label="Dazu"></button>
+      <button type="button" role="tab" aria-selected="false" aria-label="Und danach"></button>
+    </div>
+    <a class="gaenge__mehr" href="abend.html">Den ganzen Abend ansehen</a>
   </div>
 </section>
 
@@ -309,30 +361,48 @@
 
 </main>
 
-<footer class="footer">
-  <div class="wrap">
-    <div class="footer__grid">
-      <a class="brand" href="index.html" style="color:var(--band-text)">Osteria Fontana</a>
-      <ul class="footer__links">
-        <li><a href="abend.html">Der Abend</a></li>
-        <li><a href="karte.html">Karte</a></li>
-        <li><a href="besuch.html">Besuch</a></li>
-        <li><a href="impressum.html">Impressum</a></li>
-        <li><a href="datenschutz.html">Datenschutz</a></li>
-        <li><a href="../">Weitere Beispiele</a></li>
-      </ul>
+<!-- ============================================================================
+     Fuss wie die Rueckseite einer Karte: mittig gesetzt, Zeiten und Adresse
+     als zwei kurze Bloecke, darunter eine feine Linie.
+     ========================================================================= -->
+
+<footer class="rueckseite">
+  <div class="rueckseite__mitte">
+    <p class="rueckseite__name">Osteria Fontana</p>
+    <p class="rueckseite__satz">
+      Zw&ouml;lf Gerichte, jeden Tag neu. Was der Markt hergibt, steht am Abend
+      auf der Karte.
+    </p>
+
+    <div class="rueckseite__spalten">
+      <div>
+        <h2>Ge&ouml;ffnet</h2>
+        <p>Dienstag bis Samstag<br>ab 17:30 Uhr</p>
+      </div>
+      <div>
+        <h2>Ruhetag</h2>
+        <p>Sonntag und Montag</p>
+      </div>
+      <div>
+        <h2>Tisch</h2>
+        <p><a href="besuch.html">Anfragen</a><br><a href="karte.html">Karte ansehen</a></p>
+      </div>
     </div>
-    <p class="footer__note">
-      Beispielprojekt. Osteria Fontana ist ein erfundenes Unternehmen, sämtliche
-      Angaben auf dieser Seite dienen ausschließlich der Veranschaulichung von
+
+    <ul class="rueckseite__links">
+      <li><a href="impressum.html">Impressum</a></li>
+      <li><a href="datenschutz.html">Datenschutz</a></li>
+      <li><a href="../">Weitere Beispiele</a></li>
+    </ul>
+
+    <p class="rueckseite__note">
+      Beispielprojekt. Osteria Fontana ist ein erfundenes Unternehmen, s&auml;mtliche
+      Angaben auf dieser Seite dienen ausschlie&szlig;lich der Veranschaulichung von
       Gestaltung und Interaktion.
     </p>
   </div>
 </footer>
 
-<script src="assets/js/gsap.min.js"></script>
-<script src="assets/js/ScrollTrigger.min.js"></script>
-<script src="assets/js/basis.js"></script>
 <script src="assets/js/site.js"></script>
 </body>
 </html>

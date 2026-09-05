@@ -1,17 +1,551 @@
-/* ============================================================================
-   Halbritter Haustechnik - Beispielprojekt
-   ----------------------------------------------------------------------------
-   Richtung   Hell, technisch, aufgeraeumt. Handwerk verkauft sich ueber
-              Verlaesslichkeit, nicht ueber Effekte. Klare Kanten, ruhiges
-              Raster, ein einziger kraeftiger Akzent.
-   Palette    Graphit, Knochenweiss, ein Akzent in Signalblau.
-   Typografie Archivo (Display) + Barlow (Fliesstext). Beide sachlich,
-              gut lesbar auch in kleinen Groessen.
-   Signatur   Vorher-Nachher-Schieber, mit Zeiger und Tastatur bedienbar.
-   ========================================================================= */
+
 
 @import url("fonts.css");
-@import url("basis.css");
+
+/* ============================================================================
+   1. Struktur
+   ----------------------------------------------------------------------------
+   Raster, Abstaende und Bausteine dieser Seite. Farben und Schriftnamen
+   stehen nicht hier, sondern als Tokens in Abschnitt 2.
+
+   Diese Datei gehoert allein zu Halbritter Haustechnik. Sie darf frei
+   geaendert werden, ohne dass ein anderes Beispiel davon beruehrt wird.
+   ========================================================================= */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: clamp(1rem, 0.96rem + 0.2vw, 1.075rem);
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  margin: 0;
+  line-height: 1.08;
+  text-wrap: balance;
+}
+
+p { margin: 0; text-wrap: pretty; }
+a { color: inherit; }
+img { max-width: 100%; display: block; }
+
+:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+.skip {
+  position: absolute; left: -9999px; top: 0; z-index: 200;
+  background: var(--accent-flaeche); color: var(--accent-fg);
+  padding: 0.85rem 1.4rem; font-weight: 600;
+}
+.skip:focus { left: 0; }
+
+/* ------------------------------------------------------------------ Raster */
+
+.wrap {
+  width: 100%;
+  max-width: var(--wrap, 1240px);
+  margin-inline: auto;
+  padding-inline: var(--pad-x);
+}
+
+section { position: relative; }
+.section { padding-block: var(--section-y); }
+
+.band { background: var(--band); color: var(--band-text); }
+.band h1, .band h2, .band h3 { color: var(--band-text); }
+
+/* ---------------------------------------------------------------- Typo --- */
+
+/* Enger gesetzt und in Versalien - der Ton eines Typenschilds. */
+.display {
+  font-size: clamp(2.1rem, 1.4rem + 2.4vw, 3.3rem);
+  letter-spacing: -.015em;
+  line-height: 1.02;
+}
+.h2 {
+  font-size: clamp(1.35rem, 1rem + 1.5vw, 2.05rem);
+  letter-spacing: .01em;
+  text-transform: uppercase;
+  line-height: 1.12;
+}
+
+
+.lede {
+  font-size: clamp(1.06rem, 1rem + 0.4vw, 1.28rem);
+  line-height: 1.55;
+  color: var(--text-soft);
+  max-width: 44ch;
+}
+.band .lede { color: var(--band-text-soft); }
+
+.body-copy { color: var(--text-soft); max-width: 62ch; }
+.band .body-copy { color: var(--band-text-soft); }
+
+/* Statt eines kleinen Labels ueber der Ueberschrift: eine Zeile mit
+   Positionsstrich, wie die Kopfzeile einer technischen Zeichnung. Der Strich
+   laeuft bis zum Satzrand durch. */
+.eyebrow {
+  display: flex; align-items: center; gap: .9rem;
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-variant-numeric: tabular-nums;
+  color: var(--accent);
+  margin: 0 0 1.4rem;
+}
+.eyebrow::before {
+  content: ""; flex: none; width: 26px; height: 2px; background: currentColor;
+}
+.eyebrow::after {
+  content: ""; flex: 1 1 auto; height: 1px; background: var(--line);
+}
+
+/* -------------------------------------------------------------- Buttons -- */
+
+/* Rechteckig, versalgesetzt, mit einem harten Schlagschatten statt eines
+   weichen. Ein Handwerksbetrieb schreibt auf Schilder, nicht auf Pillen. */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  gap: 0.55rem; white-space: nowrap;
+  font-family: var(--font-display);
+  font-size: .84rem; font-weight: 700; line-height: 1;
+  letter-spacing: .09em; text-transform: uppercase;
+  padding: 1.05rem 1.7rem;
+  border-radius: 0;
+  border: 2px solid var(--accent-flaeche);
+  background: var(--accent-flaeche); color: var(--accent-fg);
+  text-decoration: none; cursor: pointer;
+  box-shadow: 4px 4px 0 var(--graphit-900);
+  transition: transform .14s var(--ease), box-shadow .14s var(--ease),
+              background-color .2s var(--ease), color .2s var(--ease);
+}
+.btn:hover { transform: translate(2px, 2px); box-shadow: 2px 2px 0 var(--graphit-900); }
+.btn:active { transform: translate(4px, 4px); box-shadow: 0 0 0 var(--graphit-900); }
+.btn--sm { padding: .72rem 1.15rem; font-size: .76rem; box-shadow: 3px 3px 0 var(--graphit-900); }
+
+.btn--ghost {
+  background: transparent; color: var(--band-text);
+  border-color: var(--band-line);
+}
+.btn--ghost:hover { background: rgba(255,255,255,.09); border-color: rgba(255,255,255,.34); }
+
+.btn--line {
+  background: transparent; color: var(--text); border-color: var(--line);
+}
+.btn--line:hover { background: var(--text); color: var(--bg); border-color: var(--text); }
+
+.btn__ico { width: 1.05em; height: 1.05em; flex: none; }
+
+/* ----------------------------------------------- Menue auf schmalem Fenster */
+
+.menu {
+  position: fixed; inset: 0; z-index: 110;
+  background: var(--band); color: var(--band-text);
+  display: grid; place-content: center; gap: .3rem; padding: var(--pad-x);
+  opacity: 0; visibility: hidden;
+  transition: opacity .35s var(--ease), visibility .35s;
+}
+.menu.is-open { opacity: 1; visibility: visible; }
+.menu a {
+  font-family: var(--font-display); font-size: clamp(1.9rem,8vw,2.9rem);
+  font-weight: 700; text-decoration: none; color: var(--band-text); padding: .3rem 0;
+}
+.menu a:hover { color: var(--accent); }
+.menu .btn { margin-top: 1.4rem; justify-self: start; }
+
+
+/*
+   Zeigt eine Markenflaeche, solange kein Foto vorliegt. Sobald die Datei
+   unter assets/img/ liegt, blendet sie sich darueber. Kein Markup aendern.
+*/
+.ph {
+  position: relative; overflow: hidden; border-radius: var(--r);
+  background:
+    radial-gradient(120% 96% at 18% 8%, var(--ph-1), transparent 62%),
+    radial-gradient(96% 96% at 88% 92%, var(--ph-2), transparent 58%),
+    var(--ph-3);
+  /* Eine feine Innenkante macht aus der Flaeche eine gesetzte Platte. */
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.07);
+  isolation: isolate;
+}
+.ph::before {
+  content:""; position:absolute; inset:0; pointer-events:none;
+  background-image: repeating-radial-gradient(circle at 74% 22%,
+    rgba(255,255,255,.05) 0 1px, transparent 1px 46px);
+}
+.ph img {
+  position:absolute; inset:0; width:100%; height:100%; object-fit:cover;
+  opacity:0; transition:opacity .7s var(--ease); z-index:2;
+}
+.ph img.is-loaded { opacity:1; }
+.ph.is-filled::before, .ph.is-filled .ph__mark, .ph.is-filled .ph__brief { opacity:0; }
+
+.ph__mark {
+  position:absolute; top:50%; left:50%; width:clamp(46px,16%,84px);
+  aspect-ratio:1; transform:translate(-50%,-50%);
+  color:rgba(255,255,255,.14); transition:opacity .4s var(--ease); z-index:1;
+}
+/* Der Hinweis liest sich wie eine Bildunterschrift, nicht wie eine Notiz
+   von der Baustelle: kleine Auszeichnung in der Akzentfarbe, darunter, was
+   auf dem Foto zu sehen sein wird. Sobald eine Datei unter dem erwarteten
+   Namen liegt, blendet .is-filled ihn aus. */
+.ph__brief {
+  position:absolute; inset:auto 0 0 0; padding:.95rem 1.1rem 1rem;
+  font-size:.8rem; line-height:1.45; color:rgba(255,255,255,.72);
+  background:linear-gradient(to top, rgba(0,0,0,.62), rgba(0,0,0,.28) 58%, transparent);
+  transition:opacity .4s var(--ease); z-index:1;
+}
+.ph__brief b {
+  display:block; font-family:var(--font-display); font-weight:600;
+  font-size:.68rem; letter-spacing:.16em; text-transform:uppercase;
+  color:var(--accent-band); margin-bottom:.3rem;
+}
+
+/* --------------------------------------------------- Bewegung, Grundlage */
+
+/*
+   Halbritter deckt seitlich auf: die Bloecke fahren von links herein, ohne
+   Hoehenversatz - wie ein Plan, der aufgezogen wird. Kurz (--takt 170 ms),
+   gerade, ohne Ueberschwingen. Den Takt zwischen den Bloecken setzt das
+   Skript als --verzug; das Wie steht hier.
+*/
+.js .reveal,
+.js [data-hero] {
+  opacity: 0;
+  transform: translate3d(-26px, 0, 0);
+  transition: opacity calc(var(--takt) * 2) var(--ease),
+              transform calc(var(--takt) * 3) var(--ease);
+  transition-delay: var(--verzug, 0ms);
+}
+.js .reveal.ist-da,
+.js [data-hero].ist-da { opacity: 1; transform: none; }
+
+/* Der Balken vor dem Kapitelzeichen zieht sich mit auf. */
+.js .reveal .eyebrow::before {
+  transform: scaleX(0); transform-origin: left center;
+  transition: transform calc(var(--takt) * 2.4) var(--ease);
+  transition-delay: calc(var(--verzug, 0ms) + var(--takt));
+}
+.js .reveal.ist-da .eyebrow::before { transform: scaleX(1); }
+
+/* Zeilenweises Aufdecken von Text. Jede Zeile liegt in einer Maske. */
+.js .reveal-lines .zeile { overflow: hidden; }
+.js .reveal-lines .zeile > span {
+  display: block; transform: translateY(102%);
+  transition: transform calc(var(--takt) * 3.6) var(--ease);
+  transition-delay: var(--verzug, 0ms);
+}
+.js .reveal-lines.ist-da .zeile > span { transform: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .js .reveal, .js [data-hero] { opacity: 1; transform: none; filter: none; }
+  .js .reveal-lines .zeile > span { transform: none; }
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+}
+
+
+/*
+   Rechtstexte und Fehlerseite haben keinen dunklen Hero. Die Leiste startet
+   dort deshalb sofort in Textfarbe statt in Band-Farbe, unabhaengig davon,
+   ob schon gescrollt wurde.
+*/
+.seite-hell { background: var(--bg); }
+
+.legal { padding-block: var(--section-y); }
+.legal__inner { max-width: 46rem; }
+.legal h1 { font-size: clamp(1.9rem, 1.4rem + 1.8vw, 2.7rem); margin-bottom: 2rem; }
+.legal h2 {
+  font-family: var(--font-display);
+  font-size: .82rem; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--accent); margin: 2.5rem 0 .7rem;
+}
+.legal p, .legal li { color: var(--text-soft); margin-bottom: .85rem; }
+.legal ul { margin: 0 0 .85rem; padding-left: 1.3rem; }
+.legal a { color: var(--accent); }
+.legal__hinweis {
+  border: 1px solid var(--line); border-left: 3px solid var(--accent);
+  border-radius: var(--r); background: var(--surface);
+  padding: 1.1rem 1.3rem; margin-bottom: 2.25rem;
+  font-size: .93rem; color: var(--text);
+}
+.todo {
+  background: color-mix(in srgb, var(--accent) 20%, transparent);
+  padding: .05em .4em; border-radius: 3px; font-weight: 600; color: var(--text);
+}
+
+/* ----------------------------------------------------- Fehlerseite ------- */
+
+.fehler {
+  min-height: 100dvh; display: grid; place-content: center; text-align: center;
+  padding: clamp(3rem, 8vh, 5rem) var(--pad-x) 4rem;
+}
+.fehler__code {
+  font-family: var(--font-display); font-weight: 700; line-height: 1;
+  font-size: clamp(4.5rem, 3rem + 12vw, 9rem); color: var(--accent);
+}
+.fehler h1 { font-size: clamp(1.5rem, 1.2rem + 1.4vw, 2.1rem); margin: .8rem 0 .9rem; }
+.fehler p { color: var(--text-soft); max-width: 44ch; margin: 0 auto 2rem; }
+
+
+/*
+   Kopfbereich der Unterseiten. Uebernimmt die Grundflaeche der Seite, damit
+   die feste Leiste darueber lesbar bleibt. Projekte mit dunklem Hero setzen
+   die Flaeche in ihrer site.css auf das dunkle Band um.
+*/
+.seitenkopf {
+  background: var(--bg); color: var(--text);
+  padding-block: clamp(2.5rem, 6vw, 4.5rem) clamp(2rem, 4vw, 3rem);
+  border-bottom: 1px solid var(--line);
+}
+.seitenkopf h1 { font-size: clamp(2rem, 1.5rem + 2.2vw, 3.1rem); max-width: 20ch; }
+.seitenkopf .lede { margin-top: 1.1rem; }
+
+/* Aktive Seite in der Navigation */
+.reiter a[aria-current="page"] { color: var(--text); }
+.reiter a[aria-current="page"]::after { transform: scaleY(1); }
+.menu a[aria-current="page"] { color: var(--accent); }
+
+
+/* ------------------------------------------------------- Abschnittskopf -- */
+
+.kopf-block { max-width: 46rem; margin-bottom: clamp(2rem, 4vw, 3rem); }
+.kopf-block .h2 { max-width: 20ch; }
+.kopf-block .body-copy { margin-top: 1.1rem; }
+
+/* ------------------------------------------- Kurzvorschau auf Unterseite -- */
+
+.teaser-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(1rem, 2vw, 1.5rem);
+}
+.teaser {
+  display: flex;
+  flex-direction: column;
+  gap: .7rem;
+  color: var(--text);
+  padding: clamp(1.4rem, 2.4vw, 2rem);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  text-decoration: none;
+  color: inherit;
+  transition: border-color .2s ease, transform .2s ease;
+}
+.teaser:hover { border-color: var(--accent); transform: translateY(-3px); }
+.band .teaser b, .band .projekt h3, .band .zitat b, .band .preis b { color: var(--text); }
+.teaser > svg { width: 26px; height: 26px; color: var(--accent); }
+.teaser b { font-family: var(--font-display); font-size: 1.12rem; font-weight: 700; }
+.teaser p { color: var(--text-soft); font-size: .96rem; margin: 0; }
+.teaser__mehr {
+  margin-top: auto; padding-top: .5rem;
+  display: inline-flex; align-items: center; gap: .45rem;
+  font-weight: 600; font-size: .93rem; color: var(--accent);
+}
+.teaser__mehr svg { width: 1em; height: 1em; transition: transform .15s ease; }
+.teaser:hover .teaser__mehr svg { transform: translateX(3px); }
+@media (max-width: 880px) { .teaser-grid { grid-template-columns: 1fr; } }
+
+/* --------------------------------------------------------------- Ablauf -- */
+
+.ablauf {
+  list-style: none; margin: 0; padding: 0;
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: clamp(1rem, 2vw, 1.75rem);
+  counter-reset: schritt;
+}
+.ablauf li {
+  position: relative;
+  padding-top: 1.4rem;
+  border-top: 2px solid var(--line);
+  counter-increment: schritt;
+}
+.ablauf li::before {
+  content: counter(schritt, decimal-leading-zero);
+  display: block;
+  font-family: var(--font-display); font-weight: 700;
+  font-size: .82rem; letter-spacing: .1em;
+  color: var(--accent);
+  margin-bottom: .6rem;
+}
+.ablauf b { display: block; font-family: var(--font-display); font-size: 1.08rem; margin-bottom: .35rem; }
+.ablauf p { color: var(--text-soft); font-size: .96rem; margin: 0; }
+.band .ablauf li { border-top-color: var(--band-line); }
+.band .ablauf p { color: var(--band-text-soft); }
+@media (max-width: 880px) { .ablauf { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 560px) { .ablauf { grid-template-columns: 1fr; } }
+
+/* -------------------------------------------------------------- Projekte -- */
+
+.projekte { display: grid; gap: clamp(1.25rem, 2.4vw, 2rem); }
+.projekt {
+  color: var(--text);
+  display: grid; grid-template-columns: 1fr 1.15fr;
+  gap: clamp(1.25rem, 3vw, 2.5rem);
+  align-items: center;
+  padding: clamp(1.4rem, 2.6vw, 2.25rem);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+}
+.projekt:nth-child(even) .projekt__bild { order: 2; }
+.projekt__bild { aspect-ratio: 4 / 3; }
+.projekt h3 { font-size: clamp(1.2rem, 1.05rem + .7vw, 1.6rem); margin-bottom: .55rem; }
+.projekt p { color: var(--text-soft); }
+.fakten { margin: 1.4rem 0 0; display: grid; gap: 0; }
+.fakten .zeile {
+  display: flex; justify-content: space-between; gap: 1rem;
+  padding: .6rem 0; border-top: 1px solid var(--line);
+  font-size: .95rem;
+}
+.fakten dt { color: var(--text-soft); }
+.fakten dd { margin: 0; font-weight: 600; text-align: right; }
+@media (max-width: 780px) {
+  .projekt { grid-template-columns: 1fr; }
+  .projekt:nth-child(even) .projekt__bild { order: 0; }
+}
+
+/* ------------------------------------------------------------- Zitate --- */
+
+.zitate { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(1rem, 2vw, 1.75rem); }
+.zitat {
+  color: var(--text);
+  padding: clamp(1.4rem, 2.4vw, 2rem);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+}
+.zitat blockquote { margin: 0; font-size: 1.05rem; line-height: 1.55; }
+.zitat figcaption { margin-top: 1rem; color: var(--text-soft); font-size: .92rem; }
+.zitat figcaption b { color: var(--text); font-family: var(--font-display); display: block; }
+@media (max-width: 780px) { .zitate { grid-template-columns: 1fr; } }
+
+/* ----------------------------------------------------------------- FAQ --- */
+
+.faq { display: grid; gap: 0; max-width: 52rem; }
+.faq details { border-bottom: 1px solid var(--line); }
+.faq details:first-child { border-top: 1px solid var(--line); }
+.faq summary {
+  cursor: pointer; list-style: none;
+  padding: 1.1rem 0;
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+  font-family: var(--font-display); font-weight: 600; font-size: 1.03rem;
+}
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary::after {
+  content: "+"; color: var(--accent); font-size: 1.4rem; line-height: 1;
+  flex: none; transition: transform .2s ease;
+}
+.faq details[open] summary::after { transform: rotate(45deg); }
+.faq details > p { color: var(--text-soft); margin: 0 0 1.15rem; max-width: 60ch; }
+.band .faq details { border-color: var(--band-line); }
+.band .faq details:first-child { border-top-color: var(--band-line); }
+.band .faq details > p { color: var(--band-text-soft); }
+
+/* ------------------------------------------------------------ CTA-Band --- */
+
+.cta-band { background: var(--band); color: var(--band-text); }
+.cta-band__inner {
+  display: grid; grid-template-columns: 1.4fr auto;
+  gap: clamp(1.5rem, 3vw, 3rem); align-items: center;
+}
+.cta-band h2 { color: var(--band-text); max-width: 18ch; }
+.cta-band p { color: var(--band-text-soft); margin-top: 1rem; max-width: 48ch; }
+.cta-band__aktionen { display: flex; flex-wrap: wrap; gap: .85rem; }
+@media (max-width: 880px) { .cta-band__inner { grid-template-columns: 1fr; } }
+
+/* ------------------------------------------------------------ Formular --- */
+
+.formular {
+  color: var(--text);
+  padding: clamp(1.5rem, 3vw, 2.25rem);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+}
+.feld { display: grid; gap: .45rem; margin-bottom: 1.15rem; }
+.feld-paar { display: grid; grid-template-columns: 1fr 1fr; gap: 1.15rem; }
+.feld label { font-size: .88rem; font-weight: 600; }
+.feld input, .feld textarea, .feld select {
+  width: 100%;
+  padding: .8rem .9rem;
+  font: inherit; font-size: .97rem;
+  color: var(--text);
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  transition: border-color .15s ease;
+}
+.feld textarea { resize: vertical; min-height: 7.5rem; }
+/*
+   Beim Tippen mit der Maus genuegt die farbige Kante. Wer sich mit der
+   Tastatur durch das Formular bewegt, braucht dagegen den Ring - sonst
+   weiss er nicht, in welchem Feld er steht. Frueher stand hier
+   outline: none fuer beide Faelle; das hat den globalen Fokusring auf
+   genau den Feldern abgeschaltet, auf denen er am wichtigsten ist.
+*/
+.feld input:focus, .feld textarea:focus, .feld select:focus {
+  border-color: var(--accent);
+}
+.feld input:focus:not(:focus-visible),
+.feld textarea:focus:not(:focus-visible),
+.feld select:focus:not(:focus-visible) {
+  outline: none;
+}
+.formular__hinweis { color: var(--text-soft); font-size: .85rem; margin-top: .9rem; }
+@media (max-width: 560px) { .feld-paar { grid-template-columns: 1fr; } }
+
+/* --------------------------------------------------------- Zwei Spalten -- */
+
+.zwei {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: clamp(1.5rem, 4vw, 3.5rem);
+  align-items: start;
+}
+.zwei--schmal-rechts { grid-template-columns: 1.25fr .95fr; }
+@media (max-width: 880px) { .zwei, .zwei--schmal-rechts { grid-template-columns: 1fr; } }
+
+/* ------------------------------------------------------------- Preise ---- */
+
+.preise { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(1rem, 2vw, 1.5rem); }
+.preis {
+  color: var(--text);
+  padding: clamp(1.4rem, 2.4vw, 2rem);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+}
+.preis__wert {
+  font-family: var(--font-display); font-weight: 700;
+  font-size: clamp(1.6rem, 1.3rem + 1.2vw, 2.2rem);
+  color: var(--accent); line-height: 1;
+}
+.preis b { display: block; font-family: var(--font-display); margin: .8rem 0 .35rem; }
+.preis p { color: var(--text-soft); font-size: .95rem; margin: 0; }
+@media (max-width: 880px) { .preise { grid-template-columns: 1fr; } }
+
+/* ============================================================================
+   2. Tokens und eigene Bausteine
+   ========================================================================= */
 
 :root {
   --graphit-900: #14181d;
@@ -50,11 +584,13 @@
   --font-display: Archivo, ui-sans-serif, system-ui, sans-serif;
   --font-body: Barlow, ui-sans-serif, system-ui, sans-serif;
 
-  --r: 6px;
+  --r: 0px;              /* Nichts ist hier rund. Siehe Grammatik unten. */
   --pad-x: clamp(1.25rem, 5vw, 5rem);
-  --section-y: clamp(4.5rem, 9vw, 7.5rem);
+  --section-y: clamp(3.2rem, 6vw, 5.2rem);   /* dichter als ueblich, siehe Grammatik */
   --wrap: 1240px;
-  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  /* Eigene Bewegungssprache - siehe Abschnitt 'Bewegung' unten. */
+  --ease: cubic-bezier(.2, .85, .25, 1);
+  --takt: 170ms;
 
   color-scheme: light;
 }
@@ -62,11 +598,6 @@
 h1, h2, h3 { font-weight: 700; letter-spacing: -0.02em; }
 .btn:hover { background: var(--signal-dunkel); }
 
-/* Feines Punktraster als Grundflaeche. Technisch, ohne aufdringlich zu sein. */
-.raster {
-  background-image: radial-gradient(rgba(20, 24, 29, 0.13) 1px, transparent 1px);
-  background-size: 22px 22px;
-}
 
 /* ------------------------------------------------------------- Beispiel - */
 
@@ -95,79 +626,7 @@ h1, h2, h3 { font-weight: 700; letter-spacing: -0.02em; }
 }
 .demo-badge:hover { border-color: var(--accent); }
 
-/* Die Leiste liegt ueber hellem Grund, deshalb von Anfang an dunkler Text. */
-.nav .brand,
-.nav .nav__links a { color: var(--text); }
-.nav .nav__burger { border-color: var(--line); color: var(--text); }
 
-/* ----------------------------------------------------------------- Hero - */
-
-.hero {
-  position: relative;
-  min-height: 100dvh;
-  display: flex;
-  align-items: center;
-  padding-top: clamp(6rem, 9vh, 7rem);
-  padding-bottom: clamp(3rem, 7vh, 5rem);
-  background-color: var(--bg);
-}
-.hero::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background-image: radial-gradient(rgba(20, 24, 29, 0.13) 1px, transparent 1px);
-  background-size: 22px 22px;
-  mask-image: linear-gradient(to bottom, #000 0%, transparent 78%);
-  -webkit-mask-image: linear-gradient(to bottom, #000 0%, transparent 78%);
-  pointer-events: none;
-}
-
-.hero__grid {
-  position: relative;
-  display: grid;
-  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
-  gap: clamp(2.5rem, 5vw, 4.5rem);
-  align-items: center;
-  width: 100%;
-}
-.hero .display { max-width: 15ch; }
-.hero .lede { margin-top: 1.4rem; max-width: 42ch; }
-.hero__actions { margin-top: 2.2rem; display: flex; flex-wrap: wrap; gap: .85rem; }
-.hero__media { aspect-ratio: 4 / 5; }
-
-/* Notdienst ist das staerkste Argument im Handwerk und bekommt deshalb
-   einen eigenen, ruhigen Streifen unter dem Hero. */
-.notdienst {
-  background: var(--graphit-900);
-  color: var(--band-text);
-  padding-block: 1.15rem;
-}
-.notdienst__inner {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: .85rem 1.5rem;
-}
-.notdienst svg { width: 22px; height: 22px; color: var(--accent); flex: none; }
-.notdienst b { font-family: var(--font-display); font-weight: 700; }
-.notdienst span { color: var(--band-text-soft); }
-.notdienst a {
-  margin-left: auto;
-  font-weight: 600;
-  text-decoration: none;
-  border-bottom: 2px solid var(--accent);
-  padding-bottom: 2px;
-}
-.notdienst a:hover { color: var(--accent); }
-
-@media (max-width: 900px) {
-  .hero__grid { grid-template-columns: 1fr; gap: 2.25rem; }
-  .hero .display { max-width: none; }
-  .hero__media { aspect-ratio: 3 / 2; }
-  .notdienst a { margin-left: 0; }
-}
-
-/* ------------------------------------------------------- Leistungen ----- */
 /*
    Karten, die sich beim Scrollen aufeinander stapeln. Der Stapel zeigt,
    dass die Gewerke zusammengehoeren, statt sie nebeneinander zu stellen.
@@ -228,7 +687,7 @@ h1, h2, h3 { font-weight: 700; letter-spacing: -0.02em; }
   .karte-l__ico { display: none; }
 }
 
-/* ----------------------------------------------- Vorher-Nachher-Schieber */
+
 /*
    Signatur der Seite. Zwei Bildplaetze liegen uebereinander, der obere wird
    beschnitten. Ziehen, Klicken und die Pfeiltasten steuern die Kante.
@@ -354,14 +813,6 @@ h1, h2, h3 { font-weight: 700; letter-spacing: -0.02em; }
 
 /* ---------------------------------------------------------- Kontakt ----- */
 
-.kontakt { background: var(--knochen-2); }
-.kontakt__grid {
-  display: grid;
-  grid-template-columns: minmax(0, 6fr) minmax(0, 5fr);
-  gap: clamp(2.5rem, 6vw, 5rem);
-  align-items: start;
-}
-.kontakt .h2 { max-width: 14ch; }
 
 .wege { display: grid; gap: 1rem; margin-top: 2rem; }
 .weg {
@@ -397,21 +848,443 @@ h1, h2, h3 { font-weight: 700; letter-spacing: -0.02em; }
 .einzug dt { color: var(--text-soft); }
 .einzug dd { margin: 0; font-variant-numeric: tabular-nums; }
 
-@media (max-width: 860px) {
-  .kontakt__grid { grid-template-columns: 1fr; gap: 2.5rem; }
-}
-
-
-/* ============================================================================
-   Akzent im dunklen Abschnitt
-   ========================================================================= */
 
 /* In den dunklen Abschnitten uebernimmt der aufgehellte Ton. Weil --accent
    vererbt wird, genuegt es, ihn am Container zu setzen. */
-.vergleich, .notdienst, .footer, .cta-band, .band {
+.vergleich, .werkleiste__notdienst, .datenblatt, .cta-band, .band {
   --accent: var(--accent-band);
   --accent-flaeche: var(--accent-band);
   /* Ein Knopf auf dem Band traegt jetzt die helle Flaeche, also braucht er
      dunkle Schrift statt der hellen aus dem Grundzustand. */
   --accent-fg: #14181d;
 }
+
+
+/* ------------------------------------------------------------- Werkleiste */
+
+.werkleiste {
+  position: sticky; top: 0; z-index: 100;
+  background: var(--bg);
+  box-shadow: 0 1px 0 var(--line);
+}
+.werkleiste__zeile {
+  width: 100%; max-width: var(--wrap); margin-inline: auto;
+  padding-inline: var(--pad-x);
+  display: flex; align-items: center; gap: .6rem 1.2rem;
+}
+
+/* Obere Lage: der Notdienst. */
+.werkleiste__notdienst {
+  background: var(--graphit-900);
+  color: var(--band-text-soft);
+  font-size: .86rem;
+}
+.werkleiste__notdienst .werkleiste__zeile { min-height: 40px; flex-wrap: wrap; }
+.werkleiste__notdienst svg { width: 18px; height: 18px; color: var(--accent-band); flex: none; }
+.werkleiste__notdienst b { font-family: var(--font-display); font-weight: 700; color: var(--band-text); }
+.werkleiste__notdienst a {
+  margin-left: auto; font-weight: 600; text-decoration: none;
+  color: var(--band-text); border-bottom: 2px solid var(--accent-band); padding-bottom: 1px;
+}
+.werkleiste__notdienst a:hover { color: var(--accent-band); }
+
+/* Untere Lage: Name, Reiter, Termin. */
+.werkleiste__haupt .werkleiste__zeile {
+  min-height: 66px;
+  justify-content: space-between;
+  transition: min-height 200ms var(--ease);
+}
+.werkleiste.is-stuck .werkleiste__haupt .werkleiste__zeile { min-height: 56px; }
+
+/* Der Name sitzt in einem vollen Block, nicht als freier Schriftzug. */
+.marke {
+  display: inline-flex; flex-direction: column; justify-content: center;
+  align-self: stretch;
+  margin-left: calc(var(--pad-x) * -1);
+  padding: .55rem var(--pad-x);
+  background: var(--accent-flaeche); color: var(--accent-fg);
+  font-family: var(--font-display); font-weight: 800;
+  font-size: 1.2rem; line-height: 1.05; letter-spacing: -.015em;
+  text-decoration: none;
+}
+.marke i {
+  font-style: normal; font-weight: 500;
+  font-size: .66rem; letter-spacing: .16em; text-transform: uppercase;
+  opacity: .82;
+}
+
+/* Reiter mit einem Balken darunter statt einer Unterstreichung, die erst
+   beim Zeigen erscheint - so sieht man auch im Stand, wo man ist. */
+.reiter { display: flex; align-items: stretch; gap: clamp(.4rem, 1.4vw, 1.4rem);
+  list-style: none; margin: 0; padding: 0; }
+.reiter a {
+  position: relative; display: flex; align-items: center;
+  padding: .5rem .3rem;
+  font-family: var(--font-display); font-size: .96rem; font-weight: 600;
+  color: var(--text-soft); text-decoration: none;
+  transition: color .22s var(--ease);
+}
+.reiter a::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: -2px; height: 3px;
+  background: var(--accent-flaeche);
+  transform: scaleY(0); transform-origin: bottom;
+  transition: transform .24s var(--ease);
+}
+.reiter a:hover { color: var(--text); }
+.reiter a:hover::after { transform: scaleY(1); }
+
+.werkleiste__cta { display: flex; align-items: center; gap: .7rem; }
+
+.werkleiste__burger {
+  display: none; width: 44px; height: 44px; padding: 0;
+  border: 1px solid var(--line); border-radius: 4px;
+  background: transparent; color: var(--text); cursor: pointer; place-items: center;
+}
+.werkleiste__burger span {
+  display: block; width: 17px; height: 2px; background: currentColor;
+  margin: 3.2px auto; transition: transform .3s var(--ease), opacity .2s var(--ease);
+}
+.werkleiste__burger[aria-expanded="true"] span:nth-child(1){transform:translateY(5.2px) rotate(45deg);}
+.werkleiste__burger[aria-expanded="true"] span:nth-child(2){opacity:0;}
+.werkleiste__burger[aria-expanded="true"] span:nth-child(3){transform:translateY(-5.2px) rotate(-45deg);}
+
+@media (max-width: 900px) {
+  .reiter, .werkleiste__cta .btn { display: none; }
+  .werkleiste__burger { display: grid; }
+  .werkleiste__notdienst span { display: none; }
+}
+
+/* -------------------------------------------------------------- Aufmacher */
+
+.aufmacher {
+  position: relative;
+  display: grid;
+  align-items: end;
+  min-height: min(76svh, 720px);
+}
+.aufmacher > * { grid-area: 1 / 1; }
+
+/* Der Leitungsplan liegt ueber dem Bild, unter dem Text. */
+.leitungen {
+  position: relative; z-index: 1;
+  width: 100%; height: 100%;
+  pointer-events: none; display: block;
+  align-self: stretch;
+}
+
+.aufmacher__bild { width: 100%; height: 100%; border-radius: 0; }
+.aufmacher__bild img { width: 100%; height: 100%; object-fit: cover; }
+/* Ohne den Verlauf steht heller Text spaeter auf einem hellen Foto. Er ist
+   nicht nur ein Schleier: aus der Ecke, in der die Ansage steht, kommt ein
+   kuehles Signallicht dazu, dahinter ein warmer Gegenpol. Das gibt dem Band
+   Tiefe, auch bevor ein Foto darunterliegt. */
+.aufmacher__bild::after {
+  content: ""; position: absolute; inset: 0; z-index: 1;
+  background:
+    radial-gradient(58% 46% at 16% 82%, rgba(47, 109, 240, .30), transparent 66%),
+    radial-gradient(46% 40% at 82% 22%, rgba(226, 176, 122, .13), transparent 68%),
+    linear-gradient(to top,
+      rgba(20, 24, 29, .92) 0%, rgba(20, 24, 29, .70) 34%, rgba(20, 24, 29, .10) 74%);
+}
+/* Korn darueber. Ohne das sieht ein weicher Verlauf nach Bildschirmschoner aus. */
+.aufmacher__bild::before {
+  content: ""; position: absolute; inset: 0; z-index: 2;
+  pointer-events: none; opacity: .26; mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='k'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23k)'/%3E%3C/svg%3E"); background-size: 200px 200px;
+}
+
+.aufmacher__satz {
+  position: relative; z-index: 2;
+  width: 100%; max-width: var(--wrap); margin-inline: auto;
+  padding: 0 var(--pad-x) clamp(2.2rem, 5vh, 3.5rem);
+  color: var(--band-text);
+}
+.aufmacher__satz .eyebrow { color: var(--accent-band); }
+.aufmacher__satz .display { max-width: 17ch; color: var(--band-text); }
+.aufmacher__satz .lede { margin-top: 1.2rem; max-width: 44ch; color: var(--band-text-soft); }
+.aufmacher__satz .hero__actions { margin-top: 1.9rem; display: flex; flex-wrap: wrap; gap: .85rem; }
+/* Der Linienknopf ist fuer hellen Grund gebaut. Hier steht er auf dem
+   abgedunkelten Foto und waere mit dunkler Schrift unsichtbar. */
+.aufmacher__satz .btn--line { color: var(--band-text); border-color: var(--band-line); }
+.aufmacher__satz .btn--line:hover { background: var(--band-text); color: var(--band); border-color: var(--band-text); }
+
+
+/* Im Aufmacher steht kein Hinweis. Das Band traegt den Leitungsplan, den
+   Verlauf und das Korn und ist damit fertig anzusehen - ein Zettel "Foto
+   folgt" quer ueber dem Kopf der Seite wuerde es zur Baustelle machen.
+   Sobald hero.jpg im Ordner liegt, legt es sich darunter. Auf den kleineren
+   Platten weiter unten bleibt der Hinweis stehen: dort waere ein leeres
+   Rechteck sonst nicht zu deuten. */
+.aufmacher .ph__brief, .aufmacher .ph__mark { display: none; }
+
+/* Drei Zusagen als Streifen direkt unter dem Bild. */
+.zusagen {
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
+  border-bottom: 1px solid var(--line);
+  width: 100%; max-width: var(--wrap); margin-inline: auto;
+  padding-inline: var(--pad-x);
+}
+.zusage {
+  display: grid; grid-template-columns: auto 1fr; grid-template-rows: auto auto;
+  column-gap: .8rem; align-items: center;
+  padding: clamp(1.1rem, 2.4vw, 1.6rem) clamp(1rem, 2vw, 1.8rem);
+  border-left: 1px solid var(--line);
+}
+.zusage:first-child { padding-left: 0; }
+.zusage:last-child { padding-right: 0; }
+.zusage:first-child { border-left: 0; }
+.zusage svg { grid-row: 1 / 3; width: 26px; height: 26px; color: var(--accent); }
+.zusage b { font-family: var(--font-display); font-size: 1.02rem; }
+.zusage span { color: var(--text-soft); font-size: .89rem; line-height: 1.4; }
+@media (max-width: 820px) {
+  .zusagen { grid-template-columns: 1fr; }
+  .zusage { border-left: 0; border-top: 1px solid var(--line); }
+  .zusage:first-child { border-top: 0; }
+}
+
+/* -------------------------------------------------------------- Datenblatt */
+
+.datenblatt {
+  background: var(--band); color: var(--band-text-soft);
+  border-top: 3px solid var(--accent-flaeche);
+  padding: clamp(2.5rem, 5vw, 3.5rem) var(--pad-x);
+  font-size: .94rem;
+}
+.datenblatt__raster {
+  width: 100%; max-width: var(--wrap); margin-inline: auto;
+  display: grid; grid-template-columns: minmax(0, 1.2fr) repeat(2, minmax(0, 1fr));
+  gap: clamp(1.6rem, 4vw, 3rem);
+}
+.datenblatt__block h2 {
+  font-size: .76rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase;
+  color: var(--accent-band); margin-bottom: .9rem;
+}
+.datenblatt__block p { max-width: 34ch; }
+.datenblatt__block ul { list-style: none; margin: 0; padding: 0; display: grid; gap: .45rem; }
+.datenblatt__block a { text-decoration: none; }
+.datenblatt__block a:hover { color: var(--accent-band); }
+
+/* Punktlinie zwischen Bezeichnung und Wert, wie in einer technischen Beilage. */
+.datenblatt dl { margin: 0; display: grid; gap: .45rem; }
+.datenblatt dl > div { display: flex; align-items: baseline; gap: .5rem; }
+.datenblatt dt { flex: none; }
+.datenblatt dl > div::before {
+  content: ""; order: 1; flex: 1 1 auto;
+  border-bottom: 1px dotted var(--band-line);
+  transform: translateY(-.25em);
+}
+.datenblatt dd { order: 2; margin: 0; flex: none; color: var(--band-text); }
+
+/* Zwei Ebenen, weil die Linie ueber die ganze Satzbreite laufen soll, der
+   Text darunter aber nur ueber eine lesbare Zeilenlaenge. */
+.datenblatt__fuss {
+  width: 100%; max-width: var(--wrap); margin: 2rem auto 0;
+  padding-top: 1.5rem; border-top: 1px solid var(--band-line);
+}
+.datenblatt__fuss p { max-width: 78ch; margin: 0; font-size: .85rem; opacity: .75; }
+@media (max-width: 820px) {
+  .datenblatt__raster { grid-template-columns: 1fr; }
+}
+
+
+/* ============================================================================
+   4. Tarifblatt - die Signatur der Leistungsseite
+   ----------------------------------------------------------------------------
+   Drei Wartungspakete nebeneinander, das mittlere hervorgehoben, darueber ein
+   Umschalter zwischen Jahresbetrag und Monatsrate. Der Schieber hinter den
+   beiden Knoepfen ist ein einzelnes Element, das nur verschoben wird - so
+   laeuft der Wechsel ohne Sprung.
+
+   Kein anderes Beispiel hat diesen Baustein; er sitzt hier, weil ein
+   Handwerksbetrieb wiederkehrende Leistungen verkauft und nicht nur Auftraege.
+   ========================================================================= */
+
+.tarife { margin-top: clamp(1.5rem, 3vw, 2.5rem); }
+/* Ohne JavaScript kann der Umschalter nichts umschalten, also steht er auch
+   nicht da. Die Jahresbetraege bleiben sichtbar - die Seite ist vollstaendig.
+   .js setzt das Skript selbst an <html>. */
+.tarife__schalter { display: none; }
+.js .tarife__schalter { display: flex; }
+
+/* ------------------------------------------------------------- Umschalter */
+
+.tarife__schalter {
+  position: relative;
+  display: flex;
+  width: fit-content;
+  margin: 0 auto clamp(3.2rem, 5vw, 4.2rem);
+  padding: 4px;
+  border-radius: var(--r);
+  background: var(--graphit-900);
+  isolation: isolate;
+}
+.tarife__schalter button {
+  position: relative; z-index: 1;
+  padding: .62rem 1.4rem;
+  border: 0; background: none; cursor: pointer;
+  font-family: var(--font-display); font-size: .94rem; font-weight: 600;
+  color: var(--band-text-soft);
+  transition: color .28s var(--ease);
+}
+.tarife__schalter button.is-an { color: var(--accent-fg); }
+/* Der Schieber faehrt unter dem aktiven Knopf entlang. --platz kommt aus dem
+   Skript und ist 0 oder 1. */
+.tarife__schieber {
+  position: absolute; z-index: 0;
+  top: 4px; bottom: 4px; left: 4px;
+  width: calc((100% - 8px) / 2);
+  border-radius: var(--r);
+  background: var(--accent-flaeche);
+  transform: translateX(calc(var(--platz, 0) * 100%));
+  transition: transform .34s var(--ease);
+}
+
+/* ----------------------------------------------------------------- Karten */
+
+.tarife__reihe {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(1rem, 2vw, 1.5rem);
+  align-items: start;
+}
+
+.tarif {
+  position: relative;
+  display: flex; flex-direction: column;
+  padding: clamp(1.6rem, 3vw, 2.2rem);
+  border: 1px solid var(--line);
+  /* var(--r), nicht 14px: die Tarifkarten waren die einzigen runden
+     Flaechen im ganzen Projekt. Halbritter ist rechtwinklig, vom Knopf
+     bis zum Bildplatz - eine Ausnahme macht daraus keinen Akzent,
+     sondern einen Fehler. */
+  border-radius: var(--r);
+  background: var(--surface);
+}
+/* Die mittlere Karte steht vorn: dunkler Grund, etwas hoeher, mit Marke. */
+.tarif--vorn {
+  background: var(--graphit-900);
+  border-color: var(--graphit-700);
+  color: var(--band-text-soft);
+  margin-block: calc(clamp(1rem, 2vw, 1.6rem) * -1);
+  padding-block: calc(clamp(1.6rem, 3vw, 2.2rem) + clamp(1rem, 2vw, 1.6rem));
+  box-shadow: 0 30px 60px -34px rgba(20, 24, 29, .7);
+  --accent: var(--accent-band);
+  --accent-flaeche: var(--accent-band);
+  --accent-fg: #14181d;
+}
+.tarif--vorn h3 { color: var(--band-text); }
+
+.tarif__marke {
+  position: absolute; top: 0; left: 50%;
+  transform: translate(-50%, -50%);
+  display: inline-flex; align-items: center; gap: .4rem;
+  padding: .4rem .9rem;
+  border-radius: var(--r);
+  background: var(--accent-flaeche); color: var(--accent-fg);
+  font-family: var(--font-display); font-size: .78rem; font-weight: 700;
+  white-space: nowrap;
+}
+.tarif__marke svg { width: 15px; height: 15px; }
+
+.tarif h3 { font-size: clamp(1.15rem, 1rem + .5vw, 1.4rem); }
+.tarif__wofuer { color: var(--text-soft); font-size: .93rem; margin-top: .3rem; }
+.tarif--vorn .tarif__wofuer { color: var(--band-text-soft); }
+
+.tarif__preis {
+  display: flex; align-items: baseline; gap: .4rem;
+  margin-top: clamp(1rem, 2vw, 1.5rem);
+}
+.tarif__preis b {
+  font-family: var(--font-display); font-weight: 800;
+  font-size: clamp(1.9rem, 1.4rem + 1.8vw, 2.9rem);
+  line-height: 1; letter-spacing: -.02em;
+  color: var(--text);
+}
+.tarif--vorn .tarif__preis b { color: var(--band-text); }
+.tarif__preis span { color: var(--text-soft); font-size: .95rem; }
+/* Steht dort ein Wort statt einer Zahl, wird es kleiner gesetzt - sonst
+   schreit "Auf Anfrage" lauter als die beiden echten Betraege. */
+.tarif__preis:not(:has(span)) b { font-size: clamp(1.4rem, 1.1rem + .9vw, 1.9rem); }
+.tarif--vorn .tarif__preis span { color: var(--band-text-soft); }
+.tarif__takt { margin-top: .45rem; font-size: .82rem; color: var(--text-soft); }
+.tarif--vorn .tarif__takt { color: var(--band-text-soft); }
+
+.tarif__liste {
+  list-style: none; margin: clamp(1.2rem, 2.4vw, 1.8rem) 0 0; padding: 0;
+  display: grid; gap: .62rem;
+  font-size: .93rem;
+}
+.tarif__liste li { display: grid; grid-template-columns: auto 1fr; gap: .6rem; align-items: start; }
+/* Das Haekchen ist gezeichnet, nicht gesetzt - so bleibt es unabhaengig von
+   der Schrift und faellt bei Vorlesesoftware weg. */
+.tarif__liste li::before {
+  content: ""; margin-top: .42em;
+  width: 11px; height: 6px;
+  border-left: 2px solid var(--accent);
+  border-bottom: 2px solid var(--accent);
+  transform: rotate(-45deg);
+}
+.tarif--vorn .tarif__liste li::before { border-color: var(--accent-band); }
+
+.tarif .btn { margin-top: auto; justify-content: center; }
+.tarif__liste + .btn { margin-top: clamp(1.4rem, 2.6vw, 2rem); }
+
+.tarife__fussnote {
+  margin: clamp(1.5rem, 3vw, 2.2rem) auto 0;
+  max-width: 62ch; text-align: center;
+  font-size: .85rem; color: var(--text-soft);
+}
+
+@media (max-width: 900px) {
+  .tarife__reihe { grid-template-columns: 1fr; }
+  .tarif--vorn { margin-block: 0; padding-block: clamp(1.6rem, 3vw, 2.2rem); }
+  .tarif__marke { position: static; transform: none; margin-bottom: 1rem; align-self: start; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tarife__schieber { transition: none; }
+}
+
+
+/* ============================================================================
+   Bewegung: mechanisch
+   ----------------------------------------------------------------------------
+   Kurz, praezise, mit hartem Ausklang - wie ein Schalter, der einrastet.
+   --takt ist die Grundlaenge; laengere Wege bekommen ein Vielfaches davon,
+   nie eine frei gewaehlte Zahl. So bleibt das Tempo der ganzen Seite gleich.
+
+   Beim Zeigen faehrt eine Linie ueber das Bild, als wuerde es abgetastet.
+   Kein weiches Aufblenden - das waere die Sprache der anderen Seiten.
+   ========================================================================= */
+
+.ph { overflow: hidden; }
+.ph img { transition: transform calc(var(--takt) * 2.4) var(--ease); }
+.projekt:hover .ph img, .teaser:hover .ph img, .aufmacher:hover .aufmacher__bild img {
+  transform: scale(1.045);
+}
+
+/* Die Abtastlinie. Sie faehrt einmal durch und bleibt dann weg. */
+.projekt .ph::after, .teaser .ph::after {
+  content: ""; position: absolute; left: 0; right: 0; top: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--accent-flaeche), transparent);
+  transform: translateY(-4px); opacity: 0;
+  transition: transform calc(var(--takt) * 3.5) linear, opacity var(--takt) linear;
+  z-index: 3; pointer-events: none;
+}
+.projekt:hover .ph::after, .teaser:hover .ph::after {
+  transform: translateY(var(--ph-hoehe, 320px)); opacity: 1;
+}
+
+/* Reiter und Knoepfe rasten ein statt zu gleiten. */
+.reiter a::after { transition: transform var(--takt) var(--ease); }
+
+/* --------------------------------------------------- Vorhang beim Wechsel */
+/* Ein Balken, der quer durchs Bild faehrt. Er liegt ueber allem, faengt aber
+   keine Klicks ab, sobald er draussen ist. */
+.wechsel {
+  position: fixed; inset: 0; z-index: 300;
+  background: var(--accent-flaeche);
+  transform: translateX(-100%);
+  pointer-events: none;
+}
+body.ist-da .wechsel { transform: translateX(100%); transition: transform 420ms var(--ease); }
+body.geht   .wechsel { transform: translateX(0);    transition: transform 260ms var(--ease); }

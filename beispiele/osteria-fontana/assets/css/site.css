@@ -1,18 +1,520 @@
-/* ============================================================================
-   Osteria Fontana - Beispielprojekt
-   ----------------------------------------------------------------------------
-   Richtung   Dunkel, editorial, bildgetrieben. Die Karte ist kurz, das soll
-              die Seite auch ausstrahlen: wenig Elemente, viel Ruhe, grosse
-              Typografie.
-   Palette    Warmes Fast-Schwarz, Creme, ein Akzent in Terrakotta.
-   Typografie Playfair Display (Display) + Karla (Fliesstext).
-              Serif ist hier begruendet: Gastronomie mit Handschrift, die
-              Karte liest sich wie ein redaktioneller Text.
-   Signatur   Waagerecht gescrollte Galerie, an den Viewport geheftet.
-   ========================================================================= */
+
 
 @import url("fonts.css");
-@import url("basis.css");
+
+/* ============================================================================
+   1. Struktur
+   ----------------------------------------------------------------------------
+   Raster, Abstaende und Bausteine dieser Seite. Farben und Schriftnamen
+   stehen nicht hier, sondern als Tokens in Abschnitt 2.
+
+   Diese Datei gehoert allein zu Osteria Fontana. Sie darf frei geaendert
+   werden, ohne dass ein anderes Beispiel davon beruehrt wird.
+   ========================================================================= */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: clamp(1rem, 0.96rem + 0.2vw, 1.075rem);
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  margin: 0;
+  line-height: 1.08;
+  text-wrap: balance;
+}
+
+p { margin: 0; text-wrap: pretty; }
+
+/* Die ganze Seite ist mittig gesetzt wie eine Karte. Nur was man abfaehrt -
+   Speisenliste, Formular, zweispaltige Bloecke - bleibt linksbuendig. */
+.section { text-align: center; }
+.section .karte__gruppen, .section .formular, .section .gericht,
+.section .zwei, .section .kueche__grid, .section .besuch__grid { text-align: left; }
+.lede, .body-copy { margin-inline: auto; }
+a { color: inherit; }
+img { max-width: 100%; display: block; }
+
+:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+.skip {
+  position: absolute; left: -9999px; top: 0; z-index: 200;
+  background: var(--accent-flaeche); color: var(--accent-fg);
+  padding: 0.85rem 1.4rem; font-weight: 600;
+}
+.skip:focus { left: 0; }
+
+/* ------------------------------------------------------------------ Raster */
+
+.wrap {
+  width: 100%;
+  max-width: var(--wrap, 1240px);
+  margin-inline: auto;
+  padding-inline: var(--pad-x);
+}
+
+section { position: relative; }
+.section { padding-block: var(--section-y); }
+
+.band { background: var(--band); color: var(--band-text); }
+.band h1, .band h2, .band h3 { color: var(--band-text); }
+
+/* ---------------------------------------------------------------- Typo --- */
+
+/* Groesser und mit mehr Durchschuss als anderswo: eine Karte liest man
+   langsam. */
+.display {
+  font-size: clamp(2.5rem, 1.5rem + 3.4vw, 4.1rem);
+  line-height: 1.08;
+  letter-spacing: -.005em;
+}
+.h2 { font-size: clamp(1.85rem, 1.2rem + 2.4vw, 3rem); line-height: 1.14; }
+
+
+.lede {
+  font-size: clamp(1.06rem, 1rem + 0.4vw, 1.28rem);
+  line-height: 1.55;
+  color: var(--text-soft);
+  max-width: 44ch;
+}
+.band .lede { color: var(--band-text-soft); }
+
+.body-copy { color: var(--text-soft); max-width: 62ch; }
+.band .body-copy { color: var(--band-text-soft); }
+
+/* Mittige Zierzeile mit Strichen links und rechts - die Gliederung einer
+   Speisekarte, nicht das Label eines Web-Abschnitts. */
+.eyebrow {
+  display: flex; align-items: center; justify-content: center; gap: 1rem;
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  font-weight: 500;
+  font-style: italic;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 0 0 1.3rem;
+}
+.eyebrow::before, .eyebrow::after {
+  content: ""; width: clamp(18px, 4vw, 46px); height: 1px;
+  background: currentColor; opacity: .55;
+}
+
+/* -------------------------------------------------------------- Buttons -- */
+
+/* Kein gefuellter Knopf: ein gesetzter Rahmen mit weit gesperrten Versalien,
+   wie die Zeile "Tischreservierung" unten auf einer gedruckten Karte. Erst
+   beim Zeigen laeuft die Flaeche voll. */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  gap: 0.7rem; white-space: nowrap;
+  font-family: var(--font-body);
+  font-size: .8rem; font-weight: 500; line-height: 1;
+  letter-spacing: .22em; text-transform: uppercase;
+  padding: 1.05rem 2.1rem;
+  border-radius: 0;
+  border: 1px solid var(--accent-flaeche);
+  background: transparent; color: var(--accent-flaeche);
+  text-decoration: none; cursor: pointer;
+  /* Kein letter-spacing beim Ueberfahren: das setzt bei jedem Bild den
+     Zeilenumbruch neu. Die weite Sperrung steht ohnehin schon fest, sie
+     ist die Handschrift des Hauses - passieren muss beim Zeigen die
+     Fuellung, nicht die Schrift. */
+  transition: background-color 180ms var(--ease), color 180ms var(--ease),
+              border-color 180ms var(--ease);
+}
+.btn:hover { background: var(--accent-flaeche); color: var(--accent-fg); }
+
+/* Der zweite Weg ist gar kein Knopf, sondern eine unterstrichene Zeile. */
+.btn--ghost {
+  border: 0; border-bottom: 1px solid var(--accent-band);
+  padding: 0 0 .55rem; background: none;
+  color: var(--band-text);
+}
+.btn--ghost:hover { background: none; color: var(--accent-band); }
+
+
+.btn__ico { width: 1.05em; height: 1.05em; flex: none; }
+
+/* ----------------------------------------------- Menue auf schmalem Fenster */
+
+.menu {
+  position: fixed; inset: 0; z-index: 110;
+  background: var(--band); color: var(--band-text);
+  display: grid; place-content: center; gap: .3rem; padding: var(--pad-x);
+  opacity: 0; visibility: hidden;
+  transition: opacity .35s var(--ease), visibility .35s;
+}
+.menu.is-open { opacity: 1; visibility: visible; }
+.menu a {
+  font-family: var(--font-display); font-size: clamp(1.9rem,8vw,2.9rem);
+  font-weight: 700; text-decoration: none; color: var(--band-text); padding: .3rem 0;
+}
+.menu a:hover { color: var(--accent); }
+.menu .btn { margin-top: 1.4rem; justify-self: start; }
+
+
+/*
+   Zeigt eine Markenflaeche, solange kein Foto vorliegt. Sobald die Datei
+   unter assets/img/ liegt, blendet sie sich darueber. Kein Markup aendern.
+*/
+.ph {
+  position: relative; overflow: hidden; border-radius: var(--r);
+  background:
+    radial-gradient(120% 96% at 18% 8%, var(--ph-1), transparent 62%),
+    radial-gradient(96% 96% at 88% 92%, var(--ph-2), transparent 58%),
+    var(--ph-3);
+  /* Eine feine Innenkante macht aus der Flaeche eine gesetzte Platte. */
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.07);
+  isolation: isolate;
+}
+.ph::before {
+  content:""; position:absolute; inset:0; pointer-events:none;
+  background-image: repeating-radial-gradient(circle at 74% 22%,
+    rgba(255,255,255,.05) 0 1px, transparent 1px 46px);
+}
+.ph img {
+  position:absolute; inset:0; width:100%; height:100%; object-fit:cover;
+  opacity:0; transition:opacity .7s var(--ease); z-index:2;
+}
+.ph img.is-loaded { opacity:1; }
+.ph.is-filled::before, .ph.is-filled .ph__mark, .ph.is-filled .ph__brief { opacity:0; }
+
+.ph__mark {
+  position:absolute; top:50%; left:50%; width:clamp(46px,16%,84px);
+  aspect-ratio:1; transform:translate(-50%,-50%);
+  color:rgba(255,255,255,.14); transition:opacity .4s var(--ease); z-index:1;
+}
+/* Der Hinweis liest sich wie eine Bildunterschrift, nicht wie eine Notiz
+   von der Baustelle: kleine Auszeichnung in der Akzentfarbe, darunter, was
+   auf dem Foto zu sehen sein wird. Sobald eine Datei unter dem erwarteten
+   Namen liegt, blendet .is-filled ihn aus. */
+.ph__brief {
+  position:absolute; inset:auto 0 0 0; padding:.95rem 1.1rem 1rem;
+  font-size:.8rem; line-height:1.45; color:rgba(255,255,255,.72);
+  background:linear-gradient(to top, rgba(0,0,0,.62), rgba(0,0,0,.28) 58%, transparent);
+  transition:opacity .4s var(--ease); z-index:1;
+}
+.ph__brief b {
+  display:block; font-family:var(--font-display); font-weight:600;
+  font-size:.68rem; letter-spacing:.16em; text-transform:uppercase;
+  color:var(--accent-band); margin-bottom:.3rem;
+}
+
+/* --------------------------------------------------- Bewegung, Grundlage */
+
+/*
+   Die Osteria bewegt nichts von der Stelle. Ein Block kommt, indem das Licht
+   hochgedreht wird: leicht ueberscharf gestellt, minimal zu gross, dann
+   ruhig auf seinen Platz. Lang (--takt 660 ms) und einzeln - das Skript
+   loest hier bewusst nicht gebuendelt aus.
+*/
+.js .reveal,
+.js [data-hero] {
+  opacity: 0;
+  /* Nach innen, nie nach aussen: eine Vergroesserung wuerde am Rand des
+     Fensters eine Querleiste erzeugen. */
+  transform: scale(.982);
+  filter: blur(10px);
+  transition: opacity calc(var(--takt) * 1.6) var(--ease),
+              transform calc(var(--takt) * 1.9) var(--ease),
+              filter calc(var(--takt) * 1.5) var(--ease);
+  transition-delay: var(--verzug, 0ms);
+}
+.js .reveal.ist-da,
+.js [data-hero].ist-da { opacity: 1; transform: none; filter: none; }
+
+/* Die Zierlinien links und rechts der Kapitelzeile wachsen nach aussen. */
+.js .reveal .eyebrow::before,
+.js .reveal .eyebrow::after {
+  transform: scaleX(0);
+  transition: transform calc(var(--takt) * 2.2) var(--ease);
+  transition-delay: calc(var(--verzug, 0ms) + var(--takt) * .6);
+}
+.js .reveal.ist-da .eyebrow::before,
+.js .reveal.ist-da .eyebrow::after { transform: scaleX(1); }
+
+/* Zeilenweises Aufdecken von Text. Jede Zeile liegt in einer Maske. */
+.js .reveal-lines .zeile { overflow: hidden; }
+.js .reveal-lines .zeile > span {
+  display: block; transform: translateY(102%);
+  transition: transform calc(var(--takt) * 1.8) var(--ease);
+  transition-delay: var(--verzug, 0ms);
+}
+.js .reveal-lines.ist-da .zeile > span { transform: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .js .reveal, .js [data-hero] { opacity: 1; transform: none; filter: none; }
+  .js .reveal-lines .zeile > span { transform: none; }
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+}
+
+
+/*
+   Rechtstexte und Fehlerseite haben keinen dunklen Hero. Die Leiste startet
+   dort deshalb sofort in Textfarbe statt in Band-Farbe, unabhaengig davon,
+   ob schon gescrollt wurde.
+*/
+.seite-hell { background: var(--bg); }
+/* Auf den hellen Innenseiten steht kein Bild hinter dem Schild, es traegt
+   dort von Anfang an Grund und dunkle Schrift. */
+.seite-hell .firmenschild { background: var(--bg); box-shadow: 0 1px 0 var(--line); }
+.seite-hell .firmenschild .schriftzug,
+.seite-hell .wege a { color: var(--text); }
+.seite-hell .firmenschild__burger { border-color: var(--line); color: var(--text); }
+
+.legal { padding-block: calc(var(--schild-h) + var(--section-y)) var(--section-y); }
+.legal__inner { max-width: 46rem; }
+.legal h1 { font-size: clamp(1.9rem, 1.4rem + 1.8vw, 2.7rem); margin-bottom: 2rem; }
+.legal h2 {
+  font-family: var(--font-display);
+  font-size: .82rem; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--accent); margin: 2.5rem 0 .7rem;
+}
+.legal p, .legal li { color: var(--text-soft); margin-bottom: .85rem; }
+.legal ul { margin: 0 0 .85rem; padding-left: 1.3rem; }
+.legal a { color: var(--accent); }
+.legal__hinweis {
+  border: 1px solid var(--line); border-left: 3px solid var(--accent);
+  border-radius: var(--r); background: var(--surface);
+  padding: 1.1rem 1.3rem; margin-bottom: 2.25rem;
+  font-size: .93rem; color: var(--text);
+}
+.todo {
+  background: color-mix(in srgb, var(--accent) 20%, transparent);
+  padding: .05em .4em; border-radius: 3px; font-weight: 600; color: var(--text);
+}
+
+/* ----------------------------------------------------- Fehlerseite ------- */
+
+.fehler {
+  min-height: 100dvh; display: grid; place-content: center; text-align: center;
+  padding: calc(var(--schild-h) + 2rem) var(--pad-x) 4rem;
+}
+.fehler__code {
+  font-family: var(--font-display); font-weight: 700; line-height: 1;
+  font-size: clamp(4.5rem, 3rem + 12vw, 9rem); color: var(--accent);
+}
+.fehler h1 { font-size: clamp(1.5rem, 1.2rem + 1.4vw, 2.1rem); margin: .8rem 0 .9rem; }
+.fehler p { color: var(--text-soft); max-width: 44ch; margin: 0 auto 2rem; }
+
+
+/*
+   Kopfbereich der Unterseiten. Uebernimmt die Grundflaeche der Seite, damit
+   die feste Leiste darueber lesbar bleibt. Projekte mit dunklem Hero setzen
+   die Flaeche in ihrer site.css auf das dunkle Band um.
+*/
+.seitenkopf {
+  background: var(--bg); color: var(--text);
+  padding-block: calc(var(--schild-h) + clamp(2.5rem, 6vw, 4.5rem)) clamp(2rem, 4vw, 3rem);
+  border-bottom: 1px solid var(--line);
+}
+.seitenkopf h1 { font-size: clamp(2rem, 1.5rem + 2.2vw, 3.1rem); max-width: 20ch; }
+.seitenkopf .lede { margin-top: 1.1rem; }
+
+/* Aktive Seite in der Navigation */
+.wege a[aria-current="page"] { color: var(--accent); }
+.wege a[aria-current="page"]::after { transform: scaleX(1); }
+.menu a[aria-current="page"] { color: var(--accent); }
+
+
+/* ------------------------------------------------------- Abschnittskopf -- */
+
+.kopf-block { max-width: 46rem; margin-bottom: clamp(2rem, 4vw, 3rem); }
+.kopf-block .h2 { max-width: 20ch; }
+.kopf-block .body-copy { margin-top: 1.1rem; }
+
+/* ------------------------------------------- Kurzvorschau auf Unterseite -- */
+
+.teaser-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(1rem, 2vw, 1.5rem);
+}
+.teaser {
+  display: flex;
+  flex-direction: column;
+  gap: .7rem;
+  color: var(--text);
+  padding: clamp(1.4rem, 2.4vw, 2rem);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  text-decoration: none;
+  color: inherit;
+  transition: border-color .2s ease, transform .2s ease;
+}
+.teaser:hover { border-color: var(--accent); transform: translateY(-3px); }
+.band .teaser b, .band .zitat b { color: var(--text); }
+.teaser > svg { width: 26px; height: 26px; color: var(--accent); }
+.teaser b { font-family: var(--font-display); font-size: 1.12rem; font-weight: 700; }
+.teaser p { color: var(--text-soft); font-size: .96rem; margin: 0; }
+
+
+@media (max-width: 880px) { .teaser-grid { grid-template-columns: 1fr; } }
+
+/* --------------------------------------------------------------- Ablauf -- */
+
+.ablauf {
+  list-style: none; margin: 0; padding: 0;
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: clamp(1rem, 2vw, 1.75rem);
+  counter-reset: schritt;
+}
+.ablauf li {
+  position: relative;
+  padding-top: 1.4rem;
+  border-top: 2px solid var(--line);
+  counter-increment: schritt;
+}
+.ablauf li::before {
+  content: counter(schritt, decimal-leading-zero);
+  display: block;
+  font-family: var(--font-display); font-weight: 700;
+  font-size: .82rem; letter-spacing: .1em;
+  color: var(--accent);
+  margin-bottom: .6rem;
+}
+.ablauf b { display: block; font-family: var(--font-display); font-size: 1.08rem; margin-bottom: .35rem; }
+.ablauf p { color: var(--text-soft); font-size: .96rem; margin: 0; }
+.band .ablauf li { border-top-color: var(--band-line); }
+.band .ablauf p { color: var(--band-text-soft); }
+@media (max-width: 880px) { .ablauf { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 560px) { .ablauf { grid-template-columns: 1fr; } }
+
+
+/* ------------------------------------------------------------- Zitate --- */
+
+.zitate { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(1rem, 2vw, 1.75rem); }
+.zitat {
+  color: var(--text);
+  padding: clamp(1.4rem, 2.4vw, 2rem);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+}
+.zitat blockquote { margin: 0; font-size: 1.05rem; line-height: 1.55; }
+.zitat figcaption { margin-top: 1rem; color: var(--text-soft); font-size: .92rem; }
+.zitat figcaption b { color: var(--text); font-family: var(--font-display); display: block; }
+@media (max-width: 780px) { .zitate { grid-template-columns: 1fr; } }
+
+/* ----------------------------------------------------------------- FAQ --- */
+
+.faq { display: grid; gap: 0; max-width: 52rem; }
+.faq details { border-bottom: 1px solid var(--line); }
+.faq details:first-child { border-top: 1px solid var(--line); }
+.faq summary {
+  cursor: pointer; list-style: none;
+  padding: 1.1rem 0;
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+  font-family: var(--font-display); font-weight: 600; font-size: 1.03rem;
+}
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary::after {
+  content: "+"; color: var(--accent); font-size: 1.4rem; line-height: 1;
+  flex: none; transition: transform .2s ease;
+}
+.faq details[open] summary::after { transform: rotate(45deg); }
+.faq details > p { color: var(--text-soft); margin: 0 0 1.15rem; max-width: 60ch; }
+.band .faq details { border-color: var(--band-line); }
+.band .faq details:first-child { border-top-color: var(--band-line); }
+.band .faq details > p { color: var(--band-text-soft); }
+
+/* ------------------------------------------------------------ CTA-Band --- */
+
+.cta-band { background: var(--band); color: var(--band-text); }
+.cta-band__inner {
+  display: grid; grid-template-columns: 1.4fr auto;
+  gap: clamp(1.5rem, 3vw, 3rem); align-items: center;
+}
+.cta-band h2 { color: var(--band-text); max-width: 18ch; }
+.cta-band p { color: var(--band-text-soft); margin-top: 1rem; max-width: 48ch; }
+.cta-band__aktionen { display: flex; flex-wrap: wrap; gap: .85rem; }
+@media (max-width: 880px) { .cta-band__inner { grid-template-columns: 1fr; } }
+
+/* ------------------------------------------------------------ Formular --- */
+
+.formular {
+  color: var(--text);
+  padding: clamp(1.5rem, 3vw, 2.25rem);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+}
+.feld { display: grid; gap: .45rem; margin-bottom: 1.15rem; }
+.feld-paar { display: grid; grid-template-columns: 1fr 1fr; gap: 1.15rem; }
+.feld label { font-size: .88rem; font-weight: 600; }
+.feld input, .feld textarea, .feld select {
+  width: 100%;
+  padding: .8rem .9rem;
+  font: inherit; font-size: .97rem;
+  color: var(--text);
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  transition: border-color .15s ease;
+}
+.feld textarea { resize: vertical; min-height: 7.5rem; }
+/*
+   Beim Tippen mit der Maus genuegt die farbige Kante. Wer sich mit der
+   Tastatur durch das Formular bewegt, braucht dagegen den Ring - sonst
+   weiss er nicht, in welchem Feld er steht. Frueher stand hier
+   outline: none fuer beide Faelle; das hat den globalen Fokusring auf
+   genau den Feldern abgeschaltet, auf denen er am wichtigsten ist.
+*/
+.feld input:focus, .feld textarea:focus, .feld select:focus {
+  border-color: var(--accent);
+}
+.feld input:focus:not(:focus-visible),
+.feld textarea:focus:not(:focus-visible),
+.feld select:focus:not(:focus-visible) {
+  outline: none;
+}
+/* Ein Datumsfeld besteht innen aus drei Teilen - Tag, Monat, Jahr - und
+   die Tabulatortaste laeuft sie einzeln ab. Am Feld selbst greift
+   :focus-visible dabei nur beim ersten Sprung, danach blinkt der Ring weg,
+   waehrend man noch mitten im Datum steht. Deshalb haengt er hier am
+   umgebenden Feld: einmal an, solange irgendetwas darin den Fokus hat. */
+.feld:focus-within input[type="date"] {
+  outline: 3px solid var(--accent);
+  outline-offset: 3px;
+}
+.formular__hinweis { color: var(--text-soft); font-size: .85rem; margin-top: .9rem; }
+@media (max-width: 560px) { .feld-paar { grid-template-columns: 1fr; } }
+
+/* --------------------------------------------------------- Zwei Spalten -- */
+
+.zwei {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: clamp(1.5rem, 4vw, 3.5rem);
+  align-items: start;
+}
+.zwei--schmal-rechts { grid-template-columns: 1.25fr .95fr; }
+@media (max-width: 880px) { .zwei, .zwei--schmal-rechts { grid-template-columns: 1fr; } }
+
+
+/* ============================================================================
+   2. Tokens und eigene Bausteine
+   ========================================================================= */
 
 :root {
   --nacht: #14100e;
@@ -50,11 +552,13 @@
   --font-display: "Playfair Display", Georgia, serif;
   --font-body: Karla, ui-sans-serif, system-ui, sans-serif;
 
-  --r: 4px;
+  --r: 0px;              /* Eine gedruckte Karte hat keine runden Ecken. */
   --pad-x: clamp(1.25rem, 5vw, 5rem);
   --section-y: clamp(5rem, 10vw, 8.5rem);
-  --wrap: 1280px;
-  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --wrap: 1080px;        /* Schmaler Satzspiegel wie auf einer Karte. */
+  /* Eigene Bewegungssprache - siehe Abschnitt 'Bewegung' unten. */
+  --ease: cubic-bezier(.22, .61, .24, 1);
+  --takt: 660ms;
 
   color-scheme: dark;
 }
@@ -80,7 +584,6 @@ body::after {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='.32'/%3E%3C/svg%3E");
 }
 
-/* ------------------------------------------------------------- Beispiel - */
 
 /* Rechts unten statt links: die Inhalte sind linksbuendig, dort waere der
    Hinweis staendig im Weg. */
@@ -114,58 +617,7 @@ body::after {
 }
 .demo-badge:hover { border-color: var(--accent); }
 
-/* ----------------------------------------------------------------- Hero - */
 
-.hero {
-  position: relative;
-  min-height: 100dvh;
-  display: flex;
-  align-items: flex-end;
-  padding-top: clamp(6rem, 9vh, 7rem);
-  padding-bottom: clamp(3rem, 7vh, 5rem);
-  overflow: hidden;
-}
-
-/* Ruhiger Lichtverlauf statt Farbklecks. */
-.hero::before {
-  content: "";
-  position: absolute;
-  inset: -25%;
-  pointer-events: none;
-  background:
-    radial-gradient(42% 40% at 74% 22%, rgba(196, 85, 47, 0.28), transparent 70%),
-    radial-gradient(46% 44% at 16% 78%, rgba(74, 53, 42, 0.55), transparent 72%);
-}
-
-.hero__grid {
-  position: relative;
-  display: grid;
-  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
-  gap: clamp(2.5rem, 5vw, 4.5rem);
-  align-items: end;
-  width: 100%;
-}
-
-.hero .display { max-width: 12ch; }
-.hero .lede { margin-top: 1.4rem; max-width: 38ch; }
-
-.hero__actions {
-  margin-top: 2.2rem;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.85rem;
-}
-
-.hero__media { aspect-ratio: 4 / 5; }
-
-@media (max-width: 900px) {
-  .hero { align-items: center; }
-  .hero__grid { grid-template-columns: 1fr; gap: 2.25rem; }
-  .hero .display { max-width: none; }
-  .hero__media { aspect-ratio: 3 / 2; }
-}
-
-/* -------------------------------------------------------------- Marquee - */
 /*
    Ein einziges Laufband auf der Seite. Es traegt die Gerichte des Tages und
    hat damit eine Aufgabe, es ist keine Dekoration.
@@ -181,7 +633,19 @@ body::after {
   display: inline-flex;
   align-items: center;
   gap: 2.5rem;
+}
+/* Die Spur ist vom Skript verdoppelt worden; sie faehrt genau eine Haelfte
+   weit und beginnt dann von vorn - dadurch ist der Uebergang nahtlos.
+   Geschoben wird von CSS, damit die Bewegung im Compositor bleibt. */
+.marquee__spur.laeuft {
   will-change: transform;
+  animation: marquee 34s linear infinite;
+}
+/* Beim Zeigen bleibt das Band stehen, damit man in Ruhe lesen kann. */
+.marquee.is-ruhig .marquee__spur.laeuft { animation-play-state: paused; }
+@keyframes marquee {
+  from { transform: translate3d(0, 0, 0); }
+  to   { transform: translate3d(-50%, 0, 0); }
 }
 .marquee__spur > span {
   font-family: var(--font-display);
@@ -245,78 +709,165 @@ body::after {
   .kueche__media { aspect-ratio: 3 / 2; }
 }
 
-/* ------------------------------------------------------ Galerie waagrecht */
-/*
-   Signatur der Seite. Der Abschnitt wird am Viewport geheftet, die Spur
-   darin wandert waagerecht mit dem Scrollen. Erzaehlt den Abend von der
-   Vorspeise bis zum Digestif in einer Bewegung.
-*/
-.galerie { position: relative; overflow: hidden; }
 
-.galerie__kopf {
-  position: absolute;
-  top: clamp(4.5rem, 10vh, 6.5rem);
-  left: 0;
-  right: 0;
-  z-index: 3;
-  pointer-events: none;
-}
-/* Kleiner als die uebrigen Abschnittsueberschriften: sie steht ueber der
-   Spur und darf ihr keinen Platz wegnehmen. */
-.galerie__kopf .h2 {
-  font-size: clamp(1.7rem, 1.1rem + 1.9vw, 2.4rem);
-  max-width: 16ch;
-}
 
-.galerie__spur {
-  display: flex;
-  align-items: stretch;
-  gap: clamp(1rem, 2.2vw, 2rem);
-  height: 100dvh;
-  padding-inline: var(--pad-x);
-  /* Muss die Ueberschrift darueber freihalten. */
-  padding-top: clamp(10rem, 26vh, 14.5rem);
-  padding-bottom: clamp(4rem, 9vh, 6rem);
-  will-change: transform;
-}
+/* ============================================================================
+   Gaenge - die Signatur dieser Seite
+   ----------------------------------------------------------------------------
+   Der Gang in der Mitte steht scharf und gross, links und rechts schaut der
+   Nachbar hervor, abgedunkelt und zurueckgesetzt. Alles laeuft ueber zwei
+   Werte je Karte: --ab (Abstand mit Vorzeichen) und --weg (Betrag davon).
+   Karten, die weiter weg sind, werden ausgeblendet - sonst stapeln sich
+   fuenf Bilder an den Raendern zu Matsch.
+   ========================================================================= */
 
-.platte {
+.gaenge {
   position: relative;
-  flex: none;
-  width: clamp(240px, 30vw, 380px);
-  display: flex;
-  flex-direction: column;
+  padding-block: clamp(3.5rem, 7vw, 6rem);
+  overflow: hidden;
+  /* Warmes Licht hinter dem mittleren Gang, dazu Korn. Ein Abend im Lokal
+     ist nicht gleichmaessig ausgeleuchtet. */
+  background:
+    radial-gradient(58% 60% at 50% 42%, rgba(214, 122, 78, .22), transparent 68%),
+    radial-gradient(70% 70% at 50% 100%, rgba(255, 232, 206, .06), transparent 70%),
+    var(--nacht);
 }
-/* min-height 0 erlaubt dem Bildplatz, im Flex-Container zu schrumpfen,
-   statt den Text darunter aus dem Bild zu draengen. */
-.platte .ph { flex: 1; min-height: 0; }
-.platte__text { padding-top: 1.1rem; }
-.platte__text h3 {
-  font-size: 1.25rem;
-  font-weight: 700;
+.gaenge::after {
+  content: ""; position: absolute; inset: 0; z-index: 0;
+  pointer-events: none; opacity: .30; mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='k'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.78' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23k)'/%3E%3C/svg%3E"); background-size: 200px 200px;
 }
-.platte__text p {
-  color: var(--text-soft);
-  font-size: 0.95rem;
-  margin-top: 0.2rem;
-}
-.platte--hoch { width: clamp(280px, 36vw, 460px); }
+.gaenge > * { position: relative; z-index: 1; }
 
-/* Ohne Bewegung oder auf schmalen Geraeten wird daraus eine normale,
-   seitlich wischbare Reihe. Kein Heften, kein Umbau. */
-@media (max-width: 820px), (prefers-reduced-motion: reduce) {
-  .galerie { overflow: visible; }
-  .galerie__kopf { position: static; padding-inline: var(--pad-x); margin-bottom: 2rem; }
-  .galerie__spur {
-    height: auto;
-    padding-top: 0;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    -webkit-overflow-scrolling: touch;
-    transform: none !important;
+.gaenge__kopf {
+  width: 100%; max-width: var(--wrap); margin-inline: auto;
+  padding-inline: var(--pad-x);
+  text-align: center;
+  margin-bottom: clamp(2rem, 4vw, 3rem);
+}
+.gaenge__kopf .h2 { max-width: 20ch; margin-inline: auto; }
+
+/* -------------------------------------------------------------- Buehne */
+
+.gaenge__buehne { position: relative; display: flex; align-items: center; justify-content: center; }
+
+/* Ohne JavaScript gibt es kein Karussell - dann steht hier eine wischbare
+   Reihe, in der jede Karte ihren Text zeigt. Erst .js (setzt site.js selbst
+   an <html>) schaltet die gestapelte Form frei. */
+.gaenge__reihe {
+  display: flex; gap: 1rem;
+  overflow-x: auto; scroll-snap-type: x mandatory;
+  padding-inline: var(--pad-x);
+}
+.gaenge__reihe > .gang { flex: none; width: 74vw; max-width: 320px; aspect-ratio: 4 / 5;
+  scroll-snap-align: center; }
+:not(.js) .gaenge__pfeil, :not(.js) .gaenge__punkte { display: none; }
+
+.js .gaenge__reihe {
+  position: relative; display: block; width: 100%;
+  height: clamp(360px, 56vh, 560px);
+  overflow: visible; padding-inline: 0;
+}
+
+.js .gang {
+  position: absolute;
+  left: 50%; top: 0;
+  width: clamp(240px, 30vw, 400px);
+  height: 100%;
+  transform:
+    translate(-50%, 0)
+    translateX(calc(var(--ab) * clamp(210px, 26vw, 360px)))
+    scale(calc(1 - var(--weg) * .12));
+  opacity: calc(1 - var(--weg) * .55);
+  z-index: calc(10 - var(--weg));
+  filter: blur(calc(var(--weg) * 2px));
+  pointer-events: none;
+  transition: transform .6s var(--ease), opacity .6s var(--ease), filter .6s var(--ease);
+}
+.js .gang[data-fern="ja"] { opacity: 0; }
+
+/* var(--r): das Haus setzt rechtwinklig, von der Speisekarte bis zum
+   Knopf. Die Gaenge waren die einzigen runden Flaechen. */
+.gang .ph { height: 100%; border-radius: var(--r); box-shadow: 0 36px 70px -34px rgba(0, 0, 0, .95); }
+/* Unten steht der Name des Gangs, also sitzt der Bildhinweis oben. */
+.gang .ph__brief {
+  inset: 0 0 auto;
+  border-top: 0;
+  border-bottom: 1px solid rgba(255,255,255,.12);
+  background: linear-gradient(to bottom, rgba(0,0,0,.55), transparent);
+}
+
+/* Der Text sitzt im Bild, unten, wie eine Karte am Teller. */
+.gang__text {
+  position: absolute; inset: auto 0 0 0; z-index: 4;
+  padding: clamp(1.2rem, 2.4vw, 1.9rem);
+  text-align: center;
+  background: linear-gradient(to top, rgba(20, 16, 14, .92), rgba(20, 16, 14, .5) 55%, transparent);
+  transition: opacity .5s var(--ease);
+}
+.js .gang__text { opacity: 0; }
+/* Nur der vordere Gang zeigt seinen Text, sonst liest man drei Titel auf einmal. */
+.js .gang[data-vorn="ja"] .gang__text { opacity: 1; }
+.js .gang[data-vorn="ja"] { pointer-events: auto; }
+.gang__nr {
+  font-family: var(--font-display); font-size: .8rem; letter-spacing: .24em;
+  color: var(--accent-band); margin-bottom: .45rem;
+}
+.gang__text h3 { font-size: clamp(1.25rem, 1.1rem + .7vw, 1.7rem); color: var(--band-text); }
+.gang__text p { color: var(--band-text-soft); font-size: .95rem; margin-top: .35rem; }
+
+/* --------------------------------------------------------------- Pfeile */
+
+.gaenge__pfeil {
+  position: absolute; top: 50%; z-index: 20;
+  transform: translateY(-50%);
+  width: 46px; height: 46px; padding: 0;
+  display: grid; place-items: center;
+  border: 1px solid var(--band-line); border-radius: 999px;
+  background: rgba(20, 16, 14, .55);
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  color: var(--band-text); cursor: pointer;
+  transition: background-color .25s var(--ease), border-color .25s var(--ease), color .25s var(--ease);
+}
+.gaenge__pfeil:hover { background: var(--accent-flaeche); border-color: transparent; color: var(--accent-fg); }
+.gaenge__pfeil svg { width: 22px; height: 22px; }
+.gaenge__pfeil--zurueck { left: clamp(.6rem, 3vw, 2.5rem); }
+.gaenge__pfeil--vor     { right: clamp(.6rem, 3vw, 2.5rem); }
+
+/* ----------------------------------------------------------------- Fuss */
+
+.gaenge__fuss { display: flex; flex-direction: column; align-items: center; gap: 1.1rem;
+  margin-top: clamp(1.6rem, 3vw, 2.4rem); }
+.gaenge__punkte { display: flex; gap: .5rem; }
+.gaenge__punkte button {
+  width: 8px; height: 8px; padding: 0; border: 0; border-radius: 999px;
+  background: rgba(243, 235, 225, .26); cursor: pointer;
+  transition: background .3s var(--ease), transform .3s var(--ease);
+}
+.gaenge__punkte button[aria-selected="true"] { background: var(--accent-band); transform: scale(1.4); }
+.gaenge__mehr { color: var(--accent-band); font-size: .93rem; text-decoration: none;
+  border-bottom: 1px solid currentColor; padding-bottom: 2px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .gang, .gang__text { transition: none; }
+  .gang { filter: none; }
+}
+
+/* Auf schmalen Fenstern kein Karussell, sondern eine wischbare Reihe, in der
+   jede Karte ihren Text zeigt. Das ist mit dem Daumen bedienbar. */
+@media (max-width: 820px) {
+  .js .gaenge__reihe {
+    height: auto; display: flex; gap: 1rem;
+    overflow-x: auto; scroll-snap-type: x mandatory;
+    padding-inline: var(--pad-x); overflow-y: hidden;
   }
-  .platte { height: auto; scroll-snap-align: start; }
-  .platte .ph { aspect-ratio: 3 / 4; }
+  .js .gang {
+    position: static; transform: none; opacity: 1; filter: none;
+    width: 74vw; max-width: 320px; height: auto; aspect-ratio: 4 / 5;
+    flex: none; scroll-snap-align: center; pointer-events: auto;
+  }
+  .js .gang__text, .js .gang[data-fern="ja"] { opacity: 1; }
+  .gaenge__pfeil, .gaenge__punkte { display: none; }
 }
 
 /* -------------------------------------------------------------- Karte --- */
@@ -376,15 +927,6 @@ body::after {
 
 /* ------------------------------------------------------------- Besuch --- */
 
-.besuch { background: var(--nacht-2); }
-
-.besuch__grid {
-  display: grid;
-  grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
-  gap: clamp(2.5rem, 6vw, 5rem);
-  align-items: start;
-}
-.besuch .h2 { max-width: 12ch; }
 
 .zeiten { display: grid; gap: 0; margin-top: 2rem; }
 .zeit {
@@ -399,15 +941,6 @@ body::after {
 .zeit dd { margin: 0; font-variant-numeric: tabular-nums; }
 .zeit--zu dd { color: var(--text-soft); }
 
-.karte-box {
-  border: 1px solid var(--line);
-  border-radius: var(--r);
-  padding: clamp(1.5rem, 3vw, 2.25rem);
-  background: var(--nacht);
-}
-.karte-box h3 { font-size: 1.3rem; margin-bottom: 0.6rem; }
-.karte-box p { color: var(--text-soft); }
-.karte-box .btn { margin-top: 1.5rem; }
 
 .adresse {
   margin-top: 2rem;
@@ -424,25 +957,317 @@ body::after {
 .adresse a { text-decoration: none; }
 .adresse a:hover { color: var(--accent); }
 
-@media (max-width: 860px) {
-  .besuch__grid { grid-template-columns: 1fr; gap: 2.5rem; }
-}
 
 /* Unterseiten-Kopf in der dunklen Grundflaeche, passend zum Hero. */
 .seitenkopf { background: var(--nacht); color: var(--creme); border-bottom-color: var(--band-line); }
 .seitenkopf .lede { color: var(--band-text-soft); }
 
 
-/* ============================================================================
-   Akzent im dunklen Abschnitt
-   ========================================================================= */
-
 /* In den dunklen Abschnitten uebernimmt der aufgehellte Ton. Weil --accent
    vererbt wird, genuegt es, ihn am Container zu setzen. */
-.footer, .cta-band, .band {
+.rueckseite, .cta-band, .band {
   --accent: var(--accent-band);
   --accent-flaeche: var(--accent-band);
   /* Ein Knopf auf dem Band traegt jetzt die helle Flaeche, also braucht er
      dunkle Schrift statt der hellen aus dem Grundzustand. */
   --accent-fg: #17110e;
 }
+
+
+/* ============================================================================
+   3. Rahmen dieser Seite
+   ----------------------------------------------------------------------------
+   Kopf, Anschlag und Fuss der Osteria. Nicht die uebliche Form aus Leiste
+   links, Hero-Raster und Namenszug mit Linkliste:
+
+   - Der Kopf ist ein Firmenschild: der Name mittig und allein, die Wege
+     links und rechts davon. Ueber dem Anschlag schwebt er ohne Grund und
+     bekommt ihn erst beim Scrollen - wie eine Schrift auf der Scheibe, hinter
+     der es dunkel wird.
+   - Der Anschlag ist ein Bild ueber die volle Flaeche mit dem Satz mittig
+     darin, unten die Zeiten.
+   - Der Fuss ist die Rueckseite der Karte: mittig, drei kurze Bloecke.
+   ========================================================================= */
+
+:root { --schild-h: 88px; }
+
+/* ----------------------------------------------------------- Firmenschild */
+
+.firmenschild {
+  position: fixed; inset: 0 0 auto; z-index: 100;
+  height: var(--schild-h);
+  display: flex; align-items: center;
+  transition: height 200ms var(--ease), background-color 200ms var(--ease),
+              box-shadow .3s var(--ease);
+}
+.firmenschild__zeile {
+  width: 100%; max-width: var(--wrap); margin-inline: auto;
+  padding-inline: var(--pad-x);
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: clamp(1rem, 3vw, 2.5rem);
+}
+.firmenschild.is-stuck {
+  height: 68px;
+  background: color-mix(in srgb, var(--nacht) 90%, transparent);
+  backdrop-filter: blur(14px) saturate(150%);
+  -webkit-backdrop-filter: blur(14px) saturate(150%);
+  box-shadow: 0 1px 0 var(--band-line);
+}
+
+/* Der Name steht mittig, zweizeilig, wie auf einer Scheibe. */
+.schriftzug {
+  display: grid; justify-items: center; gap: .1rem;
+  text-decoration: none; color: var(--band-text);
+  font-family: var(--font-display);
+  line-height: 1;
+  white-space: nowrap;
+}
+.schriftzug span { font-size: clamp(1.15rem, 1rem + .5vw, 1.5rem); font-weight: 600; }
+.schriftzug i {
+  font-style: normal; font-weight: 400;
+  font-size: .62rem; letter-spacing: .3em; text-transform: uppercase;
+  color: var(--accent-band);
+  padding-left: .3em;
+}
+
+.wege ul { display: flex; align-items: center; gap: clamp(.9rem, 2vw, 1.9rem);
+  list-style: none; margin: 0; padding: 0; }
+.wege--links ul { justify-content: flex-start; }
+.wege--rechts ul { justify-content: flex-end; }
+.wege a {
+  position: relative; display: inline-block; padding: .35rem 0;
+  font-size: .93rem; color: var(--band-text-soft);
+  text-decoration: none; white-space: nowrap;
+  transition: color .22s var(--ease);
+}
+.wege a::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 1px;
+  background: var(--accent-band);
+  transform: scaleX(0); transform-origin: left;
+  transition: transform .28s var(--ease);
+}
+.wege a:hover { color: var(--band-text); }
+.wege a:hover::after { transform: scaleX(1); }
+
+/* Die Reservierung ist ein Satz, kein Kauf: ein unterstrichener Verweis
+   statt eines Knopfes in der Leiste. */
+.wege__tisch { color: var(--band-text); font-weight: 600; }
+.wege__tisch::after { transform: scaleX(1); background: var(--accent-band); }
+.wege__tisch:hover::after { background: var(--band-text); }
+
+.firmenschild__burger {
+  display: none; width: 44px; height: 44px; padding: 0;
+  border: 1px solid var(--band-line); border-radius: 999px;
+  background: transparent; color: var(--band-text); cursor: pointer; place-items: center;
+  justify-self: end;
+}
+.firmenschild__burger span {
+  display: block; width: 17px; height: 1.4px; background: currentColor;
+  margin: 3.4px auto; transition: transform .3s var(--ease), opacity .2s var(--ease);
+}
+.firmenschild__burger[aria-expanded="true"] span:nth-child(1){transform:translateY(4.8px) rotate(45deg);}
+.firmenschild__burger[aria-expanded="true"] span:nth-child(2){opacity:0;}
+.firmenschild__burger[aria-expanded="true"] span:nth-child(3){transform:translateY(-4.8px) rotate(-45deg);}
+
+@media (max-width: 900px) {
+  .firmenschild__zeile { grid-template-columns: 1fr auto; }
+  .wege { display: none; }
+  .schriftzug { justify-items: start; }
+  .firmenschild__burger { display: grid; }
+}
+
+/* --------------------------------------------------------------- Anschlag */
+
+.anschlag {
+  position: relative;
+  display: grid;
+  grid-template-rows: 1fr auto;
+  align-items: center;
+  min-height: 100svh;
+  padding: calc(var(--schild-h) + 2rem) var(--pad-x) clamp(1.5rem, 4vh, 2.5rem);
+  isolation: isolate;
+}
+.anschlag__bild {
+  position: absolute; inset: 0; z-index: -1;
+  border-radius: 0;
+}
+.anschlag__bild img { width: 100%; height: 100%; object-fit: cover; }
+/* Ohne den Schleier steht heller Text spaeter auf einem hellen Foto. */
+.anschlag__bild::after {
+  content: ""; position: absolute; inset: 0; z-index: 1;
+  background:
+    radial-gradient(120% 80% at 50% 50%, rgba(20, 16, 14, .35), rgba(20, 16, 14, .82) 76%),
+    linear-gradient(to bottom, rgba(20, 16, 14, .6), rgba(20, 16, 14, .35) 40%, rgba(20, 16, 14, .85));
+}
+/* Unten stehen die Zeiten, deshalb sitzt der Bildhinweis oben. */
+/* Das Kerzenlicht liegt ueber dem Bild, unter dem Satz. */
+.kerzen {
+  position: absolute; inset: 0; z-index: 0;
+  width: 100%; height: 100%;
+  pointer-events: none; display: block;
+}
+
+/* Im Anschlag steht kein Hinweis. Kerzenlicht, Verlauf und Korn tragen das
+   Band; ein Zettel "Foto folgt" quer ueber dem Kopf der Seite wuerde daraus
+   eine Baustelle machen. Sobald hero.jpg im Ordner liegt, legt es sich
+   darunter. Auf den kleineren Platten bleibt der Hinweis stehen. */
+.anschlag .ph__brief, .anschlag .ph__mark { display: none; }
+
+.anschlag__mitte {
+  position: relative;
+  text-align: center;
+  max-width: 44rem;
+  margin-inline: auto;
+  color: var(--band-text);
+}
+.anschlag__mitte .eyebrow { color: var(--accent-band); }
+.anschlag__mitte .display { color: var(--band-text); }
+.anschlag__mitte .lede { margin: 1.3rem auto 0; max-width: 40ch; color: var(--band-text-soft); }
+.anschlag__mitte .hero__actions {
+  margin-top: 2.1rem; display: flex; flex-wrap: wrap; gap: .85rem; justify-content: center;
+}
+
+.anschlag__zeiten {
+  position: relative;
+  margin: 0; text-align: center;
+  font-family: var(--font-display);
+  font-size: .84rem; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--band-text-soft);
+}
+.anschlag__zeiten i { font-style: normal; color: var(--accent-band); margin-inline: .5em; }
+
+/* -------------------------------------------------------------- Rueckseite */
+
+.rueckseite {
+  background: var(--band); color: var(--band-text-soft);
+  border-top: 1px solid var(--band-line);
+  padding: clamp(3rem, 6vw, 4.5rem) var(--pad-x);
+  text-align: center;
+}
+.rueckseite__mitte { width: 100%; max-width: 62rem; margin-inline: auto; }
+.rueckseite__name {
+  margin: 0; font-family: var(--font-display);
+  font-size: clamp(1.5rem, 1.2rem + 1.2vw, 2.1rem); color: var(--band-text);
+}
+.rueckseite__satz { margin: .7rem auto 0; max-width: 42ch; }
+
+.rueckseite__spalten {
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.5rem clamp(1.5rem, 4vw, 3rem);
+  margin-top: clamp(2rem, 4vw, 3rem);
+  padding-block: clamp(1.5rem, 3vw, 2.2rem);
+  border-block: 1px solid var(--band-line);
+}
+.rueckseite__spalten h2 {
+  font-size: .72rem; font-weight: 600; letter-spacing: .18em; text-transform: uppercase;
+  color: var(--accent-band); margin-bottom: .6rem;
+}
+.rueckseite__spalten p { line-height: 1.7; }
+.rueckseite__spalten a { text-decoration: none; }
+.rueckseite__spalten a:hover { color: var(--accent-band); }
+
+.rueckseite__links {
+  display: flex; flex-wrap: wrap; justify-content: center; gap: 1.4rem;
+  list-style: none; margin: clamp(1.5rem, 3vw, 2.2rem) 0 0; padding: 0;
+  font-size: .9rem;
+}
+.rueckseite__links a { text-decoration: none; }
+.rueckseite__links a:hover { color: var(--accent-band); }
+
+.rueckseite__note {
+  margin: 1.6rem auto 0; max-width: 74ch;
+  font-size: .82rem; line-height: 1.6; opacity: .7;
+}
+@media (max-width: 720px) {
+  .rueckseite__spalten { grid-template-columns: 1fr; }
+}
+
+
+/* ---------------------------------------------------- Der Abend, ausfuehrlich */
+/*
+   Auf der Startseite steht der Abend als Karussell. Hier, auf der eigenen
+   Seite, soll er nicht ein zweites Mal so aussehen - also laeuft er als
+   Folge untereinander: Bild und Text im Wechsel links und rechts, dazwischen
+   eine Haarlinie. Man liest ihn ab, statt ihn zu blaettern.
+
+   Beim Umbau der Startseite sind die alten Galerie-Regeln entfallen; diese
+   Seite stand seither ohne. Das ist der Ersatz.
+*/
+.galerie { padding-block: clamp(3rem, 6vw, 5rem); }
+.galerie__kopf { width: 100%; max-width: var(--wrap); margin-inline: auto;
+  padding-inline: var(--pad-x); text-align: center;
+  margin-bottom: clamp(2rem, 4vw, 3rem); }
+.galerie__kopf .h2 { max-width: 20ch; margin-inline: auto; }
+
+.galerie__spur {
+  width: 100%; max-width: 62rem; margin-inline: auto;
+  padding-inline: var(--pad-x);
+  display: grid; gap: 0;
+}
+.platte {
+  display: grid;
+  grid-template-columns: minmax(0, 15rem) minmax(0, 1fr);
+  gap: clamp(1.4rem, 3vw, 2.6rem);
+  align-items: center;
+  padding-block: clamp(1.6rem, 3vw, 2.4rem);
+  border-top: 1px solid var(--band-line);
+  text-align: left;
+}
+.platte:last-child { border-bottom: 1px solid var(--band-line); }
+/* Jede zweite Folge dreht sich um - so entsteht ein Wechsel statt einer Liste. */
+.platte:nth-child(even) { grid-template-columns: minmax(0, 1fr) minmax(0, 15rem); }
+.platte:nth-child(even) .ph { order: 2; }
+.platte:nth-child(even) .platte__text { order: 1; text-align: right; }
+
+.platte .ph { aspect-ratio: 4 / 5; }
+.platte--hoch .ph { aspect-ratio: 1 / 1; }
+.platte__text h3 { font-size: clamp(1.3rem, 1.1rem + .8vw, 1.85rem); }
+.platte__text p { color: var(--band-text-soft); margin-top: .5rem; }
+
+@media (max-width: 700px) {
+  .platte, .platte:nth-child(even) { grid-template-columns: 1fr; }
+  .platte:nth-child(even) .ph { order: 0; }
+  .platte:nth-child(even) .platte__text { order: 0; text-align: left; }
+}
+
+
+/* ============================================================================
+   Bewegung: langsam
+   ----------------------------------------------------------------------------
+   Alles hier braucht Zeit. Der Zoom auf einem Bild laeuft ueber mehr als eine
+   Sekunde und wird nie fertig, solange man hinsieht - das ist der Punkt: es
+   soll wirken wie ein Blick, der laenger auf dem Teller bleibt.
+   ========================================================================= */
+
+.ph { overflow: hidden; }
+.ph img {
+  transition: transform calc(var(--takt) * 2), filter calc(var(--takt) * 2);
+  transition-timing-function: var(--ease);
+}
+.platte:hover .ph img, .gang[data-vorn="ja"]:hover .ph img, .kueche__media:hover img {
+  transform: scale(1.07);
+  filter: brightness(1.06);
+}
+
+/* Der Rahmenknopf laeuft von der Mitte nach aussen voll, nicht von links. */
+.btn { background-image: linear-gradient(var(--accent-flaeche), var(--accent-flaeche));
+  background-repeat: no-repeat; background-position: 50% 50%; background-size: 0% 100%;
+  /* Die Fuellung laeuft von der Mitte nach aussen. 200 ms - ein Knopf muss
+     sofort antworten, auch in einem Haus, das sich sonst Zeit laesst. */
+  transition: background-size 200ms var(--ease),
+              color 180ms var(--ease); }
+.btn:hover { background-size: 100% 100%; background-color: transparent; }
+.btn--ghost { background-image: none; }
+
+
+/* --------------------------------------------------- Schleier beim Wechsel */
+/* Kein Balken, sondern ein warmer Schleier, der auf- und wieder abblendet. */
+.wechsel {
+  position: fixed; inset: 0; z-index: 300;
+  background: radial-gradient(120% 100% at 50% 50%, #2a1d16, #14100e 70%);
+  opacity: 1; pointer-events: none;
+}
+body.ist-da .wechsel { opacity: 0; transition: opacity 620ms var(--ease); }
+body.geht   .wechsel { opacity: 1; transition: opacity 420ms var(--ease); }

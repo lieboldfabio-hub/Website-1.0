@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="de" class="pager">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -36,81 +36,70 @@
 <a class="skip" href="#main">Zum Inhalt springen</a>
 <a class="demo-badge" href="../">Beispielprojekt</a>
 
-<header class="nav">
-  <div class="nav__inner">
-    <a class="brand" href="#top">Kopfsache</a>
-    <nav aria-label="Hauptnavigation">
-      <ul class="nav__links">
-        <li><a href="#angebot">Angebot</a></li>
-        <li><a href="#team">Team</a></li>
-        <li><a href="#fragen">Fragen</a></li>
-        <li><a href="#termin">Termin</a></li>
-      </ul>
-    </nav>
-    <div class="nav__cta">
-      <a class="btn btn--sm" href="#termin">Termin buchen</a>
-      <button class="nav__burger" aria-label="Menü öffnen" aria-expanded="false" aria-controls="menu">
-        <span></span><span></span><span></span>
-      </button>
-    </div>
-  </div>
-</header>
+<!-- ============================================================================
+     Kopfsache ist ein Scroll-Pager: fuenf Tafeln, jede fuellt den Bildschirm,
+     das Scrollen rastet ein. Statt einer Kopfleiste fuehrt rechts eine
+     nummerierte Schiene durch den Salon, unten laeuft dauerhaft ein Band mit
+     den Leistungen. Auf kurzen oder schmalen Fenstern schaltet sich das
+     Einrasten ab (siehe site.css), dann liest sich die Seite normal weiter.
+     ========================================================================= -->
 
-<div class="menu" id="menu" hidden>
-  <a href="#angebot">Angebot</a>
-  <a href="#team">Team</a>
-  <a href="#fragen">Fragen</a>
-  <a href="#termin">Termin</a>
-  <a class="btn" href="#termin">Termin buchen</a>
+<div class="pagerkopf">
+  <a class="brand" href="#start">Kopfsache</a>
+  <a class="btn btn--sm" href="#termin">Termin buchen</a>
 </div>
 
-<main id="main">
+<nav class="schiene" aria-label="Abschnitte dieser Seite">
+  <ol>
+    <li><a href="#start"><b>01</b><span>Start</span></a></li>
+    <li><a href="#angebot"><b>02</b><span>Angebot</span></a></li>
+    <li><a href="#team"><b>03</b><span>Team</span></a></li>
+    <li><a href="#fragen"><b>04</b><span>Fragen</span></a></li>
+    <li><a href="#termin"><b>05</b><span>Termin</span></a></li>
+  </ol>
+</nav>
 
-<!-- ================================================================== Hero -->
-<section class="hero" id="top">
-  <div class="wrap hero__grid">
-    <div>
-      <p class="eyebrow" data-hero="1" style="color:var(--accent)">Friseur in Augsburg</p>
-      <h1 class="display" data-hero="2">Kein Schnitt <em>von der Stange.</em></h1>
-      <p class="lede" data-hero="3">
-        Wir nehmen uns Zeit für Beratung, bevor die Schere kommt.
-        Jeder Kopf ist anders, jeder Alltag auch.
-      </p>
-      <div class="hero__actions" data-hero="4">
-        <a class="btn" href="#termin">
-          Termin buchen
-          <svg class="btn__ico" aria-hidden="true"><use href="#i-arrow-right"></use></svg>
-        </a>
-        <a class="btn btn--ghost" href="#angebot">Preise ansehen</a>
-      </div>
-    </div>
+<main class="tafeln" id="main">
 
-    <div class="ph hero__media" data-hero="5">
-      <img src="assets/img/hero.jpg" alt="Im Salon" width="600" height="800">
-      <svg class="ph__mark" aria-hidden="true"><use href="#i-scissors"></use></svg>
-      <p class="ph__brief"><b>Bildplatz: Hero</b>Blick in den Salon, Hochformat 3:4</p>
+<!-- ============================================================ 01 Start -->
+<section class="tafel tafel--start" id="start" aria-labelledby="t-start">
+  <!-- Straehnen fallen langsam durchs Bild. Wo der Zeiger hinkommt, werden
+       sie geschnitten und fallen weg. Rein dekorativ, deshalb aria-hidden;
+       ohne Skript und bei prefers-reduced-motion bleibt die Flaeche leer und
+       die Tafel sieht aus wie zuvor. -->
+  <canvas class="straehnen" aria-hidden="true"></canvas>
+
+  <div class="tafel__satz">
+    <p class="eyebrow" data-hero="1">Friseur in Augsburg</p>
+    <h1 class="display" id="t-start" data-hero="2">Kein Schnitt <em>von der Stange.</em></h1>
+    <p class="lede" data-hero="3">
+      Wir nehmen uns Zeit für Beratung, bevor die Schere kommt.
+      Jeder Kopf ist anders, jeder Alltag auch.
+    </p>
+    <div class="hero__actions" data-hero="4">
+      <a class="btn" href="#termin">
+        Termin buchen
+        <svg class="btn__ico" aria-hidden="true"><use href="#i-arrow-right"></use></svg>
+      </a>
+      <a class="btn btn--ghost" href="#angebot">Preise ansehen</a>
     </div>
   </div>
+
+  <div class="ph tafel__bild" data-hero="5">
+    <img src="assets/img/hero.jpg" alt="Im Salon" width="600" height="800">
+    <svg class="ph__mark" aria-hidden="true"><use href="#i-scissors"></use></svg>
+    <p class="ph__brief"><b>Foto folgt</b>Blick in den Salon</p>
+  </div>
+
+  <p class="tafel__hinweis" data-hero="6">Scrollen</p>
 </section>
 
-<!-- =============================================================== Streifen -->
-<div class="streifen" aria-label="Leistungen im Überblick">
-  <div class="streifen__spur">
-    <span>Schnitt</span><i class="streifen__punkt"></i>
-    <span>Farbe</span><i class="streifen__punkt"></i>
-    <span>Balayage</span><i class="streifen__punkt"></i>
-    <span>Beratung</span><i class="streifen__punkt"></i>
-    <span>Hochsteckfrisur</span><i class="streifen__punkt"></i>
-    <span>Bart</span><i class="streifen__punkt"></i>
-  </div>
-</div>
-
-<!-- ============================================================== Angebot -->
-<section class="section" id="angebot">
-  <div class="wrap">
+<!-- ========================================================== 02 Angebot -->
+<section class="tafel tafel--angebot" id="angebot" aria-labelledby="t-angebot">
+  <div class="tafel__inhalt">
     <div class="angebot__kopf reveal">
       <p class="eyebrow">Angebot</p>
-      <h2 class="h2 reveal-lines">Was wir machen und was es kostet.</h2>
+      <h2 class="h2 reveal-lines" id="t-angebot">Was wir machen und was es kostet.</h2>
     </div>
 
     <div class="karten">
@@ -145,64 +134,78 @@
   </div>
 </section>
 
-<!-- ================================================================= Team -->
-<section class="section team" id="team">
-  <div class="wrap">
+<!-- ============================================================= 03 Team -->
+<!-- Coverflow: die vier Handschriften stehen wie Plattencover hintereinander,
+     das vordere flach, die anderen weggekippt. Geklickt oder mit den
+     Pfeiltasten geholt; darunter stehen die Angaben zur vorderen Karte.
+     Das ist die Signatur dieser Seite - kein anderes Beispiel hat sie. -->
+<section class="tafel tafel--team" id="team" aria-labelledby="t-team">
+  <div class="tafel__inhalt">
     <div class="team__kopf reveal">
       <p class="eyebrow">Team</p>
-      <h2 class="h2">Vier Leute, vier Handschriften.</h2>
+      <h2 class="h2" id="t-team">Vier Leute, vier Handschriften.</h2>
     </div>
 
-    <div class="koepfe">
-      <article class="kopf reveal">
-        <div class="ph">
-          <img src="assets/img/team-1.jpg" alt="Portrait" width="600" height="800">
-          <svg class="ph__mark" aria-hidden="true"><use href="#i-scissors"></use></svg>
-          <p class="ph__brief"><b>Portrait</b>Hochformat 3:4</p>
-        </div>
-        <h3>Mira</h3>
-        <p>Farbe und Balayage</p>
-      </article>
+    <div class="cover" role="group" aria-roledescription="Karussell" aria-label="Das Team">
+      <div class="cover__buehne">
+        <button class="cover__karte" type="button" data-i="0" aria-label="Mira anzeigen">
+          <span class="ph">
+            <img src="assets/img/team-1.jpg" alt="" width="600" height="800">
+            <svg class="ph__mark" aria-hidden="true"><use href="#i-scissors"></use></svg>
+            <span class="ph__brief"><b>Foto folgt</b>Portrait Mira</span>
+          </span>
+        </button>
+        <button class="cover__karte" type="button" data-i="1" aria-label="Jonas anzeigen">
+          <span class="ph">
+            <img src="assets/img/team-2.jpg" alt="" width="600" height="800">
+            <svg class="ph__mark" aria-hidden="true"><use href="#i-scissors"></use></svg>
+            <span class="ph__brief"><b>Foto folgt</b>Portrait Jonas</span>
+          </span>
+        </button>
+        <button class="cover__karte" type="button" data-i="2" aria-label="Elif anzeigen">
+          <span class="ph">
+            <img src="assets/img/team-3.jpg" alt="" width="600" height="800">
+            <svg class="ph__mark" aria-hidden="true"><use href="#i-scissors"></use></svg>
+            <span class="ph__brief"><b>Foto folgt</b>Portrait Elif</span>
+          </span>
+        </button>
+        <button class="cover__karte" type="button" data-i="3" aria-label="Bene anzeigen">
+          <span class="ph">
+            <img src="assets/img/team-4.jpg" alt="" width="600" height="800">
+            <svg class="ph__mark" aria-hidden="true"><use href="#i-scissors"></use></svg>
+            <span class="ph__brief"><b>Foto folgt</b>Portrait Bene</span>
+          </span>
+        </button>
+      </div>
 
-      <article class="kopf reveal">
-        <div class="ph">
-          <img src="assets/img/team-2.jpg" alt="Portrait" width="600" height="800">
-          <svg class="ph__mark" aria-hidden="true"><use href="#i-scissors"></use></svg>
-          <p class="ph__brief"><b>Portrait</b>Hochformat 3:4</p>
-        </div>
-        <h3>Jonas</h3>
-        <p>Kurzhaar und Bart</p>
-      </article>
+      <!-- Die Angaben wechseln mit der vorderen Karte. aria-live meldet den
+           Wechsel, damit er auch ohne Blick auf den Bildschirm ankommt. -->
+      <div class="cover__tafel" aria-live="polite">
+        <h3 class="cover__name">Mira</h3>
+        <p class="cover__rolle">Farbe und Balayage</p>
+        <dl class="cover__daten">
+          <div><dt>Im Salon seit</dt><dd>2016</dd></div>
+          <div><dt>Schwerpunkt</dt><dd>Balayage, Blondierung</dd></div>
+          <div><dt>Termin</dt><dd>Di bis Sa</dd></div>
+        </dl>
+      </div>
 
-      <article class="kopf reveal">
-        <div class="ph">
-          <img src="assets/img/team-3.jpg" alt="Portrait" width="600" height="800">
-          <svg class="ph__mark" aria-hidden="true"><use href="#i-scissors"></use></svg>
-          <p class="ph__brief"><b>Portrait</b>Hochformat 3:4</p>
-        </div>
-        <h3>Elif</h3>
-        <p>Locken und Curly Cut</p>
-      </article>
-
-      <article class="kopf reveal">
-        <div class="ph">
-          <img src="assets/img/team-4.jpg" alt="Portrait" width="600" height="800">
-          <svg class="ph__mark" aria-hidden="true"><use href="#i-scissors"></use></svg>
-          <p class="ph__brief"><b>Portrait</b>Hochformat 3:4</p>
-        </div>
-        <h3>Bene</h3>
-        <p>Schnitt und Ausbildung</p>
-      </article>
+      <div class="cover__punkte" role="tablist" aria-label="Person waehlen">
+        <button type="button" role="tab" aria-selected="true"  aria-label="Mira"></button>
+        <button type="button" role="tab" aria-selected="false" aria-label="Jonas"></button>
+        <button type="button" role="tab" aria-selected="false" aria-label="Elif"></button>
+        <button type="button" role="tab" aria-selected="false" aria-label="Bene"></button>
+      </div>
     </div>
   </div>
 </section>
 
-<!-- =============================================================== Fragen -->
-<section class="section fragen" id="fragen">
-  <div class="wrap fragen__grid">
+<!-- =========================================================== 04 Fragen -->
+<section class="tafel tafel--fragen" id="fragen" aria-labelledby="t-fragen">
+  <div class="tafel__inhalt fragen__grid">
     <div class="reveal">
       <p class="eyebrow">Fragen</p>
-      <h2 class="h2">Kurz erklärt.</h2>
+      <h2 class="h2" id="t-fragen">Kurz erklärt.</h2>
     </div>
 
     <div class="akkordeon reveal">
@@ -240,9 +243,9 @@
         </button>
         <div class="frage__inhalt">
           <p>
-            Die Preise oben sind Startpreise. Der genaue Betrag hängt von Länge und
-            Aufwand ab und wird vor Beginn besprochen. Es kommt nichts dazu, das
-            wir nicht vorher gesagt haben.
+            Die Preise in Abschnitt 02 sind Startpreise. Der genaue Betrag hängt von
+            Länge und Aufwand ab und wird vor Beginn besprochen. Es kommt nichts dazu,
+            das wir nicht vorher gesagt haben.
           </p>
         </div>
       </div>
@@ -263,10 +266,12 @@
   </div>
 </section>
 
-<!-- =============================================================== Termin -->
-<section class="section termin" id="termin">
-  <div class="wrap termin__inner">
-    <h2 class="h2 reveal">Wann passt es Ihnen?</h2>
+<!-- =========================================================== 05 Termin -->
+<!-- Letzte Tafel: der Abschluss traegt zugleich den Fussbereich, damit der
+     Pager nicht mit einer halbleeren sechsten Tafel endet. -->
+<section class="tafel tafel--termin" id="termin" aria-labelledby="t-termin">
+  <div class="tafel__inhalt termin__inner">
+    <h2 class="h2 reveal" id="t-termin">Wann passt es Ihnen?</h2>
     <p class="lede reveal">
       Buchen Sie online oder rufen Sie an. Für die Beratung planen wir zehn
       Minuten extra ein, die kosten nichts.
@@ -285,34 +290,31 @@
       <span><b>Montag</b> geschlossen</span>
     </div>
   </div>
-</section>
 
-</main>
-
-<footer class="footer">
-  <div class="wrap">
-    <div class="footer__grid">
-      <a class="brand" href="#top" style="color:var(--band-text)">Kopfsache</a>
-      <ul class="footer__links">
-        <li><a href="#angebot">Angebot</a></li>
-        <li><a href="#team">Team</a></li>
-        <li><a href="#termin">Termin</a></li>
-        <li><a href="impressum.html">Impressum</a></li>
-        <li><a href="datenschutz.html">Datenschutz</a></li>
-        <li><a href="../">Weitere Beispiele</a></li>
-      </ul>
-    </div>
-    <p class="footer__note">
+  <footer class="schluss">
+    <ul class="schluss__links">
+      <li><a href="impressum.html">Impressum</a></li>
+      <li><a href="datenschutz.html">Datenschutz</a></li>
+      <li><a href="../">Weitere Beispiele</a></li>
+    </ul>
+    <p class="schluss__note">
       Beispielprojekt. Kopfsache ist ein erfundenes Unternehmen, sämtliche
       Angaben auf dieser Seite dienen ausschließlich der Veranschaulichung von
       Gestaltung und Interaktion.
     </p>
-  </div>
-</footer>
+  </footer>
+</section>
 
-<script src="assets/js/gsap.min.js"></script>
-<script src="assets/js/ScrollTrigger.min.js"></script>
-<script src="assets/js/basis.js"></script>
+</main>
+
+<!-- Dauerband am unteren Rand. Rein dekorativ: die Leistungen stehen
+     ausgeschrieben in Tafel 02, deshalb hier aus der Vorlesereihenfolge. -->
+<div class="laufband" aria-hidden="true">
+  <div class="laufband__spur">
+    <span>Schnitt</span><i></i><span>Farbe</span><i></i><span>Balayage</span><i></i><span>Beratung</span><i></i><span>Hochsteckfrisur</span><i></i><span>Bart</span><i></i>
+  </div>
+</div>
+
 <script src="assets/js/site.js"></script>
 </body>
 </html>
