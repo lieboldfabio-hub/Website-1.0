@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32" role="img" aria-label="OKTANT">
+  <!-- Drei Ebenen teilen den Raum in acht Oktanten. Genau das zeigt das
+       Zeichen: ein Wuerfel von der Ecke aus gesehen, seine drei sichtbaren
+       Seiten in drei Helligkeiten. -->
+  <rect width="32" height="32" rx="7" fill="#07080b"/>
+  <path d="M16 5.4 27 11.6 16 17.8 5 11.6Z" fill="#ff5b2e"/>
+  <path d="M5 13.2 16 19.4v7.2L5 20.4Z" fill="#f2efe9"/>
+  <path d="M27 13.2 16 19.4v7.2l11-6.2Z" fill="#f2efe9" opacity=".38"/>
+</svg>

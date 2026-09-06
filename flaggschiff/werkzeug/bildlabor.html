@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>Bildlabor — OKTANT</title>
+<!--
+  ============================================================================
+  Bildlabor
+  ----------------------------------------------------------------------------
+  Hier entstehen die Bilder der Website. Kein Fotoarchiv, keine Bildagentur:
+  jedes Motiv ist eine gerechnete Szene mit derselben Anlage — ein warmes
+  Hauptlicht von rechts oben, das Schatten wirft, ein kaltes Streiflicht von
+  links hinten, Nebel dazwischen, viel schwarze Flaeche. Genau daraus entsteht
+  die einheitliche Bildsprache.
+
+  Zwei Regeln, die beim ersten Durchgang gefehlt haben und den Unterschied
+  zwischen Bild und Bildschirmschoner ausmachen:
+
+  * Licht bleibt schwach. Sobald eine Lampe eine Flaeche vollstaendig einfaerbt,
+    verliert das Material seine Identitaet — aus Gips wird orange Knete.
+    Die Helligkeit kommt aus der Umgebungsspiegelung, nicht aus der Lampe.
+  * Ohne Schlagschatten steht nichts auf dem Boden. Der Schattenwurf ist der
+    einzige Hinweis auf Gewicht, den ein gerechnetes Bild geben kann.
+
+  Aufruf:  bildlabor.html?szene=helix
+  Rendern: node werkzeug/bilder-rendern.mjs
+  ============================================================================
+-->
+<style>
+  html, body { margin: 0; height: 100%; background: #05060a; overflow: hidden; }
+  #bild { position: relative; width: 100vw; height: 100vh; overflow: hidden; }
+  #bild canvas { display: block; width: 100%; height: 100%; }
+
+  /* Randabdunklung: nimmt den Ecken das Licht, wie eine offene Blende */
+  #bild::after {
+    content: '';
+    position: absolute; inset: 0;
+    pointer-events: none;
+    background: radial-gradient(120% 105% at 50% 45%, transparent 34%, rgba(4,5,9,.8) 100%);
+  }
+  /* Korn, identisch zur Website */
+  #korn {
+    position: absolute; inset: 0;
+    pointer-events: none;
+    opacity: .22;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='.6'/%3E%3C/svg%3E");
+  }
+</style>
+</head>
+<body>
+<div id="bild"><div id="korn"></div></div>
+
+<script type="importmap">
+{ "imports": { "three": "../assets/js/three.module.min.js" } }
+</script>
+
+<script type="module">
+import * as THREE from 'three';
+import { EffectComposer } from './jsm/postprocessing/EffectComposer.js';
+import { RenderPass } from './jsm/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from './jsm/postprocessing/UnrealBloomPass.js';
+import { OutputPass } from './jsm/postprocessing/OutputPass.js';
+
+const p = new URLSearchParams(location.search);
+const szeneName = p.get('szene') || 'helix';
+
+const GLUT = 0xff5b2e;
+const KALT = 0x6f93cf;
+
+/* ------------------------------------------------------------- Umgebung
+
+   Die Spiegelungen kommen aus einer gemalten Leinwand statt aus einer
+   Bilddatei: dunkler Grund, ein warmes und ein kaltes Licht. Das traegt die
+   Helligkeit der Szene — die Lampen setzen nur Akzente.                    */
+
+function umgebung(renderer) {
+  const c = document.createElement('canvas');
+  c.width = 512; c.height = 256;
+  const s = c.getContext('2d');
+  const g = s.createLinearGradient(0, 0, 0, 256);
+  g.addColorStop(0, '#161b25'); g.addColorStop(.55, '#080a10'); g.addColorStop(1, '#1a1f29');
+  s.fillStyle = g; s.fillRect(0, 0, 512, 256);
+  const fleck = (x, y, r, farbe, a) => {
+    const rg = s.createRadialGradient(x, y, 0, x, y, r);
+    rg.addColorStop(0, farbe); rg.addColorStop(1, 'rgba(0,0,0,0)');
+    s.globalAlpha = a; s.fillStyle = rg; s.fillRect(x - r, y - r, r * 2, r * 2); s.globalAlpha = 1;
+  };
+  fleck(150, 58, 150, '#ffb08a', .9);   // warmes Hauptlicht
+  fleck(384, 84, 150, '#a9c6f2', .55);  // kalte Gegenseite
+  fleck(280, 236, 200, '#232833', .95); // Aufheller vom Boden
+  const t = new THREE.CanvasTexture(c);
+  t.mapping = THREE.EquirectangularReflectionMapping;
+  t.colorSpace = THREE.SRGBColorSpace;
+  const pm = new THREE.PMREMGenerator(renderer);
+  const ziel = pm.fromEquirectangular(t);
+  t.dispose(); pm.dispose();
+  return ziel.texture;
+}
+
+/* Runder, weicher Punkt fuer den Staub. Ohne diese Textur zeichnet die
+   Grafikkarte Quadrate, und das sieht nach Fehler aus, nicht nach Luft. */
+function staubTextur() {
+  const c = document.createElement('canvas');
+  c.width = c.height = 64;
+  const s = c.getContext('2d');
+  const g = s.createRadialGradient(32, 32, 0, 32, 32, 32);
+  g.addColorStop(0, 'rgba(255,255,255,1)');
+  g.addColorStop(.35, 'rgba(255,255,255,.5)');
+  g.addColorStop(1, 'rgba(255,255,255,0)');
+  s.fillStyle = g; s.fillRect(0, 0, 64, 64);
+  return new THREE.CanvasTexture(c);
+}
+
+/* ----------------------------------------------------------- Grundaufbau */
+const behaelter = document.getElementById('bild');
+const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false, preserveDrawingBuffer: true });
+renderer.setPixelRatio(window.devicePixelRatio);
+renderer.setSize(behaelter.clientWidth, behaelter.clientHeight, false);
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 0.92;
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.setClearColor(0x05060a, 1);
+behaelter.insertBefore(renderer.domElement, behaelter.firstChild);
+
+const szene = new THREE.Scene();
+szene.environment = umgebung(renderer);
+szene.fog = new THREE.FogExp2(0x05060a, 0.05);
+
+const kamera = new THREE.PerspectiveCamera(
+  34, behaelter.clientWidth / behaelter.clientHeight, 0.1, 200);
+
+/* Hintergrund: eine Kugel von innen. Kein Horizont, nur ein Verlauf. */
+{
+  const c = document.createElement('canvas');
+  c.width = 8; c.height = 256;
+  const s = c.getContext('2d');
+  const g = s.createLinearGradient(0, 0, 0, 256);
+  g.addColorStop(0, '#0d111a'); g.addColorStop(.48, '#070910'); g.addColorStop(1, '#04050a');
+  s.fillStyle = g; s.fillRect(0, 0, 8, 256);
+  const t = new THREE.CanvasTexture(c);
+  t.colorSpace = THREE.SRGBColorSpace;
+  szene.add(new THREE.Mesh(
+    new THREE.SphereGeometry(70, 32, 32),
+    new THREE.MeshBasicMaterial({ map: t, side: THREE.BackSide, fog: false })));
+}
+
+/* --------------------------------------------------------- Lichtanlage
+
+   Schwach, aber gerichtet. Das Hauptlicht wirft Schatten, das Gegenlicht
+   zeichnet nur die Kanten nach.                                            */
+
+const schluessel = new THREE.DirectionalLight(0xffd9c0, 1.5);
+schluessel.position.set(5.5, 7, 4);
+schluessel.castShadow = true;
+schluessel.shadow.mapSize.set(2048, 2048);
+schluessel.shadow.camera.near = 0.5;
+schluessel.shadow.camera.far = 30;
+schluessel.shadow.camera.left = -9;
+schluessel.shadow.camera.right = 9;
+schluessel.shadow.camera.top = 9;
+schluessel.shadow.camera.bottom = -9;
+schluessel.shadow.bias = -0.0012;
+schluessel.shadow.radius = 3;
+szene.add(schluessel);
+
+const gegen = new THREE.DirectionalLight(KALT, 0.85);
+gegen.position.set(-6, 2, -5);
+szene.add(gegen);
+szene.add(new THREE.AmbientLight(0x161a22, 0.9));
+
+/* --------------------------------------------------------- Werkzeugkasten */
+
+const metall = (farbe = 0x0f1219, rau = 0.3) => new THREE.MeshStandardMaterial({
+  color: farbe, metalness: 0.9, roughness: rau, envMapIntensity: 1.35
+});
+const matt = (farbe, rau = 0.7) => new THREE.MeshStandardMaterial({
+  color: farbe, metalness: 0.04, roughness: rau, envMapIntensity: 0.9
+});
+/* Leuchtende Flaechen bleiben knapp ueber 1 — daraus wird nach der
+   Tonwertkurve ein warmes Licht und kein weisser Fleck. */
+const leuchtend = (farbe, staerke = 1.2) => new THREE.MeshBasicMaterial({
+  color: new THREE.Color(farbe).multiplyScalar(staerke), fog: false
+});
+
+function boden(y = -2, farbe = 0x080a10, rau = 0.5, metallisch = 0.6) {
+  const m = new THREE.Mesh(
+    new THREE.PlaneGeometry(120, 120),
+    new THREE.MeshStandardMaterial({
+      color: farbe, metalness: metallisch, roughness: rau, envMapIntensity: 1
+    }));
+  m.rotation.x = -Math.PI / 2;
+  m.position.y = y;
+  m.receiveShadow = true;
+  szene.add(m);
+  return m;
+}
+
+const punktTextur = staubTextur();
+function staub(anzahl, weite, hoehe, groesse = 0.05) {
+  const pos = new Float32Array(anzahl * 3);
+  for (let i = 0; i < anzahl; i++) {
+    pos[i * 3] = (Math.random() - .5) * weite;
+    pos[i * 3 + 1] = Math.random() * hoehe - hoehe * .32;
+    pos[i * 3 + 2] = (Math.random() - .5) * weite;
+  }
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+  const punkte = new THREE.Points(geo, new THREE.PointsMaterial({
+    color: 0xffe2ce, size: groesse, map: punktTextur, transparent: true, opacity: .42,
+    blending: THREE.AdditiveBlending, depthWrite: false, fog: false
+  }));
+  szene.add(punkte);
+  return punkte;
+}
+
+/* Ein weicher Lichtfleck auf dem Boden — der Ersatz fuer eine Kaustik */
+function lichtfleck(x, z, r, farbe, staerke, y) {
+  const c = document.createElement('canvas');
+  c.width = c.height = 128;
+  const s = c.getContext('2d');
+  const g = s.createRadialGradient(64, 64, 0, 64, 64, 64);
+  g.addColorStop(0, 'rgba(255,255,255,1)');
+  g.addColorStop(.45, 'rgba(255,255,255,.35)');
+  g.addColorStop(1, 'rgba(255,255,255,0)');
+  s.fillStyle = g; s.fillRect(0, 0, 128, 128);
+  const m = new THREE.Mesh(new THREE.PlaneGeometry(r * 2, r * 2),
+    new THREE.MeshBasicMaterial({
+      map: new THREE.CanvasTexture(c),
+      color: new THREE.Color(farbe).multiplyScalar(staerke),
+      transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, fog: false
+    }));
+  m.rotation.x = -Math.PI / 2;
+  m.position.set(x, y + 0.01, z);
+  szene.add(m);
+  return m;
+}
+
+function wirftSchatten(objekt) {
+  objekt.traverse(k => { if (k.isMesh) { k.castShadow = true; k.receiveShadow = true; } });
+  return objekt;
+}
+
+/* Jede Szene stellt die Streuung selbst ein: eine Halle voller Leuchtpunkte
+   vertraegt weniger als ein einzelner Kristall im Dunkeln. */
+const streuung = { staerke: 0.5, radius: 0.55, schwelle: 0.74 };
+
+/* ================================================================ Szenen */
+
+const szenen = {
+
+  /* 01 Hallenlicht — eine Doppelhelix aus Lichtpunkten in einer Halle.
+     Die Stuetzen links und rechts geben den Massstab; ohne sie waere es
+     ein Ornament, kein Raum.                                              */
+  helix() {
+    // Viele kleine Quellen: die Streuung muss zurueckhaltend bleiben, sonst
+    // verschmieren die Punkte zu einer Wolke.
+    Object.assign(streuung, { staerke: 0.34, radius: 0.62, schwelle: 0.84 });
+    boden(-3.6, 0x0a0c12, .46, .55);
+
+    const gruppe = new THREE.Group();
+    const kugel = new THREE.SphereGeometry(0.055, 10, 10);
+    // Deutlich ueber 1, damit die Streuung greift — der Ton bleibt dabei Glut
+    // und kippt nicht ins Cremeweisse.
+    const stoff = leuchtend(0xff5f30, 2.4);
+    const anzahl = 128;
+
+    for (let strang = 0; strang < 2; strang++) {
+      const linien = [];
+      for (let i = 0; i < anzahl; i++) {
+        const t = i / anzahl;
+        const winkel = t * Math.PI * 3.4 + strang * Math.PI;
+        const r = 1.5 + Math.sin(t * Math.PI) * 0.75;
+        const x = Math.cos(winkel) * r;
+        const z = Math.sin(winkel) * r;
+        const y = -2.4 + t * 5.0;
+        const punkt = new THREE.Mesh(kugel, stoff);
+        punkt.position.set(x, y, z);
+        punkt.scale.setScalar(0.55 + Math.sin(t * Math.PI) * 0.75);
+        gruppe.add(punkt);
+        linien.push(x, y + 0.05, z, x, 4.2, z);
+      }
+      const geo = new THREE.BufferGeometry();
+      geo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(linien), 3));
+      gruppe.add(new THREE.LineSegments(geo, new THREE.LineBasicMaterial({
+        color: 0x59616f, transparent: true, opacity: .13
+      })));
+    }
+    szene.add(gruppe);
+
+    // Halle: zwei Stuetzen weit hinten und ein Unterzug. Sie stehen im
+    // Halbdunkel und geben nur den Massstab, sonst nichts.
+    const beton = matt(0x23262d, .92);
+    [-7.5, 7.5].forEach(x => {
+      const stuetze = new THREE.Mesh(new THREE.BoxGeometry(0.9, 14, 0.9), beton);
+      stuetze.position.set(x, 1.4, -6.5);
+      wirftSchatten(stuetze);
+      szene.add(stuetze);
+    });
+    const traeger = new THREE.Mesh(new THREE.BoxGeometry(17, 0.55, 0.8), beton);
+    traeger.position.set(0, 5.2, -6.5);
+    wirftSchatten(traeger);
+    szene.add(traeger);
+
+    lichtfleck(0, 0, 4.2, GLUT, .32, -3.6);
+    staub(520, 16, 10, 0.055);
+
+    const licht = new THREE.PointLight(GLUT, 9, 16, 2);
+    licht.position.set(0, 0.4, 0);
+    szene.add(licht);
+
+    kamera.position.set(4.6, 0.3, 9.2);
+    kamera.lookAt(0, 0.1, 0);
+  },
+
+  /* 02 Prisma — ein facettierter Kristall auf gefraestem Sockel.
+     Kein durchsichtiges Glas: die Brechung braeuchte einen zweiten
+     Rechendurchgang, den nicht jede Grafikkarte mitmacht. Facetten,
+     Klarlack und Interferenzfarben ergeben denselben Eindruck, kosten
+     aber nichts.                                                          */
+  prisma() {
+    // Ein einzelnes Objekt im Dunkeln vertraegt viel Streuung.
+    Object.assign(streuung, { staerke: 0.85, radius: 0.7, schwelle: 0.5 });
+    boden(-1.95, 0x0b0d14, .28, .7);
+
+    const sockel = new THREE.Mesh(new THREE.CylinderGeometry(1.0, 1.12, 0.36, 72), metall(0x191d26, .38));
+    sockel.position.y = -1.77;
+    wirftSchatten(sockel);
+    szene.add(sockel);
+
+    /* Halbdurchlaessig statt undurchsichtig: eine echte Brechung braeuchte
+       einen zweiten Rechendurchgang, den nicht jede Grafikkarte mitmacht.
+       Eine Lichtquelle im Inneren, beidseitig gerechnete Flaechen und
+       glimmende Kanten ergeben denselben Eindruck zum halben Preis. */
+    const kristall = new THREE.Mesh(
+      new THREE.OctahedronGeometry(1.02, 1),
+      new THREE.MeshPhysicalMaterial({
+        color: 0x141c28, metalness: 0.1, roughness: 0.04,
+        clearcoat: 1, clearcoatRoughness: 0.02,
+        iridescence: 1, iridescenceIOR: 2.2, iridescenceThicknessRange: [140, 880],
+        envMapIntensity: 3.6, flatShading: true,
+        transparent: true, opacity: 0.82, side: THREE.DoubleSide
+      }));
+    kristall.position.y = -0.55;
+    kristall.rotation.set(0.2, 0.62, 0.08);
+    szene.add(kristall);
+
+    // Der Kern: leuchtet die Facetten von innen an
+    const kern = new THREE.PointLight(0xffa070, 3.4, 3.6, 2);
+    kern.position.copy(kristall.position);
+    szene.add(kern);
+    // Der Funke bleibt klein: als grosse Kugel brennt er zu einem weissen
+    // Viereck aus, sobald die Streuung darueber laeuft.
+    const funke = new THREE.Mesh(new THREE.SphereGeometry(0.055, 20, 20), leuchtend(0xffbe97, 1.35));
+    funke.position.copy(kristall.position);
+    funke.position.z -= 0.12;
+    szene.add(funke);
+    kristall.castShadow = true;   // der Schlagschatten setzt ihn auf den Sockel
+
+    // Die Kanten des Kristalls glimmen nach
+    const kanten = new THREE.LineSegments(
+      new THREE.EdgesGeometry(kristall.geometry, 14),
+      new THREE.LineBasicMaterial({
+        color: new THREE.Color(GLUT).multiplyScalar(1.1),
+        transparent: true, opacity: .5, blending: THREE.AdditiveBlending, fog: false
+      }));
+    kanten.position.copy(kristall.position);
+    kanten.rotation.copy(kristall.rotation);
+    kanten.scale.setScalar(1.002);
+    szene.add(kanten);
+
+    // Der Strahl von rechts oben
+    const strahl = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.02, 0.5, 8, 32, 1, true),
+      new THREE.MeshBasicMaterial({
+        color: new THREE.Color(0xffb489),
+        transparent: true, opacity: 0.055, side: THREE.DoubleSide,
+        blending: THREE.AdditiveBlending, depthWrite: false, fog: false
+      }));
+    strahl.position.set(2.5, 2.6, -0.4);
+    strahl.rotation.z = 0.66;
+    szene.add(strahl);
+
+    lichtfleck(0.35, 0.15, 1.5, GLUT, .55, -1.95);
+    lichtfleck(-1.5, 0.5, 0.9, GLUT, .3, -1.95);
+
+    const spot = new THREE.SpotLight(0xffd0b0, 22, 14, 0.46, 0.7, 2);
+    spot.position.set(2.8, 4.4, 1.4);
+    spot.target = kristall;
+    spot.castShadow = true;
+    spot.shadow.mapSize.set(1024, 1024);
+    szene.add(spot);
+    const kante = new THREE.PointLight(0x9dc0f0, 5.5, 10, 2);
+    kante.position.set(-2.6, 0.2, 1.8);
+    szene.add(kante);
+
+    staub(260, 7, 6, 0.045);
+    kamera.position.set(0.9, 0.45, 5.6);
+    kamera.lookAt(0, -0.55, 0);
+  },
+
+  /* 03 Terrain — geschichtete Hoehenlinien, von innen hinterleuchtet */
+  terrain() {
+    boden(-2.9, 0x080a10, .5, .6);
+    const gruppe = new THREE.Group();
+    const lagen = 34;
+    const stoff = metall(0x1a1e27, .34);
+
+    for (let i = 0; i < lagen; i++) {
+      const t = i / (lagen - 1);
+      const w = 5.2 * (0.34 + 0.66 * Math.pow(Math.sin(Math.PI * (0.15 + t * 0.8)), 0.9));
+      const h = 3.0 * (0.28 + 0.72 * Math.pow(Math.sin(Math.PI * (0.3 + t * 0.6)), 1.4));
+      const lage = new THREE.Mesh(new THREE.BoxGeometry(w, 0.082, h), stoff);
+      lage.position.set(
+        Math.sin(t * 5.2) * 0.32,
+        -2.1 + i * 0.112,
+        Math.cos(t * 4.1) * 0.24);
+      wirftSchatten(lage);
+      gruppe.add(lage);
+
+      if (i % 2 === 0 && i < lagen - 1) {
+        const spalt = new THREE.Mesh(
+          new THREE.BoxGeometry(w * 0.985, 0.026, h * 0.985),
+          leuchtend(0xff7a45, 0.75 + t * 0.5));
+        spalt.position.copy(lage.position);
+        spalt.position.y += 0.056;
+        gruppe.add(spalt);
+      }
+    }
+    gruppe.rotation.y = -0.44;
+    szene.add(gruppe);
+
+    const innen = new THREE.PointLight(GLUT, 11, 10, 2);
+    innen.position.set(0, -0.4, 0);
+    szene.add(innen);
+
+    lichtfleck(0, 0, 3.4, GLUT, .28, -2.9);
+    staub(340, 11, 7, 0.05);
+    kamera.position.set(5.6, 2.4, 6.6);
+    kamera.lookAt(0, -0.45, 0);
+  },
+
+  /* 04 Nachtschicht — Projektion auf eine Betonwand, nasser Boden */
+  raster() {
+    Object.assign(streuung, { staerke: 0.55, radius: 0.6, schwelle: 0.62 });
+    const nass = boden(-3.1, 0x06080e, .14, .95);
+
+    /* Hochformat verlangt ein hohes Gebaeude. Der erste Versuch war eine
+       breite Wand — die fuellte das Bild bis an beide Raender und liess vom
+       Bau nichts uebrig als Raster. */
+    const beton = matt(0x24272e, .95);
+    const wand = new THREE.Mesh(new THREE.BoxGeometry(5.0, 12, 0.8), beton);
+    wand.position.set(0, 3.0, -1.6);
+    wirftSchatten(wand);
+    szene.add(wand);
+    [1.2, 5.4, 9.6].forEach(y => {
+      const riegel = new THREE.Mesh(new THREE.BoxGeometry(5.6, 0.42, 1.4), matt(0x1a1d24, .95));
+      riegel.position.set(0, y, -1.15);
+      wirftSchatten(riegel);
+      szene.add(riegel);
+    });
+
+    // Die Projektion: Liniennetz und zwei glimmende Flaechen
+    const linien = [];
+    for (let i = 0; i <= 10; i++) {
+      const x = -2.3 + i * 0.46;
+      linien.push(x, -2.9, -1.13, x, 8.7, -1.13);
+    }
+    for (let i = 0; i <= 24; i++) {
+      const y = -2.9 + i * 0.4833;
+      linien.push(-2.3, y, -1.13, 2.3, y, -1.13);
+    }
+    const netz = new THREE.BufferGeometry();
+    netz.setAttribute('position', new THREE.BufferAttribute(new Float32Array(linien), 3));
+    szene.add(new THREE.LineSegments(netz, new THREE.LineBasicMaterial({
+      color: new THREE.Color(0xff8a5c),
+      transparent: true, opacity: .42, blending: THREE.AdditiveBlending, fog: false
+    })));
+
+    // Die Lichtflaechen bleiben durchscheinend; deckend wirkten sie wie
+    // aufgeklebtes rotes Papier.
+    [[-1.15, 4.2, 1.6, 1.1], [0.95, 0.6, 1.2, 2.4], [1.0, 6.9, 1.4, 0.9]].forEach(([x, y, b, h]) => {
+      const flaeche = new THREE.Mesh(new THREE.PlaneGeometry(b, h),
+        new THREE.MeshBasicMaterial({
+          color: new THREE.Color(GLUT).multiplyScalar(0.3),
+          transparent: true, opacity: .3, blending: THREE.AdditiveBlending, fog: false
+        }));
+      flaeche.position.set(x, y, -1.12);
+      szene.add(flaeche);
+    });
+
+    const werfer = new THREE.SpotLight(0xffb287, 420, 40, 0.5, 0.85, 2);
+    werfer.position.set(1.2, 3.0, 13);
+    werfer.target = wand;
+    szene.add(werfer);
+    const nacht = new THREE.PointLight(KALT, 90, 30, 2);
+    nacht.position.set(-7, 8, 6);
+    szene.add(nacht);
+    // Streiflicht von vorn links: ohne es blieb der Beton eine schwarze
+    // Flaeche, auf der das Raster im Nichts schwebte.
+    const streif = new THREE.DirectionalLight(0x93b4e6, 1.15);
+    streif.position.set(-8, 5, 12);
+    szene.add(streif);
+    szene.add(new THREE.AmbientLight(0x232a38, 1.4));
+
+    // Der nasse Boden spiegelt die Projektion als Lichtband
+    lichtfleck(0, 2.4, 4.2, GLUT, .3, -3.1);
+    staub(420, 16, 12, 0.055);
+
+    // Weit genug weg, dass das Gebaeude als Gebaeude lesbar bleibt: aus der
+    // Naehe war nur noch ein Gitter zu sehen.
+    kamera.position.set(4.2, -0.4, 15.5);
+    kamera.lookAt(-0.1, 3.2, -1.2);
+  },
+
+  /* 05 Modell — der Oktant selbst, aufgetrennt und in ein Lichtraster
+     gestellt. Der urspruengliche Versuch, eine Werkstatt zu fotografieren,
+     ist gestrichen: eine Echtzeitberechnung ohne Lichtverfolgung kann eine
+     Innenaufnahme nicht glaubhaft machen, und ein schlechtes Foto ist
+     schlechter als ein gutes Diagramm. Dieses Bild zeigt stattdessen die
+     Arbeitsweise selbst — Geometrie, aufgeschnitten, vermessen.            */
+  studio() {
+    Object.assign(streuung, { staerke: 0.62, radius: 0.62, schwelle: 0.6 });
+    boden(-2.5, 0x070910, .55, .5);
+
+    /* Das Raster auf dem Boden: der Massstab, in dem hier gearbeitet wird */
+    const linien = [];
+    const feld = 16, weite = 1.1;
+    for (let i = -feld; i <= feld; i++) {
+      linien.push(i * weite, -2.49, -feld * weite, i * weite, -2.49, feld * weite);
+      linien.push(-feld * weite, -2.49, i * weite, feld * weite, -2.49, i * weite);
+    }
+    const netz = new THREE.BufferGeometry();
+    netz.setAttribute('position', new THREE.BufferAttribute(new Float32Array(linien), 3));
+    szene.add(new THREE.LineSegments(netz, new THREE.LineBasicMaterial({
+      color: new THREE.Color(0xff7d4d), transparent: true, opacity: .3,
+      blending: THREE.AdditiveBlending
+    })));
+
+    /* Der Oktant, auseinandergezogen. Jeder Teil steht ueber seinem Platz
+       im Raster — so wird sichtbar, dass die Achtteilung eine Ordnung ist
+       und keine Zerlegung.                                                 */
+    const alu = new THREE.MeshStandardMaterial({
+      color: 0xb9bcc2, metalness: 0.86, roughness: 0.3, envMapIntensity: 2.1
+    });
+    const wuerfel = new THREE.BoxGeometry(0.78, 0.78, 0.78);
+    const spreizung = 0.62;
+    [-1, 1].forEach(x => [-1, 1].forEach(y => [-1, 1].forEach(z => {
+      const w = new THREE.Mesh(wuerfel, alu);
+      w.position.set(x * spreizung, y * spreizung - 0.15, z * spreizung);
+      w.castShadow = true; w.receiveShadow = true;
+      szene.add(w);
+
+      // Lot: jeder Teil zeigt seinen Punkt auf dem Boden
+      const lot = new THREE.BufferGeometry();
+      lot.setAttribute('position', new THREE.BufferAttribute(new Float32Array([
+        w.position.x, w.position.y - 0.4, w.position.z,
+        w.position.x, -2.48, w.position.z
+      ]), 3));
+      szene.add(new THREE.Line(lot, new THREE.LineBasicMaterial({
+        color: 0xff7d4d, transparent: true, opacity: .28
+      })));
+    })));
+
+    /* Die drei Schnittebenen, die den Wuerfel teilen — als duenne
+       glimmende Flaechen angedeutet */
+    [[0, 0, 0], [Math.PI / 2, 0, 0], [0, 0, Math.PI / 2]].forEach(dreh => {
+      // Als gefuellte Flaechen legten sie rote Scheiben ueber das halbe Bild.
+      // Der Umriss allein sagt dasselbe und verdeckt nichts.
+      const ebene = new THREE.LineSegments(
+        new THREE.EdgesGeometry(new THREE.PlaneGeometry(3.1, 3.1)),
+        new THREE.LineBasicMaterial({
+          color: new THREE.Color(0xff8551),
+          transparent: true, opacity: .4, blending: THREE.AdditiveBlending, fog: false
+        }));
+      ebene.rotation.set(dreh[0], dreh[1], dreh[2]);
+      ebene.position.y = -0.15;
+      szene.add(ebene);
+    });
+
+    const kern = new THREE.PointLight(GLUT, 4.5, 6.5, 2);
+    kern.position.set(0, -0.15, 0);
+    szene.add(kern);
+    // Das kalte Licht steht hoch und weit hinten. Tief und nah spiegelte
+    // es sich als weisser Fleck im Boden.
+    const streiflicht = new THREE.PointLight(0xa8c8f5, 5, 16, 2);
+    streiflicht.position.set(-6, 5.5, -3);
+    szene.add(streiflicht);
+
+    lichtfleck(0, 0, 3.2, GLUT, .3, -2.5);
+    staub(300, 14, 7, 0.05);
+
+    kamera.position.set(4.4, 1.1, 7.2);
+    kamera.lookAt(0, -0.5, 0);
+  }
+};
+
+(szenen[szeneName] || szenen.helix)();
+
+/* ------------------------------------------------------------ Lichtstreuung
+
+   Ohne Streuung bleibt jede leuchtende Flaeche ein Aufkleber. Erst wenn das
+   Licht ueber seine Kante hinaus in die Umgebung blutet, glaubt das Auge, dass
+   dort etwas leuchtet. Die Schwelle liegt hoch genug, dass nur echte Quellen
+   erfasst werden und nicht das halbe Bild aufgeht.                          */
+
+const b = behaelter.clientWidth, h = behaelter.clientHeight;
+const komposit = new EffectComposer(renderer);
+komposit.setPixelRatio(window.devicePixelRatio);
+komposit.setSize(b, h);
+komposit.addPass(new RenderPass(szene, kamera));
+komposit.addPass(new UnrealBloomPass(
+  new THREE.Vector2(b, h), streuung.staerke, streuung.radius, streuung.schwelle));
+komposit.addPass(new OutputPass());
+
+komposit.render();
+requestAnimationFrame(() => {
+  komposit.render();
+  window.__fertig = true;
+});
+</script>
+</body>
+</html>

@@ -5,7 +5,7 @@ name: Vorschau veroeffentlichen
 on:
   push:
     branches: [main]
-    paths: ['kunden/**', 'beispiele/**', 'sf-webseiten/**', '.github/workflows/pages.yml']
+    paths: ['kunden/**', 'beispiele/**', 'sf-webseiten/**', 'flaggschiff/**', '.github/workflows/pages.yml']
   workflow_dispatch:
 
 permissions:
@@ -32,6 +32,12 @@ jobs:
           # Der eigene Auftritt der Agentur liegt an der Wurzel, damit er
           # spaeter unveraendert auf die echte Domain uebertragen werden kann.
           if [ -d sf-webseiten ]; then cp -r sf-webseiten/* _site/; fi
+
+          # Das Flaggschiff behaelt seinen eigenen Ordner: es ist ein einzelnes
+          # Projekt, kein Verzeichnis voller Projekte wie kunden/ und beispiele/.
+          if [ -d flaggschiff ]; then
+            mkdir -p _site/flaggschiff && cp -r flaggschiff/* _site/flaggschiff/
+          fi
 
           # Interne Unterlagen gehoeren nicht auf die Vorschau. Die README
           # enthaelt Verkaufsargumente und Notizen zum Kundengespraech, die
@@ -73,6 +79,18 @@ jobs:
                           titel = t.split("|")[0].strip() or titel
                   raus.append((d.name, titel))
               return raus
+
+          def flaggschiff():
+              # Ein einzelnes Projekt, kein Ordner voller Projekte — deshalb
+              # nicht ueber eintraege(), sondern direkt.
+              idx = pathlib.Path("flaggschiff/index.html")
+              if not idx.exists():
+                  return []
+              kopf = idx.read_text(encoding="utf-8", errors="ignore")[:4000]
+              titel = "flaggschiff"
+              if "<title>" in kopf:
+                  titel = kopf.split("<title>", 1)[1].split("</title>", 1)[0].strip() or titel
+              return [("flaggschiff", titel)]
 
           def block(ueberschrift, liste, leer):
               if not liste:
@@ -122,6 +140,7 @@ jobs:
           dieser Vorschau.</p>
           {block("Kundenprojekte", eintraege("kunden"), "Noch keine angelegt.")}
           {block("Beispiele", eintraege("beispiele"), "Noch keine angelegt.")}
+          {block("Flaggschiff", flaggschiff(), "Noch nicht vorhanden.")}
           <p class="fuss">Die Beispiele zeigen erfundene Unternehmen. Saemtliche
           Angaben darin dienen ausschliesslich der Veranschaulichung.</p>
           </main></body></html>"""

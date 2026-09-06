@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="de" class="kein-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>OKTANT — Studio für räumliche Markenerlebnisse</title>
+<meta name="description" content="OKTANT entwirft Installationen, Produktbilder und interaktive Oberflächen. Wir bauen den Raum als Modell, prüfen ihn in Echtzeit und übergeben ihn erst, wenn er trägt.">
+<meta name="theme-color" content="#07080b">
+<meta name="color-scheme" content="dark">
+
+<link rel="canonical" href="https://www.oktant.example/">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="de_DE">
+<meta property="og:site_name" content="OKTANT">
+<meta property="og:title" content="OKTANT — Studio für räumliche Markenerlebnisse">
+<meta property="og:description" content="Installationen, Produktbilder und interaktive Oberflächen. Erst im Modell geprüft, dann gebaut.">
+<meta property="og:image" content="assets/img/og.jpg">
+<meta property="og:url" content="https://www.oktant.example/">
+<meta name="twitter:card" content="summary_large_image">
+
+<link rel="icon" href="assets/img/signet.svg" type="image/svg+xml">
+
+<link rel="preload" href="assets/fonts/instrumentserif-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/spacegrotesk-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="assets/css/fonts.css">
+<link rel="stylesheet" href="assets/css/basis.css">
+<link rel="stylesheet" href="assets/css/site.css">
+
+<script>
+  /* Steht bewusst vor dem Inhalt: erst wenn feststeht, dass Skripte laufen,
+     dürfen Elemente unsichtbar starten. Sonst bliebe ohne JavaScript eine
+     leere Seite zurück. */
+  document.documentElement.classList.remove('kein-js');
+  document.documentElement.classList.add('hat-js');
+
+  /* Reißleine: sollte site.js nicht laden oder unterwegs stehen bleiben,
+     bliebe der Vorspann für immer stehen und die Seite unerreichbar. Nach
+     sechs Sekunden räumt dieser Zeitgeber ihn selbst weg. */
+  window.setTimeout(function () {
+    if (!document.body || !document.body.classList.contains('laedt')) return;
+    document.body.classList.remove('laedt');
+    ['vorspann', 'vorhang'].forEach(function (id) {
+      var feld = document.getElementById(id);
+      if (feld) feld.hidden = true;
+    });
+    document.querySelectorAll('.auf').forEach(function (feld) {
+      feld.classList.add('ist-da');
+    });
+  }, 6000);
+</script>
+</head>
+
+<body class="laedt">
+
+<a class="sprung" href="#inhalt">Zum Inhalt springen</a>
+
+<!-- ======================================================= Vorspann ==== -->
+<div class="vorspann" id="vorspann" role="status" aria-live="polite">
+  <div class="vorspann__mitte">
+    <div class="vorspann__wort" aria-label="OKTANT">
+      <span>O</span><span>K</span><span>T</span><span>A</span><span>N</span><span>T</span>
+    </div>
+    <div class="vorspann__balken"><i id="vorspann-balken"></i></div>
+    <div class="vorspann__zahl"><span id="vorspann-zahl">000</span> — Szene wird aufgebaut</div>
+  </div>
+</div>
+<div class="vorhang" id="vorhang"></div>
+
+<!-- ========================================================== Zeiger ==== -->
+<div class="zeiger" id="zeiger" aria-hidden="true">
+  <div class="zeiger__ring" id="zeiger-ring"></div>
+  <div class="zeiger__punkt" id="zeiger-punkt"></div>
+</div>
+
+<div class="korn" aria-hidden="true"></div>
+<div class="gehaeuse" aria-hidden="true"></div>
+
+<!-- ========================================================== Leiste ==== -->
+<header class="leiste" id="leiste">
+  <a class="marke" href="#oben" aria-label="OKTANT, zum Seitenanfang">
+    <svg class="marke__signet" viewBox="0 0 24 24" aria-hidden="true">
+      <path class="oktant-a" d="M12 1.6 22.4 7.5 12 13.4 1.6 7.5Z"/>
+      <path class="oktant-b" d="M1.6 8.9 12 14.8v7.6L1.6 16.5Z"/>
+      <path class="oktant-c" d="M22.4 8.9 12 14.8v7.6l10.4-5.9Z"/>
+    </svg>
+    <span>Oktant</span>
+  </a>
+
+  <nav class="leiste__wege" id="wege" aria-label="Hauptbereiche">
+    <a class="leiste__weg" href="#studio">Studio</a>
+    <a class="leiste__weg" href="#leistungen">Leistungen</a>
+    <a class="leiste__weg" href="#arbeiten">Arbeiten</a>
+    <a class="leiste__weg" href="#werkbank">Werkbank</a>
+  </nav>
+
+  <div class="leiste__rechts">
+    <a class="knopf" href="#kontakt" data-zeiger="Los">
+      Projekt anfragen
+      <span class="knopf__kreis" aria-hidden="true">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 12 12 4M6 4h6v6"/>
+        </svg>
+      </span>
+    </a>
+    <button class="schalter" id="schalter" type="button" aria-expanded="false" aria-controls="uebersicht">
+      <span class="nur-vorlesen">Menü öffnen</span>
+      <i aria-hidden="true"></i><i aria-hidden="true"></i>
+    </button>
+  </div>
+</header>
+
+<!-- ====================================================== Uebersicht ==== -->
+<div class="uebersicht" id="uebersicht" hidden>
+  <div class="rahmen">
+    <nav class="uebersicht__liste" aria-label="Alle Bereiche">
+      <div class="uebersicht__zeile"><a class="uebersicht__weg" href="#studio" style="--verzug:.05s">Studio <em>01</em></a></div>
+      <div class="uebersicht__zeile"><a class="uebersicht__weg" href="#leistungen" style="--verzug:.11s">Leistungen <em>02</em></a></div>
+      <div class="uebersicht__zeile"><a class="uebersicht__weg" href="#arbeiten" style="--verzug:.17s">Arbeiten <em>03</em></a></div>
+      <div class="uebersicht__zeile"><a class="uebersicht__weg" href="#werkbank" style="--verzug:.23s">Werkbank <em>04</em></a></div>
+      <div class="uebersicht__zeile"><a class="uebersicht__weg" href="#kontakt" style="--verzug:.29s">Kontakt <em>05</em></a></div>
+    </nav>
+    <div class="uebersicht__fuss">
+      <span>Augsburg &amp; Berlin</span>
+      <a class="strichlink" href="mailto:studio@oktant.example">studio@oktant.example</a>
+      <span class="ziffer">48.3668° N, 10.8987° O</span>
+    </div>
+  </div>
+</div>
+
+<main id="inhalt" class="inhalt">
+
+<!-- ============================================================ Kopf ==== -->
+<section class="hero" id="oben">
+  <div class="hero__buehne" id="hero-buehne" aria-hidden="true"></div>
+  <div class="hero__schleier" aria-hidden="true"></div>
+
+  <div class="rahmen hero__satz">
+    <p class="rubrik rubrik--marke">Studio für räumliche Erlebnisse — seit 2014</p>
+
+    <h1 class="hero__titel">
+      <span class="zeile"><span>Wir bauen den</span></span>
+      <span class="zeile versatz"><span><i class="kursiv">Raum</i>, bevor</span></span>
+      <span class="zeile"><span>es ihn gibt.</span></span>
+    </h1>
+
+    <div class="hero__unten">
+      <p class="hero__zusatz">
+        Installationen, Produktbilder und interaktive Oberflächen. Jedes Projekt
+        entsteht zuerst als begehbares Modell — geprüft in Echtzeit, lange bevor
+        jemand Material bestellt.
+      </p>
+      <div class="hero__tat">
+        <a class="knopf" href="#arbeiten" data-zeiger="Ansehen">
+          Arbeiten ansehen
+          <span class="knopf__kreis" aria-hidden="true">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M8 3v10M3.5 8.5 8 13l4.5-4.5"/>
+            </svg>
+          </span>
+        </a>
+        <a class="knopf knopf--leer" href="#werkbank" data-zeiger="Drehen">
+          Werkbank öffnen
+          <span class="knopf__kreis" aria-hidden="true">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M13 8a5 5 0 1 1-1.6-3.7M13 2.5V5h-2.5"/>
+            </svg>
+          </span>
+        </a>
+      </div>
+    </div>
+
+    <dl class="hero__daten">
+      <div><dt>Gegründet</dt><dd class="ziffer">2014</dd></div>
+      <div><dt>Projekte</dt><dd class="ziffer" data-zaehler="64">64</dd></div>
+      <div><dt>Länder</dt><dd class="ziffer" data-zaehler="9">9</dd></div>
+      <div><dt>Werkstatt</dt><dd>Augsburg</dd></div>
+    </dl>
+  </div>
+
+  <div class="hero__wink" aria-hidden="true">
+    <i></i>
+    <span>Scrollen</span>
+  </div>
+</section>
+
+<!-- ============================================================ Band ==== -->
+<div class="band" aria-hidden="true">
+  <div class="band__lauf" id="band-lauf">
+    <div class="band__stueck">
+      <span><b>Installation</b></span><i class="band__punkt"></i>
+      <span><em>Produktvisualisierung</em></span><i class="band__punkt"></i>
+      <span><b>Echtzeit</b></span><i class="band__punkt"></i>
+      <span><em>Bühne</em></span><i class="band__punkt"></i>
+      <span><b>Konfigurator</b></span><i class="band__punkt"></i>
+      <span><em>Ausstellung</em></span><i class="band__punkt"></i>
+    </div>
+  </div>
+</div>
+
+<!-- ========================================================== Studio ==== -->
+<section class="abschnitt" id="studio">
+  <div class="rahmen">
+    <div class="abschnitt__kopf">
+      <p class="rubrik auf">01 — Haltung</p>
+      <h2 class="abschnitt__titel auf">Nicht Dekoration.<br><i class="kursiv">Konstruktion.</i></h2>
+    </div>
+
+    <p class="manifest__satz aufhellen" id="manifest-satz">
+      Ein Raum überzeugt nicht, weil er teuer aussieht, sondern weil jede Kante
+      eine Entscheidung ist, die vorher geprüft wurde.
+    </p>
+
+    <div class="manifest__gitter">
+      <div class="manifest__bild auf">
+        <div class="bildfeld bildfeld--quer" data-parallax="0.12">
+          <img src="assets/img/studio.jpg" width="1600" height="1000" loading="lazy" decoding="async"
+               alt="Modellansicht: der Oktant aufgetrennt in acht Teile, jedes über seinem Punkt im Lichtraster.">
+        </div>
+      </div>
+
+      <div class="manifest__text">
+        <p class="lauf auf">
+          OKTANT arbeitet an der Grenze zwischen Bühne, Software und Handwerk.
+          Wir bauen Modelle, weil ein Rendering hübsch sein kann und trotzdem
+          nicht steht. Was wir zeigen, ist gerechnet: Traglast, Blickwinkel,
+          Lichtstärke, Bildrate.
+        </p>
+
+        <ol class="stufen auf">
+          <li class="stufe">
+            <span class="stufe__nr ziffer">01</span>
+            <div>
+              <h3 class="stufe__titel">Sondieren</h3>
+              <p class="stufe__text">Zwei Tage vor Ort. Wir messen den Raum, das Licht und die Wege, die Menschen ohnehin nehmen.</p>
+            </div>
+          </li>
+          <li class="stufe">
+            <span class="stufe__nr ziffer">02</span>
+            <div>
+              <h3 class="stufe__titel">Entwerfen</h3>
+              <p class="stufe__text">Drei Richtungen, jede als Modell. Keine Stimmungsbilder, sondern Geometrie mit Maßen.</p>
+            </div>
+          </li>
+          <li class="stufe">
+            <span class="stufe__nr ziffer">03</span>
+            <div>
+              <h3 class="stufe__titel">Simulieren</h3>
+              <p class="stufe__text">Der Entwurf läuft in Echtzeit, bevor er gebaut wird. Wer will, geht mit der Brille hinein.</p>
+            </div>
+          </li>
+          <li class="stufe">
+            <span class="stufe__nr ziffer">04</span>
+            <div>
+              <h3 class="stufe__titel">Aufbauen</h3>
+              <p class="stufe__text">Fertigung, Aufbau und Einmessung vor Ort. Übergabe erst nach der letzten Justage.</p>
+            </div>
+          </li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====================================================== Leistungen ==== -->
+<section class="abschnitt" id="leistungen">
+  <div class="rahmen">
+    <div class="abschnitt__kopf">
+      <p class="rubrik auf">02 — Leistungen</p>
+      <h2 class="abschnitt__titel auf">Sechs Wege,<br>einen Raum zu <i class="kursiv">behaupten</i>.</h2>
+    </div>
+
+    <div class="leistungen__gitter">
+
+      <article class="dienst auf" data-neig>
+        <div class="schale"><div class="kern">
+          <p class="dienst__marke"><span>Installation</span><span class="ziffer">01</span></p>
+          <div class="dienst__zeichen" aria-hidden="true">
+            <svg viewBox="0 0 160 100">
+              <g data-strich="hoch">
+                <path d="M20 14v72M45 14v72M70 14v72M95 14v72M120 14v72M145 14v72"/>
+              </g>
+              <path data-strich d="M8 50h144" opacity=".5"/>
+              <circle data-strich="weit" cx="70" cy="50" r="26"/>
+            </svg>
+          </div>
+          <div>
+            <h3 class="dienst__titel">Räumliche Installation</h3>
+            <p class="dienst__text">Kinetik, Licht und Tragwerk als ein Stück. Vom Entwurf bis zur Abnahme durch den Prüfstatiker.</p>
+            <ul class="dienst__liste"><li>Kinetik</li><li>Statik</li><li>Lichtplanung</li></ul>
+          </div>
+        </div></div>
+      </article>
+
+      <article class="dienst auf" data-neig>
+        <div class="schale"><div class="kern">
+          <p class="dienst__marke"><span>Bild</span><span class="ziffer">02</span></p>
+          <div class="dienst__zeichen" aria-hidden="true">
+            <svg viewBox="0 0 160 100">
+              <path data-strich="dreh" d="M80 20 122 50 80 80 38 50Z"/>
+              <path data-strich d="M38 50h84" opacity=".45"/>
+              <path data-strich="weit" d="M80 6v88" opacity=".45"/>
+            </svg>
+          </div>
+          <div>
+            <h3 class="dienst__titel">Produktvisualisierung</h3>
+            <p class="dienst__text">Physikalisch korrektes Licht statt Filter. Ein Materialmuster, ein Messwert, ein Bild, das hält.</p>
+            <ul class="dienst__liste"><li>Studio-Render</li><li>Materialbau</li><li>Bewegtbild</li></ul>
+          </div>
+        </div></div>
+      </article>
+
+      <article class="dienst auf" data-neig>
+        <div class="schale"><div class="kern">
+          <p class="dienst__marke"><span>Software</span><span class="ziffer">03</span></p>
+          <div class="dienst__zeichen" aria-hidden="true">
+            <svg viewBox="0 0 160 100">
+              <rect data-strich="weit" x="30" y="22" width="100" height="56" rx="8"/>
+              <path data-strich="hoch" d="M30 42h100"/>
+              <circle data-strich cx="44" cy="32" r="3"/>
+              <path data-strich="dreh" d="M68 56h24v14H68z"/>
+            </svg>
+          </div>
+          <div>
+            <h3 class="dienst__titel">Echtzeit-Konfigurator</h3>
+            <p class="dienst__text">Der Katalog wird bedienbar. Läuft im Browser, auf dem Messeterminal und auf dem Tablet des Außendiensts.</p>
+            <ul class="dienst__liste"><li>WebGL</li><li>Produktdaten</li><li>Offline-Modus</li></ul>
+          </div>
+        </div></div>
+      </article>
+
+      <article class="dienst auf" data-neig>
+        <div class="schale"><div class="kern">
+          <p class="dienst__marke"><span>Bühne</span><span class="ziffer">04</span></p>
+          <div class="dienst__zeichen" aria-hidden="true">
+            <svg viewBox="0 0 160 100">
+              <path data-strich="weit" d="M80 14 20 86h120Z"/>
+              <path data-strich="hoch" d="M52 56h56" opacity=".55"/>
+              <circle data-strich cx="80" cy="26" r="6"/>
+            </svg>
+          </div>
+          <div>
+            <h3 class="dienst__titel">Bühne und Projektion</h3>
+            <p class="dienst__text">Mapping auf Fassaden, Bühnenbilder und Medienregie. Eingemessen auf den Zentimeter.</p>
+            <ul class="dienst__liste"><li>Mapping</li><li>Medienregie</li><li>Einmessung</li></ul>
+          </div>
+        </div></div>
+      </article>
+
+      <article class="dienst auf" data-neig>
+        <div class="schale"><div class="kern">
+          <p class="dienst__marke"><span>Ausstellung</span><span class="ziffer">05</span></p>
+          <div class="dienst__zeichen" aria-hidden="true">
+            <svg viewBox="0 0 160 100">
+              <path data-strich="hoch" d="M24 78V34l28-14 28 14v44"/>
+              <path data-strich="weit" d="M80 78V44l28-12 28 12v34"/>
+              <path data-strich d="M12 78h136" opacity=".5"/>
+            </svg>
+          </div>
+          <div>
+            <h3 class="dienst__titel">Ausstellungsgestaltung</h3>
+            <p class="dienst__text">Dramaturgie über Räume hinweg: was zuerst gesehen wird, was wartet, was in Erinnerung bleibt.</p>
+            <ul class="dienst__liste"><li>Dramaturgie</li><li>Wegeführung</li><li>Vitrinenbau</li></ul>
+          </div>
+        </div></div>
+      </article>
+
+      <article class="dienst auf" data-neig>
+        <div class="schale"><div class="kern">
+          <p class="dienst__marke"><span>Nachweis</span><span class="ziffer">06</span></p>
+          <div class="dienst__zeichen" aria-hidden="true">
+            <svg viewBox="0 0 160 100">
+              <path data-strich="weit" d="M20 76c22-6 30-42 52-42s30 36 52 30"/>
+              <path data-strich d="M20 84h120" opacity=".5"/>
+              <path data-strich="hoch" d="M20 20v64" opacity=".5"/>
+            </svg>
+          </div>
+          <div>
+            <h3 class="dienst__titel">Simulation und Nachweis</h3>
+            <p class="dienst__text">Lichtstärke, Sichtachsen, Besucherströme. Zahlen für die Freigabe, nicht für die Präsentation.</p>
+            <ul class="dienst__liste"><li>Lichtrechnung</li><li>Strömung</li><li>Dokumentation</li></ul>
+          </div>
+        </div></div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================== Arbeiten ==== -->
+<section class="abschnitt arbeiten" id="arbeiten">
+  <div class="rahmen">
+    <div class="abschnitt__kopf">
+      <p class="rubrik auf">03 — Arbeiten</p>
+      <h2 class="abschnitt__titel auf">Vier Räume,<br>die es <i class="kursiv">wirklich</i> gibt.</h2>
+    </div>
+  </div>
+
+  <!-- Waagerechte Strecke fuer breite Bildschirme -->
+  <div class="strecke" id="strecke">
+    <div class="strecke__halt">
+      <div class="strecke__lauf" id="strecke-lauf">
+
+        <article class="werkkarte" data-zeiger="Projekt">
+          <div class="werkkarte__bild">
+            <span class="werkkarte__nr ziffer">01 — 2024</span>
+            <img src="assets/img/werk-hallenlicht.jpg" width="1400" height="1050" loading="lazy" decoding="async"
+                 alt="Hallenlicht: hunderte hängende Leuchtpunkte bilden eine gedrehte Spirale in einer Betonhalle.">
+          </div>
+          <div class="werkkarte__fuss">
+            <h3 class="werkkarte__titel">Hallenlicht</h3>
+            <p class="werkkarte__art">Kinetische Installation<br>Messehalle, 1 400 m²</p>
+          </div>
+        </article>
+
+        <article class="werkkarte werkkarte--hoch" data-zeiger="Projekt">
+          <div class="werkkarte__bild">
+            <span class="werkkarte__nr ziffer">02 — 2025</span>
+            <img src="assets/img/werk-prisma.jpg" width="1050" height="1400" loading="lazy" decoding="async"
+                 alt="Prisma: ein facettiertes Glasobjekt auf dunklem Sockel, ein Lichtstrahl bricht sich darin.">
+          </div>
+          <div class="werkkarte__fuss">
+            <h3 class="werkkarte__titel">Prisma</h3>
+            <p class="werkkarte__art">Produktvisualisierung<br>Serie, 24 Motive</p>
+          </div>
+        </article>
+
+        <article class="werkkarte werkkarte--quer" data-zeiger="Projekt">
+          <div class="werkkarte__bild">
+            <span class="werkkarte__nr ziffer">03 — 2023</span>
+            <img src="assets/img/werk-terrain.jpg" width="1600" height="900" loading="lazy" decoding="async"
+                 alt="Terrain: ein Wandrelief aus geschichteten Höhenlinien, von innen warm hinterleuchtet.">
+          </div>
+          <div class="werkkarte__fuss">
+            <h3 class="werkkarte__titel">Terrain</h3>
+            <p class="werkkarte__art">Datenrelief im Foyer<br>Aluminium, 11 m</p>
+          </div>
+        </article>
+
+        <article class="werkkarte werkkarte--hoch" data-zeiger="Projekt">
+          <div class="werkkarte__bild">
+            <span class="werkkarte__nr ziffer">04 — 2025</span>
+            <img src="assets/img/werk-nachtschicht.jpg" width="1050" height="1400" loading="lazy" decoding="async"
+                 alt="Nachtschicht: eine Betonfassade bei Nacht, überzogen von einer geometrischen Projektion.">
+          </div>
+          <div class="werkkarte__fuss">
+            <h3 class="werkkarte__titel">Nachtschicht</h3>
+            <p class="werkkarte__art">Fassadenprojektion<br>Drei Nächte, 42 m Breite</p>
+          </div>
+        </article>
+
+        <div class="strecke__ende">
+          <h3 class="abschnitt__titel" style="font-size:var(--gr-3)">Der nächste Raum ist noch leer.</h3>
+          <p class="lauf">Erzählen Sie uns, was darin passieren soll.</p>
+          <a class="knopf" href="#kontakt" data-zeiger="Los">
+            Projekt anfragen
+            <span class="knopf__kreis" aria-hidden="true">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 12 12 4M6 4h6v6"/>
+              </svg>
+            </span>
+          </a>
+        </div>
+
+      </div>
+      <div class="strecke__spur" aria-hidden="true"><i id="strecke-spur"></i></div>
+    </div>
+  </div>
+
+  <!-- Senkrechte Fassung fuer schmale Geraete -->
+  <div class="rahmen">
+    <div class="arbeiten__liste">
+      <article class="werkkarte auf">
+        <div class="werkkarte__bild">
+          <span class="werkkarte__nr ziffer">01 — 2024</span>
+          <img src="assets/img/werk-hallenlicht.jpg" width="1400" height="1050" loading="lazy" decoding="async" alt="">
+        </div>
+        <div class="werkkarte__fuss">
+          <h3 class="werkkarte__titel">Hallenlicht</h3>
+          <p class="werkkarte__art">Kinetische Installation</p>
+        </div>
+      </article>
+      <article class="werkkarte werkkarte--hoch auf">
+        <div class="werkkarte__bild">
+          <span class="werkkarte__nr ziffer">02 — 2025</span>
+          <img src="assets/img/werk-prisma.jpg" width="1050" height="1400" loading="lazy" decoding="async" alt="">
+        </div>
+        <div class="werkkarte__fuss">
+          <h3 class="werkkarte__titel">Prisma</h3>
+          <p class="werkkarte__art">Produktvisualisierung</p>
+        </div>
+      </article>
+      <article class="werkkarte werkkarte--quer auf">
+        <div class="werkkarte__bild">
+          <span class="werkkarte__nr ziffer">03 — 2023</span>
+          <img src="assets/img/werk-terrain.jpg" width="1600" height="900" loading="lazy" decoding="async" alt="">
+        </div>
+        <div class="werkkarte__fuss">
+          <h3 class="werkkarte__titel">Terrain</h3>
+          <p class="werkkarte__art">Datenrelief im Foyer</p>
+        </div>
+      </article>
+      <article class="werkkarte werkkarte--hoch auf">
+        <div class="werkkarte__bild">
+          <span class="werkkarte__nr ziffer">04 — 2025</span>
+          <img src="assets/img/werk-nachtschicht.jpg" width="1050" height="1400" loading="lazy" decoding="async" alt="">
+        </div>
+        <div class="werkkarte__fuss">
+          <h3 class="werkkarte__titel">Nachtschicht</h3>
+          <p class="werkkarte__art">Fassadenprojektion</p>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================== Werkbank ==== -->
+<section class="abschnitt werkbank" id="werkbank">
+  <div class="rahmen werkbank__gitter">
+
+    <div class="werkbank__text">
+      <p class="rubrik auf">04 — Werkbank</p>
+      <h2 class="abschnitt__titel auf" style="font-size:var(--gr-3)">Drehen Sie<br>den Entwurf.</h2>
+      <p class="lauf auf">
+        Was bei uns auf dem Tisch liegt, liegt auch hier: ein Oktant, acht
+        Teile, in Echtzeit gerechnet. Ziehen Sie ihn mit der Maus, scrollen Sie
+        hindurch, schalten Sie die Darstellung um.
+      </p>
+      <div class="schalterreihe auf" role="group" aria-label="Darstellung des Modells">
+        <button type="button" data-modus="kanten" aria-pressed="false">Kanten</button>
+        <button type="button" data-modus="massiv" aria-pressed="true">Massiv</button>
+        <button type="button" data-modus="streuung" aria-pressed="false">Streuung</button>
+      </div>
+      <dl class="hero__daten auf" style="margin-top:0">
+        <div><dt>Teile</dt><dd class="ziffer">8</dd></div>
+        <div><dt>Bildrate</dt><dd class="ziffer" id="bildrate">—</dd></div>
+      </dl>
+    </div>
+
+    <div class="werkbank__buehne" id="werkbank-buehne">
+      <p class="werkbank__hinweis" id="werkbank-hinweis">Ziehen zum Drehen</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- ======================================================= Abschluss ==== -->
+<section class="abschnitt abschluss" id="kontakt">
+  <div class="abschluss__schein" id="abschluss-schein" aria-hidden="true"></div>
+  <div class="rahmen">
+    <p class="rubrik auf" style="justify-content:center">05 — Kontakt</p>
+    <h2 class="abschluss__titel" style="margin-top:1.5rem">
+      <span class="zeile"><span>Bauen wir</span></span>
+      <span class="zeile"><span><em>etwas</em>, das steht.</span></span>
+    </h2>
+    <p class="lauf auf" style="margin-top:2rem">
+      Schreiben Sie uns zwei Sätze über den Raum und drei über das Ziel. Wir
+      melden uns innerhalb von zwei Werktagen mit einer ersten Einschätzung.
+    </p>
+    <div class="abschluss__tat auf">
+      <a class="knopf" href="mailto:studio@oktant.example" data-zeiger="Schreiben">
+        studio@oktant.example
+        <span class="knopf__kreis" aria-hidden="true">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 12 12 4M6 4h6v6"/>
+          </svg>
+        </span>
+      </a>
+      <a class="knopf knopf--leer" href="tel:+498211234567">
+        <span class="ziffer">+49 821 123 456 7</span>
+        <span class="knopf__kreis" aria-hidden="true">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 4.5c0 5 3.5 8.5 8.5 8.5l1.5-2-3-1.5-1.3 1.3A9.6 9.6 0 0 1 5.7 7.3L7 6 5.5 3 3.5 3z"/>
+          </svg>
+        </span>
+      </a>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ============================================================ Fuss ==== -->
+<footer class="fuss">
+  <div class="rahmen">
+    <div class="fuss__oben">
+      <div>
+        <a class="marke" href="#oben" aria-label="OKTANT, zum Seitenanfang">
+          <svg class="marke__signet" viewBox="0 0 24 24" aria-hidden="true">
+            <path class="oktant-a" d="M12 1.6 22.4 7.5 12 13.4 1.6 7.5Z"/>
+            <path class="oktant-b" d="M1.6 8.9 12 14.8v7.6L1.6 16.5Z"/>
+            <path class="oktant-c" d="M22.4 8.9 12 14.8v7.6l10.4-5.9Z"/>
+          </svg>
+          <span>Oktant</span>
+        </a>
+        <p class="fuss__wort">
+          Studio für räumliche Markenerlebnisse. Wir entwerfen, rechnen und
+          bauen — in dieser Reihenfolge.
+        </p>
+      </div>
+
+      <div>
+        <h2 class="fuss__titel">Bereiche</h2>
+        <ul class="fuss__liste">
+          <li><a class="strichlink" href="#studio">Studio</a></li>
+          <li><a class="strichlink" href="#leistungen">Leistungen</a></li>
+          <li><a class="strichlink" href="#arbeiten">Arbeiten</a></li>
+          <li><a class="strichlink" href="#werkbank">Werkbank</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h2 class="fuss__titel">Kontakt</h2>
+        <ul class="fuss__liste">
+          <li><a class="strichlink" href="mailto:studio@oktant.example">studio@oktant.example</a></li>
+          <li><a class="strichlink ziffer" href="tel:+498211234567">+49 821 123 456 7</a></li>
+          <li>Beispielstraße 1<br>86150 Augsburg</li>
+        </ul>
+      </div>
+
+      <div>
+        <h2 class="fuss__titel">Sozial</h2>
+        <ul class="fuss__liste">
+          <li><a class="strichlink" href="#kontakt">Instagram</a></li>
+          <li><a class="strichlink" href="#kontakt">LinkedIn</a></li>
+          <li><a class="strichlink" href="#kontakt">Vimeo</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <p class="fuss__signatur" aria-hidden="true">OKTANT</p>
+
+    <div class="fuss__unten">
+      <p>© <span class="ziffer">2026</span> OKTANT — erfundenes Studio, gebaut als Gestaltungsbeispiel.</p>
+      <nav class="fuss__rechte" aria-label="Rechtliches">
+        <a class="strichlink" href="impressum.html">Impressum</a>
+        <a class="strichlink" href="datenschutz.html">Datenschutz</a>
+      </nav>
+    </div>
+  </div>
+</footer>
+
+<p class="fiktion" role="note">
+  Erfundenes Unternehmen. Name, Anschrift, Zahlen und Projekte dienen allein
+  der Veranschaulichung.
+</p>
+
+<script src="assets/js/lenis.min.js"></script>
+<script src="assets/js/gsap.min.js"></script>
+<script src="assets/js/ScrollTrigger.min.js"></script>
+<script src="assets/js/site.js"></script>
+<script type="module" src="assets/js/szene.js"></script>
+</body>
+</html>
