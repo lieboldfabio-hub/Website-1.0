@@ -210,6 +210,20 @@ Startseite als Bereich „Unsere Zusagen", auf der Bewertungsseite ausführlich.
 Sobald echte Kundenprojekte live sind, gehören sie an diese Stelle: mit Namen,
 mit Link, ohne herausgekürzte Kritik.
 
+## KI-Studio (internes Werkzeug)
+
+`ki-studio.html` erzeugt über KI-Anbieter (OpenAI, Google Gemini, Runway,
+Luma) passende Bilder und Videos für die Beispielprojekte unter `beispiele/`
+und kann sie direkt an der richtigen Stelle ablegen. Bewusst **nicht** in der
+Hauptnavigation verlinkt, mit `noindex` versehen und in `robots.txt`
+gesperrt – jede Generierung kostet echtes Geld, der Zugriff ist zusätzlich
+über ein Admin-Token geschützt.
+
+Braucht ein separates Backend (`ai-studio/server/`, Node/Express), das
+**nicht** über GitHub Pages läuft (kann kein Node ausführen) und deshalb
+eigenständig gehostet werden muss. Einrichtung, API-Schlüssel, Kosten und
+Erweiterung um weitere Anbieter: siehe `ai-studio/README.md`.
+
 ## Deployment
 
 `.github/workflows/pages.yml` kopiert `sf-webseiten/*` beim Bauen der Vorschau

@@ -2,5 +2,6 @@ User-agent: *
 Allow: /
 Disallow: /impressum.html
 Disallow: /datenschutz.html
+Disallow: /ki-studio.html
 
 Sitemap: https://www.sf-webseiten.de/sitemap.xml
