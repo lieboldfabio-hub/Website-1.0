@@ -1,0 +1,176 @@
+/* ============================================================================
+   KI-Studio
+   ----------------------------------------------------------------------------
+   Internes Werkzeug, eigenstaendige Seite (nicht in der Hauptnavigation
+   verlinkt). Nutzt ausschliesslich Tokens aus site.css (--bg, --surface,
+   --accent, --r-*, --font-*), damit es sich einfuegt, ohne site.css
+   anzufassen.
+   ========================================================================= */
+
+.ki-studio-body { background: var(--surface-2); }
+
+/* Mehrere Bausteine hier setzen ein eigenes display (grid/flex) fuer den
+   sichtbaren Zustand. Das schlaegt sonst das display:none der Browser-
+   Vorgabe fuer [hidden], weil Autor-CSS die UA-Vorgabe unabhaengig von der
+   Spezifitaet gewinnt - deshalb hier ausdruecklich erzwungen. */
+.ki-studio [hidden] { display: none !important; }
+
+.ki-studio-tag {
+  margin-left: auto;
+  display: inline-flex; align-items: center; gap: 0.45rem;
+  font-size: 0.78rem; font-weight: 600; letter-spacing: 0.04em;
+  color: var(--accent-strong);
+  background: var(--accent-soft);
+  padding: 0.4rem 0.85rem;
+  border-radius: 999px;
+}
+.ki-studio-tag .ic { width: 0.95rem; height: 0.95rem; }
+
+.ki-studio { padding-block: clamp(2rem, 5vw, 3rem) clamp(4rem, 8vw, 6rem); }
+
+/* ------------------------------------------------------------------- Zugang */
+
+.ki-gate { display: grid; place-items: center; min-height: 60vh; }
+.ki-gate__card { max-width: 30rem; text-align: center; }
+.ki-gate__icon {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 3rem; height: 3rem; margin: 0 auto 1rem;
+  border-radius: 999px; background: var(--accent-soft); color: var(--accent-strong);
+}
+.ki-gate__icon .ic { width: 1.4rem; height: 1.4rem; }
+.ki-gate h1 { font-size: clamp(1.4rem, 1.2rem + 1vw, 1.8rem); }
+.ki-gate p { color: var(--text-soft); margin-top: 0.75rem; }
+.ki-gate form { margin-top: 1.75rem; display: grid; gap: 1rem; text-align: left; }
+.ki-gate .btn { justify-content: center; margin-top: 0.25rem; }
+.ki-gate__status { font-size: 0.86rem; min-height: 1.2em; }
+.ki-gate__status[data-state="error"] { color: #b3261e; }
+.ki-gate__status[data-state="ok"] { color: #1c7c3f; }
+.ki-gate__hint { font-size: 0.8rem; color: var(--text-faint); margin-top: 1.5rem; }
+
+/* --------------------------------------------------------------------- Kopf */
+
+.ki-app__head {
+  display: flex; align-items: flex-end; justify-content: space-between; gap: 1.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.75rem;
+}
+.ki-app__head h1 { font-size: clamp(1.5rem, 1.2rem + 1.4vw, 2.1rem); margin-top: 0.4rem; max-width: 30ch; }
+.ki-app__head-actions { display: flex; align-items: center; gap: 1rem; }
+.ki-quota { font-size: 0.85rem; color: var(--text-soft); white-space: nowrap; }
+
+.ki-banner {
+  display: flex; align-items: flex-start; gap: 0.75rem;
+  padding: 1rem 1.25rem; border-radius: var(--r-m);
+  margin-bottom: 1.5rem; font-size: 0.92rem;
+}
+.ki-banner--error { background: #fbeae8; color: #7a2016; border: 1px solid #f0c4bd; }
+.ki-banner .ic { flex: none; margin-top: 0.1rem; width: 1.1rem; height: 1.1rem; }
+
+/* ------------------------------------------------------------------ Layout */
+
+.ki-layout { display: grid; grid-template-columns: minmax(0, 22rem) 1fr; gap: clamp(1.5rem, 3vw, 2.5rem); align-items: start; }
+@media (max-width: 980px) { .ki-layout { grid-template-columns: 1fr; } }
+
+.ki-form { display: grid; gap: 1.15rem; position: sticky; top: 6rem; }
+@media (max-width: 980px) { .ki-form { position: static; } }
+
+.feld { display: grid; gap: 0.4rem; font-size: 0.86rem; font-weight: 600; color: var(--text); }
+.feld em { font-style: normal; font-weight: 500; color: var(--text-faint); }
+.feld input, .feld select, .feld textarea {
+  font: inherit; font-weight: 400;
+  padding: 0.75rem 0.9rem;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-s);
+  background: var(--surface);
+  color: var(--text);
+  width: 100%;
+}
+.feld input:focus, .feld select:focus, .feld textarea:focus {
+  outline: 2px solid var(--accent); outline-offset: 1px; border-color: var(--accent);
+}
+.feld input[type="range"] { padding: 0; accent-color: var(--accent-flaeche); }
+.feld textarea { resize: vertical; min-height: 4rem; }
+
+.ki-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+@media (max-width: 480px) { .ki-grid-2 { grid-template-columns: 1fr; } }
+
+.ki-field-group { display: grid; gap: 0.5rem; }
+.ki-field-group__label { font-size: 0.86rem; font-weight: 600; color: var(--text); }
+
+.ki-switch { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+.ki-switch__opt {
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+  padding: 0.7rem 0.5rem; border-radius: var(--r-s);
+  border: 1px solid var(--line-strong); background: var(--surface);
+  font-weight: 600; font-size: 0.9rem; color: var(--text-soft);
+}
+.ki-switch__opt .ic { width: 1rem; height: 1rem; }
+.ki-switch__opt.is-active { border-color: var(--accent); color: var(--accent-strong); background: var(--accent-soft); }
+
+.ki-farbreihe { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+@media (max-width: 480px) { .ki-farbreihe { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+/* .farbknopf ist fuer dunkle Flaechen (.werkbank) gebaut - hier auf hellem
+   Karten-Grund braucht es eigene Farben statt der --ink-*/--accent-band Tokens. */
+.ki-farbreihe .farbknopf {
+  background: var(--surface);
+  border-color: var(--line-strong);
+  color: var(--text-soft);
+}
+.ki-farbreihe .farbknopf:hover { border-color: var(--accent); color: var(--text); }
+.ki-farbreihe .farbknopf:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.ki-farbreihe .farbknopf[aria-pressed="true"] {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--text);
+}
+
+.ki-submit { justify-content: center; width: 100%; margin-top: 0.25rem; }
+.ki-submit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+/* ----------------------------------------------------------------- Ergebnis */
+
+.ki-progress { display: grid; gap: 0.85rem; margin-bottom: 1.5rem; }
+.ki-progress__head { display: flex; align-items: center; gap: 0.75rem; font-size: 0.92rem; color: var(--text-soft); }
+.ki-progress__spinner {
+  width: 1.15rem; height: 1.15rem; border-radius: 999px; flex: none;
+  border: 2px solid var(--line-strong); border-top-color: var(--accent);
+  animation: ki-spin 0.8s linear infinite;
+}
+@media (prefers-reduced-motion: reduce) { .ki-progress__spinner { animation: none; } }
+@keyframes ki-spin { to { transform: rotate(360deg); } }
+.ki-progress__bar { height: 8px; border-radius: 999px; background: var(--surface-2); overflow: hidden; }
+.ki-progress__fill { height: 100%; background: var(--accent-flaeche); border-radius: 999px; transition: width 0.5s cubic-bezier(.16,.8,.24,1); }
+
+.ki-results__title { font-size: 1.05rem; margin-bottom: 1rem; }
+.ki-gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(15.5rem, 1fr)); gap: 1.25rem; }
+.ki-gallery__empty { color: var(--text-faint); font-size: 0.92rem; grid-column: 1 / -1; }
+
+.ki-card {
+  background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-l);
+  overflow: hidden; display: flex; flex-direction: column;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.ki-card:hover { transform: translateY(-2px); box-shadow: 0 18px 40px -28px rgba(0,0,0,0.35); }
+.ki-card__preview {
+  aspect-ratio: 4 / 3; background: var(--surface-2);
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden;
+}
+.ki-card__preview img, .ki-card__preview video { width: 100%; height: 100%; object-fit: cover; display: block; }
+.ki-card__preview .ki-card__placeholder { font-size: 0.8rem; color: var(--text-faint); padding: 1rem; text-align: center; }
+.ki-card__body { padding: 1rem 1.1rem 1.15rem; display: grid; gap: 0.5rem; }
+.ki-card__meta { font-size: 0.76rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--accent-strong); }
+.ki-card__prompt {
+  font-size: 0.82rem; color: var(--text-faint);
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+.ki-card__actions { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.35rem; }
+.ki-card__actions .btn { padding: 0.5rem 0.8rem; font-size: 0.8rem; }
+.ki-card__applied { font-size: 0.8rem; color: #1c7c3f; }
+.ki-card__applied[data-state="hint"] { color: var(--text-soft); }
+.ki-card.is-busy { opacity: 0.6; pointer-events: none; }
+
+/* ---------------------------------------------------------------- Reduziert */
+@media (prefers-reduced-motion: reduce) {
+  .ki-card, .ki-progress__fill { transition: none; }
+}
