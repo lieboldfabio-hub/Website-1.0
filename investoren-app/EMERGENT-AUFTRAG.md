@@ -753,15 +753,30 @@ genutzten Quellen, Modell und Kosten. Aufklappbar.
 
 ### 12.3 Gestaltung
 
+**Verbindliche Werte stehen in `DESIGN-SYSTEM.md`.** Dieser Abschnitt nennt
+nur die Haltung; Token, Kontraste und Budgets kommen aus jenem Dokument.
+
+- Dunkles Erscheinungsbild als Grundlage: Schwarz mit blauem Stich, Blau als
+  einzige Akzentfarbe. Hochwertig durch Zurueckhaltung und Konsequenz, nicht
+  durch Effekte.
+- Verlaeufe, Glaseffekte und Tiefe sind erlaubt — aber ausschliesslich in den
+  Rahmenflaechen: Seitengrund, Kopfleiste, Navigation, Kennzahlenband,
+  Primaerschaltflaeche, Flaeche unter einer Diagrammlinie. **Nie hinter
+  Tabellen, Zahlen, Fliesstext oder in der Zeichenflaeche eines Diagramms.**
+  Hoechstens zwei Verlaufsflaechen und drei weichgezeichnete Flaechen
+  gleichzeitig auf einem Bildschirm.
+- Tiefe entsteht zuerst aus Flaechenstufen, dann aus einem 1 px Kantenlicht
+  an der Oberkante, erst zuletzt aus einem weichen Schatten. Kein farbiger
+  Schein.
 - Ruhig, dicht, sachlich. Ein Analysewerkzeug, kein Handelsprodukt.
-- Helles und dunkles Erscheinungsbild, beide vollstaendig ausgearbeitet.
 - Zahlen in einer Schrift mit gleich breiten Ziffern
   (`font-variant-numeric: tabular-nums`), damit Spalten ausgerichtet bleiben.
 - Farben sparsam: eine Akzentfarbe, Gruen und Rot ausschliesslich fuer
   Richtung und nie als einziger Traeger einer Information.
-- Keine Farbverlaeufe, keine Emoji, keine animierten Zaehler, keine
-  Werbesprache, keine Erfolgs-Konfetti. Ein Analysewerkzeug, das Begeisterung
-  simuliert, wird unglaubwuerdig.
+- Keine Emoji, keine animierten Zaehler, keine Werbesprache, keine
+  Erfolgs-Konfetti, kein farbiger Schein. Ein Analysewerkzeug, das
+  Begeisterung simuliert, wird unglaubwuerdig. Hochwertig heisst hier ruhig
+  und praezise, nicht laut.
 - Diagramme: Recharts, ohne Dekoration, mit beschrifteten Achsen und
   Einheiten. Zeitachsen immer mit sichtbarem Datumsbereich.
 - Ladezustaende zeigen den laufenden Analyseschritt im Klartext
@@ -1004,8 +1019,8 @@ vorfuehrbar sind, ohne dass jemand die Zahlen fuer echt halten kann.
 - Keine Trefferquote nennen, die nicht aus dem eigenen Protokoll stammt.
 - Keine automatische Orderausfuehrung, auch nicht als Vorbereitung.
 - Kein Chat-Fenster als Hauptbedienelement.
-- Keine Werbesprache, keine Emoji, keine Farbverlaeufe, keine
-  Erfolgsanimationen.
+- Keine Werbesprache, keine Emoji, keine Erfolgsanimationen, kein farbiger
+  Schein, kein Verlauf und kein Glas hinter Zahlen.
 - Keine Bibliothek von einem nicht erreichbaren Anbieter einbinden; wenn
   eine externe Abhaengigkeit nicht laedt, nimm eine erreichbare Alternative
   und vermerke die Ersetzung.

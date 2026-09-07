@@ -624,12 +624,22 @@ of the argument.
 
 **12.3 Visual direction**
 
-Calm, dense, factual — an analysis instrument, not a trading product. Light
-and dark themes both fully worked out. Tabular figures
+**Binding values live in `DESIGN-SYSTEM.md`** (German). This section states
+only the posture; tokens, contrasts and budgets come from that document.
+
+Dark theme as the base: black with a blue cast, blue as the single accent.
+Gradients, glass and depth are permitted — but only in the chrome: page
+ground, header, navigation, the KPI band, the primary button, the fill under
+a chart line. **Never behind tables, numbers, body text, or inside a chart's
+plot area.** At most two gradient surfaces and three backdrop-filtered
+surfaces visible at once. Depth comes first from surface steps, then a 1px
+top edge highlight, and only last from a soft shadow. No coloured glow.
+
+Calm, dense, factual — an analysis instrument, not a trading product. Tabular figures
 (`font-variant-numeric: tabular-nums`) so columns align. Colour used
 sparingly: one accent; green and red only for direction and never as the
-sole carrier of meaning. No gradients, no emoji, no animated counters, no
-marketing language, no success confetti — a tool that simulates excitement
+sole carrier of meaning. No emoji, no animated counters, no marketing
+language, no success confetti, no coloured glow — a tool that simulates excitement
 loses credibility. Charts via Recharts, undecorated, with labelled axes and
 units. Loading states name the running step in plain German ("Jahresab-
 schluesse 1995–2025 werden geladen"), never an anonymous spinner. Keyboard
@@ -841,7 +851,8 @@ real.
 - Do not quote a hit rate that does not come from the app's own journal.
 - Do not build order execution, not even in preparation.
 - Do not make a chat window the primary interface.
-- No marketing language, no emoji, no gradients, no success animations.
+- No marketing language, no emoji, no success animations, no coloured glow,
+  no gradient or glass behind numbers.
 - Do not pull a library from an unreachable CDN; if a dependency fails to
   load, use a reachable alternative and note the substitution.
 - Do not skip an analysis step silently. What is dropped is stated in the

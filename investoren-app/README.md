@@ -8,6 +8,9 @@ Drei Dateien:
   Emergent-Agenten. Inhaltlich gleich, zusaetzlich mit Abschnitt 0
   (Sprachregel) und Akzeptanzkriterium 23: die Oberflaeche laeuft auf
   Deutsch, der Code ist englisch.
+- **`DESIGN-SYSTEM.md`** — verbindliche Gestaltungsgrundlage: Blau-Schwarz-
+  Farbtoken mit gerechneten Kontrasten, Regeln fuer Verlaeufe und Glas,
+  Bewegung, Leistungsbudget. Quelle der Wahrheit fuer alles Optische.
 - **`KURZFASSUNG.md`** — komprimierte deutsche Fassung, falls die Eingabe
   zu lang wird. Danach je Phase den passenden Abschnitt nachreichen.
 
@@ -50,6 +53,33 @@ Skill wird eine Engine im Backend.
 | `invest-compliance` | `compliance`, 8.13 |
 
 Wer die Skills aendert, sollte den Auftrag mit aendern — und umgekehrt.
+
+## Der zweite Agent: Oberflaeche
+
+Acht `ui-*` Skills bilden einen zweiten, eigenstaendigen Agenten neben dem
+Investment-Agenten. Klare Arbeitsteilung: `invest-agent` verantwortet, **was**
+angezeigt wird — Zahlen, Signale, Belege, Regeln. `ui-agent` verantwortet,
+**wie** es angezeigt wird. Der Oberflaechen-Agent aendert nie ein
+Analyseergebnis; faellt ihm dort etwas auf, meldet er es.
+
+| Skill | Aufgabe |
+|-------|---------|
+| `ui-agent` | Leitskill: Arbeitszyklus, Rangfolge der Befunde, Massstab |
+| `ui-audit` | Systematische Pruefung, Befunde mit Ort und Schwere |
+| `ui-designsystem` | Token durchsetzen, Verlaufs- und Glasdisziplin, Einheitlichkeit |
+| `ui-motion` | Uebergaenge, Hover, Ladezustaende, reduzierte Bewegung |
+| `ui-performance` | Bildrate, Ladezeit, Layoutspruenge — gemessen, nicht geschaetzt |
+| `ui-responsive` | Haltepunkte, dichte Tabellen auf kleinen Geraeten, Beruehrung |
+| `ui-barrierefrei` | Kontraste rechnen, Tastatur, Farbe nie allein |
+| `ui-regression` | Funktionsinventar vor und nach jedem Umbau |
+
+Die tragende Regel des zweiten Agenten: **nichts geht verloren.** Der
+haeufigste Schaden durch ein Redesign ist nicht schlechtes Aussehen, sondern
+stiller Funktionsverlust — eine Warnung, die im neuen Layout keinen Platz
+mehr hat, ein Leerzustand, den niemand mehr sieht. `ui-regression` ist
+deshalb vor und nach jedem Durchgang verpflichtend und fuehrt eine
+unantastbare Liste: Beleg-Chips, Hinweistext, Demo-Band, Datenstand,
+„Kein Signal" in voller Groesse, Gegenargument, Warnungen.
 
 ## Grenze, die im Auftrag steht und dort bleiben sollte
 
