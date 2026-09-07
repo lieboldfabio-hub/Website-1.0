@@ -45,6 +45,18 @@ MARK_MIN = {f"--chart-{i}": 3.0 for i in range(1, 9)}
 # accent-quiet ist ausdruecklich KEINE Textfarbe
 NEVER_TEXT = {"--accent-quiet", "--up-quiet", "--down-quiet"}
 
+# Verlaeufe aus DESIGN-SYSTEM.md: (Bezeichnung, von, nach, Textfarbe, Mindestwert)
+# Beide Enden werden einzeln geprueft. Genau diese Pruefung fehlte in der
+# ersten Fassung — und genau dort lag der Fehler: der Primaerknopf war als
+# accent -> accent-quiet vorgesehen, was am unteren Ende 2,88:1 ergab.
+DECLARED_GRADIENTS = [
+    ("Primaerschaltflaeche", "--accent-hover", "--accent", "--accent-ink", 4.5),
+    ("Kopfleiste / Navigation", "--surface-1", "--bg", "--ink-1", 4.5),
+    ("Kopfleiste / Navigation", "--surface-1", "--bg", "--ink-3", 4.5),
+    ("Kennzahlenband", "--surface-1", "--surface-2", "--ink-1", 4.5),
+    ("Kennzahlenband", "--surface-1", "--surface-2", "--ink-3", 4.5),
+]
+
 SPACING = {0, 1, 2, 4, 8, 12, 16, 24, 32, 48, 64}
 RADII = {0, 6, 10, 14, 999, 9999}
 FORBIDDEN_TRANSITION = ["width", "height", "top", "left", "right", "bottom",
@@ -141,6 +153,22 @@ def check_contrast(rep):
     if c < 4.5:
         rep.add(1, "kontrast", "DESIGN-SYSTEM.md",
                 f"--accent-ink auf --accent: {c}:1, gefordert 4.5:1")
+
+
+def check_gradient_ends(rep):
+    """Beide Enden jedes deklarierten Verlaufs einzeln pruefen.
+
+    Ein Verlauf kann in der Mitte unauffaellig aussehen und an einem Ende
+    durchfallen. Wer nur hinschaut, bemerkt das nicht.
+    """
+    for name, a, b, text, minimum in DECLARED_GRADIENTS:
+        for ende in (a, b):
+            c = contrast(TOKENS[text], TOKENS[ende])
+            if c < minimum:
+                rep.add(1, "verlauf", "DESIGN-SYSTEM.md",
+                        f"{name}: {text} auf dem Ende {ende} nur {c}:1, "
+                        f"gefordert {minimum}:1 — Verlauf flacher machen oder "
+                        f"dem Text eine deckende Flaeche geben")
 
 
 def check_raw_colors(root, rep, token_file_hint="index.css"):
@@ -330,6 +358,7 @@ def main():
 
     rep = Report()
     check_contrast(rep)
+    check_gradient_ends(rep)
     check_tokens(args.root, rep)
     check_raw_colors(args.root, rep)
     check_scales(args.root, rep)

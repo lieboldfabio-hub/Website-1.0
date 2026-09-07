@@ -16,6 +16,7 @@ das Skript als Tor in eine Pipeline haengen.
 | Bereich | Inhalt | Stufe bei Verstoss |
 |---------|--------|--------------------|
 | Kontrast | jedes Farbtoken gegen Karte und Seitengrund neu gerechnet, nicht der Dokumentation geglaubt | 1 |
+| Verlaufsenden | jeder deklarierte Verlauf gegen **beide** Enden einzeln, mit der jeweils vorgesehenen Textfarbe | 1 |
 | Token | alle 28 Token vorhanden und mit dem vorgeschriebenen Wert | 1 |
 | Fokus | `outline: none` ohne erkennbaren Ersatz | 1 |
 | Sprache | Sperrformulierungen wie „garantiert" | 1 |
@@ -28,6 +29,29 @@ das Skript als Tor in eine Pipeline haengen.
 | Skala | Radien ausserhalb 6/10/14/999, Abstaende ausserhalb der 4er-Skala | 3 |
 | Bewegung | `transition` auf Layout- oder Malvorgaengen | 4 |
 | Glas | Weichzeichnung ueber 20 px, auffaellig viele Glasflaechen | 4 |
+
+## Warum die Verlaufspruefung existiert
+
+Die erste Fassung des Designsystems sah fuer die Primaerschaltflaeche den
+Verlauf `--accent` → `--accent-quiet` vor. Gerechnet erreicht die
+Beschriftung am oberen Ende 6,54:1, am unteren aber nur **2,88:1**. In der
+Mitte sieht der Knopf unauffaellig aus, weshalb beim Hinsehen niemand
+stutzt — der Fehler faellt erst auf, wenn man beide Enden einzeln rechnet.
+
+Gefunden hat ihn die unabhaengige Nachrechnung durch den Oberflaechen-Agenten,
+nicht der Autor des Designsystems. Genau dafuer ist die Regel da, dass
+Vorgaben nachgerechnet und nicht uebernommen werden.
+
+## Blinde Stellen
+
+Das Skript liest CSS-Deklarationen. Utility-Klassen eines Frameworks
+(`rounded-md`, `p-4`, `gap-6`, `h-[256px]`) sieht es **nicht**. In einem
+Projekt mit Tailwind faellt die Skalenpruefung damit weitgehend aus — ein
+Ergebnis von null Befunden auf Stufe 3 bedeutet dort nicht Sauberkeit,
+sondern dass nichts geprueft wurde.
+
+Wer das schliessen will, prueft zusaetzlich die Framework-Konfiguration
+gegen die Skala und laesst die erlaubten Utility-Klassen dort begrenzen.
 
 ## Was das Skript nicht kann
 

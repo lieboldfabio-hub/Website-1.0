@@ -113,7 +113,7 @@ niemals Textfarbe. Beschriftungen, Werte und Legendentext tragen
 | Seitengrund | sehr grossflaechig und flach: radial von `#0B1524` oben links nach `--bg`, Deckkraft hoechstens 60 % |
 | Kopfleiste und Seitennavigation | linear 180°, `--surface-1` → `--bg` |
 | Signal- und Kennzahlenband | linear 135°, `--surface-1` → `--surface-2`, plus 1 px Kantenlicht oben |
-| Primaerschaltflaeche | linear 180°, `--accent` → `--accent-quiet` |
+| Primaerschaltflaeche | linear 180°, `--accent-hover` → `--accent` |
 | Diagrammfuellung unter einer Linie | vertikal von Serienfarbe 22 % nach 0 % |
 | Fortschritts- und Konfidenzbalken | linear 90° innerhalb der Balkenfarbe |
 
@@ -128,6 +128,16 @@ niemals Textfarbe. Beschriftungen, Werte und Legendentext tragen
 Ein Verlauf darf ueber seine gesamte Ausdehnung den Kontrast des darauf
 liegenden Textes nie unter 4,5:1 druecken. Im Zweifel wird gegen das
 **dunkelste** und das **hellste** Ende einzeln geprueft.
+
+**Beispiel, warum das keine Formalie ist.** Die erste Fassung dieses Dokuments
+sah fuer die Primaerschaltflaeche `--accent` → `--accent-quiet` vor. Gerechnet:
+`--accent-ink` erreicht am oberen Ende 6,54:1, am unteren aber nur **2,88:1** —
+die Beschriftung waere auf der unteren Haelfte des Knopfes durchgefallen. Weil
+die Mitte unauffaellig aussieht, faellt so etwas beim Hinsehen nicht auf.
+Korrigiert auf `--accent-hover` → `--accent`: schlechtestes Ende 6,54:1.
+
+Geprueft wird deshalb maschinell, nicht am Bild (`pruefung/ui-audit.py`,
+Abschnitt Verlaufsenden).
 
 ---
 
