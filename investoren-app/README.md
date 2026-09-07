@@ -1,11 +1,18 @@
 # Investoren-App — Bauauftrag fuer Emergent
 
-Zwei Dateien:
+Drei Dateien:
 
-- **`EMERGENT-AUFTRAG.md`** — der vollstaendige Bauauftrag. Alles ab der
-  Zeile „ANFANG DES AUFTRAGS" kopieren und in Emergent einfuegen.
-- **`KURZFASSUNG.md`** — komprimierte Fassung, falls die Eingabe zu lang
-  wird. Danach je Phase den passenden Abschnitt nachreichen.
+- **`EMERGENT-AUFTRAG.md`** — der vollstaendige Bauauftrag auf Deutsch, das
+  Referenzdokument. Alles ab „ANFANG DES AUFTRAGS" ist der Prompt.
+- **`EMERGENT-BUILD-ORDER-EN.md`** — englische Arbeitsfassung fuer den
+  Emergent-Agenten. Inhaltlich gleich, zusaetzlich mit Abschnitt 0
+  (Sprachregel) und Akzeptanzkriterium 23: die Oberflaeche laeuft auf
+  Deutsch, der Code ist englisch.
+- **`KURZFASSUNG.md`** — komprimierte deutsche Fassung, falls die Eingabe
+  zu lang wird. Danach je Phase den passenden Abschnitt nachreichen.
+
+Aendert sich etwas, beide Fassungen nachziehen — sonst laufen sie
+auseinander.
 
 ## Vorher besorgen
 
