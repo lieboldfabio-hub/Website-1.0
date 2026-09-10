@@ -54,7 +54,7 @@ constantly …“) – das wirkt seriöser, als es zu verschweigen.
 | `contact.html` | Anfrageformular, Direktkontakt, Hinweise für Käufer und Lieferanten |
 | `imprint.html` | Vorlage, gelb markierte Stellen ausfüllen |
 | `privacy.html` | Vorlage, gelb markierte Stellen ausfüllen |
-| `404.html` | Fehlerseite |
+| `404.html` | Fehlerseite: dunkler Seitenkopf, volle Navigation, drei Wege weiter |
 
 ## Vor dem Livegang
 
