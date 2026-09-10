@@ -108,12 +108,37 @@ h1, h2, h3 { letter-spacing: -.021em; font-weight: 700; }
   background: var(--band);
   color: var(--band-text);
   padding-block: calc(74px + clamp(3rem, 7vw, 5.5rem)) clamp(3rem, 6vw, 4.5rem);
+  min-height: min(86vh, 820px);
+  display: flex; align-items: center;
   overflow: hidden;
+}
+
+/* Das Foto liegt hinter allem und ist etwas hoeher als der Bereich, damit
+   der leichte Versatz beim Scrollen keine Kante freilegt. */
+.hero__foto {
+  position: absolute; z-index: 0;
+  top: -6%; left: 0; width: 100%; height: 112%;
+  object-fit: cover; object-position: 50% 42%;
+}
+/* Ohne JavaScript steht das Foto sofort. Mit JavaScript blendet es auf,
+   sobald es geladen ist. */
+.js .hero__foto { opacity: 0; transition: opacity 1.1s var(--ease); }
+.js .hero__foto.is-loaded { opacity: 1; }
+
+/* Schleier ueber dem Foto. Links dicht, damit Schrift und Knoepfe sicher
+   lesbar bleiben, rechts offener, damit das Motiv erkennbar bleibt. */
+.hero__schleier {
+  position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  background:
+    linear-gradient(96deg,
+      rgba(8,13,19,.95) 0%, rgba(8,13,19,.9) 34%,
+      rgba(8,13,19,.72) 62%, rgba(8,13,19,.58) 100%),
+    linear-gradient(to top, rgba(8,13,19,.9) 0%, rgba(8,13,19,0) 42%);
 }
 
 /* Feines technisches Raster, kaum sichtbar, gibt der Fläche Tiefe */
 .hero::before {
-  content: ""; position: absolute; inset: 0; pointer-events: none;
+  content: ""; position: absolute; inset: 0; z-index: 2; pointer-events: none;
   background-image:
     linear-gradient(to right, rgba(255,255,255,.045) 1px, transparent 1px),
     linear-gradient(to bottom, rgba(255,255,255,.045) 1px, transparent 1px);
@@ -121,22 +146,30 @@ h1, h2, h3 { letter-spacing: -.021em; font-weight: 700; }
   mask-image: radial-gradient(120% 90% at 20% 0%, #000 20%, transparent 78%);
   -webkit-mask-image: radial-gradient(120% 90% at 20% 0%, #000 20%, transparent 78%);
 }
-.hero__inner {
-  position: relative; z-index: 1;
-  display: grid; grid-template-columns: 1.08fr .92fr;
-  gap: clamp(2.5rem, 5vw, 4.5rem);
-  align-items: center;
-}
+.hero__inner { position: relative; z-index: 3; }
+/* Die Auszeichnung soll nur so breit sein wie ihr Text. Ueber die volle
+   Breite gezogen liefe sie in die hellen Stellen des Fotos. */
+.hero .eyebrow { width: fit-content; }
 .hero h1 { max-width: 15ch; }
 .hero .lede { margin-top: 1.4rem; font-size: clamp(1.1rem, 1rem + .5vw, 1.32rem); }
 .hero__aktionen { display: flex; flex-wrap: wrap; gap: .8rem; margin-top: 2.1rem; }
 
 /* Materialzeile unter den Knöpfen: nennt die Schwerpunkte, ohne Zahlen */
+.hero__leiste {
+  display: flex; flex-wrap: wrap; gap: .8rem 2rem;
+  align-items: baseline; justify-content: space-between;
+  margin-top: clamp(2.5rem, 5vw, 4rem); padding-top: 1.4rem;
+  border-top: 1px solid var(--band-line);
+}
 .hero__meta {
   display: flex; flex-wrap: wrap; gap: .55rem 1.6rem;
-  list-style: none; margin: 3rem 0 0; padding: 1.4rem 0 0;
-  border-top: 1px solid var(--band-line);
+  list-style: none; margin: 0; padding: 0;
   font-size: .82rem; letter-spacing: .11em; text-transform: uppercase;
+  color: var(--band-text-soft);
+}
+.hero__dienste {
+  font-family: var(--font-display); font-weight: 600;
+  font-size: .78rem; letter-spacing: .16em; text-transform: uppercase;
   color: var(--band-text-soft);
 }
 .hero__meta li { display: flex; align-items: center; gap: .6rem; }
@@ -145,41 +178,34 @@ h1, h2, h3 { letter-spacing: -.021em; font-weight: 700; }
   background: var(--accent-band); transform: rotate(45deg);
 }
 
-/* Bildfläche im Hero. Der Rahmen schneidet ab, damit der leichte Versatz
-   beim Scrollen keine Kante freilegt; die Marke liegt bewusst darüber. */
-.hero__bild { position: relative; aspect-ratio: 4 / 5; }
-.hero__rahmen { position: absolute; inset: 0; overflow: hidden; }
-.hero__rahmen .ph { position: absolute; inset: -5% 0; aspect-ratio: auto; }
-.hero__rahmen .ph__brief { bottom: 5.2%; }
-.hero__bild::after {
-  content: ""; position: absolute; inset: 0; z-index: 3; pointer-events: none;
-  border: 1px solid rgba(255,255,255,.16);
+@media (max-width: 900px) {
+  .hero { min-height: 0; }
+  /* Auf schmalen Geräten liegt die Schrift über der ganzen Breite des Fotos,
+     der Schleier deckt deshalb gleichmäßig ab. */
+  .hero__schleier {
+    background:
+      linear-gradient(to bottom, rgba(8,13,19,.9) 0%, rgba(8,13,19,.79) 52%, rgba(8,13,19,.91) 100%);
+  }
 }
-.hero__marke {
-  position: absolute; z-index: 4; left: 0; bottom: 0;
-  transform: translate(-18px, 18px);
-  background: var(--bg); color: var(--text);
-  padding: .95rem 1.15rem;
-  font-family: var(--font-display); font-weight: 700;
-  font-size: .74rem; letter-spacing: .17em; text-transform: uppercase;
-  border-left: 2px solid var(--accent-flaeche);
-}
-
-@media (max-width: 940px) {
-  .hero__inner { grid-template-columns: 1fr; }
-  .hero__bild { aspect-ratio: 16 / 10; max-width: 34rem; }
-  .hero__marke { transform: translate(0, 14px); }
-}
-@media (max-width: 620px) {
-  .hero__bild { display: none; }   /* auf dem Telefon zählt die Aussage, nicht das Bild */
+@media (max-width: 560px) {
+  .hero__leiste { flex-direction: column; align-items: flex-start; gap: .9rem; }
 }
 
 /* Bildplatzhalter: gebürstete Metallfläche statt bunter Markenfläche.
    Sobald ein Foto unter dem erwarteten Namen liegt, verschwindet das alles. */
+/* Alle Fotos bekommen dieselbe leichte Rücknahme in Farbe und Kontrast.
+   Die Vorlagen stammen aus verschiedenen Quellen; ohne das fällt jedes Bild
+   für sich auf, statt zu einer Bildwelt zu gehören. */
+.ph img, .hero__foto { filter: saturate(.88) contrast(1.04); }
+.hero__foto { filter: saturate(.72) contrast(1.05) brightness(.96); }
+
 /* Ein Bildplatz ohne Foto hat sonst keine Hoehe: die Kinder liegen absolut.
    Deshalb hier ein festes Seitenverhaeltnis. */
 .ph { border: 0; aspect-ratio: 4 / 3; }
 .ph--quadrat { aspect-ratio: 1 / 1; }
+.ph--3x2 { aspect-ratio: 3 / 2; }
+.ph--breit { aspect-ratio: 24 / 7; }
+@media (max-width: 760px) { .ph--breit { aspect-ratio: 16 / 9; } }
 
 /* Zwei Materialbilder nebeneinander. Sie bleiben nebeneinander, bis der
    Platz wirklich fehlt: einzeln uebereinander werden sie sonst riesig. */
@@ -327,6 +353,27 @@ h1, h2, h3 { letter-spacing: -.021em; font-weight: 700; }
 }
 
 .tafel__inhalt { padding: clamp(1.75rem, 3vw, 2.75rem); background: var(--bg); }
+
+/* Tafeln mit Foto: Text links, Material rechts. Beide Materialien sind
+   gleich aufgebaut, damit sie als ein Paar gelesen werden. */
+.tafel__inhalt--bild {
+  display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr);
+  gap: clamp(1.5rem, 3vw, 2.5rem); align-items: start;
+}
+.tafel__inhalt--bild .tafel__qualitaeten { grid-template-columns: 1fr; }
+/* display aus der Klasse schlaegt sonst das hidden-Attribut des Browsers:
+   ohne diese Zeile stuenden alle Tafeln gleichzeitig da. */
+.tafel__inhalt[hidden] { display: none; }
+/* Das Foto laeuft auf die volle Hoehe der Liste mit. Ein quadratisches Bild
+   neben einer langen Liste laesst darunter ein Loch stehen. */
+.tafel__inhalt--bild { align-items: stretch; }
+.tafel__bild { position: relative; min-height: 16rem; }
+.tafel__bild .ph { position: absolute; inset: 0; aspect-ratio: auto; }
+@media (max-width: 860px) {
+  .tafel__inhalt--bild { grid-template-columns: 1fr; }
+  .tafel__bild { order: -1; position: static; min-height: 0; }
+  .tafel__bild .ph { position: relative; aspect-ratio: 16 / 10; }
+}
 .tafel__kopf { display: flex; flex-wrap: wrap; align-items: baseline; gap: .6rem 1rem; margin-bottom: .9rem; }
 .tafel__inhalt h3 { font-size: clamp(1.4rem, 1.2rem + .8vw, 1.85rem); }
 .tafel__kennung {
@@ -372,6 +419,11 @@ h1, h2, h3 { letter-spacing: -.021em; font-weight: 700; }
 .band .ablauf li::before { color: var(--accent-band); }
 .ablauf b { font-size: 1.08rem; margin-bottom: .5rem; }
 
+/* Schmaler Streifen unter dem Ablauf. Er zeigt, worum es geht, ohne den
+   vier Schritten die Aufmerksamkeit zu nehmen. */
+.ablauf-bild { margin-top: clamp(2.5rem, 5vw, 4rem); }
+.ablauf-bild .ph { border: 1px solid var(--band-line); }
+
 /* Linie, die den Ablauf beim Scrollen verbindet. Sie wird in site.js
    mitgezeichnet und bleibt bei reduzierter Bewegung einfach stehen. */
 .ablauf-linie { position: relative; height: 1px; background: var(--band-line); margin-bottom: 0; }
@@ -379,6 +431,13 @@ h1, h2, h3 { letter-spacing: -.021em; font-weight: 700; }
   position: absolute; inset: 0 auto 0 0; width: 100%;
   background: var(--accent-band); transform: scaleX(0); transform-origin: left;
 }
+
+/* --------------------------------------------------------------- Netzwerk */
+
+.netz { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+  gap: clamp(2rem, 4vw, 3.5rem); align-items: center; }
+.netz__text p + p { margin-top: 1.1rem; }
+@media (max-width: 880px) { .netz { grid-template-columns: 1fr; } }
 
 /* --------------------------------------------------------------- Vertrauen */
 

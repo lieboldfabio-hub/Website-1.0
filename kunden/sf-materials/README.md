@@ -47,10 +47,10 @@ constantly …“) – das wirkt seriöser, als es zu verschweigen.
 
 | Datei | Inhalt |
 | --- | --- |
-| `index.html` | Hero, Unternehmen, Leistungen, Materialtafel, Ablauf, Vertrauen, CTA |
+| `index.html` | Hero, Unternehmen, Leistungen, Materialtafel, Ablauf, Netzwerk, Vertrauen, CTA |
 | `company.html` | Was wir tun, Materialien/Regionen/Gegenparteien, was Kunden erwarten können |
 | `services.html` | Sourcing, Matching, Trade Support im Einzelnen; Ablauf; was für eine Anfrage gebraucht wird |
-| `materials.html` | Materialtafel, wie eine Qualität vereinbart wird, zwei Materialbilder |
+| `materials.html` | Materialtafel mit Materialfotos, wie eine Qualität vereinbart wird |
 | `contact.html` | Anfrageformular, Direktkontakt, Hinweise für Käufer und Lieferanten |
 | `imprint.html` | Vorlage, gelb markierte Stellen ausfüllen |
 | `privacy.html` | Vorlage, gelb markierte Stellen ausfüllen |
@@ -63,9 +63,12 @@ constantly …“) – das wirkt seriöser, als es zu verschweigen.
 | E-Mail-Adresse und Telefonnummer | `contact.html`, `imprint.html`, `privacy.html` | 5 Min |
 | Impressum vervollständigen | `imprint.html` | Angaben des Unternehmens |
 | Datenschutz vervollständigen | `privacy.html` | Angaben des Hosters |
-| Vier Fotos einsetzen | `assets/img/` | siehe `assets/img/README.txt` |
 | Formular an einen Versand anschließen | `assets/js/site.js`, Ende | ca. 15 Min |
 | Domain und Hosting | | |
+
+Die Fotos sind eingesetzt. Wer eines austauscht, legt die neue Datei unter
+demselben Namen in `assets/img/` ab; am Code ist nichts zu ändern. Welche
+Datei wo steht, sagt `assets/img/README.txt`.
 
 Die auszufüllenden Stellen in den Rechtstexten sind **farbig markiert** und
 damit nicht zu übersehen. Vor dem Livegang darf keine einzige mehr stehen:
@@ -135,7 +138,7 @@ kunden/sf-materials/
     ├── js/site.js      Materialtafel, Ablauflinie, Formular
     ├── js/gsap.min.js  GSAP 3.15 mit ScrollTrigger
     ├── fonts/          4 woff2-Dateien, zusammen 104 KB
-    └── img/            og.jpg und favicon.svg liegen hier, Fotos hierher
+    └── img/            fünf Fotos, og.jpg und favicon.svg
 ```
 
 `basis.css` ist dieselbe Datei wie in den Beispielprojekten. `basis.js` weicht
@@ -154,6 +157,34 @@ Markenfarbe – sonst sieht der Auftritt aus wie ein Schrottplatz-Prospekt.
 Der Akzent hat drei Rollen (`--accent-flaeche`, `--accent`, `--accent-band`),
 siehe Kommentar in `site.css`. Wer eine Farbe ändert, prüft alle drei.
 
+### Bilder
+
+Fünf Fotos, sonst nichts – die Seite lebt von Weißraum, nicht von Bildern.
+
+| Datei | Wo | Motiv |
+| --- | --- | --- |
+| `hero.jpg` | Startseite, Hero | Recyclinganlage, ganze Halle, unter dunklem Schleier |
+| `process.jpg` | Ablauf (Start + Leistungen) | enger Ausschnitt auf das Förderband |
+| `material-copper.jpg` | Materialtafel, Copper | gebündelter Kupferschrott |
+| `material-aluminium.jpg` | Materialtafel, Aluminium | gebündelter Aluminiumschrott |
+| `network.jpg` | „Connecting European Markets“ | Containerterminal in der Dämmerung |
+
+Hero und Ablauf zeigen dieselbe Anlage, aber unterschiedliche Ausschnitte:
+im Hero die Halle unter starkem Schleier, im Ablauf ein enger Blick auf das
+Band. Kommt ein weiteres Anlagenfoto dazu, ersetzt es `process.jpg`.
+
+Alle Fotos laufen über `.ph`: bis das Bild geladen ist, steht dort eine
+Metallfläche mit Signet, danach blendet das Foto auf. Fehlt eine Datei,
+bleibt die Fläche stehen – nie ein kaputtes Bildsymbol.
+
+Damit die Bilder aus verschiedenen Quellen wie eine Bildwelt wirken, nimmt
+`site.css` Farbe und Kontrast leicht zurück (`.ph img`, `.hero__foto`). Das
+hält auch Warnfarben wie das Gelb der Geländer im Zaum.
+
+Der Schleier über dem Hero-Foto ist kein Geschmacksentscheid: ohne ihn fällt
+der Fließtext unter die Kontrastvorgabe. Wer ihn aufhellt, misst nach – die
+Werte stehen unten unter „Geprüft“.
+
 ### Bewegung
 
 Jede Bewegung hat eine Aufgabe:
@@ -161,7 +192,7 @@ Jede Bewegung hat eine Aufgabe:
 - Der Hero baut sich gestaffelt auf und führt zum Knopf.
 - Abschnitte blenden beim Lesen ein, Überschriften zeilenweise.
 - Die Linie über dem Ablauf wird beim Scrollen mitgezeichnet.
-- Das Hero-Bild läuft minimal langsamer als der Text.
+- Das Hero-Foto läuft minimal langsamer als der Text und blendet beim Laden auf.
 - Beim Wechsel der Materialtafel fährt der Inhalt kurz ein.
 
 Bei `prefers-reduced-motion` entfällt alles davon, die Inhalte stehen sofort.
@@ -174,6 +205,8 @@ Im echten Browser nachgestellt, nicht nur überlegt:
 - alle internen Verweise lösen auf (offen sind nur die vier Fotos, die noch fehlen)
 - kein horizontaler Overflow bei 390, 820, 1024, 1280 und 1440 Pixeln
 - Kontraste: alle Texte erreichen mindestens 4,5:1, maschinell über alle Seiten
+- Schrift über dem Hero-Foto pixelweise gegen den tatsächlichen Untergrund
+  gemessen, schlechtester Wert 5,2:1 (Fließtext auf dem Telefon)
 - Materialtafel mit Maus und Tastatur (Pfeile, Pos1, Ende), Fokus wandert mit
 - Formular mit Leer-, Fehler- und Erfolgszustand
 - Mobiles Menü inklusive Escape und Fokus im Menü

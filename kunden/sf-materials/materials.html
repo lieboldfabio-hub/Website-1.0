@@ -95,8 +95,9 @@
           each transaction. Further materials on request.</p>
       </div>
 
-      <div class="tafel__inhalt" role="tabpanel" id="panel-copper" aria-labelledby="tab-copper"
+      <div class="tafel__inhalt tafel__inhalt--bild" role="tabpanel" id="panel-copper" aria-labelledby="tab-copper"
            tabindex="0" style="--material: var(--kupfer)">
+        <div>
         <div class="tafel__kopf">
           <h3>Copper</h3>
           <span class="tafel__kennung">Cu &middot; Non-ferrous</span>
@@ -109,10 +110,18 @@
           <li><b>Copper Cables</b><span>Insulated cable with varying copper content.</span></li>
           <li><b>Copper-bearing Materials</b><span>Alloys, residues and mixed material containing copper.</span></li>
         </ul>
+        </div>
+        <div class="tafel__bild">
+          <div class="ph ph--quadrat">
+            <img src="assets/img/material-copper.jpg" alt="Baled copper wire and cable scrap stacked on pallets in a warehouse" loading="lazy" decoding="async">
+            <svg class="ph__mark" aria-hidden="true"><use href="#i-mark"></use></svg>
+          </div>
+        </div>
       </div>
 
-      <div class="tafel__inhalt" role="tabpanel" id="panel-aluminium" aria-labelledby="tab-aluminium"
+      <div class="tafel__inhalt tafel__inhalt--bild" role="tabpanel" id="panel-aluminium" aria-labelledby="tab-aluminium"
            tabindex="0" style="--material: var(--aluminium)" hidden>
+        <div>
         <div class="tafel__kopf">
           <h3>Aluminium</h3>
           <span class="tafel__kennung">Al &middot; Non-ferrous</span>
@@ -125,6 +134,13 @@
           <li><b>Aluminium Sheets</b><span>Sheet and plate material from production and processing.</span></li>
           <li><b>Aluminium Cables</b><span>Insulated aluminium cable qualities.</span></li>
         </ul>
+        </div>
+        <div class="tafel__bild">
+          <div class="ph ph--quadrat">
+            <img src="assets/img/material-aluminium.jpg" alt="Baled aluminium cans, profiles and sheet stacked on pallets in a warehouse" loading="lazy" decoding="async">
+            <svg class="ph__mark" aria-hidden="true"><use href="#i-mark"></use></svg>
+          </div>
+        </div>
       </div>
 
       <div class="tafel__inhalt" role="tabpanel" id="panel-further" aria-labelledby="tab-further"
@@ -159,36 +175,20 @@
       <p class="body-copy reveal" style="max-width: 36ch">Trading names alone rarely
         describe a material precisely enough. We work with what is actually measurable.</p>
     </div>
-    <div class="zwei">
-      <ul class="merkmale reveal" style="margin: 0; padding: 0; list-style: none; grid-template-columns: 1fr">
-        <li>
-          <b>Description and grade</b>
-          <p>Form of the material, degree of sorting and the trading grade it refers to.</p>
-        </li>
-        <li>
-          <b>Content and impurities</b>
-          <p>Metal content, permitted attachments and what has to be excluded.</p>
-        </li>
-        <li>
-          <b>Packaging and delivery</b>
-          <p>Loose, baled or in containers, plus the delivery terms and region.</p>
-        </li>
-      </ul>
-      <div class="reveal">
-        <div class="bildpaar">
-          <div class="ph ph--quadrat">
-        <img src="assets/img/material-copper.jpg" alt="" loading="lazy" decoding="async">
-        <svg class="ph__mark" aria-hidden="true"><use href="#i-mark"></use></svg>
-        <p class="ph__brief"><b>assets/img/material-copper.jpg</b>Copper scrap or wire, close-up, square format</p>
-      </div>
-          <div class="ph ph--quadrat">
-        <img src="assets/img/material-aluminium.jpg" alt="" loading="lazy" decoding="async">
-        <svg class="ph__mark" aria-hidden="true"><use href="#i-mark"></use></svg>
-        <p class="ph__brief"><b>assets/img/material-aluminium.jpg</b>Aluminium profiles or sheet, close-up, square format</p>
-      </div>
-        </div>
-      </div>
-    </div>
+    <ul class="merkmale reveal" style="margin: 0; padding: 0; list-style: none">
+      <li>
+        <b>Description and grade</b>
+        <p>Form of the material, degree of sorting and the trading grade it refers to.</p>
+      </li>
+      <li>
+        <b>Content and impurities</b>
+        <p>Metal content, permitted attachments and what has to be excluded.</p>
+      </li>
+      <li>
+        <b>Packaging and delivery</b>
+        <p>Loose, baled or in containers, plus the delivery terms and region.</p>
+      </li>
+    </ul>
   </div>
 </section>
 

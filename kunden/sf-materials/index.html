@@ -66,31 +66,24 @@
 <main id="inhalt">
 
 <section class="hero">
+  <img class="hero__foto" src="assets/img/hero.jpg" alt="" fetchpriority="high" decoding="async">
+  <div class="hero__schleier" aria-hidden="true"></div>
   <div class="wrap hero__inner">
-    <div>
-      <p class="eyebrow" data-hero>International Raw Material Sourcing &amp; Trading</p>
-      <h1 class="display" data-hero>Connecting Materials. Building Business.</h1>
-      <p class="lede" data-hero>S&amp;F Materials connects reliable suppliers with industrial
-        buyers across Europe.</p>
-      <div class="hero__aktionen" data-hero>
-        <a class="btn" href="contact.html">Get in touch</a>
-        <a class="btn btn--ghost" href="services.html">Our services</a>
-      </div>
-      <ul class="hero__meta" data-hero>
+    <p class="eyebrow" data-hero>International Raw Material Sourcing &amp; Trading</p>
+    <h1 class="display" data-hero>Connecting Materials. Building Business.</h1>
+    <p class="lede" data-hero>S&amp;F Materials connects reliable suppliers with industrial
+      buyers across Europe.</p>
+    <div class="hero__aktionen" data-hero>
+      <a class="btn" href="contact.html">Get in touch</a>
+      <a class="btn btn--ghost" href="services.html">Our services</a>
+    </div>
+    <div class="hero__leiste" data-hero>
+      <ul class="hero__meta">
         <li>Copper</li>
         <li>Aluminium</li>
         <li>Secondary raw materials</li>
       </ul>
-    </div>
-    <div class="hero__bild" data-hero>
-      <div class="hero__rahmen">
-      <div class="ph">
-        <img src="assets/img/hero.jpg" alt="" loading="lazy" decoding="async">
-        <svg class="ph__mark" aria-hidden="true"><use href="#i-mark"></use></svg>
-        <p class="ph__brief"><b>assets/img/hero.jpg</b>Copper wire and scrap in an industrial setting, portrait format 4:5</p>
-      </div>
-      </div>
-      <p class="hero__marke">Sourcing &middot; Matching &middot; Trade Support</p>
+      <p class="hero__dienste">Sourcing &middot; Matching &middot; Trade Support</p>
     </div>
   </div>
 </section>
@@ -182,8 +175,9 @@
           each transaction. Further materials on request.</p>
       </div>
 
-      <div class="tafel__inhalt" role="tabpanel" id="panel-copper" aria-labelledby="tab-copper"
+      <div class="tafel__inhalt tafel__inhalt--bild" role="tabpanel" id="panel-copper" aria-labelledby="tab-copper"
            tabindex="0" style="--material: var(--kupfer)">
+        <div>
         <div class="tafel__kopf">
           <h3>Copper</h3>
           <span class="tafel__kennung">Cu &middot; Non-ferrous</span>
@@ -196,10 +190,18 @@
           <li><b>Copper Cables</b><span>Insulated cable with varying copper content.</span></li>
           <li><b>Copper-bearing Materials</b><span>Alloys, residues and mixed material containing copper.</span></li>
         </ul>
+        </div>
+        <div class="tafel__bild">
+          <div class="ph ph--quadrat">
+            <img src="assets/img/material-copper.jpg" alt="Baled copper wire and cable scrap stacked on pallets in a warehouse" loading="lazy" decoding="async">
+            <svg class="ph__mark" aria-hidden="true"><use href="#i-mark"></use></svg>
+          </div>
+        </div>
       </div>
 
-      <div class="tafel__inhalt" role="tabpanel" id="panel-aluminium" aria-labelledby="tab-aluminium"
+      <div class="tafel__inhalt tafel__inhalt--bild" role="tabpanel" id="panel-aluminium" aria-labelledby="tab-aluminium"
            tabindex="0" style="--material: var(--aluminium)" hidden>
+        <div>
         <div class="tafel__kopf">
           <h3>Aluminium</h3>
           <span class="tafel__kennung">Al &middot; Non-ferrous</span>
@@ -212,6 +214,13 @@
           <li><b>Aluminium Sheets</b><span>Sheet and plate material from production and processing.</span></li>
           <li><b>Aluminium Cables</b><span>Insulated aluminium cable qualities.</span></li>
         </ul>
+        </div>
+        <div class="tafel__bild">
+          <div class="ph ph--quadrat">
+            <img src="assets/img/material-aluminium.jpg" alt="Baled aluminium cans, profiles and sheet stacked on pallets in a warehouse" loading="lazy" decoding="async">
+            <svg class="ph__mark" aria-hidden="true"><use href="#i-mark"></use></svg>
+          </div>
+        </div>
       </div>
 
       <div class="tafel__inhalt" role="tabpanel" id="panel-further" aria-labelledby="tab-further"
@@ -265,6 +274,37 @@
         <p>The parties agree the commercial details directly with each other.</p>
       </li>
     </ol>
+    <div class="ablauf-bild reveal">
+      <div class="ph ph--breit">
+        <img src="assets/img/process.jpg" alt="Shredded aluminium moving along a conveyor in a recycling plant" loading="lazy" decoding="async">
+        <svg class="ph__mark" aria-hidden="true"><use href="#i-mark"></use></svg>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section section--flaeche" id="network">
+  <div class="wrap">
+    <div class="netz">
+      <div class="netz__text">
+        <p class="eyebrow reveal">Network</p>
+        <h2 class="h2 reveal-lines">Connecting European Markets</h2>
+        <p class="body-copy reveal" style="margin-top: 1.4rem">Material rarely moves in a
+          straight line. Suppliers and industrial buyers sit in different countries, work to
+          different specifications and plan on different cycles. Our task is to keep those
+          ends connected: material, quality, quantity, delivery region and terms.</p>
+        <p class="body-copy reveal">We work with counterparts across Europe. Enquiries from
+          outside Europe are reviewed case by case, on the same basis as any other: whether
+          the material, the route and the terms fit.</p>
+        <a class="link-pfeil reveal" href="company.html" style="margin-top: 1.9rem">Where we work <svg aria-hidden="true"><use href="#i-arrow"></use></svg></a>
+      </div>
+      <div class="reveal">
+        <div class="ph ph--3x2">
+          <img src="assets/img/network.jpg" alt="Container terminal at dusk with gantry cranes and stacked containers" loading="lazy" decoding="async">
+          <svg class="ph__mark" aria-hidden="true"><use href="#i-mark"></use></svg>
+        </div>
+      </div>
+    </div>
   </div>
 </section>
 

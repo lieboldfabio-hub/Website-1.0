@@ -84,19 +84,26 @@
     }
   }
 
-  /* ------------------------------------------------------------ Hero-Bild */
+  /* ------------------------------------------------------------ Hero-Foto */
   /*
-     Das Bild laeuft beim Scrollen minimal langsamer als der Text. Sehr
-     zurueckhaltend, es soll auffallen, dass die Flaeche Tiefe hat, nicht
-     dass sich etwas bewegt.
+     Das Foto blendet auf, sobald es da ist: ohne das erscheint es hart und
+     die Ueberschrift springt optisch. Beim Scrollen laeuft es minimal
+     langsamer als die Schrift. Sehr zurueckhaltend, es soll auffallen, dass
+     die Flaeche Tiefe hat, nicht dass sich etwas bewegt.
   */
-  var heroBild = document.querySelector(".hero__bild .ph");
-  if (heroBild && hatGSAP && !reduziert) {
-    gsap.to(heroBild, {
-      yPercent: -6,
-      ease: "none",
-      scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: .5 }
-    });
+  var heroFoto = document.querySelector(".hero__foto");
+  if (heroFoto) {
+    var aufblenden = function () { heroFoto.classList.add("is-loaded"); };
+    if (heroFoto.complete && heroFoto.naturalWidth > 0) aufblenden();
+    else heroFoto.addEventListener("load", aufblenden, { once: true });
+
+    if (hatGSAP && !reduziert) {
+      gsap.to(heroFoto, {
+        yPercent: 3,
+        ease: "none",
+        scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: .5 }
+      });
+    }
   }
 
   /* ------------------------------------------------------------ Formular */
