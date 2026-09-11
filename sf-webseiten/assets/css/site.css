@@ -562,6 +562,9 @@
 .contact-line .ic { color: var(--accent-strong); margin-top: 0.15rem; flex: none; }
 .contact-line strong { display: block; font-size: 0.95rem; }
 .contact-line span { font-size: 0.9rem; color: var(--text-soft); }
+/* Wie in den Rechtstexten: ein Verweis ist unterstrichen und traegt den Akzent,
+   sonst ist der Mailto-Link von den danebenstehenden Angaben nicht zu unterscheiden. */
+.contact-line a { color: var(--accent-strong); text-decoration: underline; text-underline-offset: 3px; }
 
 /* -------------------------------------------------------------- Section-Titel */
 
