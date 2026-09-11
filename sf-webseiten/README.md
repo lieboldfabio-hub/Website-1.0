@@ -36,11 +36,17 @@ weil echte Angaben zum Unternehmen noch fehlen:
 - **Adresse**: Maximilianstraße 57, 86150 Augsburg ist bereits eingetragen
   (Impressum, Kontakt, JSON-LD auf `index.html`) – bei Bedarf gegen die
   tatsächliche Geschäftsadresse austauschen.
+- **Domain**: im STRATO-Paket liegt noch keine. Solange das so ist, ist
+  `kontakt@sf-webseiten.de` eingetragen, nimmt aber nichts an – das Postfach
+  `kontakt@` gilt laut STRATO für alle Domains des Pakets, es gibt nur noch
+  keine. Fällt die Wahl auf eine andere Domain, muss `sf-webseiten.de` überall
+  ersetzt werden: E-Mail-Adresse, Canonical- und OG-URLs, JSON-LD, `sitemap.xml`.
 - **Impressum** (`impressum.html`): Firmierung/Rechtsform, Inhaber:in,
-  Telefon, E-Mail, USt-IdNr. noch offen
-- **Datenschutz** (`datenschutz.html`): Firmierung, Hosting-Anbieter, E-Mail
-  noch offen
-- **Kontakt** (`kontakt.html`): Telefonnummer, E-Mail-Adresse noch offen
+  Telefon, USt-IdNr. noch offen. E-Mail eingetragen (siehe Domain).
+- **Datenschutz** (`datenschutz.html`): Firmierung noch offen. Hoster ist
+  benannt (STRATO AG), der Auftragsverarbeitungsvertrag nach Art. 28 DSGVO ist
+  im STRATO-Kundenbereich noch abzuschließen.
+- **Kontakt** (`kontakt.html`): Telefonnummer noch offen.
 - **Kontaktformular**: hat aktuell keine Versandanbindung. Vor dem Livegang an
   einen Formular-Dienst (z. B. Formspree, eigenes Backend) oder eine echte
   E-Mail-Adresse anbinden – und danach den Hinweis dazu in `kontakt.html`
