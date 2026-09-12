@@ -1,54 +1,52 @@
 ---
 typ: hinweis
+geprüft: 2026-09-12
 ---
 
 # Arbeitsanweisungen für Claude
 
-Fertige Sätze zum Kopieren. Sie funktionieren, weil in der `CLAUDE.md` im Vault steht,
-wie hier gearbeitet wird — du musst den Kontext nicht jedes Mal erklären.
+Fertige Sätze zum Kopieren. Sie funktionieren, weil in `CLAUDE.md` steht, wie hier
+gearbeitet wird — der Kontext muss nicht jedes Mal erklärt werden.
 
-Immer zuerst: **„Nimm das Repo `lieboldfabio-hub/zweites-gehirn` dazu."**
+## Der Satz am Sitzungsanfang
 
-## Täglich
+> Nimm das Repo `lieboldfabio-hub/zweites-gehirn` dazu, lies `90-Meta/Index.md` und die
+> Projektnotiz zu *[Projekt]*. Dann fangen wir an.
 
-> Lies meine Tagesnotiz von heute und leg für jeden Gedanken, der es wert ist,
-> eine eigene Notiz in `10-Notizen` an. Verlink sie sinnvoll.
+Das ist der ganze Trick: zwei kleine Dateien statt einer Erkundungstour durch den Quelltext.
+
+## Der Satz am Sitzungsende
+
+> Bring die Projektnotiz auf Stand, bevor wir aufhören.
+
+Am besten jedes Mal. Eine Sitzung, deren Erkenntnisse nicht in der Notiz landen,
+muss beim nächsten Mal noch einmal bezahlt werden.
+
+## Gedächtnis pflegen
+
+> Trag *[Projekt]* im Index ein und leg die Projektnotiz nach der Vorlage an.
+
+> Die Projektnotiz zu *[Projekt]* ist über 80 Zeilen. Streich, was nicht mehr gilt.
+
+> Welche Notizen sind seit über drei Monaten nicht geprüft? Sag mir, was davon
+> noch stimmt und was nachgesehen werden muss.
+
+## Wissen hineinholen
 
 > Ich diktiere dir jetzt etwas. Leg es als Notiz im Posteingang ab, mehr nicht.
-
-## Wöchentlich
 
 > Räum meinen Posteingang auf: Jeder Zettel wird zu einer dauerhaften Notiz, an ein
 > Projekt gehängt, zu einer Quellennotiz — oder du sagst mir, warum er weg kann.
 
-> Wochenrückblick: Fass zusammen, was in den Tagesnotizen der letzten sieben Tage steht,
-> und sag mir, was ich liegen gelassen habe.
+> Hier ist ein Artikel: [Link]. Leg eine Quellennotiz in `20-Quellen` an und destillier
+> daraus, was für mich dauerhaft ist.
 
 ## Denken lassen
 
 > Finde Verbindungen zwischen meinen Notizen, die ich noch nicht verlinkt habe.
-> Nur solche, die wirklich tragen — keine Assoziationsketten.
+> Nur solche, die wirklich tragen.
 
 > Welche meiner Notizen widersprechen sich?
 
-> Ich denke über *[Thema]* nach. Zeig mir alles, was ich dazu schon im Vault habe,
-> und sag mir, wo mein Denken Lücken hat.
-
-> Diese Notiz ist noch ein Keim. Stell mir fünf Fragen, die sie besser machen.
-
-## Aufräumen
-
-> Alle Notizen mit Status `keim`, die älter als drei Monate sind: entweder ausarbeiten
-> oder nach `50-Archiv`.
-
-> Bau eine Karte in `90-Meta/Karten` für das Thema *[Thema]* — alle passenden Notizen
-> sortiert und kommentiert verlinkt.
-
-> Prüf den Vault auf kaputte Wikilinks.
-
-## Hineinholen
-
-> Hier ist ein Artikel: [Link]. Leg eine Quellennotiz in `20-Quellen` an und destillier
-> daraus, was für mich dauerhaft ist.
-
-> Mach aus diesen Besprechungsnotizen ein Projekt mit Zielen und nächsten Schritten.
+> Ich denke über *[Thema]* nach. Zeig mir, was ich dazu schon habe, und wo mein Denken
+> Lücken hat.
