@@ -1,0 +1,12 @@
+{
+  "attachmentFolderPath": "90-Meta/Anhänge",
+  "newLinkFormat": "shortest",
+  "useMarkdownLinks": false,
+  "alwaysUpdateLinks": true,
+  "promptDelete": false,
+  "showUnsupportedFiles": false,
+  "livePreview": true,
+  "defaultViewMode": "source",
+  "newFileLocation": "folder",
+  "newFileFolderPath": "00-Posteingang"
+}

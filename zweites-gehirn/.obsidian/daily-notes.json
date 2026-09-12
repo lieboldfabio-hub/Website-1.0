@@ -1,0 +1,6 @@
+{
+  "folder": "60-Tagebuch",
+  "format": "YYYY-MM-DD",
+  "template": "90-Meta/Vorlagen/Tagesnotiz",
+  "autorun": false
+}
