@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Immobilien-Service Augsburg</title>
+    <meta
+      name="description"
+      content="Immobilien-Service Augsburg — Verkauf, Vermietung und Mediation rund um Augsburg."
+    />
+    <meta name="theme-color" content="#0b0b0d" />
+  </head>
+  <body>
+    <!--
+      Zwillingsformular für Netlify.
+
+      Netlify durchsucht nur das ausgelieferte HTML nach Formularen. Das echte
+      Formular baut React erst im Browser zusammen und bleibt deshalb unsichtbar
+      für den Dienst. Die Feldnamen hier MÜSSEN mit denen in
+      src/komponenten/Kontakt.jsx übereinstimmen, sonst gehen Anfragen verloren.
+    -->
+    <form name="kontakt" netlify netlify-honeypot="firmenname" hidden>
+      <input type="text" name="name" />
+      <input type="email" name="email" />
+      <input type="tel" name="telefon" />
+      <select name="anliegen"></select>
+      <textarea name="nachricht"></textarea>
+      <input type="checkbox" name="datenschutz" />
+      <input type="text" name="firmenname" />
+    </form>
+
+    <div id="wurzel"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>

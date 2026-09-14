@@ -1,0 +1,81 @@
+/*
+  Gestaltungswerte an einer Stelle.
+
+  Die Farben sind aus der bestehenden Seite immobilien-service-augsburg.de
+  ausgelesen (Pixelanalyse der Screenshots vom 14.09.2026). Die Marke ist ein
+  Gelbgrün bei Farbton 75–78° — es zieht sich dort durch Kopfband, Bänder,
+  Symbole und Schaltflächen. Dazu kommt je Leistung eine eigene Nebenfarbe;
+  auch die stammt aus der alten Seite und wird hier beibehalten, weil sie den
+  Leistungen als Wiedererkennung dient.
+*/
+
+:root {
+  /* --- Marke: Gelbgrün, Ton 76° ----------------------------------------- */
+  --gruen: #7d8c4e;               /* Schrift- und Linienfarbe, kontraststark */
+  --gruen-tief: #5f6b3a;          /* für Text auf Hell: 6,2:1 auf Weiß */
+  --gruen-kraeftig: #a8c455;      /* Signalfarbe, aus den Symbolen */
+  --gruen-mittel: #c4d68f;        /* Verläufe, Kopfband */
+  --gruen-hell: #deebbf;          /* die hellen Bänder der alten Seite */
+  --gruen-schleier: #eef4e0;      /* ganz zarte Flächen */
+
+  /* --- Nebenfarben je Leistung, aus der alten Seite ---------------------- */
+  --ton-bewertung: #699ba9;       /* Petrol */
+  --ton-verkauf: #e9c078;         /* Sand */
+  --ton-vermietung: #b8c4db;      /* Hellblau */
+  --ton-mediation: #a8c455;       /* Limette */
+  --ton-betreuung: #c9c684;       /* Khaki */
+  --ton-beratung: #ad4f74;        /* Bordeaux */
+
+  /* --- Grundflächen: hell, wie die bestehende Seite ---------------------- */
+  --grund: #ffffff;
+  --grund-leise: #f7f7f5;         /* der Grauton der alten Seitenleiste */
+  --grund-band: var(--gruen-hell);
+
+  /* --- Der Showroom ist der einzige dunkle Ort --------------------------- */
+  --dunkel: #1b1e16;              /* Schwarz mit einem Stich ins Grüne */
+  --dunkel-tief: #10120d;
+
+  /* --- Schrift ---------------------------------------------------------- */
+  --text: #23261f;
+  --text-gedaempft: #5a5e52;
+  --text-schwach: #85897c;
+  --text-auf-dunkel: #f2f4ec;
+  --text-auf-dunkel-leise: #a9ae9c;
+
+  --linie: #e3e5dd;
+  --linie-stark: #c9ccbf;
+  --linie-dunkel: rgba(242, 244, 236, 0.14);
+
+  /* --- Platzhalter sichtbar machen (Grundsatz aus dem Hauptrepo) --------- */
+  --todo: #b45309;
+  --todo-flaeche: #fff4d6;
+
+  /* --- Schriftfamilien -------------------------------------------------- */
+  --schrift-titel: "Georgia", "Times New Roman", serif;
+  --schrift-text: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+
+  /* --- Raster ----------------------------------------------------------- */
+  --breite: 1180px;
+  --rand: clamp(1.25rem, 5vw, 4rem);
+
+  /* --- Bewegung --------------------------------------------------------- */
+  --weich: cubic-bezier(0.22, 1, 0.36, 1);
+  --dauer-kurz: 0.28s;
+  --dauer-mittel: 0.6s;
+}
+
+/* Wer Bewegung reduziert haben will, bekommt sie reduziert — überall. */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dauer-kurz: 0.01s;
+    --dauer-mittel: 0.01s;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
