@@ -17,6 +17,9 @@ body {
   /* Lange Fachwörter wie „Wohnflächenberechnung" brechen notfalls um,
      statt den Kasten aufzudrücken. */
   overflow-wrap: break-word;
+  /* „Immobilienmediation" bricht sonst als „Immobilienmediat|on". Mit
+     lang="de" am <html> trennt der Browser richtig. */
+  hyphens: auto;
   background: var(--grund);
   /* Der Hintergrund liegt in einem eigenen festen Element (siehe unten),
      damit hier nichts mitscrollt und nichts neu gezeichnet wird. */
@@ -213,12 +216,70 @@ section[id], :target { scroll-margin-top: calc(var(--kopfzeile-hoehe) + var(--a5
   background: color-mix(in srgb, var(--grund) 82%, transparent);
   backdrop-filter: blur(10px);
   border-bottom: 1px solid transparent;
-  transition: border-color var(--dauer-kurz) var(--kurve),
-              box-shadow var(--dauer-kurz) var(--kurve);
+  /* Der Schatten liegt fest; animiert wird nur die Kante. Ein Schatten im
+     Übergang kostet im Malschritt — siehe styles/bewegung.css. */
+  transition: border-color var(--dauer-kurz) var(--kurve);
 }
 .kopfzeile.ist-gescrollt {
   border-bottom-color: var(--linie);
-  box-shadow: 0 1px 12px rgba(36, 38, 31, 0.04);
+  box-shadow: var(--schatten-2);
+}
+
+/*
+  Über dem dunklen Ausstellungsraum wird die Kopfzeile selbst dunkel. Gesetzt
+  wird das von einem IntersectionObserver in Querfahrt.jsx, nicht von einem
+  Scroll-Zuhörer: zwei Meldungen beim Ein- und Austreten, dazwischen nichts.
+*/
+/* Läuft eine Bühne hinter der Kopfzeile, wird der Weichzeichner abgeschaltet
+   und die Leiste deckend: hinter ihr bewegt sich etwas, und jedes Bild neu
+   weichzuzeichnen kostet mehr, als der Effekt wert ist. Gesetzt von einem
+   IntersectionObserver in Querfahrt.jsx, nicht von einem Scroll-Zuhörer. */
+:root[data-buehne] .kopfzeile {
+  backdrop-filter: none;
+  background: var(--grund);
+}
+:root[data-dunkle-buehne] .kopfzeile {
+  background: var(--dunkel-tief);
+  border-bottom-color: var(--linie-dunkel);
+  box-shadow: none;
+}
+:root[data-dunkle-buehne] .kopfzeile .marke,
+:root[data-dunkle-buehne] .kopfzeile .marke strong {
+  color: var(--text-auf-dunkel);
+}
+:root[data-dunkle-buehne] .kopfzeile .marke-text span,
+:root[data-dunkle-buehne] .hauptmenue a,
+:root[data-dunkle-buehne] .kopfzeile-anruf,
+:root[data-dunkle-buehne] .kopfzeile-aktionen .kopfzeile-anruf {
+  color: var(--text-auf-dunkel-ruhig);
+}
+:root[data-dunkle-buehne] .signet,
+:root[data-dunkle-buehne] .hauptmenue a:hover,
+:root[data-dunkle-buehne] .hauptmenue a.active,
+:root[data-dunkle-buehne] .kopfzeile-aktionen .kopfzeile-anruf:hover {
+  color: var(--akzent-hell);
+}
+:root[data-dunkle-buehne] .hauptmenue a.knopf,
+:root[data-dunkle-buehne] .kopfzeile .knopf-voll {
+  background: var(--akzent-hell);
+  color: var(--dunkel-tief);
+}
+:root[data-dunkle-buehne] .menue-knopf {
+  background: transparent;
+  border-color: var(--linie-dunkel);
+  color: var(--text-auf-dunkel);
+}
+/* Der Farbwechsel darf nicht springen. Farben sind billig zu animieren —
+   es ist ein Element, und es passiert zweimal je Ausstellung. */
+.kopfzeile,
+.kopfzeile .marke,
+.kopfzeile .marke-text span,
+.hauptmenue a,
+.kopfzeile-aktionen .kopfzeile-anruf,
+.menue-knopf {
+  transition: background-color var(--dauer-kurz) var(--kurve),
+              color var(--dauer-kurz) var(--kurve),
+              border-color var(--dauer-kurz) var(--kurve);
 }
 .kopfzeile-innen {
   max-width: var(--breite);
@@ -308,7 +369,7 @@ section[id], :target { scroll-margin-top: calc(var(--kopfzeile-hoehe) + var(--a5
   background: var(--flaeche);
   border: 1px solid var(--linie);
   border-radius: var(--radius-l);
-  box-shadow: var(--schatten-gehoben);
+  box-shadow: var(--schatten-4);
 }
 .klappe.ist-offen { display: grid; grid-template-columns: 1fr 1fr; }
 .klappe-titel {
@@ -349,7 +410,7 @@ section[id], :target { scroll-margin-top: calc(var(--kopfzeile-hoehe) + var(--a5
     /* Deckend, nicht durchscheinend: hinter dem offenen Menü liegt die Seite. */
     background: var(--grund);
     border-bottom: 1px solid var(--linie);
-    box-shadow: var(--schatten-gehoben);
+    box-shadow: var(--schatten-4);
     max-height: calc(100dvh - var(--kopfzeile-hoehe));
     overflow-y: auto;
     /* Das Menü scrollt für sich, ohne die Seite dahinter mitzuziehen. */
@@ -500,7 +561,7 @@ section[id], :target { scroll-margin-top: calc(var(--kopfzeile-hoehe) + var(--a5
   font-size: var(--gr-s);
   font-weight: 600;
 }
-.einstieg-portraet .bildflaeche { box-shadow: var(--schatten-ruhig); }
+.einstieg-portraet .bildflaeche { box-shadow: var(--schatten-3), var(--kante-licht); }
 .einstieg-portraet figcaption {
   display: flex; flex-direction: column; text-align: center;
   margin-top: var(--a4);
@@ -583,7 +644,13 @@ section[id], :target { scroll-margin-top: calc(var(--kopfzeile-hoehe) + var(--a5
   border-radius: var(--radius-l);
   overflow: hidden;
 }
-.lagen-raster li { background: var(--grund); padding: var(--a6) var(--a5); }
+.lagen-raster li {
+  background: var(--grund);
+  background-image: var(--flaeche-verlauf);
+  padding: var(--a6) var(--a5);
+  border-radius: 0 0 var(--radius-m) var(--radius-m);
+  box-shadow: var(--schatten-2);
+}
 .lagen-raster h3 { font-size: var(--gr-xl); color: var(--akzent-tief); }
 .lagen-raster li { border-top: 3px solid transparent; }
 .lagen-raster li:nth-child(1) { border-top-color: var(--ton-mediation); }
@@ -737,10 +804,25 @@ section[id], :target { scroll-margin-top: calc(var(--kopfzeile-hoehe) + var(--a5
   border: 1px solid var(--linie);
   border-radius: var(--radius-l);
   text-decoration: none; color: inherit;
+  background-image: var(--flaeche-verlauf);
+  box-shadow: var(--schatten-2), var(--kante-licht);
   transition: border-color var(--dauer-kurz) var(--kurve),
-              box-shadow var(--dauer-kurz) var(--kurve);
+              transform var(--dauer-kurz) var(--kurve);
+  position: relative;
 }
-.leistungs-raster a:hover { border-color: var(--akzent); box-shadow: var(--schatten-ruhig); }
+/* Die Erhebung beim Zeigen: eine zweite Schattenebene wird sichtbar, statt
+   den Schatten selbst zu verändern. */
+.leistungs-raster a::after {
+  content: "";
+  position: absolute; inset: 0;
+  border-radius: inherit;
+  box-shadow: var(--schatten-3);
+  opacity: 0;
+  transition: opacity var(--dauer-kurz) var(--kurve);
+  pointer-events: none;
+}
+.leistungs-raster a:hover { border-color: var(--akzent); transform: translateY(-2px); }
+.leistungs-raster a:hover::after { opacity: 1; }
 .leistungs-raster h3 { margin-bottom: var(--a2); }
 .leistungs-raster p { color: var(--text-ruhig); font-size: var(--gr-s); margin-bottom: 0; }
 .leistungs-kurz { color: var(--akzent) !important; font-weight: 600; margin-bottom: var(--a3) !important; }
@@ -812,8 +894,11 @@ section[id], :target { scroll-margin-top: calc(var(--kopfzeile-hoehe) + var(--a5
 .gebiet-raster { display: grid; gap: var(--a6); grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr)); }
 .gebiet-block {
   display: flex; flex-direction: column;
-  padding-top: var(--a4);
+  padding: var(--a4) var(--a5) var(--a5);
   border-top: 2px solid var(--marke);
+  background-image: var(--flaeche-verlauf);
+  border-radius: 0 0 var(--radius-m) var(--radius-m);
+  box-shadow: var(--schatten-1);
 }
 .gebiet-block h2 { font-size: var(--gr-xl); }
 .gebiet-anriss {
@@ -883,8 +968,10 @@ section[id], :target { scroll-margin-top: calc(var(--kopfzeile-hoehe) + var(--a5
 .formular {
   display: grid; gap: var(--a4);
   background: var(--flaeche);
+  background-image: var(--flaeche-verlauf);
   border: 1px solid var(--linie);
   border-radius: var(--radius-l);
+  box-shadow: var(--schatten-2), var(--kante-licht);
   padding: clamp(var(--a5), 3vw, var(--a6));
 }
 .formular label { display: grid; gap: var(--a2); font-size: var(--gr-s); font-weight: 600; color: var(--text-ruhig); }
@@ -894,6 +981,8 @@ section[id], :target { scroll-margin-top: calc(var(--kopfzeile-hoehe) + var(--a5
   background: var(--grund);
   border: 1px solid var(--linie-kraeftig);
   border-radius: var(--radius-m);
+  /* Eingesenkt: der Schatten fällt nach innen, das Licht bleibt oben. */
+  box-shadow: inset 0 1px 2px rgba(35, 42, 28, 0.06);
   color: var(--text);
   font: inherit; font-weight: 400; font-size: var(--gr-m);
 }
@@ -984,24 +1073,23 @@ section[id], :target { scroll-margin-top: calc(var(--kopfzeile-hoehe) + var(--a5
 }
 
 /*
-  Die Querfahrt.
+  Die Querfahrt, in zwei Varianten.
 
   Der äußere Abschnitt ist hoch — eine Bildschirmhöhe je Station. Diese Höhe
-  IST die Scrollstrecke: Sie bestimmt, wie lange die Bühne klebt und wie
+  IST die Scrollstrecke: sie bestimmt, wie lange die Bühne klebt und wie
   schnell die Stationen vorbeiziehen.
 
   Die Bühne klebt mit `position: sticky`. Mehr Eingriff ins Scrollen gibt es
   nicht: kein `preventDefault`, kein Rad-Abfangen, keine Bibliothek. Der
   Browser scrollt weiter ganz normal, die Bühne steht nur still, solange der
-  Abschnitt an ihr vorbeiläuft.
-
-  Die Seitwärtsbewegung liest diesen Fortschritt mit — über eine
-  scrollgetriebene Animation auf dem Compositor. Sie kann deshalb weder
-  hängen noch blockieren: Sie steuert nichts, sie folgt.
+  Abschnitt an ihr vorbeiläuft. Die Seitwärtsbewegung liest diesen Fortschritt
+  mit — auf dem Compositor. Sie steuert nichts, sie folgt.
 */
 .querfahrt {
   position: relative;
-  /* Der Fortschritt dieses Abschnitts steuert die Bahn. */
+  /* Der Fortschritt dieses Abschnitts steuert alles darin. Beide Varianten
+     dürfen denselben Namen tragen: er wird von innen nach außen aufgelöst,
+     jede Fahrt findet also ihre eigene. */
   view-timeline-name: --fahrt;
   view-timeline-axis: block;
 }
@@ -1014,12 +1102,16 @@ section[id], :target { scroll-margin-top: calc(var(--kopfzeile-hoehe) + var(--a5
   flex-direction: column;
   justify-content: center;
   overflow: hidden;
+  /* Die Tiefe des Raums. Alles darin steht in dieser einen Perspektive. */
+  perspective: 1500px;
+  perspective-origin: 50% 46%;
 }
 
 .querfahrt-bahn {
   display: flex;
   align-items: center;
   height: 100%;
+  transform-style: preserve-3d;
   will-change: transform;
 }
 
@@ -1032,15 +1124,41 @@ section[id], :target { scroll-margin-top: calc(var(--kopfzeile-hoehe) + var(--a5
   gap: clamp(var(--a5), 5vw, var(--a8));
   padding: var(--a7) var(--rand);
   max-width: 100vw;
+  transform-style: preserve-3d;
 }
 
-.station-motiv {
+.station-bild {
+  position: relative;
   display: grid;
   place-items: center;
-  color: var(--akzent);
-  opacity: 0.85;
+  transform-style: preserve-3d;
 }
-.station-motiv svg { width: 100%; max-height: 58svh; height: auto; }
+
+/* Die Geisterziffer: Ausstellungsbeschilderung hinter dem Blatt, in der
+   Tiefe versetzt, damit sie beim Vorbeiziehen langsamer wandert. */
+.station-geist {
+  position: absolute;
+  left: 50%;
+  top: 8%;
+  transform: translate3d(-58%, -50%, -260px);
+  font-family: var(--schrift-display);
+  font-size: clamp(9rem, 22vw, 20rem);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  color: transparent;
+  -webkit-text-stroke: 1px var(--linie-kraeftig);
+  pointer-events: none;
+  user-select: none;
+}
+
+.station-rahmen {
+  position: relative;
+  width: 100%;
+  padding: clamp(var(--a4), 2.6vw, var(--a6));
+  border-radius: var(--radius-m);
+  color: var(--akzent);
+}
+.station-rahmen svg { display: block; width: 100%; max-height: 54svh; height: auto; }
 
 .station-kopf {
   display: flex;
@@ -1051,7 +1169,7 @@ section[id], :target { scroll-margin-top: calc(var(--kopfzeile-hoehe) + var(--a5
 .station-nummer {
   font-family: var(--schrift-display);
   font-size: 1.6rem;
-  color: var(--akzent);
+  color: var(--ton, var(--akzent));
   font-variant-numeric: tabular-nums;
   line-height: 1;
 }
@@ -1063,7 +1181,22 @@ section[id], :target { scroll-margin-top: calc(var(--kopfzeile-hoehe) + var(--a5
   text-transform: uppercase;
   color: var(--text-leise);
 }
-.station h2 { font-size: clamp(1.8rem, 3.6vw, 3.1rem); max-width: 16ch; }
+/* `max-width` gibt das Maß vor, darf aber kein Wort zerreißen: „Immobilien-
+   bewertung" ist breiter als 18 Zeichen und wurde als „Immobilienbewertun|g"
+   umbrochen. Auf Silbentrennung ist kein Verlass — nicht jedes System hat
+   das deutsche Wörterbuch. Also bleibt das Wort ganz und ragt lieber über
+   das Maß hinaus; Platz ist in der Spalte genug. */
+.station h2 {
+  font-size: clamp(1.7rem, 3.2vw, 2.8rem);
+  max-width: 18ch;
+  overflow-wrap: normal;
+}
+.station-claim {
+  margin: var(--a3) 0 var(--a4);
+  font-weight: 600;
+  font-size: var(--gr-l);
+  color: var(--ton-schrift, var(--akzent-tief));
+}
 .station-absatz {
   color: var(--text-ruhig);
   font-size: var(--gr-l);
@@ -1078,6 +1211,7 @@ section[id], :target { scroll-margin-top: calc(var(--kopfzeile-hoehe) + var(--a5
   bottom: clamp(1.5rem, 4vh, 3rem);
   height: 2px;
   background: var(--linie);
+  z-index: 3;
 }
 .querfahrt-balken {
   display: block;
@@ -1088,22 +1222,170 @@ section[id], :target { scroll-margin-top: calc(var(--kopfzeile-hoehe) + var(--a5
   transform: scaleX(0);
 }
 
+/* ---------- Variante „hell": die Leistungen als Platten ----------------- */
+
+.querfahrt-hell .station-rahmen {
+  background:
+    linear-gradient(
+      170deg,
+      color-mix(in srgb, var(--ton, var(--marke)) 16%, #fff) 0%,
+      color-mix(in srgb, var(--ton, var(--marke)) 5%, #fff) 62%,
+      #fff 100%
+    );
+  border: 1px solid color-mix(in srgb, var(--ton, var(--marke)) 34%, transparent);
+  /* Der Schatten trägt den Ton mit — eine Platte färbt den Grund unter sich. */
+  box-shadow:
+    0 2px 4px rgba(35, 42, 28, 0.06),
+    2px 18px 40px color-mix(in srgb, var(--ton, var(--marke)) 26%, transparent),
+    var(--kante-licht);
+  color: color-mix(in srgb, var(--ton, var(--marke)) 72%, var(--dunkel));
+}
+/* Die Dicke: eine Oberkante im vollen Leistungston und eine dunklere
+   Unterkante. Damit liest sich die Platte als Gegenstand, nicht als
+   Rechteck — und man sieht beim Drehen, dass sie eine Seite hat. */
+.querfahrt-hell .station-rahmen::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  border-top: 6px solid var(--ton, var(--akzent));
+  border-bottom: 1px solid color-mix(in srgb, var(--ton, var(--marke)) 45%, var(--dunkel));
+  pointer-events: none;
+}
+.querfahrt-hell .station-geist {
+  -webkit-text-stroke-color: color-mix(in srgb, var(--ton, var(--marke)) 30%, transparent);
+}
+.querfahrt-hell .querfahrt-balken { background: var(--ton, var(--akzent)); }
+
+/* ---------- Variante „raum": die Ausstellung ---------------------------- */
+
+/*
+  Der Raum wird nicht geschnitten, er wird betreten: das dunkle Panel fährt
+  seine Deckkraft hoch, wenn die Fahrt beginnt, und wieder herunter, wenn sie
+  endet. Der durchgehende Seitenhintergrund bleibt darunter erhalten.
+*/
+.querfahrt-raum {
+  --text: var(--text-auf-dunkel);
+  --text-ruhig: var(--text-auf-dunkel-ruhig);
+  --text-leise: var(--text-auf-dunkel-ruhig);
+  --akzent: var(--akzent-hell);
+  --akzent-tief: var(--akzent-hell);
+  --linie: var(--linie-dunkel);
+  --linie-kraeftig: rgba(242, 241, 234, 0.22);
+  color: var(--text-auf-dunkel);
+}
+.querfahrt-raum .station h2,
+.querfahrt-raum .station-absatz,
+.querfahrt-raum .station-kategorie { color: inherit; }
+.querfahrt-raum .station-absatz { color: var(--text-auf-dunkel-ruhig); }
+/* Dunkelgrün auf Dunkelgrün wäre unlesbar: im Raum kehrt sich der Knopf um. */
+.querfahrt-raum .knopf-voll { background: var(--akzent-hell); color: var(--dunkel-tief); }
+.querfahrt-raum .knopf-voll:hover { background: #d3e795; color: var(--dunkel-tief); }
+
+.raum {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  background: var(--dunkel-tief);
+  overflow: hidden;
+  z-index: 0;
+}
+/* Boden und Decke: zwei Flächen, nach hinten auslaufend. Sie verkaufen den
+   Raum stärker als alles andere. */
+.raum-boden, .raum-decke {
+  position: absolute;
+  left: -20%;
+  right: -20%;
+  height: 46%;
+  background: linear-gradient(
+    to top,
+    color-mix(in srgb, var(--dunkel-erhoben) 90%, var(--marke)) 0%,
+    transparent 92%
+  );
+}
+.raum-boden { bottom: 0; }
+.raum-decke { top: 0; transform: scaleY(-1); opacity: 0.5; }
+/* Das Licht wandert mit dem Fortschritt durch den Raum. */
+.raum-licht {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    46% 60% at var(--licht-x, 50%) 42%,
+    rgba(255, 246, 226, 0.16) 0%,
+    rgba(255, 246, 226, 0.06) 42%,
+    transparent 72%
+  );
+}
+.nebel {
+  position: absolute;
+  top: 0; bottom: 0;
+  width: clamp(3rem, 12vw, 11rem);
+  z-index: 2;
+  pointer-events: none;
+  opacity: 0;
+}
+.nebel-links  { left: 0;  background: linear-gradient(to right, var(--dunkel-tief), transparent); }
+.nebel-rechts { right: 0; background: linear-gradient(to left,  var(--dunkel-tief), transparent); }
+
+.querfahrt-raum .station-rahmen {
+  background: var(--dunkel-erhoben);
+  border: 1px solid var(--linie-dunkel);
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.45), var(--kante-licht-dunkel);
+}
+/* Der Lichtschein auf dem Blatt — als läge es unter einem Strahler. */
+.querfahrt-raum .station-rahmen::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(160deg, rgba(255, 246, 226, 0.09), transparent 58%);
+  pointer-events: none;
+}
+.querfahrt-raum .station-geist { -webkit-text-stroke-color: rgba(242, 241, 234, 0.13); }
+.querfahrt-raum .station-nummer { color: var(--akzent-hell); }
+.querfahrt-raum .querfahrt-leiste { background: rgba(242, 241, 234, 0.15); }
+.querfahrt-raum .querfahrt-balken { background: var(--akzent-hell); }
+
 /*
   Die Bewegung selbst.
 
   `contain 0% contain 100%` ist genau der Bereich, in dem der hohe Abschnitt
-  den Bildschirm vollständig ausfüllt — also exakt die Zeit, in der die Bühne
-  klebt. Anfang und Ende der Querfahrt fallen damit auf Anfang und Ende des
-  Klebens: kein Nachlauf, kein Sprung beim Übergang.
+  den Bildschirm ausfüllt — also exakt die Zeit, in der die Bühne klebt.
+  Anfang und Ende der Fahrt fallen damit auf Anfang und Ende des Klebens.
+
+  Jede Station dreht sich um ihre eigene Mitte: `--mitte` kommt aus der
+  Komponente und sagt, bei welchem Fortschritt diese Station in der Bildmitte
+  steht. Der Bereich liegt symmetrisch darum, der mittlere Keyframe ist die
+  gerade Ansicht. Sieben Animationen, alle auf `transform`.
 */
 @supports (animation-timeline: view()) {
   @media (min-width: 900px) and (prefers-reduced-motion: no-preference) {
     @keyframes fahren {
       to { transform: translate3d(calc(-100vw * (var(--stationen) - 1)), 0, 0); }
     }
-    @keyframes fortschritt {
-      to { transform: scaleX(1); }
+    @keyframes fortschritt { to { transform: scaleX(1); } }
+    @keyframes drehen {
+      from { transform: translate3d(0, 0, -230px) rotateY(26deg); }
+      50%  { transform: translate3d(0, 0, 0) rotateY(0deg); }
+      to   { transform: translate3d(0, 0, -230px) rotateY(-26deg); }
     }
+    /* Der Raum ist dunkel, bevor man ihn betritt.
+
+       Das ist kein Geschmack, sondern Lesbarkeit: im Raum ist die Schrift
+       hell, und eine helle Schrift auf einem noch hellen Grund ist
+       unlesbar. Der Raum blendet darum früh in der Einfahrt auf und ist
+       spätestens fertig, wenn die Bühne zu kleben beginnt. Ein Ausblenden
+       braucht es nicht — am Ende scrollt die klebende Bühne von selbst aus
+       dem Bild. */
+    @keyframes raum-auf {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+    @keyframes licht-wandern {
+      from { --licht-x: 26%; }
+      to   { --licht-x: 74%; }
+    }
+
     .querfahrt-bahn {
       animation: fahren linear both;
       animation-timeline: --fahrt;
@@ -1114,29 +1396,74 @@ section[id], :target { scroll-margin-top: calc(var(--kopfzeile-hoehe) + var(--a5
       animation-timeline: --fahrt;
       animation-range: contain 0% contain 100%;
     }
+    /* Gedreht wird das Bild, nicht die Station.
+
+       Eine Station ist so groß wie das Fenster und enthält Fließtext. Dreht
+       man sie, muss der Browser bei jedem Bild die ganze Fläche samt Schrift
+       neu rastern — gemessen 21 ms je Bild statt 16,7. Dreht sich nur der
+       Rahmen, bleibt der Text flach (und damit lesbar), und die neu zu
+       rasternde Fläche ist weniger als die Hälfte. */
+    .station-bild {
+      animation: drehen linear both;
+      animation-timeline: --fahrt;
+      animation-range: contain calc(var(--mitte) - 19%) contain calc(var(--mitte) + 19%);
+    }
+    .raum, .nebel {
+      animation: raum-auf linear both;
+      animation-timeline: --fahrt;
+      animation-range: entry 15% entry 65%;
+    }
+    .raum-licht {
+      animation: licht-wandern linear both;
+      animation-timeline: --fahrt;
+      animation-range: contain 0% contain 100%;
+    }
+
+    /* Die Zeichnung zeichnet sich, während man auf sie zufährt, und ist
+       fertig, kurz bevor die Station gerade steht. `pathLength="1"` auf
+       jedem Pfad macht alle Linien gleich lang, sodass eine Regel reicht;
+       `stroke-dasharray` und `-dashoffset` erben von der Gruppe. */
+    @keyframes zeichnen-fahrt { to { stroke-dashoffset: 0; } }
+    .station [data-linie] {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 1;
+      animation: zeichnen-fahrt linear both;
+      animation-timeline: --fahrt;
+      animation-range: contain calc(var(--mitte) - 17%) contain calc(var(--mitte) - 4%);
+    }
+    .station [data-linie="2"] {
+      animation-range: contain calc(var(--mitte) - 14%) contain calc(var(--mitte) - 2%);
+    }
+    .station [data-linie="3"] {
+      animation-range: contain calc(var(--mitte) - 11%) contain calc(var(--mitte) + 1%);
+    }
   }
 }
 
 /*
   Rückfallebene — und zugleich die Fassung für Touchgeräte.
 
-  Ohne scrollgetriebene Animationen, auf schmalen Geräten und bei
-  reduzierter Bewegung gibt es keine überhohe Sektion und kein Kleben. Die
-  Stationen liegen dann in einer gewöhnlichen seitlich scrollbaren Reihe mit
-  Einrasten. Auf einem Touchscreen ist Wischen ohnehin die natürlichere
-  Geste als eine umgedeutete Scrollstrecke — und eine Seite, die auf dem
-  Handy am Finger klebt, wäre genau das Gegenteil von hochwertig.
+  Ohne scrollgetriebene Animationen, auf schmalen Geräten und bei reduzierter
+  Bewegung gibt es keine überhohe Sektion und kein Kleben. Die Stationen
+  liegen dann in einer gewöhnlichen seitlich wischbaren Reihe mit Einrasten.
+  Eine Seite, die auf dem Handy am Finger klebt, wäre das Gegenteil von
+  hochwertig.
 */
 @media (max-width: 899.98px), (prefers-reduced-motion: reduce) {
   .querfahrt { height: auto !important; }
-  .querfahrt-buehne { position: static; height: auto; overflow: visible; }
+  .querfahrt-buehne {
+    position: static; height: auto; overflow: visible;
+    perspective: none;
+    padding-block: var(--abschnitt);
+  }
   .querfahrt-bahn {
     overflow-x: auto;
     scroll-snap-type: x mandatory;
     overscroll-behavior-x: contain;
     scrollbar-width: thin;
     scrollbar-color: var(--linie-kraeftig) transparent;
-    padding-bottom: var(--a5);
+    padding: 0 var(--rand) var(--a5);
+    transform-style: flat;
     will-change: auto;
   }
   .station {
@@ -1148,24 +1475,42 @@ section[id], :target { scroll-margin-top: calc(var(--kopfzeile-hoehe) + var(--a5
     border: 1px solid var(--linie);
     border-radius: var(--radius-l);
     background: var(--flaeche);
+    background-image: var(--flaeche-verlauf);
+    box-shadow: var(--schatten-2), var(--kante-licht);
     margin-right: var(--a4);
+    transform: none;
   }
-  .station-motiv svg { max-height: 30svh; }
+  .station-geist { display: none; }
+  .station-rahmen { padding: 0; border: 0; background: none; box-shadow: none; }
+  .station-rahmen svg { max-height: 30svh; }
   .station h2 { font-size: clamp(1.4rem, 5vw, 1.9rem); }
-  .station-absatz { font-size: var(--gr-m); }
+  .station-absatz, .station-claim { font-size: var(--gr-m); }
   .querfahrt-leiste { display: none; }
+  /* Der Raum bleibt ein Raum, nur ohne Perspektive: die Karten sind dunkel,
+     der Hintergrund der Seite läuft weiter durch. */
+  .querfahrt-raum .raum { position: absolute; opacity: 1; }
+  .querfahrt-raum .station {
+    background: var(--dunkel-erhoben);
+    background-image: none;
+    border-color: var(--linie-dunkel);
+    box-shadow: var(--schatten-3);
+  }
+  .querfahrt-raum .nebel { display: none; }
 }
 @supports not (animation-timeline: view()) {
   .querfahrt { height: auto !important; }
-  .querfahrt-buehne { position: static; height: auto; overflow: visible; }
+  .querfahrt-buehne { position: static; height: auto; overflow: visible; perspective: none; }
   .querfahrt-bahn {
     overflow-x: auto;
     scroll-snap-type: x proximity;
     overscroll-behavior-x: contain;
     padding-bottom: var(--a5);
+    transform-style: flat;
   }
-  .station { flex: 0 0 min(88vw, 40rem); scroll-snap-align: center; height: auto; }
+  .station { flex: 0 0 min(88vw, 40rem); scroll-snap-align: center; height: auto; transform: none; }
+  .station-geist { display: none; }
   .querfahrt-leiste { display: none; }
+  .querfahrt-raum .raum { opacity: 1; }
 }
 
 /* Architektur- und Kompetenzabschnitte der Ausstellungsseite */
@@ -1209,10 +1554,12 @@ section[id], :target { scroll-margin-top: calc(var(--kopfzeile-hoehe) + var(--a5
   padding: var(--a6) var(--a3);
   text-decoration: none;
   color: inherit;
+  /* Der Einzug läuft über `transform`, nicht über `padding` — Innenabstände
+     zu animieren heißt, bei jedem Bild neu zu setzen. */
   transition: background var(--dauer-kurz) var(--kurve),
-              padding-left var(--dauer-kurz) var(--kurve);
+              transform var(--dauer-kurz) var(--kurve);
 }
-.strecke a:hover { background: var(--flaeche-zart); padding-left: var(--a5); }
+.strecke a:hover { background: var(--flaeche-zart); transform: translateX(var(--a3)); }
 .strecke-nr {
   font-family: var(--schrift-display);
   font-size: 1.3rem;
@@ -1258,8 +1605,10 @@ section[id], :target { scroll-margin-top: calc(var(--kopfzeile-hoehe) + var(--a5
   gap: var(--a3);
   padding: var(--a4);
   background: var(--flaeche);
+  background-image: var(--flaeche-verlauf);
   border: 1px solid var(--linie);
   border-radius: var(--radius-m);
+  box-shadow: var(--schatten-2), var(--kante-licht);
   color: var(--akzent);
   /* Leichte Staffelung, damit es nach Blättern aussieht und nicht nach
      drei gleichen Kacheln. */

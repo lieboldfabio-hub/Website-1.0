@@ -10,6 +10,9 @@ import { useEffect, useRef } from "react";
      in jeder Linkvorschau und für alle, die Bewegung abgeschaltet haben.
   2. Der Beobachter meldet sich nach dem ersten Mal ab. Nichts läuft weiter,
      während gescrollt wird.
+
+  Seit es `styles/bewegung.css` gibt, ist das die Rückfallebene: wo eine
+  scrollgebundene Animation greift, tritt dieser Beobachter zurück.
 */
 export default function Einblenden({ children, als: Als = "div", verzug = 0, className = "", ...rest }) {
   const ref = useRef(null);
@@ -19,6 +22,12 @@ export default function Einblenden({ children, als: Als = "div", verzug = 0, cla
     if (!el) return;
     if (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) return;
     if (!("IntersectionObserver" in window)) return;
+    /* Trägt das Element eine scrollgebundene Bewegung — oder steht es in
+       einer gestaffelten Reihe — und kann der Browser das, gehört ihm die
+       Bewegung allein: zwei Animationen auf demselben `transform`
+       überschreiben einander. */
+    if (CSS.supports?.("animation-timeline", "view()") &&
+        (el.dataset.bewegung || el.parentElement?.closest('[data-bewegung~="staffel"]'))) return;
 
     el.dataset.wartet = "";
     const beobachter = new IntersectionObserver(

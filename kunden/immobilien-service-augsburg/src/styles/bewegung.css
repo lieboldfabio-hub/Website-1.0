@@ -1,0 +1,200 @@
+/*
+  Scrollgebundene Bewegung.
+
+  Alles hier hängt an `animation-timeline` — der Browser liest die
+  Scrollposition und bewegt auf dem Compositor. Es gibt keinen Scroll-Zuhörer,
+  keine Rechnung je Bild, kein `preventDefault`. Das Scrollen bleibt beim
+  Browser; es wird nur mitgelesen. Deshalb kann hier nichts hängen oder
+  blockieren, egal wie viel gleichzeitig läuft.
+
+  Vier Regeln, die nicht verhandelbar sind:
+
+  1. Animiert werden nur `transform`, `opacity`, `clip-path` und über
+     `@property` registrierte Eigenschaften. Keine Geometrie, kein
+     `box-shadow` — beides läuft im Mal- oder Layoutschritt und ist genau die
+     Art Kosten, die die Vorfassung unbrauchbar gemacht hat.
+  2. Inhalt startet sichtbar. Fließtext und Überschriften bewegen sich nur in
+     der Lage. Verstecken — Deckkraft, Wischmaske, Selbstzeichnen — ist
+     ausschließlich für `aria-hidden`-Dekoration erlaubt. Sonst fehlt der
+     Inhalt in jeder Linkvorschau, in jedem Bild der ganzen Seite und für
+     alle, die Bewegung abgeschaltet haben.
+  3. Nichts über dem Falz hängt an einer View-Timeline. Was beim Laden schon
+     sichtbar ist, bekommt eine einmalige Eintrittsbewegung oder gar keine.
+  4. Zwei Primitive, die beide `transform` animieren, gehören nicht auf
+     dasselbe Element — das zweite überschreibt das erste. Für Kombinationen
+     wird verschachtelt.
+
+  Ohne Unterstützung greift nichts: die Ruhelage ist die fertige Seite, und
+  `Einblenden.jsx` übernimmt als ruhigere, aber vollwertige Fassung.
+*/
+
+/* Registriert, damit es überhaupt animierbar ist: eine nicht registrierte
+   Custom Property springt zwischen zwei Werten, statt zu laufen. */
+@property --licht-x {
+  syntax: "<percentage>";
+  inherits: true;
+  initial-value: 50%;
+}
+
+@property --tiefe {
+  syntax: "<percentage>";
+  inherits: false;
+  initial-value: 7%;
+}
+
+/* Die Staffelung zählt die Kinder. `nth-child` statt einer Zahl im JSX:
+   die Seiten sollen nur sagen, dass gestaffelt wird, nicht wie weit. */
+[data-bewegung~="staffel"] > * { --i: 0; }
+[data-bewegung~="staffel"] > *:nth-child(1)  { --i: 0; }
+[data-bewegung~="staffel"] > *:nth-child(2)  { --i: 1; }
+[data-bewegung~="staffel"] > *:nth-child(3)  { --i: 2; }
+[data-bewegung~="staffel"] > *:nth-child(4)  { --i: 3; }
+[data-bewegung~="staffel"] > *:nth-child(5)  { --i: 4; }
+[data-bewegung~="staffel"] > *:nth-child(6)  { --i: 5; }
+[data-bewegung~="staffel"] > *:nth-child(7)  { --i: 6; }
+[data-bewegung~="staffel"] > *:nth-child(8)  { --i: 7; }
+[data-bewegung~="staffel"] > *:nth-child(9)  { --i: 8; }
+[data-bewegung~="staffel"] > *:nth-child(10) { --i: 9; }
+[data-bewegung~="staffel"] > *:nth-child(11) { --i: 10; }
+[data-bewegung~="staffel"] > *:nth-child(n + 12) { --i: 11; }
+
+/* Der Schatten des Schwebens liegt in einer eigenen Ebene, damit seine
+   Deckkraft animiert werden kann statt des Schattens selbst. */
+[data-bewegung~="schweben"] { position: relative; }
+[data-bewegung~="schweben"]::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: var(--schatten-3);
+  opacity: 0;
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* Zeilenweise Überschriften: außen die Blende, innen die Zeile. Der Text
+   steht vollständig im DOM und in Ruhelage sichtbar. */
+.zeile { display: block; overflow: hidden; }
+.zeile > span { display: block; }
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    @keyframes heben {
+      from { transform: translate3d(0, 44px, 0); }
+      to   { transform: none; }
+    }
+    @keyframes zeile-heben {
+      from { transform: translate3d(0, 105%, 0); }
+      to   { transform: none; }
+    }
+    @keyframes tiefe {
+      from { transform: translate3d(0, var(--tiefe), 0); }
+      to   { transform: translate3d(0, calc(var(--tiefe) * -1), 0); }
+    }
+    @keyframes naeher {
+      from { transform: scale(1.06); }
+      to   { transform: none; }
+    }
+    @keyframes aufwischen {
+      from { clip-path: inset(0 100% 0 0); }
+      to   { clip-path: inset(0 0 0 0); }
+    }
+    @keyframes zeichnen {
+      from { stroke-dashoffset: 1; }
+      to   { stroke-dashoffset: 0; }
+    }
+    @keyframes schatten-an {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+
+    [data-bewegung~="heben"] {
+      animation: heben linear both;
+      animation-timeline: view();
+      animation-range: entry 15% cover 30%;
+    }
+
+    /* Parallaxe: läuft über die ganze Zeit, in der das Element zu sehen ist.
+       `--tiefe` regelt, wie stark — verschiedene Werte auf benachbarten
+       Ebenen erzeugen die Tiefe. */
+    [data-bewegung~="tiefe"] {
+      animation: tiefe linear both;
+      animation-timeline: view();
+      animation-range: cover 0% cover 100%;
+      will-change: transform;
+    }
+
+    [data-bewegung~="naeher"] {
+      animation: naeher linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 40%;
+    }
+
+    /* Nur Dekoration: was hier steht, darf beim Laden fehlen. */
+    [data-bewegung~="aufwischen"][aria-hidden="true"] {
+      animation: aufwischen linear both;
+      animation-timeline: view();
+      animation-range: entry 20% cover 25%;
+    }
+
+    [data-bewegung~="zeichnen"] [data-linie] {
+      stroke-dasharray: 1;
+      animation: zeichnen linear both;
+      animation-timeline: view();
+      animation-range: entry 10% cover 45%;
+    }
+    /* Die Ebenen zeichnen sich von hinten nach vorn. */
+    [data-bewegung~="zeichnen"] [data-linie="2"] { animation-range: entry 20% cover 55%; }
+    [data-bewegung~="zeichnen"] [data-linie="3"] { animation-range: entry 30% cover 65%; }
+
+    /* Staffelung: dieselbe Bewegung, je Kind später. Sechs Prozent Versatz
+       sind genug, dass es als Reihe liest und nicht als Zufall. */
+    [data-bewegung~="staffel"] > * {
+      animation: heben linear both;
+      animation-timeline: view();
+      animation-range: entry calc(12% + var(--i) * 6%) cover calc(30% + var(--i) * 6%);
+    }
+
+    [data-bewegung~="schweben"] {
+      animation: heben linear both;
+      animation-timeline: view();
+      animation-range: entry 20% cover 45%;
+    }
+    [data-bewegung~="schweben"]::before {
+      animation: schatten-an linear both;
+      animation-timeline: view();
+      animation-range: entry 20% cover 45%;
+    }
+
+    .zeile > span {
+      animation: zeile-heben linear both;
+      animation-timeline: view();
+      animation-range: entry calc(10% + var(--i, 0) * 7%) cover calc(26% + var(--i, 0) * 7%);
+    }
+    .zeile:nth-child(1) > span { --i: 0; }
+    .zeile:nth-child(2) > span { --i: 1; }
+    .zeile:nth-child(3) > span { --i: 2; }
+    .zeile:nth-child(4) > span { --i: 3; }
+    .zeile:nth-child(5) > span { --i: 4; }
+  }
+}
+
+/*
+  Der Einstieg. Keine Timeline — er ist beim Laden schon zu sehen, eine
+  View-Timeline stünde dort auf ihrem Anfangswert und hielte den Inhalt fest.
+  Stattdessen einmal beim Laden, und nur in der Lage.
+*/
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes eintreten {
+    from { transform: translate3d(0, 22px, 0); }
+    to   { transform: none; }
+  }
+  [data-eintritt] {
+    animation: eintreten var(--dauer-lang) var(--kurve) both;
+    animation-delay: calc(var(--i, 0) * 70ms);
+  }
+  [data-eintritt="1"] { --i: 1; }
+  [data-eintritt="2"] { --i: 2; }
+  [data-eintritt="3"] { --i: 3; }
+  [data-eintritt="4"] { --i: 4; }
+}

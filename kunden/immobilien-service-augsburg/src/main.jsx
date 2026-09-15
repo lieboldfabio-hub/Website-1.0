@@ -5,6 +5,7 @@ import App from "./App.jsx";
 import "./styles/tokens.css";
 import "./styles/schriften.css";
 import "./styles/global.css";
+import "./styles/bewegung.css";
 
 /*
   Im Livebetrieb saubere Adressen — dafür sorgt die Umleitung in

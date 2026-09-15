@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
-import { firma, qualifikationen } from "../daten/firma.js";
+import { firma, qualifikationen, leistungen } from "../daten/firma.js";
+import { stationen } from "../daten/ausstellung.js";
 import { useSeitenkopf } from "../bausteine/useSeitenkopf.js";
-import Einblenden from "../bausteine/Einblenden.jsx";
 import Aufruf from "../bausteine/Aufruf.jsx";
 import Querfahrt from "../komponenten/Querfahrt.jsx";
 import Motiv from "../bausteine/Motiv.jsx";
@@ -32,7 +32,20 @@ export default function Ausstellung() {
       </section>
 
       <div id="ausstellung">
-        <Querfahrt />
+        <Querfahrt
+          variante="raum"
+          beschriftung="Ausstellung"
+          stationen={stationen.map((s) => ({
+            nummer: s.nummer,
+            marke: s.kategorie,
+            titel: s.titel,
+            text: s.text,
+            weg: s.weg,
+            aufruf: s.aufruf,
+            motiv: s.motiv,
+            ton: leistungen.find((l) => l.weg === s.weg)?.ton,
+          }))}
+        />
       </div>
 
       <section className="abschnitt">
@@ -42,8 +55,8 @@ export default function Ausstellung() {
             <h2>Worauf ich beim Betreten eines Hauses zuerst schaue</h2>
           </div>
 
-          <div className="architektur-raster">
-            <Einblenden className="arch-block">
+          <div className="architektur-raster" data-bewegung="staffel">
+            <div className="arch-block">
               <h3>Raumgefühl</h3>
               <p>
                 Ob ein Raum trägt, entscheidet sich selten an der Quadratmeterzahl.
@@ -51,16 +64,16 @@ export default function Ausstellung() {
                 die Räume zueinander liegen. Als Innenarchitektin sehe ich das,
                 bevor die ersten Interessenten kommen.
               </p>
-            </Einblenden>
-            <Einblenden className="arch-block" verzug={70}>
+            </div>
+            <div className="arch-block">
               <h3>Substanz</h3>
               <p>
                 Baujahr, Bauweise und Zustand bestimmen, was an einer Immobilie
                 möglich ist und was sie in den nächsten Jahren kostet. Beides
                 gehört auf den Tisch, bevor über einen Preis gesprochen wird.
               </p>
-            </Einblenden>
-            <Einblenden className="arch-block" verzug={140}>
+            </div>
+            <div className="arch-block">
               <h3>Lage</h3>
               <p>
                 Der Augsburger Markt ist kleinteilig. Lechhausen und das
@@ -68,8 +81,8 @@ export default function Ausstellung() {
                 entscheidet oft die Anbindung. Wer hier bewertet, muss die
                 Straßen kennen, nicht nur die Statistik.
               </p>
-            </Einblenden>
-            <Einblenden className="arch-block" verzug={210}>
+            </div>
+            <div className="arch-block">
               <h3>Unterlagen</h3>
               <p>
                 Grundriss, Wohnflächenberechnung, Energieausweis: die
@@ -77,14 +90,14 @@ export default function Ausstellung() {
                 sich ein Verkauf um Monate verzögert. Sie gehören früh
                 zusammengestellt.
               </p>
-            </Einblenden>
+            </div>
           </div>
         </div>
       </section>
 
       <section className="abschnitt kompetenz">
         <div className="mitte kompetenz-raster">
-          <Einblenden className="kompetenz-text">
+          <div className="kompetenz-text" data-bewegung="heben">
             <p className="ueberzeile">Kompetenz</p>
             <h2>Vier Berufe, die zusammengehören</h2>
             <p>
@@ -97,16 +110,16 @@ export default function Ausstellung() {
             <Link className="knopf knopf-linie" to="/ueber-mich">
               Mehr über {firma.inhaberin}
             </Link>
-          </Einblenden>
+          </div>
 
-          <Einblenden als="ul" className="kompetenz-liste" verzug={80}>
+          <ul className="kompetenz-liste" data-bewegung="staffel">
             {qualifikationen.map((q) => (
               <li key={q.titel}>
                 <strong>{q.titel}</strong>
                 <span>{q.text}</span>
               </li>
             ))}
-          </Einblenden>
+          </ul>
         </div>
       </section>
 

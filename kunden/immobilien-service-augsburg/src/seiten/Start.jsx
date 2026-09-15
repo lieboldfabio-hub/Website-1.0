@@ -29,16 +29,16 @@ export default function Start() {
       <section className="einstieg">
         <div className="mitte einstieg-raster">
           <div className="einstieg-text">
-            <p className="ueberzeile">Immobilienmaklerin für {firma.gebiet}</p>
-            <h1>
+            <p className="ueberzeile" data-eintritt>Immobilienmaklerin für {firma.gebiet}</p>
+            <h1 data-eintritt="1">
               Immobilien in Augsburg mit Erfahrung, Marktkenntnis und{" "}
               <em>persönlicher Beratung.</em>
             </h1>
-            <p className="vorspann">
+            <p className="vorspann" data-eintritt="2">
               Zertifizierte Immobilienmaklerin für Augsburg Stadt und Land mit
               mehr als {firma.erfahrungJahre} Jahren Berufserfahrung.
             </p>
-            <div className="knopf-reihe">
+            <div className="knopf-reihe" data-eintritt="3">
               <Link className="knopf knopf-voll" to="/immobilienbewertung">
                 Immobilie bewerten lassen
               </Link>
@@ -68,9 +68,9 @@ export default function Start() {
       </section>
 
       <section className="vertrauen" aria-label="Auf einen Blick">
-        <ul className="mitte vertrauen-reihe">
-          {vertrauen.map((v, i) => (
-            <Einblenden als="li" key={v.label} verzug={i * 60}>
+        <ul className="mitte vertrauen-reihe" data-bewegung="staffel">
+          {vertrauen.map((v) => (
+            <Einblenden als="li" key={v.label}>
               <span className="vertrauen-zahl">{v.zahl}</span>
               <strong>{v.label}</strong>
               <p>{v.text}</p>
@@ -92,10 +92,9 @@ export default function Start() {
             </p>
           </div>
 
-          <ol className="strecke">
+          <ol className="strecke" data-bewegung="staffel">
             {hauptleistungen.map((l, i) => (
-              <Einblenden als="li" key={l.weg} verzug={(i % 3) * 50}
-                style={{ "--ton": l.ton }}>
+              <Einblenden als="li" key={l.weg} style={{ "--ton": l.ton }}>
                 <Link to={l.weg}>
                   <span className="strecke-nr">{String(i + 1).padStart(2, "0")}</span>
                   <span className="strecke-inhalt">
@@ -133,14 +132,19 @@ export default function Start() {
             <Link className="knopf knopf-voll" to="/ausstellung">Zur Ausstellung</Link>
           </Einblenden>
 
-          <Einblenden className="teaser-vorschau" verzug={80} aria-hidden="true">
+          <div className="teaser-vorschau" aria-hidden="true">
             {stationen.slice(0, 3).map((s, i) => (
-              <span className="teaser-blatt" key={s.nummer} style={{ "--i": i }}>
+              <span
+                className="teaser-blatt"
+                key={s.nummer}
+                data-bewegung="tiefe"
+                style={{ "--i": i, "--tiefe": `${5 + i * 4}%` }}
+              >
                 <Motiv art={s.motiv} />
                 <small>{s.nummer} — {s.kategorie}</small>
               </span>
             ))}
-          </Einblenden>
+          </div>
         </div>
       </section>
 
@@ -156,9 +160,9 @@ export default function Start() {
             </p>
           </div>
 
-          <ul className="lagen-raster">
-            {lebenslagen.map((l, i) => (
-              <Einblenden als="li" key={l.titel} verzug={(i % 3) * 60}>
+          <ul className="lagen-raster" data-bewegung="staffel">
+            {lebenslagen.map((l) => (
+              <Einblenden als="li" key={l.titel}>
                 <h3>{l.titel}</h3>
                 <p>{l.text}</p>
                 <Link className="mehr-zeichen" to={l.weg}>{l.aufruf}</Link>
@@ -187,14 +191,14 @@ export default function Start() {
             <Link className="knopf knopf-linie" to="/ueber-mich">Mehr über mich</Link>
           </Einblenden>
 
-          <Einblenden als="ul" className="qualifikations-liste" verzug={80}>
+          <ul className="qualifikations-liste" data-bewegung="staffel">
             {qualifikationen.map((q) => (
               <li key={q.titel}>
                 <strong>{q.titel}</strong>
                 <span>{q.text}</span>
               </li>
             ))}
-          </Einblenden>
+          </ul>
         </div>
       </section>
 
@@ -208,12 +212,12 @@ export default function Start() {
               Wohnungen in zwei Stadtteilen unterschiedlich viel wert sind.
             </p>
           </div>
-          <Einblenden className="ort-wolke">
+          <div className="ort-wolke" data-bewegung="staffel">
             {region.flatMap((g) => g.orte.slice(0, 5)).map((o) => (
               <span key={o}>{o}</span>
             ))}
             <Link to="/region" className="ort-mehr">alle Orte ansehen</Link>
-          </Einblenden>
+          </div>
         </div>
       </section>
 

@@ -17,6 +17,16 @@ npm run build    # nach dist/
 npm run preview  # gebaute Fassung ansehen
 ```
 
+Prüfen (braucht Playwright und eine laufende Vorschau — Einzelheiten in
+`werkzeuge/LIESMICH.md`):
+
+```bash
+node werkzeuge/pruefen.mjs     # 30 Prüfungen
+node werkzeuge/fluss.mjs       # Scrollfluss, auch mit gedrosselter CPU
+node werkzeuge/ganzseiten.mjs  # Ganzseitenbilder + versteckter Inhalt
+node werkzeuge/regeln.mjs      # Stylesheet-Regeln, ohne Vorschau
+```
+
 Vorschau ohne Server-Umleitung:
 `VITE_VORSCHAU=1 npx vite build --outDir dist-vorschau` — hängt die Adressen
 der Unterseiten hinter ein `#`.
@@ -76,6 +86,58 @@ Gemessen (Startseite, ganze Länge durchgescrollt): 16,7 ms je Bild auf
 Desktop, Laptop, Tablet und Handy — und ebenso bei vierfach gedrosselter
 CPU. Kein einziges Bild über 32 ms. Layout-Verschiebung 0,000.
 
+## Bewegung
+
+Die Seite reagiert durchgehend auf die Scrollposition — über
+`animation-timeline`, nicht über JavaScript. Der Browser liest die Position
+und bewegt auf dem Compositor: kein Scroll-Zuhörer, keine Rechnung je Bild,
+kein `preventDefault`.
+
+Die Primitive stehen einmal in `styles/bewegung.css`; die Seiten rufen sie
+über ein Attribut ab (`data-bewegung="heben"`, `"tiefe"`, `"naeher"`,
+`"staffel"`, `"schweben"`, `"aufwischen"`, `"zeichnen"`). Eine Seite erfindet
+keine eigene Animation.
+
+Vier Regeln, die nicht verhandelbar sind:
+
+1. Animiert werden nur `transform`, `opacity`, `clip-path` und über
+   `@property` registrierte Eigenschaften — und auch die nur, wenn sie eine
+   dieser Eigenschaften speisen. Eine registrierte Eigenschaft, die in einen
+   Verlauf fließt, kostet jedes Bild einen Malschritt.
+2. Inhalt startet sichtbar. Verstecken ist nur für `aria-hidden`-Dekoration
+   erlaubt. `werkzeuge/ganzseiten.mjs` setzt das maschinell durch.
+3. Nichts über dem Falz hängt an einer View-Timeline. Der Einstieg bekommt
+   `data-eintritt` — eine einmalige Bewegung beim Laden.
+4. Zwei Primitive, die beide `transform` animieren, gehören nicht auf
+   dasselbe Element.
+
+## Licht und Tiefe
+
+Eine Lichtquelle für die ganze Seite: von oben, leicht von links. Alles
+Erhobene wirft in dieselbe Richtung, darum wächst der Versatz nach rechts mit
+der Höhe. Die Schattenleiter `--schatten-1` bis `--schatten-4` steht in
+`tokens.css`, gefärbt aus `--dunkel` statt aus Schwarz — ein neutralgrauer
+Schatten auf warmem Off-White sieht billig aus.
+
+Tiefe ist Hierarchie, nicht Dekor: 1 Lesestrecken (Verlauf, kein Schatten),
+2 Karten und Formularfelder, 3 Gehobenes und die Stationen der Querfahrten,
+4 Kopfzeile und offene Menüs.
+
+## Die beiden Querfahrten
+
+`komponenten/Querfahrt.jsx` trägt zwei Varianten derselben Mechanik:
+
+- **`"raum"`** auf `/ausstellung` — dunkler Raum mit Boden, Decke, wanderndem
+  Licht und Rahmen an der Wand.
+- **`"hell"`** auf `/leistungen` — die sechs Kernleistungen als Platten im
+  eigenen Leistungston, mit Dicke und Schatten.
+
+Die Tiefe kommt aus echter Perspektive: die Bühne hat `perspective`, die Bahn
+steht in `preserve-3d`, und jede Station dreht sich um ihre eigene Mitte.
+Wann diese Mitte erreicht ist, sagt `--mitte` — in der Komponente
+ausgerechnet, weil Rechnen in JavaScript ehrlicher ist als eine Division im
+Stylesheet.
+
 ## Beim Ändern beachten
 
 - **Keine Scroll-Bibliothek einbauen.** Kein Lenis, kein Locomotive, kein
@@ -104,6 +166,19 @@ CPU. Kein einziges Bild über 32 ms. Layout-Verschiebung 0,000.
 - **Rasterspalten als `minmax(0, 1fr)`, nicht als `1fr`.** Sonst setzt der
   breiteste unteilbare Inhalt eine Mindestbreite durch und die Spalte wächst
   über das Fenster hinaus — so entstand der letzte Querüberlauf auf 320 px.
+- **Gedreht wird das Bild, nie eine Fläche mit Fließtext.** Eine Station ist
+  so groß wie das Fenster; dreht man sie mitsamt Schrift, muss der Browser
+  bei jedem Bild alles neu rastern — gemessen 21 ms je Bild statt 16,7.
+- **Kein `backdrop-filter` über einer laufenden Bühne.** Der Weichzeichner
+  rechnet den Bereich dahinter bei jedem Bild neu. Über der stehenden Seite
+  kostet das nichts, über wandernden Stationen jedes Bild. Ein
+  IntersectionObserver in `Querfahrt.jsx` schaltet ihn ab, solange eine Fahrt
+  hinter der Kopfzeile läuft — und die Kopfzeile über dem Ausstellungsraum
+  gleich mit dunkel.
+- **`max-width` in Überschriften darf kein Wort zerreißen.**
+  „Immobilienbewertung" wurde als „Immobilienbewertun|g" umbrochen. Auf
+  Silbentrennung ist kein Verlass, also `overflow-wrap: normal` und das Wort
+  ragt lieber über das Maß.
 - **`base` bleibt beim Live-Bau absolut.** Mit relativer Basis sucht ein
   direkter Einstieg auf einer Unterseite mit Schlussstrich die Dateien im
   falschen Verzeichnis; die Umschreibung liefert dort wieder index.html und
@@ -129,14 +204,17 @@ CPU. Kein einziges Bild über 32 ms. Layout-Verschiebung 0,000.
   Qualifikationen, Verkaufsschritte, Lebenslagen, Region, Kundenstimmen. Was `offen: true` trägt, liegt nicht
   vor und wird in der Oberfläche markiert dargestellt.
 - `src/seiten-meta.js` — Adressregister mit Titel und Beschreibung je Seite.
-- `src/styles/tokens.css` — **alle** Farben, Größen, Abstände, Radien.
+- `src/styles/tokens.css` — **alle** Farben, Größen, Abstände, Radien,
+  Schattenleiter.
+- `src/styles/bewegung.css` — die Bewegungsprimitive, einmal.
 - `src/styles/schriften.css` — selbst ausgelieferte Schriften, kein Aufruf an
   Google.
 - `src/daten/ausstellung.js` — die sieben Stationen der Ausstellung.
-- `src/komponenten/Querfahrt.jsx` — die angeheftete Seitwärtsfahrt.
+- `src/komponenten/Querfahrt.jsx` — beide Querfahrten, hell und dunkel.
 - `src/komponenten/Stimmen.jsx` — Rückmeldungen; ab der zweiten Stimme
   erscheinen die Punkte zum Blättern von selbst.
 - `src/bausteine/` — Einblenden, Bildfläche, Seitenkopf, Aufruf, Signet, Motiv.
+- `werkzeuge/` — die vier Prüfskripte.
 
 ## Vor dem Livegang
 
@@ -150,10 +228,16 @@ CPU. Kein einziges Bild über 32 ms. Layout-Verschiebung 0,000.
 
 ## Geprüft
 
-26 Prüfungen, alle bestanden (Skript im Sitzungsverlauf, Vorschau auf `dist/`):
-20 Seiten erreichbar und kein 404, je genau eine H1, eigener Titel und eigene
-Beschreibung; kein Querüberlauf bei 1440, 820, 390 und 320 px; Scrollfluss
-16,7 ms Median ohne ein Bild über 32 ms; Querfahrt monoton und exakt am Ende;
-Ausstellung auf dem Handy bis unten scrollbar; Formular bei Netlify angemeldet
-und jedes Feld beschriftet; keine Fehler in der Konsole.
-Layout-Verschiebung 0,000 auf Desktop, Tablet und Handy.
+Alle Prüfungen bestanden, Vorschau auf `dist/`:
+
+- **30 Prüfungen**: 20 Seiten erreichbar und kein 404, je genau eine H1,
+  eigener Titel und eigene Beschreibung; kein Querüberlauf bei 1440, 820,
+  390 und 320 px; **beide** Querfahrten monoton vorwärts und exakt auf der
+  letzten Station endend (−8640 px bei sieben, −7200 px bei sechs Stationen);
+  Formular angemeldet und jedes Feld beschriftet; keine Konsolenfehler.
+- **Scrollfluss** auf `/`, `/leistungen`, `/ausstellung`, `/region` und einer
+  Leistungsseite: Median 16,7 ms, auch bei **vierfach gedrosselter CPU**.
+  Gemessen über drei Durchläufe je Seite, der erste verworfen.
+- **Layout-Verschiebung 0,000** auf Desktop, Tablet und Handy.
+- Kein Inhalt unsichtbar, der nicht `aria-hidden` trägt (maschinell).
+- Nur Compositor-Eigenschaften in `@keyframes` und `transition` (maschinell).

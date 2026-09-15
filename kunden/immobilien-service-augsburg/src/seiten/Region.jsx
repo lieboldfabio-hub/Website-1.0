@@ -17,18 +17,18 @@ export default function Region() {
       />
 
       <section className="abschnitt">
-        <div className="mitte gebiet-raster">
-          {region.map((gebiet, i) => (
-            <Einblenden className="gebiet-block" key={gebiet.schluessel} verzug={i * 70}>
+        <div className="mitte gebiet-raster" data-bewegung="staffel">
+          {region.map((gebiet) => (
+            <div className="gebiet-block" key={gebiet.schluessel}>
               <h2>{gebiet.titel}</h2>
               <p className="gebiet-anriss">{gebiet.anriss}</p>
-              <ul className="ort-liste">
+              <ul className="ort-liste" data-bewegung="staffel">
                 {gebiet.orte.map((o) => <li key={o}>{o}</li>)}
               </ul>
               <p className="gebiet-zahl">
                 {gebiet.orte.length} {gebiet.orte.length === 1 ? "Ort" : "Orte"}
               </p>
-            </Einblenden>
+            </div>
           ))}
         </div>
 

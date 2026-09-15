@@ -61,12 +61,12 @@ export default function UeberMich() {
             <p className="ueberzeile">Qualifikationen</p>
             <h2>Worauf die Arbeit fachlich steht</h2>
           </div>
-          <ul className="qualifikations-raster">
-            {qualifikationen.map((q, i) => (
-              <Einblenden als="li" key={q.titel} verzug={(i % 3) * 60}>
+          <ul className="qualifikations-raster" data-bewegung="staffel">
+            {qualifikationen.map((q) => (
+              <li key={q.titel}>
                 <h3>{q.titel}</h3>
                 <p>{q.text}</p>
-              </Einblenden>
+              </li>
             ))}
           </ul>
         </div>

@@ -48,7 +48,7 @@ export default function Leistungsseite() {
             {weg === "/immobilienverkauf" && (
               <>
                 <h2>Der Ablauf</h2>
-                <ol className="ablauf">
+                <ol className="ablauf" data-bewegung="staffel">
                   {verkaufsschritte.map((sch) => (
                     <Einblenden als="li" key={sch.nr}>
                       <span className="ablauf-nr">{sch.nr}</span>
