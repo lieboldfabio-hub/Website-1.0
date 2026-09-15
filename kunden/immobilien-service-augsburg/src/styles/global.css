@@ -315,8 +315,8 @@ section[id], :target { scroll-margin-top: calc(var(--kopfzeile-hoehe) + var(--a5
 
 .seitenkopf {
   padding-block: var(--a7) var(--a6);
-  background: linear-gradient(180deg, var(--akzent-schleier), var(--grund));
-  border-bottom: 1px solid var(--linie);
+  background: linear-gradient(180deg, var(--marke-band), var(--marke-schleier) 62%, var(--grund));
+  border-bottom: 3px solid var(--ton, var(--marke));
 }
 .seitenkopf h1 { max-width: 20ch; }
 
@@ -358,7 +358,7 @@ section[id], :target { scroll-margin-top: calc(var(--kopfzeile-hoehe) + var(--a5
 
 .einstieg {
   padding-block: clamp(2.5rem, 6vw, 5rem) var(--abschnitt);
-  background: linear-gradient(170deg, var(--akzent-schleier) 0%, var(--grund) 58%);
+  background: linear-gradient(168deg, var(--marke-band) 0%, var(--marke-schleier) 34%, var(--grund) 66%);
 }
 .einstieg-raster {
   display: grid;
@@ -445,7 +445,12 @@ section[id], :target { scroll-margin-top: calc(var(--kopfzeile-hoehe) + var(--a5
    Vertrauensbereich
    ======================================================================== */
 
-.vertrauen { padding-block: var(--a7); border-block: 1px solid var(--linie); background: var(--grund-rein); }
+.vertrauen {
+  padding-block: var(--a7);
+  border-top: 3px solid var(--marke);
+  border-bottom: 1px solid var(--linie);
+  background: var(--grund-rein);
+}
 .vertrauen-reihe {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
@@ -457,111 +462,223 @@ section[id], :target { scroll-margin-top: calc(var(--kopfzeile-hoehe) + var(--a5
   font-family: var(--schrift-display);
   font-size: 2.6rem;
   line-height: 1;
-  color: var(--akzent);
+  color: var(--akzent-tief);
   font-variant-numeric: tabular-nums;
 }
 .vertrauen-reihe strong { display: block; margin-top: var(--a2); font-size: var(--gr-m); }
 .vertrauen-reihe p { margin: var(--a1) 0 0; font-size: var(--gr-s); color: var(--text-ruhig); }
 
 /* ========================================================================
-   Schaufenster — native waagerechte Bahn
+   Kontaktband — das grüne Band der bestehenden Seite
    ======================================================================== */
 
-.schaufenster { padding-block: var(--abschnitt); background: var(--grund-ruhig); }
-.schaufenster-kopf { display: flex; align-items: flex-end; justify-content: space-between; gap: var(--a5); max-width: none; }
-.schaufenster-kopf h2 { margin: 0; }
-.schaufenster-steuerung { display: flex; gap: var(--a2); }
-.schaufenster-steuerung button {
-  display: grid; place-items: center;
-  width: 2.6rem; height: 2.6rem;
-  border: 1px solid var(--linie-kraeftig);
-  border-radius: var(--radius-rund);
-  background: var(--grund-rein);
-  color: var(--text); cursor: pointer;
-  transition: border-color var(--dauer-kurz) var(--kurve), opacity var(--dauer-kurz);
+.kontaktband {
+  background: linear-gradient(90deg, var(--marke-band), var(--marke-mittel));
+  border-block: 1px solid var(--marke);
 }
-.schaufenster-steuerung button:hover:not(:disabled) { border-color: var(--akzent); color: var(--akzent-tief); }
-.schaufenster-steuerung button:disabled { opacity: 0.35; cursor: default; }
-
-.schaufenster-bahn {
+.kontaktband-innen {
   display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--a4) clamp(var(--a6), 8vw, var(--a8));
+  padding-block: var(--a4);
+}
+.kontaktband a { text-decoration: none; color: var(--text); }
+.kontaktband-aufruf {
+  font-family: var(--schrift-display);
+  font-size: clamp(1.25rem, 2.2vw, 1.6rem);
+}
+.kontaktband-aufruf:hover { color: var(--akzent-tief); text-decoration: underline; }
+.kontaktband-aufruf span { color: var(--akzent-tief); }
+.kontaktband-nummer {
+  display: inline-flex; align-items: center; gap: var(--a2);
+  font-family: var(--schrift-display);
+  font-size: clamp(1.25rem, 2.2vw, 1.6rem);
+}
+.kontaktband-nummer:hover { color: var(--akzent-tief); }
+
+/* ========================================================================
+   Showroom — dunkler Ausstellungsraum, waagerecht begehbar
+   ======================================================================== */
+
+.showroom {
+  position: relative;
+  padding-block: var(--abschnitt);
+  background: var(--dunkel-tief);
+  color: var(--text-auf-dunkel);
+  isolation: isolate;
+  overflow: hidden;
+}
+
+/* Der Raum: ein Lichtkegel von oben und ein Bodenschein, beide gemalt.
+   Zwei Verläufe, die einmal gezeichnet werden und danach nichts kosten —
+   keine Schatten, keine Weichzeichner, keine Lichtberechnung. */
+.showroom-raum {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(120% 62% at 50% -8%, rgba(191, 218, 113, 0.14), transparent 62%),
+    radial-gradient(90% 40% at 50% 104%, rgba(191, 218, 113, 0.09), transparent 66%);
+}
+
+.showroom h2 { color: var(--text-auf-dunkel); margin: 0; }
+.showroom .ueberzeile { color: var(--akzent-hell); }
+
+.showroom-kopf {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
   gap: var(--a5);
+  margin-bottom: var(--a7);
+}
+.showroom-steuerung { display: flex; gap: var(--a2); flex: none; }
+.showroom-steuerung button {
+  display: grid; place-items: center;
+  width: 2.75rem; height: 2.75rem;
+  border: 1px solid var(--linie-dunkel);
+  border-radius: var(--radius-rund);
+  background: transparent;
+  color: var(--text-auf-dunkel);
+  cursor: pointer;
+  transition: border-color var(--dauer-kurz) var(--kurve),
+              color var(--dauer-kurz) var(--kurve),
+              opacity var(--dauer-kurz) var(--kurve);
+}
+.showroom-steuerung button:hover:not(:disabled) {
+  border-color: var(--akzent-hell); color: var(--akzent-hell);
+}
+.showroom-steuerung button:disabled { opacity: 0.3; cursor: default; }
+
+.showroom-bahn {
+  display: flex;
+  gap: var(--a6);
   list-style: none;
   margin: 0;
-  padding: var(--a2) var(--rand) var(--a5);
-  /* Das ist die ganze Mechanik: das Scrollen des Browsers.
-     `proximity` statt `mandatory` — es fängt weich, statt zu greifen. */
+  padding: var(--a4) var(--rand) var(--a6);
   overflow-x: auto;
   scroll-snap-type: x proximity;
   scroll-padding-inline: var(--rand);
-  /* Verhindert, dass ein waagerechter Wisch die Seite zurücknavigiert
-     oder das senkrechte Scrollen der Seite übernimmt. */
+  /* Ein waagerechter Wisch bleibt in der Bahn und navigiert die Seite
+     nicht zurück. */
   overscroll-behavior-x: contain;
   scrollbar-width: thin;
-  scrollbar-color: var(--linie-kraeftig) transparent;
+  scrollbar-color: rgba(242, 241, 234, 0.22) transparent;
 }
-.schaufenster-bahn::-webkit-scrollbar { height: 6px; }
-.schaufenster-bahn::-webkit-scrollbar-thumb { background: var(--linie-kraeftig); border-radius: var(--radius-rund); }
+.showroom-bahn::-webkit-scrollbar { height: 5px; }
+.showroom-bahn::-webkit-scrollbar-thumb {
+  background: rgba(242, 241, 234, 0.22); border-radius: var(--radius-rund);
+}
 
-.schaufenster-karte {
-  /* `min()` statt einer festen Untergrenze: auf sehr schmalen Geräten
-     schrumpft die Karte mit, statt den Kasten zu sprengen. Dass rechts
-     ein Stück der nächsten Karte hervorschaut, zeigt zugleich, dass es
-     seitlich weitergeht. */
-  flex: 0 0 min(clamp(16rem, 27vw, 21rem), 78vw);
-  scroll-snap-align: start;
-  /* Weit außen liegende Karten überspringt der Browser beim Zeichnen. */
-  content-visibility: auto;
-  contain-intrinsic-size: 340px 400px;
+.tafel {
+  flex: 0 0 min(clamp(17rem, 30vw, 24rem), 80vw);
+  scroll-snap-align: center;
 }
-.schaufenster-karte > a {
+/*
+  Kein `content-visibility: auto` auf den Tafeln.
+
+  Es spart bei fünf Tafeln praktisch nichts, überspringt sie aber beim
+  Zeichnen, solange sie außerhalb liegen — in einem Bild der ganzen Seite
+  war der Showroom dadurch leer. Das ist derselbe Fehler wie Inhalt, der
+  auf `opacity: 0` wartet: Was ein Vorschaubild oder ein Crawler nicht
+  sieht, existiert für sie nicht.
+*/
+.tafel > a {
   display: flex;
   flex-direction: column;
   height: 100%;
-  background: var(--grund-rein);
-  border: 1px solid var(--linie);
-  border-radius: var(--radius-l);
-  overflow: hidden;
   text-decoration: none;
   color: inherit;
-  transition: border-color var(--dauer-kurz) var(--kurve),
-              box-shadow var(--dauer-kurz) var(--kurve),
-              transform var(--dauer-kurz) var(--kurve);
+  border-radius: var(--radius-l);
+  overflow: hidden;
+  background: var(--dunkel-erhoben);
+  border: 1px solid var(--linie-dunkel);
+  transition: border-color var(--dauer-kurz) var(--kurve);
 }
-.schaufenster-karte > a:hover {
-  border-color: var(--akzent);
-  box-shadow: var(--schatten-gehoben);
-  transform: translateY(-2px);
-}
-.schaufenster-bild {
+.tafel > a:hover { border-color: var(--akzent-hell); }
+
+/* Das Bild in der Tafel: Rahmen in der Leistungsfarbe, wie auf der
+   bestehenden Seite, dort trägt die Farbe die Wiedererkennung. */
+.tafel-rahmen {
   position: relative;
-  display: block;
-  aspect-ratio: 3 / 2;
-  background: var(--akzent-schleier);
-  color: var(--akzent);
   display: grid;
   place-items: center;
+  aspect-ratio: 4 / 3;
+  background:
+    radial-gradient(70% 58% at 50% 42%, rgba(255, 246, 226, 0.13), transparent 70%),
+    var(--dunkel);
+  border-bottom: 3px solid var(--ton, var(--marke));
+  color: var(--ton, var(--marke));
 }
-.schaufenster-bild svg { width: 78%; height: auto; }
-.schaufenster-bild::after {
-  content: attr(data-nummer);
+.tafel-motiv { display: block; width: 76%; }
+.tafel-motiv svg { width: 100%; height: auto; }
+.tafel-nummer {
   position: absolute;
-  top: var(--a3); left: var(--a4);
+  top: var(--a4); left: var(--a5);
   font-family: var(--schrift-display);
   font-size: var(--gr-s);
-  color: var(--akzent);
-  opacity: 0.6;
+  color: var(--text-auf-dunkel-ruhig);
   font-variant-numeric: tabular-nums;
 }
-.schaufenster-inhalt { display: block; padding: var(--a5); }
-.schaufenster-inhalt h3 { margin: 0 0 var(--a2); font-size: var(--gr-xl); }
-.schaufenster-inhalt p { margin: 0; color: var(--text-ruhig); font-size: var(--gr-s); }
-.schaufenster-mehr {
-  display: inline-flex; align-items: center; gap: var(--a2);
-  margin-top: var(--a4);
-  font-size: var(--gr-s); font-weight: 600; color: var(--akzent);
+
+.tafel-schild { display: block; padding: var(--a5) var(--a5) var(--a6); }
+.tafel-marke {
+  display: block; width: 2rem; height: 2px;
+  background: var(--ton, var(--marke));
+  margin-bottom: var(--a4);
 }
-.schaufenster-fuss { margin-top: var(--a4); color: var(--text-ruhig); font-size: var(--gr-s); }
+.tafel-schild h3 {
+  margin: 0 0 var(--a2);
+  font-size: var(--gr-xl);
+  color: var(--text-auf-dunkel);
+}
+.tafel-schild p { margin: 0; color: var(--text-auf-dunkel-ruhig); font-size: var(--gr-s); }
+.tafel-mehr {
+  display: inline-flex; align-items: center; gap: var(--a2);
+  margin-top: var(--a5);
+  font-size: var(--gr-s); font-weight: 600;
+  color: var(--akzent-hell);
+}
+
+/*
+  Die Tiefe.
+
+  Eine scrollgetriebene Animation auf der waagerechten Achse: Was sich der
+  Mitte nähert, tritt hervor; was zum Rand wandert, tritt zurück. Diese
+  Animation läuft auf dem Compositor — kein Scroll-Zuhörer, keine Rechnung
+  je Bild, kein Zugriff aufs Layout. Genau das unterscheidet sie von der
+  Kamerafahrt der Vorfassung, die dasselbe Bild erzeugte und dabei jedes
+  Scroll-Ereignis blockierte.
+
+  Animiert werden nur `transform` und `filter` — beides ohne Layoutwirkung,
+  also ohne jede Verschiebung des Seiteninhalts.
+*/
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    @keyframes tafel-tiefe {
+      entry 0%  { transform: scale(0.9) translateY(10px); filter: brightness(0.55); }
+      cover 42% { transform: scale(1) translateY(0);      filter: brightness(1); }
+      cover 58% { transform: scale(1) translateY(0);      filter: brightness(1); }
+      exit 100% { transform: scale(0.9) translateY(10px); filter: brightness(0.55); }
+    }
+    .tafel {
+      animation: tafel-tiefe linear both;
+      animation-timeline: view(inline);
+      animation-range: entry 0% exit 100%;
+      will-change: transform, filter;
+    }
+  }
+}
+
+.showroom-fuss { margin-top: var(--a5); }
+.showroom-fuss p { margin: 0; color: var(--text-auf-dunkel-ruhig); font-size: var(--gr-s); }
+.showroom-fuss a { color: var(--akzent-hell); }
+
+@media (max-width: 700px) {
+  .showroom-kopf { flex-direction: column; align-items: flex-start; }
+  .showroom-steuerung { display: none; }
+}
 
 /* ========================================================================
    Lebenslagen, Über-Anriss, Region, Stimmen
@@ -579,6 +696,11 @@ section[id], :target { scroll-margin-top: calc(var(--kopfzeile-hoehe) + var(--a5
 }
 .lagen-raster li { background: var(--grund); padding: var(--a6) var(--a5); }
 .lagen-raster h3 { font-size: var(--gr-xl); color: var(--akzent-tief); }
+.lagen-raster li { border-top: 3px solid transparent; }
+.lagen-raster li:nth-child(1) { border-top-color: var(--ton-mediation); }
+.lagen-raster li:nth-child(2) { border-top-color: var(--ton-verkauf); }
+.lagen-raster li:nth-child(3) { border-top-color: var(--ton-bewertung); }
+.lagen-raster li:nth-child(4) { border-top-color: var(--ton-beratung); }
 .lagen-raster p { margin: 0; color: var(--text-ruhig); font-size: var(--gr-s); }
 .lagen-fuss { margin-top: var(--a5); font-size: var(--gr-s); color: var(--text-ruhig); }
 
@@ -605,8 +727,8 @@ section[id], :target { scroll-margin-top: calc(var(--kopfzeile-hoehe) + var(--a5
 .ort-wolke { display: flex; flex-wrap: wrap; gap: var(--a2); align-items: center; }
 .ort-wolke span {
   padding: 0.4rem 0.9rem;
-  background: var(--grund-rein);
-  border: 1px solid var(--linie);
+  background: var(--marke-schleier);
+  border: 1px solid var(--marke-mittel);
   border-radius: var(--radius-rund);
   font-size: var(--gr-s);
   color: var(--text-ruhig);
@@ -623,7 +745,7 @@ section[id], :target { scroll-margin-top: calc(var(--kopfzeile-hoehe) + var(--a5
   margin: 0; height: 100%;
   background: var(--grund-rein);
   border: 1px solid var(--linie);
-  border-left: 3px solid var(--akzent);
+  border-left: 4px solid var(--marke);
   border-radius: var(--radius-m);
   padding: var(--a5) var(--a6);
 }
@@ -646,7 +768,7 @@ section[id], :target { scroll-margin-top: calc(var(--kopfzeile-hoehe) + var(--a5
 .aufruf-dunkel .ueberzeile { color: var(--akzent-hell); }
 .aufruf-dunkel .aufruf-text { color: var(--text-auf-dunkel-ruhig); }
 .aufruf-dunkel .knopf-voll { background: var(--akzent-hell); color: var(--dunkel-tief); }
-.aufruf-dunkel .knopf-voll:hover { background: #a3b68a; color: var(--dunkel-tief); }
+.aufruf-dunkel .knopf-voll:hover { background: var(--marke-mittel); color: var(--dunkel-tief); }
 .aufruf-innen { text-align: center; display: flex; flex-direction: column; align-items: center; }
 .aufruf-innen h2 { max-width: 20ch; }
 .aufruf-text { max-width: 48ch; color: var(--text-ruhig); margin-bottom: var(--a5); }
@@ -662,10 +784,20 @@ section[id], :target { scroll-margin-top: calc(var(--kopfzeile-hoehe) + var(--a5
 }
 .leistungs-raster > li > a,
 .leistungs-raster > li > div > a { display: block; height: 100%; }
+/* Jede Leistungskarte trägt oben das Farbband ihrer Leistung — dieselbe
+   Zuordnung wie auf der bestehenden Seite, dort ist sie die Wiedererkennung.
+
+   Als Rahmenkante, nicht als eigenes Element mit negativen Rändern: Solche
+   Ränder vergrößern die Breite des Elements, und das Band ragte dadurch auf
+   schmalen Geräten links und rechts aus der Karte heraus. */
+.karten-band { display: none; }
+
 .leistungs-raster a {
+  border-top: 4px solid var(--ton, var(--marke));
   display: flex; flex-direction: column;
   height: 100%;
   padding: var(--a6) var(--a5);
+  overflow: hidden;
   background: var(--grund-rein);
   border: 1px solid var(--linie);
   border-radius: var(--radius-l);
@@ -747,8 +879,8 @@ section[id], :target { scroll-margin-top: calc(var(--kopfzeile-hoehe) + var(--a5
 .ort-liste { display: flex; flex-wrap: wrap; gap: var(--a2); list-style: none; margin: 0; padding: 0; }
 .ort-liste li {
   padding: 0.4rem 0.9rem;
-  background: var(--grund-rein);
-  border: 1px solid var(--linie);
+  background: var(--marke-schleier);
+  border: 1px solid var(--marke-mittel);
   border-radius: var(--radius-rund);
   font-size: var(--gr-s);
   color: var(--text-ruhig);
@@ -779,7 +911,7 @@ section[id], :target { scroll-margin-top: calc(var(--kopfzeile-hoehe) + var(--a5
   font-size: 1.4rem;
   transition: background var(--dauer-kurz) var(--kurve);
 }
-.anruf-feld:hover { background: #dfe6d0; }
+.anruf-feld:hover { background: var(--marke-mittel); }
 .anruf-feld > span { display: flex; flex-direction: column; line-height: 1.25; }
 .anruf-feld small {
   font-family: var(--schrift-text);

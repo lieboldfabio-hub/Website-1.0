@@ -4,6 +4,7 @@ import { useSeitenkopf } from "../bausteine/useSeitenkopf.js";
 import Einblenden from "../bausteine/Einblenden.jsx";
 import Bildflaeche from "../bausteine/Bildflaeche.jsx";
 import Aufruf from "../bausteine/Aufruf.jsx";
+import Kontaktband from "../bausteine/Kontaktband.jsx";
 import Schaufenster from "../komponenten/Schaufenster.jsx";
 import { TelefonZeichen } from "../komponenten/Kopfzeile.jsx";
 
@@ -62,6 +63,8 @@ export default function Start() {
         </ul>
       </section>
 
+      <Kontaktband />
+
       <Schaufenster />
 
       <section className="lagen">
@@ -88,6 +91,8 @@ export default function Start() {
           </p>
         </div>
       </section>
+
+      <Kontaktband text="Immobilie bewerten lassen" weg="/immobilienbewertung" />
 
       <section className="kurz-ueber">
         <div className="mitte kurz-ueber-raster">

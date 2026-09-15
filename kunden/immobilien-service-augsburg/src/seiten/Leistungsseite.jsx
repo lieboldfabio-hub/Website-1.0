@@ -4,6 +4,7 @@ import { useSeitenkopf } from "../bausteine/useSeitenkopf.js";
 import Seitenkopf from "../bausteine/Seitenkopf.jsx";
 import Einblenden from "../bausteine/Einblenden.jsx";
 import Aufruf from "../bausteine/Aufruf.jsx";
+import Kontaktband from "../bausteine/Kontaktband.jsx";
 
 /*
   Eine Vorlage für alle zehn Leistungsseiten. Die Adresse kommt aus den
@@ -22,7 +23,7 @@ export default function Leistungsseite() {
   const andere = leistungen.filter((x) => x.weg !== weg).slice(0, 3);
 
   return (
-    <>
+    <div style={{ "--ton": l.ton, "--ton-schrift": l.tonSchrift }}>
       <Seitenkopf
         ueberzeile="Leistung"
         titel={l.titel}
@@ -63,12 +64,15 @@ export default function Leistungsseite() {
         </div>
       </section>
 
+      <Kontaktband />
+
       <section className="abschnitt abschnitt-ruhig">
         <div className="mitte">
           <h2 className="gruppen-titel">Könnte ebenfalls passen</h2>
           <ul className="leistungs-raster leistungs-raster-schlank">
             {andere.map((a) => (
-              <li key={a.weg}>
+              <li key={a.weg} style={{ "--ton": a.ton, "--ton-schrift": a.tonSchrift }}>
+                <span className="karten-band" aria-hidden="true" />
                 <Link to={a.weg}>
                   <h3>{a.titel}</h3>
                   <p>{a.anriss}</p>
@@ -87,6 +91,6 @@ export default function Leistungsseite() {
         weg="/kontakt"
         ton="dunkel"
       />
-    </>
+    </div>
   );
 }

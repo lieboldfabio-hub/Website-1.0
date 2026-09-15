@@ -45,12 +45,22 @@ export const vertrauen = [
 ];
 
 /*
-  Leistungen. `haupt: true` erscheint auf der Startseite und im Menü,
+  Leistungen. `haupt: true` erscheint auf der Startseite und im Showroom,
   die übrigen auf der Leistungsübersicht.
+
+  `ton` ist die Farbe, die die bestehende Seite dieser Leistung gibt. Dort
+  trägt sie die Wiedererkennung — wer die alte Seite kennt, findet sich über
+  die Farbe zurecht. Sie bleibt deshalb erhalten.
+
+  Fünf der sechs Töne sind zu hell für weiße Schrift (unter 2:1). Schrift auf
+  diesen Flächen ist deshalb dunkel; nur das Bordeaux der Beratung trägt
+  Weiß. Wer eine Farbe ändert, rechnet den Kontrast neu: mindestens 4,5:1.
 */
 export const leistungen = [
   {
     weg: "/immobilienbewertung",
+    ton: "var(--ton-bewertung)",
+    tonSchrift: "#1d2b30",
     titel: "Immobilienbewertung",
     kurz: "Was Ihre Immobilie heute wert ist",
     anriss: "Aktuelle Wertermittlung auf Basis echter Abschlüsse — unter Berücksichtigung der Markt-, wirtschaftlichen und rechtlichen Entwicklungen, die den Preis bewegen.",
@@ -65,6 +75,8 @@ export const leistungen = [
   },
   {
     weg: "/immobilienverkauf",
+    ton: "var(--ton-verkauf)",
+    tonSchrift: "#3a2c10",
     titel: "Immobilienverkauf",
     kurz: "Von A bis Z in einer Hand",
     anriss: "Der gesamte Verkaufsprozess in einer Hand: Wertermittlung, Unterlagen, Vermarktung, Besichtigungen und die Vorbereitung bis zum Notartermin.",
@@ -80,6 +92,8 @@ export const leistungen = [
   },
   {
     weg: "/immobilienvermietung",
+    ton: "var(--ton-vermietung)",
+    tonSchrift: "#1f2733",
     titel: "Immobilienvermietung",
     kurz: "Mieter, die bleiben",
     anriss: "Mietersuche, Auswahl geeigneter Interessenten, Vorbereitung und Vertragsabwicklung — mit Blick auf ein Mietverhältnis, das trägt.",
@@ -94,6 +108,8 @@ export const leistungen = [
   },
   {
     weg: "/immobilienmediation",
+    ton: "var(--ton-mediation)",
+    tonSchrift: "#24261f",
     titel: "Immobilienmediation",
     kurz: "Bevor Anwälte nötig werden",
     anriss: "Wenn mehrere Parteien über eine Immobilie entscheiden müssen — bei Trennung, Scheidung, Erbschaft oder im Betreuungsverfahren.",
@@ -108,6 +124,8 @@ export const leistungen = [
   },
   {
     weg: "/beratung",
+    ton: "var(--ton-beratung)",
+    tonSchrift: "#ffffff",
     titel: "Immobilienberatung",
     kurz: "Fragen, bevor Sie entscheiden",
     anriss: "Individuelle Beratung rund um Immobilie, Markt und Ihre persönliche Situation — auch wenn noch nichts entschieden ist.",
@@ -122,6 +140,8 @@ export const leistungen = [
   },
   {
     weg: "/wohnflaechenberechnung",
+    ton: "var(--ton-betreuung)",
+    tonSchrift: "#2b2a14",
     titel: "Wohnflächenberechnung",
     kurz: "Die Zahl, an der alles hängt",
     anriss: "Nachvollziehbare Berechnung der Wohnfläche nach anerkannten Regeln — Grundlage für Preis, Miete und Nebenkosten.",
@@ -135,6 +155,8 @@ export const leistungen = [
   },
   {
     weg: "/grundrisse",
+    ton: "var(--ton-weiteres)",
+    tonSchrift: "#1f2415",
     titel: "Grundrisse",
     kurz: "Was Interessenten zuerst ansehen",
     anriss: "Erstellung sauberer, verständlicher Grundrisse — das Erste, was ernsthafte Interessenten in einem Exposé suchen.",
@@ -148,6 +170,8 @@ export const leistungen = [
   },
   {
     weg: "/energieausweis",
+    ton: "var(--ton-betreuung)",
+    tonSchrift: "#2b2a14",
     titel: "Energieausweis",
     kurz: "Pflicht bei jedem Angebot",
     anriss: "Beschaffung und Einordnung des Energieausweises — gesetzlich vorgeschrieben für jedes Verkaufs- und Mietangebot.",
@@ -161,6 +185,8 @@ export const leistungen = [
   },
   {
     weg: "/unterlagen",
+    ton: "var(--ton-weiteres)",
+    tonSchrift: "#1f2415",
     titel: "Unterlagen & Dokumente",
     kurz: "Vollständig, bevor es zählt",
     anriss: "Zusammenstellung aller Unterlagen, die für Verkauf oder Vermietung gebraucht werden — vollständig und rechtzeitig.",
@@ -174,6 +200,8 @@ export const leistungen = [
   },
   {
     weg: "/innenarchitektur",
+    ton: "var(--ton-bewertung)",
+    tonSchrift: "#1d2b30",
     titel: "Innenarchitektur & Feng Shui",
     kurz: "Räume, die ihr Potenzial zeigen",
     anriss: "Beratung zur Raumwirkung vor dem Verkauf, auf Wunsch mit Feng-Shui-Prinzipien — und Unterstützung bei der Suche nach Handwerkern.",

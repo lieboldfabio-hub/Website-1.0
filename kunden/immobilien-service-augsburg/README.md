@@ -21,6 +21,36 @@ Vorschau ohne Server-Umleitung:
 `VITE_VORSCHAU=1 npx vite build --outDir dist-vorschau` — hängt die Adressen
 der Unterseiten hinter ein `#`.
 
+## Die Marke
+
+Das Gelbgrün der bestehenden Seite (Ton 76°) trägt den Auftritt: helle Bänder,
+Flächen, Symbole. Für Schrift und Linien wird dieselbe Farbe abgedunkelt, weil
+das helle Grün auf Weiß nur 1,9:1 erreicht und unlesbar ist. Gleiche Farbe,
+zwei Helligkeiten.
+
+Dazu die sechs Nebenfarben der bestehenden Seite, eine je Leistung — Petrol,
+Sand, Hellblau, Limette, Bordeaux, Khaki. Dort tragen sie die Wiedererkennung,
+hier ebenso: als Kante der Leistungskarten und als Band der Showroom-Tafeln.
+Fünf davon sind zu hell für weiße Schrift; die Schriftfarbe je Ton steht
+gerechnet in `daten/firma.js`.
+
+Das grüne Band mit Aufruf und Telefonnummer (`Kontaktband.jsx`) ist das
+auffälligste wiederkehrende Element der bestehenden Seite und gliedert hier
+ebenso den Inhalt.
+
+## Der Showroom
+
+Ein dunkler Ausstellungsraum, durch den man seitlich fährt — die Tafel in der
+Mitte steht groß und hell, die seitlichen treten zurück. Optisch ist das die
+Wirkung der Vorfassung, technisch hat es damit nichts mehr zu tun.
+
+Die Tiefe trägt eine scrollgetriebene CSS-Animation
+(`animation-timeline: view(inline)`). Die läuft auf dem Compositor: kein
+Scroll-Zuhörer, keine Rechnung je Bild, kein Zugriff aufs Layout. Animiert
+werden nur `transform` und `filter`, beides ohne Layoutwirkung. Browser ohne
+diese Technik zeigen alle Tafeln gleich — es fehlt dann die Tiefe, nicht der
+Inhalt.
+
 ## Warum das Scrollen so gebaut ist, wie es gebaut ist
 
 Die Vorfassung hatte zwei Dinge, die das Scrollen unbrauchbar machten: eine
@@ -63,6 +93,12 @@ CPU. Kein einziges Bild über 32 ms. Layout-Verschiebung 0,000.
   quer scrollen ließ.
 - **Schriftfarben auf Flächen neu rechnen**, wenn eine Farbe geändert wird:
   mindestens 4,5:1.
+- **Kein `content-visibility: auto` auf den Showroom-Tafeln.** Es spart bei
+  fünf Tafeln nichts und überspringt sie beim Zeichnen, solange sie außerhalb
+  liegen — in einem Bild der ganzen Seite war der Showroom dadurch leer.
+- **Farbbänder als Rahmenkante, nicht als Element mit negativen Rändern.**
+  Solche Ränder vergrößern die Elementbreite; das Band ragte dadurch auf
+  schmalen Geräten aus der Karte heraus und ließ die Seite quer scrollen.
 
 ## Struktur
 

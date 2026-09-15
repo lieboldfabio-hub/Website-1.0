@@ -1,22 +1,27 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { hauptleistungen } from "../daten/firma.js";
-import Einblenden from "../bausteine/Einblenden.jsx";
 
 /*
-  Die horizontale Präsentation.
+  Der Showroom.
 
-  Sie benutzt ausschließlich das Scrollen, das der Browser ohnehin kann:
-  ein Element mit `overflow-x: auto`. Kein Rad-Abfangen, kein sticky, keine
-  Kamerafahrt, kein Animationslauf. Der Vorgänger war eine 660 Bildschirme
-  hohe Sektion, deren Scroll-Fortschritt eine 3D-Szene steuerte — jedes
-  Scroll-Ereignis rechnete und zeichnete, und genau daher kamen die Hänger
-  und Sprünge.
+  Ein dunkler Ausstellungsraum, durch den man seitlich fährt — die Tafel in
+  der Mitte steht groß und hell, die seitlichen treten zurück. Optisch ist
+  das die Wirkung der Vorfassung; technisch hat es damit nichts mehr zu tun.
 
-  Was hier an JavaScript übrig ist, greift nie ins Scrollen ein: zwei
-  Knöpfe, die `scrollBy` aufrufen, und ein Beobachter, der ausrechnet, ob
-  die Knöpfe noch etwas zu tun haben. Das senkrechte Scrollen der Seite
-  bleibt davon vollständig unberührt.
+  Die Vorfassung war eine 660 Bildschirme hohe Sektion, deren Scroll-
+  Fortschritt eine WebGL-Kamerafahrt steuerte: jedes Scroll-Ereignis rechnete
+  und zeichnete, und das senkrechte Scrollen der Seite hing mit daran.
+
+  Hier trägt die Tiefenwirkung eine scrollgetriebene CSS-Animation
+  (`animation-timeline: view(inline)`). Die läuft auf dem Compositor, nicht
+  im Hauptthread — es gibt keinen Scroll-Zuhörer, keine Berechnung je Bild
+  und keinen Zugriff auf das Layout. Gescrollt wird waagerecht in einem
+  Element mit `overflow-x: auto`, also mit dem, was der Browser ohnehin tut.
+  Das senkrechte Scrollen der Seite bleibt vollständig unberührt.
+
+  Browser ohne scrollgetriebene Animationen zeigen alle Tafeln gleich hell
+  und gleich groß. Es fehlt dann die Tiefe, nicht der Inhalt.
 */
 export default function Schaufenster() {
   const bahnRef = useRef(null);
@@ -26,9 +31,8 @@ export default function Schaufenster() {
   const standPruefen = useCallback(() => {
     const el = bahnRef.current;
     if (!el) return;
-    const rest = el.scrollWidth - el.clientWidth - el.scrollLeft;
     setKannLinks(el.scrollLeft > 8);
-    setKannRechts(rest > 8);
+    setKannRechts(el.scrollWidth - el.clientWidth - el.scrollLeft > 8);
   }, []);
 
   useEffect(() => {
@@ -46,66 +50,62 @@ export default function Schaufenster() {
   const blaettern = (richtung) => {
     const el = bahnRef.current;
     if (!el) return;
-    const karte = el.querySelector(".schaufenster-karte");
-    const schritt = karte ? karte.getBoundingClientRect().width + 20 : el.clientWidth * 0.8;
+    const tafel = el.querySelector(".tafel");
+    const schritt = tafel ? tafel.getBoundingClientRect().width + 28 : el.clientWidth * 0.8;
     el.scrollBy({ left: richtung * schritt, behavior: "smooth" });
   };
 
   return (
-    <section className="schaufenster" aria-labelledby="schaufenster-titel">
-      <div className="mitte">
-        <div className="abschnitt-kopf schaufenster-kopf">
-          <div>
-            <p className="ueberzeile">Im Überblick</p>
-            <h2 id="schaufenster-titel">Wobei ich Sie begleite</h2>
-          </div>
+    <section className="showroom" aria-labelledby="showroom-titel">
+      <div className="showroom-raum" aria-hidden="true" />
 
-          <div className="schaufenster-steuerung" aria-hidden="true">
-            <button type="button" onClick={() => blaettern(-1)} disabled={!kannLinks} tabIndex={-1}>
-              <Pfeil richtung="links" />
-            </button>
-            <button type="button" onClick={() => blaettern(1)} disabled={!kannRechts} tabIndex={-1}>
-              <Pfeil richtung="rechts" />
-            </button>
-          </div>
+      <div className="mitte showroom-kopf">
+        <div>
+          <p className="ueberzeile">Die Ausstellung</p>
+          <h2 id="showroom-titel">Wobei ich Sie begleite</h2>
+        </div>
+        <div className="showroom-steuerung">
+          <button type="button" onClick={() => blaettern(-1)} disabled={!kannLinks}
+                  aria-label="Eine Tafel zurück">
+            <Pfeil richtung="links" />
+          </button>
+          <button type="button" onClick={() => blaettern(1)} disabled={!kannRechts}
+                  aria-label="Eine Tafel weiter">
+            <Pfeil richtung="rechts" />
+          </button>
         </div>
       </div>
 
-      {/* Die Bahn ist selbst fokussierbar, damit sie auch mit den
-          Pfeiltasten bedient werden kann — das erledigt der Browser. */}
       <ul
-        className="schaufenster-bahn"
+        className="showroom-bahn"
         ref={bahnRef}
         tabIndex={0}
-        role="list"
         aria-label="Leistungen, seitlich scrollbar"
       >
         {hauptleistungen.map((l, i) => (
-          <li className="schaufenster-karte" key={l.weg}>
+          <li className="tafel" key={l.weg} style={{ "--ton": l.ton, "--ton-schrift": l.tonSchrift }}>
             <Link to={l.weg}>
-              <span className="schaufenster-bild" data-nummer={String(i + 1).padStart(2, "0")}>
-                <Motiv art={l.weg} />
+              <span className="tafel-rahmen">
+                <span className="tafel-motiv"><Motiv art={l.weg} /></span>
+                <span className="tafel-nummer">{String(i + 1).padStart(2, "0")}</span>
               </span>
-              <span className="schaufenster-inhalt">
+              <span className="tafel-schild">
+                <span className="tafel-marke" />
                 <h3>{l.titel}</h3>
                 <p>{l.kurz}</p>
-                <span className="schaufenster-mehr">
-                  Mehr dazu <Pfeil richtung="rechts" klein />
-                </span>
+                <span className="tafel-mehr">Mehr dazu <Pfeil richtung="rechts" klein /></span>
               </span>
             </Link>
           </li>
         ))}
       </ul>
 
-      <div className="mitte">
-        <Einblenden className="schaufenster-fuss">
-          <p>
-            Alle Leistungen, auch Wohnflächenberechnung, Grundrisse,
-            Energieausweis und Unterlagen, finden Sie in der{" "}
-            <Link to="/leistungen">Übersicht</Link>.
-          </p>
-        </Einblenden>
+      <div className="mitte showroom-fuss">
+        <p>
+          Alle Leistungen, auch Wohnflächenberechnung, Grundrisse,
+          Energieausweis und Unterlagen, stehen in der{" "}
+          <Link to="/leistungen">Übersicht</Link>.
+        </p>
       </div>
     </section>
   );
@@ -114,95 +114,79 @@ export default function Schaufenster() {
 function Pfeil({ richtung, klein = false }) {
   const g = klein ? 12 : 16;
   return (
-    <svg
-      viewBox="0 0 16 16"
-      width={g}
-      height={g}
-      aria-hidden="true"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.7"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      style={richtung === "links" ? { transform: "rotate(180deg)" } : undefined}
-    >
+    <svg viewBox="0 0 16 16" width={g} height={g} aria-hidden="true" fill="none"
+         stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"
+         style={richtung === "links" ? { transform: "rotate(180deg)" } : undefined}>
       <path d="M3 8h10M9 4l4 4-4 4" />
     </svg>
   );
 }
 
 /*
-  Motive statt Fotos.
-
-  Es liegt kein freigegebenes Bildmaterial vor, und für ein reales
-  Unternehmen aus dem Netz gegriffene Bilder einzusetzen wäre ein
-  Lizenzproblem. Diese ruhigen Linienmotive tragen den Auftritt, bis
-  echte Fotos da sind — und sie kosten nichts zu laden.
+  Motive statt Fotos: Es liegt kein freigegebenes Bildmaterial vor, und für
+  ein reales Unternehmen aus dem Netz gegriffene Bilder einzusetzen wäre ein
+  Lizenzproblem. Die Linienzeichnungen tragen den Raum, bis echte Fotos da
+  sind — und sie kosten nichts zu laden.
 */
 function Motiv({ art }) {
-  const gemeinsam = {
-    viewBox: "0 0 300 200",
-    fill: "none",
-    stroke: "currentColor",
-    strokeWidth: 1.4,
-    strokeLinecap: "round",
-    strokeLinejoin: "round",
-    "aria-hidden": true,
+  const g = {
+    viewBox: "0 0 320 220", fill: "none", stroke: "currentColor",
+    strokeWidth: 1.3, strokeLinecap: "round", strokeLinejoin: "round", "aria-hidden": true,
   };
-
   if (art === "/immobilienbewertung")
     return (
-      <svg {...gemeinsam}>
-        <path d="M60 150V95l45-33 45 33v55" />
-        <path d="M95 150v-28h20v28" />
-        <path d="M175 150V70h70v80" />
-        <path d="M192 88h16M192 106h16M192 124h16M222 88h8M222 106h8M222 124h8" />
-        <path d="M40 150h230" strokeWidth="1.8" />
-        <path d="M150 62v-18M138 52l12-12 12 12" />
+      <svg {...g}>
+        <path d="M30 170h260" strokeWidth="1.7" />
+        <path d="M62 170v-58l46-34 46 34v58" />
+        <path d="M96 170v-30h24v30" />
+        <path d="M186 170V84h74v86" />
+        <path d="M202 102h18M202 122h18M202 142h18M234 102h10M234 122h10M234 142h10" />
+        <path d="M154 74V44M140 56l14-14 14 14" />
+        <circle cx="154" cy="30" r="8" />
       </svg>
     );
   if (art === "/immobilienverkauf")
     return (
-      <svg {...gemeinsam}>
-        <path d="M70 150V92l50-36 50 36v58" />
-        <path d="M105 150v-32h30v32" />
-        <path d="M40 150h230" strokeWidth="1.8" />
-        <path d="M200 66h46v34h-46z" />
-        <path d="M223 100v50" />
-        <path d="M210 78h22M210 88h14" />
+      <svg {...g}>
+        <path d="M30 170h260" strokeWidth="1.7" />
+        <path d="M70 170v-62l52-38 52 38v62" />
+        <path d="M106 170v-34h32v34" />
+        <path d="M212 76h56v40h-56z" />
+        <path d="M240 116v54" />
+        <path d="M224 90h32M224 102h20" />
       </svg>
     );
   if (art === "/immobilienvermietung")
     return (
-      <svg {...gemeinsam}>
-        <path d="M60 150V78h80v72M140 150V96h80v54" />
-        <path d="M40 150h230" strokeWidth="1.8" />
-        <path d="M78 96h18v18H78zM104 96h18v18h-18zM78 122h18v18H78z" />
-        <path d="M160 114h18v18h-18zM188 114h18v18h-18z" />
-        <circle cx="113" cy="131" r="3" />
+      <svg {...g}>
+        <path d="M30 170h260" strokeWidth="1.7" />
+        <path d="M62 170V88h88v82M150 170v-62h88v62" />
+        <path d="M82 108h20v20H82zM112 108h20v20h-20zM82 136h20v20H82z" />
+        <path d="M172 126h20v20h-20zM202 126h20v20h-20z" />
+        <circle cx="122" cy="146" r="3.5" />
       </svg>
     );
   if (art === "/immobilienmediation")
     return (
-      <svg {...gemeinsam}>
-        <path d="M40 150h230" strokeWidth="1.8" />
-        <path d="M95 150V92l35-26 35 26v58" />
-        <path d="M130 66v-16" />
-        <circle cx="70" cy="112" r="13" />
-        <path d="M54 150v-14a16 16 0 0 1 32 0v14" />
-        <circle cx="222" cy="112" r="13" />
-        <path d="M206 150v-14a16 16 0 0 1 32 0v14" />
-        <path d="M100 124h-14M174 124h14" />
+      <svg {...g}>
+        <path d="M30 170h260" strokeWidth="1.7" />
+        <path d="M108 170v-62l44-32 44 32v62" />
+        <path d="M152 76V50" />
+        <circle cx="62" cy="120" r="14" />
+        <path d="M44 170v-16a18 18 0 0 1 36 0v16" />
+        <circle cx="258" cy="120" r="14" />
+        <path d="M240 170v-16a18 18 0 0 1 36 0v16" />
+        <path d="M100 134H84M204 134h16" />
       </svg>
     );
   return (
-    <svg {...gemeinsam}>
-      <path d="M40 150h230" strokeWidth="1.8" />
-      <path d="M78 150V84h64v66" />
-      <path d="M142 150V104h72v46" />
-      <circle cx="110" cy="60" r="12" />
-      <path d="M96 84a14 14 0 0 1 28 0" />
-      <path d="M160 122h36M160 136h24" />
+    <svg {...g}>
+      <path d="M30 170h260" strokeWidth="1.7" />
+      <path d="M78 170V96h74v74" />
+      <path d="M152 170v-52h82v52" />
+      <circle cx="115" cy="62" r="14" />
+      <path d="M97 90a18 18 0 0 1 36 0" />
+      <path d="M172 136h42M172 152h28" />
     </svg>
   );
 }

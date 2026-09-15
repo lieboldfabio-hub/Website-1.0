@@ -2,11 +2,17 @@
   Ein Satz Werte für die ganze Seite — Startseite, Unterseiten und Showroom
   greifen ausschließlich hierauf zu.
 
-  Farbwelt: warmes Off-White als Grund, Anthrazit für Text, ein gedämpftes
-  Salbeigrün als Akzent. Das Grün ist die Marke der bestehenden Seite, hier
-  aber entsättigt und abgedunkelt — das grelle Limettengrün des Originals
-  wirkt als Flächenfarbe billig und trägt keinen seriösen Auftritt. Dazu
-  ein warmes Greige für ruhige Flächen. Keine zweite Signalfarbe.
+  Farbwelt: das Gelbgrün der bestehenden Seite, auf warmem Off-White.
+
+  Das Grün ist die Marke und muss sichtbar bleiben — wer die alte Seite
+  kennt, muss diese wiedererkennen. Es steht deshalb auf Flächen, Bändern
+  und Symbolen in seiner hellen Fassung, so wie dort. Für Schrift und
+  Linien wird dieselbe Farbe abgedunkelt, damit der Kontrast trägt: helles
+  Limettengrün als Textfarbe erreicht auf Weiß nur 1,9:1 und ist unlesbar.
+  Gleiche Farbe, zwei Helligkeiten, ein Auftritt.
+
+  Dazu die sechs Nebenfarben der alten Seite, eine je Leistung. Sie sind
+  dort die Wiedererkennung und bleiben es hier.
 */
 
 :root {
@@ -17,9 +23,9 @@
   --grund-warm: #eeebe2;     /* etwas kräftiger, für Karten auf Greige */
 
   /* --- Dunkel: der Showroom und die Fußzeile ---------------------------- */
-  --dunkel: #232622;         /* Anthrazit mit minimalem Grünstich */
-  --dunkel-tief: #1a1c19;
-  --dunkel-erhoben: #2c302b;
+  --dunkel: #232a1c;         /* Anthrazit mit Grünstich, passend zur Marke */
+  --dunkel-tief: #171c12;
+  --dunkel-erhoben: #2d3525;
 
   /* --- Text -------------------------------------------------------------- */
   --text: #24261f;
@@ -28,11 +34,27 @@
   --text-auf-dunkel: #f2f1ea;
   --text-auf-dunkel-ruhig: #b3b5a9;
 
-  /* --- Akzent: gedämpftes Salbei ---------------------------------------- */
-  --akzent: #5c6b4a;         /* 6,4:1 auf --grund, taugt für Text */
-  --akzent-tief: #47543a;
-  --akzent-hell: #8ea173;    /* nur auf dunklem Grund */
-  --akzent-schleier: #eaeee0;
+  /* --- Die Marke: Gelbgrün, Ton 76°, in fünf Helligkeiten --------------- */
+  --marke: #a8c455;          /* das kräftige Grün der alten Seite: Flächen */
+  --marke-leuchtend: #bfda71; /* Symbole und Glanzpunkte */
+  --marke-mittel: #c4d68f;   /* Verläufe, Kopfbänder */
+  --marke-band: #deebbf;     /* die hellen Bänder der alten Seite */
+  --marke-schleier: #eef4e0;
+
+  /* Dieselbe Farbe, abgedunkelt — für alles, was gelesen werden muss. */
+  --akzent: #5f7034;         /* 5,4:1 auf Off-White */
+  --akzent-tief: #48561f;    /* 7,6:1 — Knöpfe, Überschriftenakzente */
+  --akzent-hell: #bfda71;    /* auf dunklem Grund: 9,9:1 */
+  --akzent-schleier: var(--marke-schleier);
+
+  /* --- Nebenfarben je Leistung, aus der bestehenden Seite --------------- */
+  --ton-bewertung: #699ba9;   /* Petrol */
+  --ton-verkauf: #e9c078;     /* Sand */
+  --ton-vermietung: #b8c4db;  /* Hellblau */
+  --ton-mediation: #a8c455;   /* Limette */
+  --ton-beratung: #ad4f74;    /* Bordeaux */
+  --ton-betreuung: #c9c684;   /* Khaki */
+  --ton-weiteres: #8c9a60;    /* Oliv, für die übrigen Leistungen */
 
   /* --- Linien ------------------------------------------------------------ */
   --linie: #e4e1d7;

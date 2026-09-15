@@ -21,8 +21,10 @@ export default function Leistungsuebersicht() {
           <h2 className="gruppen-titel">Kernleistungen</h2>
           <ul className="leistungs-raster">
             {hauptleistungen.map((l, i) => (
-              <Einblenden als="li" key={l.weg} verzug={(i % 3) * 60}>
+              <Einblenden als="li" key={l.weg} verzug={(i % 3) * 60}
+                style={{ "--ton": l.ton, "--ton-schrift": l.tonSchrift }}>
                 <Link to={l.weg}>
+                  <span className="karten-band" aria-hidden="true" />
                   <h3>{l.titel}</h3>
                   <p className="leistungs-kurz">{l.kurz}</p>
                   <p>{l.anriss}</p>
@@ -35,8 +37,10 @@ export default function Leistungsuebersicht() {
           <h2 className="gruppen-titel gruppen-titel-zweit">Weitere Leistungen</h2>
           <ul className="leistungs-raster leistungs-raster-schlank">
             {weitereLeistungen.map((l, i) => (
-              <Einblenden als="li" key={l.weg} verzug={(i % 3) * 60}>
+              <Einblenden als="li" key={l.weg} verzug={(i % 3) * 60}
+                style={{ "--ton": l.ton, "--ton-schrift": l.tonSchrift }}>
                 <Link to={l.weg}>
+                  <span className="karten-band" aria-hidden="true" />
                   <h3>{l.titel}</h3>
                   <p>{l.anriss}</p>
                   <span className="mehr-zeichen">Mehr dazu</span>
