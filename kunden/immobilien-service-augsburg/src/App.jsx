@@ -14,6 +14,16 @@ import Recht from "./seiten/Recht.jsx";
 import NichtGefunden from "./seiten/NichtGefunden.jsx";
 
 export default function App() {
+  const { pathname, search, hash } = useLocation();
+
+  /* /immobilienverkauf/ und /immobilienverkauf sind dieselbe Seite, also soll
+     es auch dieselbe Adresse sein. Die Entscheidung fällt vor den Routen:
+     stünde sie daneben, rendert die Leistungsseite im selben Durchgang ihre
+     eigene Weiterleitung auf die Übersicht und behält recht. */
+  if (pathname.length > 1 && pathname.endsWith("/")) {
+    return <Navigate to={pathname.replace(/\/+$/, "") + search + hash} replace />;
+  }
+
   return (
     <>
       {/* Der Hintergrund der ganzen Seite — ein festes Element hinter allem. */}

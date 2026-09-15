@@ -20,7 +20,12 @@
       content="Bewertung, Verkauf, Vermietung, Beratung und Immobilienmediation in Augsburg Stadt und Land."
     />
 
-    <link rel="preload" as="font" type="font/woff2" href="/schriften/cormorant-garamond-500-latin.woff2" crossorigin />
+    <!--
+      Die Anzeigeschrift wird vorgeladen. Der Pfad zeigt auf die Quelle, damit
+      Vite ihn beim Bauen auf den gehashten Namen umschreibt — ein fest
+      getippter Pfad lief ins Leere und lud bei jedem Aufruf eine 404.
+    -->
+    <link rel="preload" as="font" type="font/woff2" href="./src/schriften/cormorant-garamond-400-latin.woff2" crossorigin />
 
     <script type="application/ld+json">
       {

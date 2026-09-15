@@ -104,6 +104,16 @@ CPU. Kein einziges Bild über 32 ms. Layout-Verschiebung 0,000.
 - **Rasterspalten als `minmax(0, 1fr)`, nicht als `1fr`.** Sonst setzt der
   breiteste unteilbare Inhalt eine Mindestbreite durch und die Spalte wächst
   über das Fenster hinaus — so entstand der letzte Querüberlauf auf 320 px.
+- **`base` bleibt beim Live-Bau absolut.** Mit relativer Basis sucht ein
+  direkter Einstieg auf einer Unterseite mit Schlussstrich die Dateien im
+  falschen Verzeichnis; die Umschreibung liefert dort wieder index.html und
+  die Seite bleibt weiß. Relativ ist nur der Vorschau-Bau.
+- **Der Schlussstrich wird in `App.jsx` abgeschnitten, vor den Routen.**
+  Steht die Weiterleitung neben ihnen, rendert die Leistungsseite im selben
+  Durchgang ihre eigene Weiterleitung auf die Übersicht und behält recht.
+- **Vorgeladene Dateien über den Quellpfad angeben**, damit Vite sie auf den
+  gehashten Namen umschreibt. Ein fest getippter Pfad lud bei jedem Aufruf
+  eine Datei, die es nicht gab.
 - **Schriftfarben auf Flächen neu rechnen**, wenn eine Farbe geändert wird:
   mindestens 4,5:1.
 - **Kein `content-visibility: auto` auf den Stationen.** Es spart bei sieben
