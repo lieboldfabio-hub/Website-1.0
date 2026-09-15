@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Immobilienmaklerin Augsburg — Marion Sens</title>
+    <meta
+      name="description"
+      content="Immobilienmaklerin in Augsburg mit über 30 Jahren Erfahrung: Bewertung, Verkauf, Vermietung, Beratung und Immobilienmediation."
+    />
+    <meta name="theme-color" content="#fbfaf7" />
+    <meta name="robots" content="index, follow" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="de_DE" />
+    <meta property="og:site_name" content="Immobilien-Service Augsburg" />
+    <meta property="og:title" content="Immobilienmaklerin Augsburg — Marion Sens" />
+    <meta
+      property="og:description"
+      content="Bewertung, Verkauf, Vermietung, Beratung und Immobilienmediation in Augsburg Stadt und Land."
+    />
+
+    <!--
+      Die Anzeigeschrift wird vorgeladen. Der Pfad zeigt auf die Quelle, damit
+      Vite ihn beim Bauen auf den gehashten Namen umschreibt — ein fest
+      getippter Pfad lief ins Leere und lud bei jedem Aufruf eine 404.
+    -->
+    <link rel="preload" as="font" type="font/woff2" href="./src/schriften/cormorant-garamond-400-latin.woff2" crossorigin />
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "RealEstateAgent",
+        "name": "Immobilien-Service Augsburg",
+        "founder": "Marion Sens",
+        "telephone": "+4915152904317",
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "Koloniestraße 4",
+          "postalCode": "86199",
+          "addressLocality": "Augsburg",
+          "addressCountry": "DE"
+        },
+        "areaServed": "Augsburg Stadt und Land",
+        "knowsAbout": [
+          "Immobilienbewertung",
+          "Immobilienverkauf",
+          "Immobilienvermietung",
+          "Immobilienmediation",
+          "Betreuungsverfahren"
+        ]
+      }
+    </script>
+  </head>
+  <body>
+    <!--
+      Zwillingsformular für Netlify.
+
+      Netlify durchsucht nur das ausgelieferte HTML nach Formularen. Das echte
+      Formular baut React erst im Browser zusammen und bleibt deshalb
+      unsichtbar für den Dienst. Die Feldnamen hier MÜSSEN mit denen in
+      src/seiten/Kontakt.jsx übereinstimmen, sonst gehen Anfragen verloren.
+    -->
+    <form name="kontakt" netlify netlify-honeypot="firmenname" hidden>
+      <input type="text" name="name" />
+      <input type="email" name="email" />
+      <input type="tel" name="telefon" />
+      <select name="anliegen"></select>
+      <textarea name="nachricht"></textarea>
+      <input type="checkbox" name="datenschutz" />
+      <input type="text" name="firmenname" />
+    </form>
+
+    <div id="wurzel"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>

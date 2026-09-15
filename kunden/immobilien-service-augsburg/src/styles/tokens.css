@@ -1,0 +1,161 @@
+/*
+  Ein Satz Werte für die ganze Seite — Startseite, Unterseiten und Showroom
+  greifen ausschließlich hierauf zu.
+
+  Farbwelt: das Gelbgrün der bestehenden Seite, auf warmem Off-White.
+
+  Das Grün ist die Marke und muss sichtbar bleiben — wer die alte Seite
+  kennt, muss diese wiedererkennen. Es steht deshalb auf Flächen, Bändern
+  und Symbolen in seiner hellen Fassung, so wie dort. Für Schrift und
+  Linien wird dieselbe Farbe abgedunkelt, damit der Kontrast trägt: helles
+  Limettengrün als Textfarbe erreicht auf Weiß nur 1,9:1 und ist unlesbar.
+  Gleiche Farbe, zwei Helligkeiten, ein Auftritt.
+
+  Dazu die sechs Nebenfarben der alten Seite, eine je Leistung. Sie sind
+  dort die Wiedererkennung und bleiben es hier.
+*/
+
+:root {
+  /* --- Der Grund --------------------------------------------------------
+     Die Seite hat EINEN Hintergrund, der unter allem durchläuft. Abschnitte
+     bekommen keine eigenen Farbblöcke mehr — getrennt wird über Abstand,
+     feine Linien und leicht erhobene, halbdurchsichtige Flächen. Sonst
+     zerfällt die Seite beim Scrollen in eine Kette bunter Kästen. */
+  --grund: #fbfaf7;          /* warmes Off-White, Basis des Verlaufs */
+  --grund-rein: #ffffff;
+
+  /* Flächen, die sich vom Grund abheben, ohne ihn zu unterbrechen:
+     weiß mit Durchlässigkeit — der Hintergrund bleibt dahinter sichtbar. */
+  --flaeche: rgba(255, 255, 255, 0.62);
+  --flaeche-fest: rgba(255, 255, 255, 0.86);
+  --flaeche-zart: rgba(255, 255, 255, 0.34);
+
+  /* --- Dunkel: der Showroom und die Fußzeile ---------------------------- */
+  --dunkel: #232a1c;         /* Anthrazit mit Grünstich, passend zur Marke */
+  --dunkel-tief: #171c12;
+  --dunkel-erhoben: #2d3525;
+
+  /* --- Text -------------------------------------------------------------- */
+  --text: #24261f;
+  --text-ruhig: #5c5f55;
+  --text-leise: #6f7266;      /* 4,7:1 — auch in Kleinschrift lesbar */
+  --text-auf-dunkel: #f2f1ea;
+  --text-auf-dunkel-ruhig: #b3b5a9;
+
+  /* --- Die Marke: Gelbgrün, Ton 76°, in fünf Helligkeiten --------------- */
+  --marke: #a8c455;          /* das kräftige Grün der alten Seite: Flächen */
+  --marke-leuchtend: #bfda71; /* Symbole und Glanzpunkte */
+  --marke-mittel: #c4d68f;   /* Verläufe, Kopfbänder */
+  --marke-band: #deebbf;     /* die hellen Bänder der alten Seite */
+  --marke-schleier: #eef4e0;
+
+  /* Dieselbe Farbe, abgedunkelt — für alles, was gelesen werden muss. */
+  --akzent: #5f7034;         /* 5,4:1 auf Off-White */
+  --akzent-tief: #48561f;    /* 7,6:1 — Knöpfe, Überschriftenakzente */
+  --akzent-hell: #bfda71;    /* auf dunklem Grund: 9,9:1 */
+  --akzent-schleier: var(--marke-schleier);
+
+  /* --- Nebenfarben je Leistung, aus der bestehenden Seite --------------- */
+  --ton-bewertung: #699ba9;   /* Petrol */
+  --ton-verkauf: #e9c078;     /* Sand */
+  --ton-vermietung: #b8c4db;  /* Hellblau */
+  --ton-mediation: #a8c455;   /* Limette */
+  --ton-beratung: #ad4f74;    /* Bordeaux */
+  --ton-betreuung: #c9c684;   /* Khaki */
+  --ton-weiteres: #8c9a60;    /* Oliv, für die übrigen Leistungen */
+
+  /* --- Linien ------------------------------------------------------------ */
+  --linie: rgba(96, 92, 72, 0.14);
+  --linie-kraeftig: rgba(96, 92, 72, 0.26);
+  --linie-zart: rgba(96, 92, 72, 0.08);
+  --linie-dunkel: rgba(242, 241, 234, 0.13);
+
+  /* --- Offene Punkte sichtbar halten ------------------------------------ */
+  --offen: #8a5a12;
+  --offen-flaeche: #fbf1dd;
+
+  /* --- Schrift ----------------------------------------------------------- */
+  --schrift-display: "Cormorant Garamond", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+  --schrift-text: "Inter Tight", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+
+  /* Eine Skala, und die Seite bleibt darauf. */
+  --gr-xs: 0.78rem;
+  --gr-s: 0.9rem;
+  --gr-m: 1rem;
+  --gr-l: 1.1rem;
+  --gr-xl: clamp(1.25rem, 1.6vw, 1.45rem);
+  --gr-titel-s: clamp(1.5rem, 2.4vw, 1.95rem);
+  --gr-titel-m: clamp(1.9rem, 3.4vw, 2.8rem);
+  --gr-titel-l: clamp(2.3rem, 5vw, 4rem);
+
+  /* --- Abstände: eine Reihe, keine Zwischenwerte ------------------------- */
+  --a1: 0.25rem;
+  --a2: 0.5rem;
+  --a3: 0.75rem;
+  --a4: 1rem;
+  --a5: 1.5rem;
+  --a6: 2rem;
+  --a7: 3rem;
+  --a8: 4rem;
+  --abschnitt: clamp(4rem, 9vw, 7rem);
+
+  /* --- Form -------------------------------------------------------------- */
+  --radius-s: 3px;
+  --radius-m: 6px;
+  --radius-l: 10px;
+  --radius-rund: 999px;
+
+  /* --- Licht und Tiefe ---------------------------------------------------
+     Eine Lichtquelle für die ganze Seite: von oben, leicht von links. Alles
+     Erhobene wirft in dieselbe Richtung — daher der kleine Versatz nach
+     rechts, der mit der Höhe wächst.
+
+     Gefärbt aus --dunkel (35 42 28), nicht aus Schwarz: ein neutralgrauer
+     Schatten auf warmem Off-White sieht billig aus, ein Schatten in der
+     Farbe des dunklen Tons gehört zum Bild.
+
+     Je Stufe zwei Lagen: ein enger Kontaktschatten direkt unter der Kante,
+     der die Fläche auf dem Grund aufsetzen lässt, und ein weiter, sehr
+     blasser Umgebungsschatten für die Höhe.                                */
+  --schatten-1: 0 1px 1px rgba(35, 42, 28, 0.035),
+                0 2px 6px rgba(35, 42, 28, 0.04);
+  --schatten-2: 0 1px 2px rgba(35, 42, 28, 0.05),
+                1px 6px 16px rgba(35, 42, 28, 0.06);
+  --schatten-3: 0 2px 4px rgba(35, 42, 28, 0.06),
+                2px 14px 32px rgba(35, 42, 28, 0.10);
+  --schatten-4: 0 3px 6px rgba(35, 42, 28, 0.07),
+                3px 26px 60px rgba(35, 42, 28, 0.14);
+
+  /* Die Oberkante fängt das Licht. Ein Pixel, das eine Fläche erhebt, ohne
+     ihr einen Rahmen zu zeichnen. */
+  --kante-licht: inset 0 1px 0 rgba(255, 255, 255, 0.72);
+  --kante-licht-dunkel: inset 0 1px 0 rgba(242, 241, 234, 0.09);
+
+  /* Flache Wölbung: oben heller, unten zurückgenommen. */
+  --flaeche-verlauf: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.78) 0%,
+    rgba(255, 255, 255, 0.46) 100%
+  );
+
+  /* --- Raster ------------------------------------------------------------ */
+  --breite: 1200px;
+  --breite-text: 44rem;
+  --rand: clamp(1.25rem, 5vw, 4rem);
+  --kopfzeile-hoehe: 4.5rem;
+
+  /* --- Bewegung: eine Kurve, zwei Dauern --------------------------------- */
+  --kurve: cubic-bezier(0.22, 1, 0.36, 1);
+  --dauer-kurz: 0.2s;
+  --dauer-lang: 0.5s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root { --dauer-kurz: 0.01ms; --dauer-lang: 0.01ms; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

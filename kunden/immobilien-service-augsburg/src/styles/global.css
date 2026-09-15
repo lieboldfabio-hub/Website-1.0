@@ -1,0 +1,1909 @@
+/* ========================================================================
+   Grundlagen
+   ======================================================================== */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  -webkit-text-size-adjust: 100%;
+  /* Sanftes Springen zu Ankern überlässt der Browser sich selbst — keine
+     Bibliothek greift ins Scrollen ein. */
+  scroll-behavior: smooth;
+}
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+body {
+  margin: 0;
+  /* Lange Fachwörter wie „Wohnflächenberechnung" brechen notfalls um,
+     statt den Kasten aufzudrücken. */
+  overflow-wrap: break-word;
+  /* „Immobilienmediation" bricht sonst als „Immobilienmediat|on". Mit
+     lang="de" am <html> trennt der Browser richtig. */
+  hyphens: auto;
+  background: var(--grund);
+  /* Der Hintergrund liegt in einem eigenen festen Element (siehe unten),
+     damit hier nichts mitscrollt und nichts neu gezeichnet wird. */
+  color: var(--text);
+  font-family: var(--schrift-text);
+  font-size: var(--gr-m);
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  /* Verhindert waagerechtes Wackeln, ohne das Scrollen zu kapern. */
+  overflow-x: hidden;
+}
+
+h1, h2, h3 {
+  font-family: var(--schrift-display);
+  font-weight: 500;
+  line-height: 1.12;
+  letter-spacing: -0.005em;
+  text-wrap: balance;
+  margin: 0 0 var(--a4);
+  color: var(--text);
+}
+h1 { font-size: var(--gr-titel-l); }
+h2 { font-size: var(--gr-titel-m); }
+h3 { font-size: var(--gr-titel-s); font-weight: 500; }
+p { margin: 0 0 var(--a4); }
+p:last-child { margin-bottom: 0; }
+
+a { color: var(--akzent); text-underline-offset: 0.18em; }
+a:hover { color: var(--akzent-tief); }
+img { max-width: 100%; display: block; }
+
+:focus-visible {
+  outline: 2px solid var(--akzent);
+  outline-offset: 3px;
+  border-radius: var(--radius-s);
+}
+
+/* Ohne `min-width: 0` weigern sich Grid- und Flex-Kinder, unter ihre
+   Inhaltsbreite zu schrumpfen — die klassische Ursache dafür, dass eine
+   Seite auf schmalen Geräten ein paar Pixel zu breit wird. */
+.einstieg-raster > *, .kurz-ueber-raster > *, .leistung-raster > *,
+.kontakt-raster > *, .person-raster > *, .fusszeile-raster > *,
+.vertrauen-reihe > *, .knopf-reihe > * { min-width: 0; }
+
+/*
+  Der durchgehende Hintergrund.
+
+  Ein festes Element hinter allem — nicht `background-attachment: fixed` am
+  Body: das rechnet auf iOS bei jedem Scrollschritt neu und ruckelt. Ein
+  Element mit `position: fixed` wird einmal gezeichnet und danach vom
+  Compositor gehalten. Es scrollt nichts, es rechnet nichts.
+
+  Der Verlauf trägt das Gelbgrün der Marke oben, läuft nach unten ins
+  warme Off-White aus und nimmt am Fuß einen Hauch davon wieder auf.
+  Darüber liegt eine sehr feine Struktur, damit die Fläche auf großen
+  Schirmen nicht flach wirkt.
+*/
+.grundflaeche {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(120% 55% at 78% -6%, rgba(168, 196, 85, 0.22), transparent 58%),
+    radial-gradient(90% 45% at 8% 8%, rgba(222, 235, 191, 0.5), transparent 62%),
+    radial-gradient(130% 60% at 50% 108%, rgba(196, 214, 143, 0.2), transparent 64%),
+    linear-gradient(176deg, #f6f7ee 0%, var(--grund) 42%, #f7f6f0 100%);
+}
+/* Feine Körnung, damit der Verlauf auf großen Flächen nicht bandet.
+   Ein Datenbild von 120 Byte, kein Netzzugriff, keine Animation. */
+.grundflaeche::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0.35;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='r'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23r)' opacity='.055'/%3E%3C/svg%3E");
+}
+
+.mitte {
+  width: 100%;
+  max-width: var(--breite);
+  margin-inline: auto;
+  padding-inline: var(--rand);
+}
+
+section[id], :target { scroll-margin-top: calc(var(--kopfzeile-hoehe) + var(--a5)); }
+
+.zum-inhalt {
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform: translateY(-120%);
+  z-index: 100;
+  padding: var(--a3) var(--a5);
+  background: var(--akzent-tief);
+  color: #fff;
+  font-weight: 600;
+  border-radius: 0 0 var(--radius-m) 0;
+}
+.zum-inhalt:focus { transform: translateY(0); }
+
+.nur-vorlesen {
+  position: absolute; width: 1px; height: 1px;
+  padding: 0; margin: -1px; overflow: hidden;
+  clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+/* Was nur stimmt, wenn es einen Zeiger gibt. Auf einem Touchgerät wäre der
+   Hinweis „zeigen Sie auf …" schlicht falsch. */
+.nur-mit-zeiger { display: none; }
+@media (hover: hover) { .nur-mit-zeiger { display: inline; } }
+
+/* Offene Punkte bleiben sichtbar, bis sie gefüllt sind. */
+.offen {
+  background: var(--offen-flaeche);
+  color: var(--offen);
+  box-shadow: inset 0 -1px 0 currentColor;
+  padding: 0 0.25em;
+  border-radius: var(--radius-s);
+}
+
+.ueberzeile {
+  font-size: var(--gr-xs);
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--akzent);
+  margin: 0 0 var(--a3);
+}
+
+.vorspann {
+  font-size: var(--gr-xl);
+  line-height: 1.55;
+  color: var(--text-ruhig);
+  max-width: var(--breite-text);
+}
+
+/* Einblenden: Ruhelage sichtbar, animiert wird nur die Lage. */
+.einblenden {
+  transition: transform var(--dauer-lang) var(--kurve);
+}
+.einblenden[data-wartet] { transform: translateY(18px); }
+@media (prefers-reduced-motion: reduce) {
+  .einblenden, .einblenden[data-wartet] { transform: none; transition: none; }
+}
+
+/* ========================================================================
+   Knöpfe — drei Varianten, mehr braucht die Seite nicht
+   ======================================================================== */
+
+.knopf {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--a2);
+  padding: 0.85rem 1.6rem;
+  border: 1px solid transparent;
+  border-radius: var(--radius-rund);
+  font: inherit;
+  font-weight: 600;
+  font-size: var(--gr-s);
+  letter-spacing: 0.01em;
+  text-decoration: none;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background var(--dauer-kurz) var(--kurve),
+              border-color var(--dauer-kurz) var(--kurve),
+              color var(--dauer-kurz) var(--kurve);
+}
+.knopf.klein { padding: 0.55rem 1.1rem; }
+
+.knopf-voll { background: var(--akzent-tief); color: #fff; }
+.knopf-voll:hover { background: var(--akzent); color: #fff; }
+.knopf-voll:disabled { opacity: 0.6; cursor: wait; }
+
+.knopf-linie { border-color: var(--linie-kraeftig); color: var(--text); background: var(--flaeche-fest); }
+.knopf-linie:hover { border-color: var(--akzent); color: var(--akzent-tief); }
+
+.knopf-reihe { display: flex; flex-wrap: wrap; gap: var(--a3); margin-top: var(--a5); }
+
+.mehr-zeichen {
+  display: inline-block;
+  margin-top: var(--a3);
+  font-size: var(--gr-s);
+  font-weight: 600;
+  color: var(--akzent);
+}
+.mehr-zeichen::after { content: " →"; }
+
+/* ========================================================================
+   Kopfzeile
+   ======================================================================== */
+
+.kopfzeile {
+  position: sticky;
+  top: 0;
+  z-index: 60;
+  background: color-mix(in srgb, var(--grund) 82%, transparent);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid transparent;
+  /* Der Schatten liegt fest; animiert wird nur die Kante. Ein Schatten im
+     Übergang kostet im Malschritt — siehe styles/bewegung.css. */
+  transition: border-color var(--dauer-kurz) var(--kurve);
+}
+.kopfzeile.ist-gescrollt {
+  border-bottom-color: var(--linie);
+  box-shadow: var(--schatten-2);
+}
+
+/*
+  Über dem dunklen Ausstellungsraum wird die Kopfzeile selbst dunkel. Gesetzt
+  wird das von einem IntersectionObserver in Querfahrt.jsx, nicht von einem
+  Scroll-Zuhörer: zwei Meldungen beim Ein- und Austreten, dazwischen nichts.
+*/
+/* Läuft eine Bühne hinter der Kopfzeile, wird der Weichzeichner abgeschaltet
+   und die Leiste deckend: hinter ihr bewegt sich etwas, und jedes Bild neu
+   weichzuzeichnen kostet mehr, als der Effekt wert ist. Gesetzt von einem
+   IntersectionObserver in Querfahrt.jsx, nicht von einem Scroll-Zuhörer. */
+:root[data-buehne] .kopfzeile {
+  backdrop-filter: none;
+  background: var(--grund);
+}
+:root[data-dunkle-buehne] .kopfzeile {
+  background: var(--dunkel-tief);
+  border-bottom-color: var(--linie-dunkel);
+  box-shadow: none;
+}
+:root[data-dunkle-buehne] .kopfzeile .marke,
+:root[data-dunkle-buehne] .kopfzeile .marke strong {
+  color: var(--text-auf-dunkel);
+}
+:root[data-dunkle-buehne] .kopfzeile .marke-text span,
+:root[data-dunkle-buehne] .hauptmenue a,
+:root[data-dunkle-buehne] .kopfzeile-anruf,
+:root[data-dunkle-buehne] .kopfzeile-aktionen .kopfzeile-anruf {
+  color: var(--text-auf-dunkel-ruhig);
+}
+:root[data-dunkle-buehne] .signet,
+:root[data-dunkle-buehne] .hauptmenue a:hover,
+:root[data-dunkle-buehne] .hauptmenue a.active,
+:root[data-dunkle-buehne] .kopfzeile-aktionen .kopfzeile-anruf:hover {
+  color: var(--akzent-hell);
+}
+:root[data-dunkle-buehne] .hauptmenue a.knopf,
+:root[data-dunkle-buehne] .kopfzeile .knopf-voll {
+  background: var(--akzent-hell);
+  color: var(--dunkel-tief);
+}
+:root[data-dunkle-buehne] .menue-knopf {
+  background: transparent;
+  border-color: var(--linie-dunkel);
+  color: var(--text-auf-dunkel);
+}
+/* Der Farbwechsel darf nicht springen. Farben sind billig zu animieren —
+   es ist ein Element, und es passiert zweimal je Ausstellung. */
+.kopfzeile,
+.kopfzeile .marke,
+.kopfzeile .marke-text span,
+.hauptmenue a,
+.kopfzeile-aktionen .kopfzeile-anruf,
+.menue-knopf {
+  transition: background-color var(--dauer-kurz) var(--kurve),
+              color var(--dauer-kurz) var(--kurve),
+              border-color var(--dauer-kurz) var(--kurve);
+}
+.kopfzeile-innen {
+  max-width: var(--breite);
+  margin-inline: auto;
+  padding-inline: var(--rand);
+  min-height: var(--kopfzeile-hoehe);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--a5);
+}
+
+.marke { display: inline-flex; align-items: center; gap: var(--a3); text-decoration: none; color: var(--text); min-width: 0; }
+.signet { color: var(--akzent); flex: none; }
+.marke-text { display: flex; flex-direction: column; line-height: 1.2; }
+.marke-text strong { font-family: var(--schrift-display); font-weight: 600; font-size: 1.18rem; }
+.marke-text span {
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.19em;
+  text-transform: uppercase;
+  color: var(--text-leise);
+}
+
+/* Die Abstände schrumpfen mit der Fensterbreite, damit sechs Punkte plus
+   Aktionen auch knapp über dem Umbruchpunkt in eine Zeile passen. */
+.hauptmenue { display: flex; align-items: center; gap: clamp(1rem, 2.2vw, 2rem); }
+.hauptmenue > ul {
+  display: flex; align-items: center; list-style: none; margin: 0; padding: 0;
+  gap: clamp(0.8rem, 1.8vw, 1.75rem);
+}
+/* Menüpunkte brechen nie um — ein zweizeiliges „Über mich" verzieht die Zeile.
+   Nur oberhalb des Umbruchpunkts: im Klappmenü darf alles umbrechen. */
+@media (min-width: 1081px) {
+  .hauptmenue > ul > li > a,
+  .klappe-zeile > a { white-space: nowrap; }
+  .marke { flex: none; }
+  .marke-text strong,
+  .marke-text span { white-space: nowrap; }
+}
+.hauptmenue a {
+  color: var(--text-ruhig);
+  text-decoration: none;
+  font-size: var(--gr-s);
+  font-weight: 500;
+  padding: var(--a2) 0;
+}
+.hauptmenue a:hover, .hauptmenue a.active { color: var(--akzent-tief); }
+.hauptmenue a.knopf { color: #fff; }
+
+/* Telefonnummer als Text, Bewertung als Knopf. Zwei Klassen, damit die
+   Farbe die Menüfarbe schlägt — ohne !important. */
+.kopfzeile-aktionen { display: flex; align-items: center; gap: var(--a4); }
+.kopfzeile-aktionen .kopfzeile-anruf {
+  display: inline-flex; align-items: center; gap: var(--a2);
+  font-size: var(--gr-s); font-weight: 600;
+  color: var(--text-ruhig); text-decoration: none; white-space: nowrap;
+}
+.kopfzeile-aktionen .kopfzeile-anruf:hover { color: var(--akzent-tief); }
+
+/* Knapp über dem Umbruchpunkt hat die Nummer keinen Platz mehr. Sie steht
+   im Fuß und auf der Kontaktseite, der Knopf bleibt. */
+@media (min-width: 1081px) and (max-width: 1220px) {
+  .kopfzeile-aktionen .kopfzeile-anruf { display: none; }
+}
+
+.klappe-zeile { display: flex; align-items: center; gap: var(--a1); }
+.klappe-knopf {
+  display: grid; place-items: center;
+  width: 1.5rem; height: 1.5rem;
+  border: 0; background: none; padding: 0;
+  color: var(--text-leise); cursor: pointer;
+}
+.klappe-knopf[aria-expanded="true"] svg { transform: rotate(180deg); }
+.klappe-knopf svg { transition: transform var(--dauer-kurz) var(--kurve); }
+
+.hat-klappe { position: relative; }
+.klappe {
+  position: absolute;
+  top: calc(100% + 0.7rem);
+  left: 50%;
+  transform: translateX(-50%);
+  display: none;
+  gap: var(--a6);
+  min-width: 34rem;
+  padding: var(--a5);
+  background: var(--flaeche);
+  border: 1px solid var(--linie);
+  border-radius: var(--radius-l);
+  box-shadow: var(--schatten-4);
+}
+.klappe.ist-offen { display: grid; grid-template-columns: 1fr 1fr; }
+.klappe-titel {
+  font-size: var(--gr-xs); font-weight: 600; letter-spacing: 0.13em;
+  text-transform: uppercase; color: var(--text-leise);
+  margin: 0 0 var(--a3);
+}
+.klappe-spalte a {
+  display: block;
+  padding: var(--a2) var(--a3);
+  margin-inline: calc(var(--a3) * -1);
+  border-radius: var(--radius-m);
+}
+.klappe-spalte a:hover { background: var(--akzent-schleier); }
+.klappe-spalte strong { display: block; font-size: var(--gr-s); color: var(--text); }
+.klappe-spalte span { display: block; font-size: var(--gr-xs); color: var(--text-leise); }
+
+.menue-knopf { display: none; }
+.menue-striche { display: inline-grid; gap: 3px; }
+.menue-striche i { display: block; width: 15px; height: 1.5px; background: currentColor; }
+
+@media (max-width: 1080px) {
+  .menue-knopf {
+    display: inline-flex; align-items: center; gap: var(--a2);
+    background: var(--flaeche); border: 1px solid var(--linie-kraeftig);
+    border-radius: var(--radius-rund); color: var(--text);
+    font: inherit; font-size: var(--gr-s); font-weight: 600;
+    padding: 0.5rem 0.95rem; cursor: pointer; flex: none;
+  }
+  .kopfzeile-innen { gap: var(--a3); }
+  .hauptmenue {
+    position: absolute;
+    inset: 100% 0 auto;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    padding: var(--a4) var(--rand) var(--a6);
+    /* Deckend, nicht durchscheinend: hinter dem offenen Menü liegt die Seite. */
+    background: var(--grund);
+    border-bottom: 1px solid var(--linie);
+    box-shadow: var(--schatten-4);
+    max-height: calc(100dvh - var(--kopfzeile-hoehe));
+    overflow-y: auto;
+    /* Das Menü scrollt für sich, ohne die Seite dahinter mitzuziehen. */
+    overscroll-behavior: contain;
+    display: none;
+  }
+  .hauptmenue.ist-offen { display: flex; }
+  .hauptmenue > ul { flex-direction: column; align-items: stretch; gap: 0; }
+  .hauptmenue > ul > li { border-bottom: 1px solid var(--linie); }
+  .hauptmenue > ul > li > a,
+  .klappe-zeile > a { padding: var(--a4) 0; font-size: var(--gr-l); flex: 1; }
+  .klappe-zeile { justify-content: space-between; }
+  .klappe-knopf { width: 2.75rem; height: 2.75rem; }
+  .klappe {
+    position: static; transform: none; min-width: 0;
+    border: 0; box-shadow: none; padding: 0 0 var(--a4);
+    background: none;
+  }
+  .klappe.ist-offen { grid-template-columns: 1fr; gap: var(--a4); }
+  .kopfzeile-aktionen { flex-direction: column; align-items: stretch; gap: var(--a4); margin-top: var(--a5); }
+  .kopfzeile-aktionen .kopfzeile-anruf { justify-content: center; font-size: var(--gr-m); }
+}
+
+/* ========================================================================
+   Seitenkopf und Abschnitte
+   ======================================================================== */
+
+.abschnitt { padding-block: var(--abschnitt); }
+/* Kein eigener Farbblock mehr: eine Haarlinie oben genügt als Trennung. */
+.abschnitt-ruhig { border-top: 1px solid var(--linie-zart); }
+.abschnitt-kopf { max-width: var(--breite-text); margin-bottom: var(--a7); }
+.abschnitt-vorspann { color: var(--text-ruhig); }
+
+.seitenkopf {
+  padding-block: var(--a7) var(--a6);
+  border-bottom: 1px solid var(--linie);
+  position: relative;
+}
+/* Statt eines Farbblocks eine kurze kräftige Marke unter der Überschrift —
+   sie setzt den Akzent, ohne den durchgehenden Grund zu unterbrechen. */
+.seitenkopf::after {
+  content: "";
+  position: absolute;
+  left: var(--rand); bottom: -2px;
+  width: 4rem; height: 3px;
+  background: var(--ton, var(--marke));
+}
+.seitenkopf h1 { max-width: 20ch; }
+
+.krumen { margin-bottom: var(--a5); }
+.krumen ol { display: flex; flex-wrap: wrap; gap: var(--a2); list-style: none; margin: 0; padding: 0; font-size: var(--gr-xs); }
+.krumen li { display: flex; gap: var(--a2); color: var(--text-leise); }
+.krumen a { color: var(--text-ruhig); text-decoration: none; }
+.krumen a:hover { color: var(--akzent-tief); text-decoration: underline; }
+
+.gruppen-titel { font-size: var(--gr-titel-s); margin-bottom: var(--a5); }
+.gruppen-titel-zweit { margin-top: var(--a8); }
+
+.fliesstext { max-width: var(--breite-text); }
+.fliesstext h2 { font-size: var(--gr-xl); margin-top: var(--a6); }
+.fliesstext h2:first-child { margin-top: 0; }
+.fliesstext p, .fliesstext li { color: var(--text-ruhig); }
+.fliesstext ul { padding-left: 1.1rem; }
+.fliesstext li { margin-bottom: var(--a2); }
+
+.haken-liste { list-style: none; padding: 0; margin: 0 0 var(--a5); }
+.haken-liste li {
+  position: relative;
+  padding: var(--a2) 0 var(--a2) 1.8rem;
+  border-bottom: 1px solid var(--linie);
+  color: var(--text-ruhig);
+}
+.haken-liste li::before {
+  content: "";
+  position: absolute; left: 0; top: 1.05em;
+  width: 0.6rem; height: 0.35rem;
+  border-left: 1.5px solid var(--akzent);
+  border-bottom: 1.5px solid var(--akzent);
+  transform: rotate(-45deg);
+}
+
+/* ========================================================================
+   Einstieg
+   ======================================================================== */
+
+.einstieg { padding-block: clamp(2.5rem, 6vw, 5rem) var(--abschnitt); }
+.einstieg-raster {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+  gap: clamp(var(--a6), 5vw, var(--a8));
+  align-items: center;
+}
+.einstieg h1 { max-width: 17ch; }
+.einstieg h1 em { font-style: italic; color: var(--akzent); }
+/*
+  Kein `white-space: nowrap` auf der Kursivstelle. Zweimal falsch gewesen:
+  es erzwingt eine Mindestbreite, die auf 320 Pixeln die Spalte aufbläht,
+  und es schafft hinter dem </em> eine Umbruchstelle, an der der Schlusspunkt
+  allein in die nächste Zeile rutscht. Darum steht der Punkt jetzt im <em>.
+*/
+.einstieg-anruf {
+  display: inline-flex; align-items: center; gap: var(--a2);
+  margin-top: var(--a5);
+  font-size: var(--gr-s); font-weight: 600;
+  color: var(--text-ruhig); text-decoration: none;
+}
+.einstieg-anruf:hover { color: var(--akzent-tief); }
+
+/*
+  Die Bildfläche hat ihre Größe, bevor irgendetwas geladen ist.
+
+  Vorher wurde ein fehlendes Bild per display:none entfernt — danach sprang
+  die ganze Spalte nach oben. Auf dem Handy waren das allein 0,97 an
+  Layout-Verschiebung. Jetzt steckt das Bild in einem Rahmen mit festem
+  Seitenverhältnis; fehlt es, wird nur seine Deckkraft null, und das Layout
+  merkt davon nichts.
+*/
+.einstieg-portraet, .person-bild { margin: 0; }
+
+.bildflaeche {
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  background: var(--grund-warm);
+  border-radius: var(--radius-l);
+  overflow: hidden;
+}
+.bildflaeche img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: opacity var(--dauer-kurz) var(--kurve);
+}
+.bildflaeche[data-fehlt] { border: 1px dashed var(--linie-kraeftig); }
+.bildflaeche[data-fehlt] img { opacity: 0; }
+.bildflaeche[data-fehlt]::after {
+  content: attr(data-fehlt);
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  padding: var(--a4);
+  color: var(--offen);
+  font-size: var(--gr-s);
+  font-weight: 600;
+}
+.einstieg-portraet .bildflaeche { box-shadow: var(--schatten-3), var(--kante-licht); }
+.einstieg-portraet figcaption {
+  display: flex; flex-direction: column; text-align: center;
+  margin-top: var(--a4);
+}
+.einstieg-portraet figcaption strong { font-family: var(--schrift-display); font-size: 1.25rem; font-weight: 600; }
+.einstieg-portraet figcaption span { font-size: var(--gr-s); color: var(--text-leise); }
+
+@media (max-width: 900px) {
+  .einstieg-raster { grid-template-columns: 1fr; }
+  .einstieg-portraet { order: -1; max-width: 17rem; margin-inline: auto; }
+  .einstieg-portraet .bildflaeche { aspect-ratio: 1; border-radius: var(--radius-rund); }
+}
+
+/* ========================================================================
+   Vertrauensbereich
+   ======================================================================== */
+
+.vertrauen {
+  padding-block: var(--a7);
+  border-block: 1px solid var(--linie);
+}
+.vertrauen-reihe {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  gap: var(--a6);
+  list-style: none; margin: 0; padding-block: 0;
+}
+.vertrauen-zahl {
+  display: block;
+  font-family: var(--schrift-display);
+  font-size: 2.6rem;
+  line-height: 1;
+  color: var(--akzent-tief);
+  font-variant-numeric: tabular-nums;
+}
+.vertrauen-reihe strong { display: block; margin-top: var(--a2); font-size: var(--gr-m); }
+.vertrauen-reihe p { margin: var(--a1) 0 0; font-size: var(--gr-s); color: var(--text-ruhig); }
+
+/* ========================================================================
+   Kontaktband — das grüne Band der bestehenden Seite
+   ======================================================================== */
+
+.kontaktband {
+  background: linear-gradient(90deg, var(--marke-band), var(--marke-mittel));
+  border-block: 1px solid var(--marke);
+}
+.kontaktband-innen {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--a4) clamp(var(--a6), 8vw, var(--a8));
+  padding-block: var(--a4);
+}
+.kontaktband a { text-decoration: none; color: var(--text); }
+.kontaktband-aufruf {
+  font-family: var(--schrift-display);
+  font-size: clamp(1.25rem, 2.2vw, 1.6rem);
+}
+.kontaktband-aufruf:hover { color: var(--akzent-tief); text-decoration: underline; }
+.kontaktband-aufruf span { color: var(--akzent-tief); }
+.kontaktband-nummer {
+  display: inline-flex; align-items: center; gap: var(--a2);
+  font-family: var(--schrift-display);
+  font-size: clamp(1.25rem, 2.2vw, 1.6rem);
+}
+.kontaktband-nummer:hover { color: var(--akzent-tief); }
+
+/* ========================================================================
+   Lebenslagen, Über-Anriss, Region, Stimmen
+   ======================================================================== */
+
+.lagen { padding-block: var(--abschnitt); }
+.lagen-raster {
+  display: grid; gap: 1px;
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  list-style: none; margin: 0; padding: 0;
+  background: var(--linie);
+  border: 1px solid var(--linie);
+  border-radius: var(--radius-l);
+  overflow: hidden;
+}
+.lagen-raster li {
+  background: var(--grund);
+  background-image: var(--flaeche-verlauf);
+  padding: var(--a6) var(--a5);
+  border-radius: 0 0 var(--radius-m) var(--radius-m);
+  box-shadow: var(--schatten-2);
+}
+.lagen-raster h3 { font-size: var(--gr-xl); color: var(--akzent-tief); }
+.lagen-raster li { border-top: 3px solid transparent; }
+.lagen-raster li:nth-child(1) { border-top-color: var(--ton-mediation); }
+.lagen-raster li:nth-child(2) { border-top-color: var(--ton-verkauf); }
+.lagen-raster li:nth-child(3) { border-top-color: var(--ton-bewertung); }
+.lagen-raster li:nth-child(4) { border-top-color: var(--ton-beratung); }
+.lagen-raster p { margin: 0; color: var(--text-ruhig); font-size: var(--gr-s); }
+.lagen-fuss { margin-top: var(--a5); font-size: var(--gr-s); color: var(--text-ruhig); }
+
+.kurz-ueber { padding-block: var(--abschnitt); border-top: 1px solid var(--linie-zart); }
+.kurz-ueber-raster {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: clamp(var(--a6), 5vw, var(--a8));
+  align-items: start;
+}
+.kurz-ueber-text p { color: var(--text-ruhig); }
+.kurz-ueber-text .knopf { margin-top: var(--a3); }
+
+.qualifikations-liste { list-style: none; margin: 0; padding: 0; }
+.qualifikations-liste li {
+  padding: var(--a4) 0;
+  border-bottom: 1px solid var(--linie);
+}
+.qualifikations-liste li:first-child { padding-top: 0; }
+.qualifikations-liste strong { display: block; font-size: var(--gr-m); }
+.qualifikations-liste span { display: block; font-size: var(--gr-s); color: var(--text-ruhig); margin-top: var(--a1); }
+
+.region-kurz { padding-block: var(--abschnitt); }
+.ort-wolke { display: flex; flex-wrap: wrap; gap: var(--a2); align-items: center; }
+.ort-wolke span {
+  padding: 0.4rem 0.9rem;
+  background: var(--marke-schleier);
+  border: 1px solid var(--marke-mittel);
+  border-radius: var(--radius-rund);
+  font-size: var(--gr-s);
+  color: var(--text-ruhig);
+}
+.ort-mehr { font-size: var(--gr-s); font-weight: 600; margin-left: var(--a2); }
+
+.stimmen { padding-block: var(--abschnitt); border-top: 1px solid var(--linie-zart); }
+
+/* Alle Stimmen liegen im selben Rasterfeld übereinander. Die längste gibt
+   die Höhe vor, darum springt beim Blättern nichts. */
+.stimmen-buehne { display: grid; }
+.stimme {
+  grid-area: 1 / 1;
+  margin: 0;
+  max-width: 46rem;
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity var(--dauer-kurz) var(--kurve);
+}
+.stimme[data-aktiv] { visibility: visible; opacity: 1; }
+
+.stimme blockquote { margin: 0; position: relative; padding-left: var(--a6); }
+/* Das Anführungszeichen sitzt in der Marge, nicht im Textfluss. */
+.stimme blockquote::before {
+  content: "\201C";
+  position: absolute; left: -0.06em; top: -0.34em;
+  font-family: var(--schrift-display);
+  font-size: 4.5rem; line-height: 1;
+  color: var(--marke-mittel);
+}
+.stimme blockquote p {
+  font-family: var(--schrift-display);
+  font-size: var(--gr-xl);
+  line-height: 1.45;
+  color: var(--text);
+  margin: 0;
+}
+.stimme figcaption {
+  display: flex; flex-direction: column; gap: var(--a1);
+  margin: var(--a5) 0 0 var(--a6);
+  padding-top: var(--a4);
+  border-top: 1px solid var(--linie);
+}
+.stimme-kontext {
+  font-size: var(--gr-xs); font-weight: 600;
+  letter-spacing: 0.14em; text-transform: uppercase; color: var(--akzent);
+}
+.stimme-quelle { font-size: var(--gr-s); font-weight: 600; color: var(--text-ruhig); }
+
+.stimmen-punkte { display: flex; gap: var(--a3); margin-top: var(--a6); margin-left: var(--a6); }
+.stimmen-punkte button {
+  width: 2.25rem; height: 2.25rem; padding: 0;
+  background: none; border: 0; cursor: pointer;
+  display: grid; place-items: center;
+}
+.stimmen-punkte button::before {
+  content: ""; width: 0.6rem; height: 0.6rem; border-radius: 50%;
+  background: var(--linie-kraeftig);
+  transition: background var(--dauer-kurz) var(--kurve), transform var(--dauer-kurz) var(--kurve);
+}
+.stimmen-punkte button.ist-aktiv::before { background: var(--akzent); transform: scale(1.35); }
+.stimmen-punkte button:hover::before { background: var(--akzent-tief); }
+
+@media (max-width: 640px) {
+  .stimme blockquote { padding-left: 0; }
+  .stimme blockquote::before { position: static; display: block; font-size: 3rem; }
+  .stimme blockquote p { font-size: var(--gr-l); }
+  .stimme figcaption, .stimmen-punkte { margin-left: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stimme { transition: none; }
+}
+
+/* ========================================================================
+   Handlungsaufruf
+   ======================================================================== */
+
+.aufruf { padding-block: var(--abschnitt); }
+.aufruf-ruhig { border-block: 1px solid var(--linie-zart); }
+.aufruf-dunkel { background: var(--dunkel); }
+.aufruf-dunkel h2 { color: var(--text-auf-dunkel); }
+.aufruf-dunkel .ueberzeile { color: var(--akzent-hell); }
+.aufruf-dunkel .aufruf-text { color: var(--text-auf-dunkel-ruhig); }
+.aufruf-dunkel .knopf-voll { background: var(--akzent-hell); color: var(--dunkel-tief); }
+.aufruf-dunkel .knopf-voll:hover { background: var(--marke-mittel); color: var(--dunkel-tief); }
+.aufruf-innen { text-align: center; display: flex; flex-direction: column; align-items: center; }
+.aufruf-innen h2 { max-width: 20ch; }
+.aufruf-text { max-width: 48ch; color: var(--text-ruhig); margin-bottom: var(--a5); }
+
+/* ========================================================================
+   Leistungen
+   ======================================================================== */
+
+.leistungs-raster {
+  display: grid; gap: var(--a5);
+  grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr));
+  list-style: none; margin: 0; padding: 0;
+}
+.leistungs-raster > li > a,
+.leistungs-raster > li > div > a { display: block; height: 100%; }
+/* Jede Leistungskarte trägt oben das Farbband ihrer Leistung — dieselbe
+   Zuordnung wie auf der bestehenden Seite, dort ist sie die Wiedererkennung.
+
+   Als Rahmenkante, nicht als eigenes Element mit negativen Rändern: Solche
+   Ränder vergrößern die Breite des Elements, und das Band ragte dadurch auf
+   schmalen Geräten links und rechts aus der Karte heraus. */
+.karten-band { display: none; }
+
+.leistungs-raster a {
+  border-top: 4px solid var(--ton, var(--marke));
+  display: flex; flex-direction: column;
+  height: 100%;
+  padding: var(--a6) var(--a5);
+  overflow: hidden;
+  background: var(--flaeche);
+  border: 1px solid var(--linie);
+  border-radius: var(--radius-l);
+  text-decoration: none; color: inherit;
+  background-image: var(--flaeche-verlauf);
+  box-shadow: var(--schatten-2), var(--kante-licht);
+  transition: border-color var(--dauer-kurz) var(--kurve),
+              transform var(--dauer-kurz) var(--kurve);
+  position: relative;
+}
+/* Die Erhebung beim Zeigen: eine zweite Schattenebene wird sichtbar, statt
+   den Schatten selbst zu verändern. */
+.leistungs-raster a::after {
+  content: "";
+  position: absolute; inset: 0;
+  border-radius: inherit;
+  box-shadow: var(--schatten-3);
+  opacity: 0;
+  transition: opacity var(--dauer-kurz) var(--kurve);
+  pointer-events: none;
+}
+.leistungs-raster a:hover { border-color: var(--akzent); transform: translateY(-2px); }
+.leistungs-raster a:hover::after { opacity: 1; }
+.leistungs-raster h3 { margin-bottom: var(--a2); }
+.leistungs-raster p { color: var(--text-ruhig); font-size: var(--gr-s); margin-bottom: 0; }
+.leistungs-kurz { color: var(--akzent) !important; font-weight: 600; margin-bottom: var(--a3) !important; }
+.leistungs-raster .mehr-zeichen { margin-top: auto; padding-top: var(--a4); }
+.leistungs-raster-schlank a { padding: var(--a5); }
+.leistungs-raster-schlank h3 { font-size: var(--gr-xl); }
+
+.leistung-raster {
+  display: grid;
+  grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr);
+  gap: clamp(var(--a6), 5vw, var(--a8));
+  align-items: start;
+}
+.leistung-text h2 { font-size: var(--gr-xl); margin-top: var(--a6); }
+.leistung-text h2:first-child { margin-top: 0; }
+.leistung-text > p { color: var(--text-ruhig); max-width: var(--breite-text); }
+.rand-karte {
+  background: var(--grund-ruhig);
+  border: 1px solid var(--linie);
+  border-radius: var(--radius-l);
+  padding: var(--a6) var(--a5);
+  position: sticky;
+  top: calc(var(--kopfzeile-hoehe) + var(--a5));
+}
+.rand-karte h2 { font-size: var(--gr-l); margin-bottom: var(--a2); }
+.rand-karte > p { color: var(--akzent); font-weight: 600; font-size: var(--gr-s); }
+.rand-karte dl { margin: var(--a5) 0 0; border-top: 1px solid var(--linie); }
+.rand-karte dl > div { display: flex; justify-content: space-between; gap: var(--a3); padding: var(--a3) 0; border-bottom: 1px solid var(--linie); }
+.rand-karte dt { font-size: var(--gr-xs); color: var(--text-leise); }
+.rand-karte dd { margin: 0; font-size: var(--gr-s); font-weight: 600; text-align: right; }
+
+@media (max-width: 900px) {
+  .leistung-raster, .kurz-ueber-raster { grid-template-columns: 1fr; }
+  .rand-karte { position: static; }
+}
+
+/* ========================================================================
+   Über mich, Region
+   ======================================================================== */
+
+.person-raster {
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  gap: clamp(var(--a6), 5vw, var(--a8));
+  align-items: start;
+}
+.person-bild { margin: 0; position: relative; }
+.person-text h2 { font-size: var(--gr-xl); }
+.person-text p { color: var(--text-ruhig); }
+@media (max-width: 900px) {
+  .person-raster { grid-template-columns: 1fr; }
+  .person-bild { max-width: 17rem; }
+}
+
+.qualifikations-raster {
+  display: grid; gap: var(--a5);
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  list-style: none; margin: 0; padding: 0;
+}
+.qualifikations-raster li {
+  background: var(--flaeche);
+  border: 1px solid var(--linie);
+  border-radius: var(--radius-l);
+  padding: var(--a5);
+}
+.qualifikations-raster h3 { font-size: var(--gr-l); }
+.qualifikations-raster p { margin: 0; color: var(--text-ruhig); font-size: var(--gr-s); }
+
+.gebiet-raster { display: grid; gap: var(--a6); grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr)); }
+.gebiet-block {
+  display: flex; flex-direction: column;
+  padding: var(--a4) var(--a5) var(--a5);
+  border-top: 2px solid var(--marke);
+  background-image: var(--flaeche-verlauf);
+  border-radius: 0 0 var(--radius-m) var(--radius-m);
+  box-shadow: var(--schatten-1);
+}
+.gebiet-block h2 { font-size: var(--gr-xl); }
+.gebiet-anriss {
+  color: var(--text-ruhig); font-size: var(--gr-s);
+  margin: var(--a3) 0 var(--a4); max-width: 34ch;
+}
+.gebiet-zahl {
+  margin-top: auto; padding-top: var(--a4);
+  font-size: var(--gr-xs); font-weight: 600;
+  letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-leise);
+}
+.ort-liste { display: flex; flex-wrap: wrap; gap: var(--a2); list-style: none; margin: 0; padding: 0; }
+.ort-liste li {
+  padding: 0.4rem 0.9rem;
+  background: var(--marke-schleier);
+  border: 1px solid var(--marke-mittel);
+  border-radius: var(--radius-rund);
+  font-size: var(--gr-s);
+  color: var(--text-ruhig);
+}
+.gebiet-text { margin-top: var(--a7); max-width: var(--breite-text); }
+.gebiet-text p { color: var(--text-ruhig); }
+
+/* ========================================================================
+   Kontakt
+   ======================================================================== */
+
+.kontakt-raster {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: clamp(var(--a6), 5vw, var(--a8));
+  align-items: start;
+}
+@media (max-width: 900px) { .kontakt-raster { grid-template-columns: 1fr; } }
+
+.anruf-feld {
+  display: inline-flex; align-items: center; gap: var(--a3);
+  padding: var(--a3) var(--a5) var(--a3) var(--a4);
+  background: var(--akzent-schleier);
+  border-radius: var(--radius-rund);
+  text-decoration: none;
+  color: var(--akzent-tief);
+  font-family: var(--schrift-display);
+  font-size: 1.4rem;
+  transition: background var(--dauer-kurz) var(--kurve);
+}
+.anruf-feld:hover { background: var(--marke-mittel); }
+.anruf-feld > span { display: flex; flex-direction: column; line-height: 1.25; }
+.anruf-feld small {
+  font-family: var(--schrift-text);
+  font-size: 0.64rem; font-weight: 600;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--text-ruhig);
+}
+
+.angaben-liste { margin: var(--a6) 0 0; }
+.angaben-liste > div { padding: var(--a4) 0; border-top: 1px solid var(--linie); }
+.angaben-liste dt {
+  font-size: var(--gr-xs); font-weight: 600;
+  letter-spacing: 0.13em; text-transform: uppercase;
+  color: var(--text-leise); margin-bottom: var(--a1);
+}
+.angaben-liste dd { margin: 0; color: var(--text-ruhig); }
+.angaben-liste address { font-style: normal; }
+.kontakt-hinweis { margin-top: var(--a5); font-size: var(--gr-s); color: var(--text-ruhig); }
+
+.formular {
+  display: grid; gap: var(--a4);
+  background: var(--flaeche);
+  background-image: var(--flaeche-verlauf);
+  border: 1px solid var(--linie);
+  border-radius: var(--radius-l);
+  box-shadow: var(--schatten-2), var(--kante-licht);
+  padding: clamp(var(--a5), 3vw, var(--a6));
+}
+.formular label { display: grid; gap: var(--a2); font-size: var(--gr-s); font-weight: 600; color: var(--text-ruhig); }
+.formular input, .formular select, .formular textarea {
+  width: 100%;
+  padding: 0.72rem 0.85rem;
+  background: var(--grund);
+  border: 1px solid var(--linie-kraeftig);
+  border-radius: var(--radius-m);
+  /* Eingesenkt: der Schatten fällt nach innen, das Licht bleibt oben. */
+  box-shadow: inset 0 1px 2px rgba(35, 42, 28, 0.06);
+  color: var(--text);
+  font: inherit; font-weight: 400; font-size: var(--gr-m);
+}
+.formular textarea { resize: vertical; min-height: 8rem; }
+.formular :is(input, select, textarea):focus {
+  border-color: var(--akzent); outline: none; background: var(--flaeche);
+}
+.feld-paar { display: grid; gap: var(--a4); grid-template-columns: 1fr 1fr; align-items: end; }
+@media (max-width: 540px) { .feld-paar { grid-template-columns: 1fr; } }
+.freiwillig { color: var(--text-leise); font-weight: 400; }
+.zustimmung {
+  grid-template-columns: auto 1fr; align-items: start;
+  gap: var(--a3); font-weight: 400; font-size: var(--gr-s); line-height: 1.5;
+}
+.zustimmung input { width: auto; margin-top: 0.2rem; }
+.honigtopf { position: absolute; left: -9999px; }
+.formular-fehler { margin: 0; font-size: var(--gr-s); color: #9c3324; font-weight: 600; }
+.formular-fussnote { margin: 0; font-size: var(--gr-xs); }
+
+.formular-erfolg {
+  background: var(--akzent-schleier);
+  border: 1px solid var(--akzent-hell);
+  border-radius: var(--radius-l);
+  padding: clamp(var(--a6), 4vw, var(--a7));
+}
+.formular-erfolg h2 { font-size: var(--gr-titel-s); }
+.formular-erfolg p { color: var(--text-ruhig); }
+
+.nicht-gefunden { padding-block: var(--a8); }
+
+/* ========================================================================
+   Fußzeile
+   ======================================================================== */
+
+.fusszeile { background: var(--dunkel-tief); color: var(--text-auf-dunkel-ruhig); padding-block: var(--a8) var(--a5); }
+.fusszeile-raster {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr 1.2fr;
+  gap: var(--a6);
+}
+@media (max-width: 960px) { .fusszeile-raster { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 560px) { .fusszeile-raster { grid-template-columns: 1fr; } }
+
+.fusszeile .marke { color: var(--text-auf-dunkel); }
+.fusszeile .signet { color: var(--akzent-hell); }
+.fusszeile .marke-text span { color: var(--akzent-hell); }
+.fusszeile-marke p { margin-top: var(--a4); font-size: var(--gr-s); max-width: 26rem; }
+.fusszeile h2 {
+  font-family: var(--schrift-text);
+  font-size: var(--gr-xs); font-weight: 600;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--text-auf-dunkel); margin-bottom: var(--a4);
+}
+.fusszeile ul { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--a2); }
+.fusszeile a { color: var(--text-auf-dunkel-ruhig); text-decoration: none; font-size: var(--gr-s); }
+.fusszeile a:hover { color: var(--akzent-hell); }
+.fusszeile address { font-style: normal; font-size: var(--gr-s); margin-bottom: var(--a4); }
+.fusszeile-anruf {
+  display: inline-flex; align-items: center; gap: var(--a2);
+  font-family: var(--schrift-display); font-size: 1.2rem;
+  color: var(--akzent-hell) !important; margin-bottom: var(--a4);
+}
+.fusszeile .knopf-linie { background: none; border-color: var(--linie-dunkel); color: var(--text-auf-dunkel); }
+.fusszeile .knopf-linie:hover { border-color: var(--akzent-hell); color: var(--akzent-hell); }
+
+.fusszeile-unten {
+  margin-top: var(--a8);
+  padding-top: var(--a5);
+  border-top: 1px solid var(--linie-dunkel);
+  display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--a4);
+  font-size: var(--gr-xs);
+}
+.fusszeile-unten p { margin: 0; }
+.fusszeile-unten nav { display: flex; flex-wrap: wrap; gap: var(--a5); }
+
+/* ========================================================================
+   Ausstellung — die Querfahrt
+   ======================================================================== */
+
+.aus-einstieg { padding-block: clamp(3rem, 7vw, 6rem) var(--a8); }
+.aus-einstieg h1 { max-width: 16ch; }
+.aus-hinweis {
+  margin-top: var(--a6);
+  font-size: var(--gr-xs);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-leise);
+}
+
+/*
+  Die klebende Bühne — der gemeinsame Unterbau von Querfahrt und Rundgang.
+
+  Der äußere Abschnitt ist hoch — eine Bildschirmhöhe je Station. Diese Höhe
+  IST die Scrollstrecke: sie bestimmt, wie lange die Bühne klebt und wie
+  schnell sich bewegt, was darin liegt.
+
+  Die Bühne klebt mit `position: sticky`. Mehr Eingriff ins Scrollen gibt es
+  nicht: kein `preventDefault`, kein Rad-Abfangen, keine Bibliothek. Der
+  Browser scrollt weiter ganz normal, die Bühne steht nur still, solange der
+  Abschnitt an ihr vorbeiläuft. Was sich darin bewegt, liest diesen Fortschritt
+  mit — auf dem Compositor. Es steuert nichts, es folgt.
+*/
+.buehne-abschnitt {
+  position: relative;
+  /* Der Fortschritt dieses Abschnitts steuert alles darin. Alle Bühnen dürfen
+     denselben Namen tragen: er wird von innen nach außen aufgelöst, jede
+     findet also ihre eigene. */
+  view-timeline-name: --fahrt;
+  view-timeline-axis: block;
+}
+
+.buehne {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  overflow: hidden;
+  /* Die Tiefe des Raums. Alles darin steht in dieser einen Perspektive. */
+  perspective: 1500px;
+  perspective-origin: 50% 46%;
+}
+
+.querfahrt-bahn {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+.station {
+  flex: 0 0 100vw;
+  height: 100%;
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  align-items: center;
+  gap: clamp(var(--a5), 5vw, var(--a8));
+  padding: var(--a7) var(--rand);
+  max-width: 100vw;
+  transform-style: preserve-3d;
+}
+
+.station-bild {
+  position: relative;
+  display: grid;
+  place-items: center;
+  transform-style: preserve-3d;
+}
+
+/* Die Geisterziffer: Ausstellungsbeschilderung hinter dem Blatt, in der
+   Tiefe versetzt, damit sie beim Vorbeiziehen langsamer wandert. */
+.station-geist {
+  position: absolute;
+  left: 50%;
+  top: 8%;
+  transform: translate3d(-58%, -50%, -260px);
+  font-family: var(--schrift-display);
+  font-size: clamp(9rem, 22vw, 20rem);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  color: transparent;
+  -webkit-text-stroke: 1px var(--linie-kraeftig);
+  pointer-events: none;
+  user-select: none;
+}
+
+.station-rahmen {
+  position: relative;
+  width: 100%;
+  padding: clamp(var(--a4), 2.6vw, var(--a6));
+  border-radius: var(--radius-m);
+  color: var(--akzent);
+}
+.station-rahmen svg { display: block; width: 100%; max-height: 54svh; height: auto; }
+
+.station-kopf {
+  display: flex;
+  align-items: center;
+  gap: var(--a3);
+  margin-bottom: var(--a5);
+}
+.station-nummer {
+  font-family: var(--schrift-display);
+  font-size: 1.6rem;
+  color: var(--ton, var(--akzent));
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+.station-strich { width: 2.5rem; height: 1px; background: var(--linie-kraeftig); }
+.station-kategorie {
+  font-size: var(--gr-xs);
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-leise);
+}
+/* `max-width` gibt das Maß vor, darf aber kein Wort zerreißen: „Immobilien-
+   bewertung" ist breiter als 18 Zeichen und wurde als „Immobilienbewertun|g"
+   umbrochen. Auf Silbentrennung ist kein Verlass — nicht jedes System hat
+   das deutsche Wörterbuch. Also bleibt das Wort ganz und ragt lieber über
+   das Maß hinaus; Platz ist in der Spalte genug. */
+.station h2 {
+  font-size: clamp(1.7rem, 3.2vw, 2.8rem);
+  max-width: 18ch;
+  overflow-wrap: normal;
+}
+.station-claim {
+  margin: var(--a3) 0 var(--a4);
+  font-weight: 600;
+  font-size: var(--gr-l);
+  color: var(--ton-schrift, var(--akzent-tief));
+}
+.station-absatz {
+  color: var(--text-ruhig);
+  font-size: var(--gr-l);
+  max-width: 44ch;
+  margin-bottom: var(--a5);
+}
+
+.buehne-leiste {
+  position: absolute;
+  left: var(--rand);
+  right: var(--rand);
+  bottom: clamp(1.5rem, 4vh, 3rem);
+  height: 2px;
+  background: var(--linie);
+  z-index: 3;
+}
+.buehne-balken {
+  display: block;
+  height: 100%;
+  width: 100%;
+  background: var(--akzent);
+  transform-origin: left;
+  transform: scaleX(0);
+}
+
+/* ---------- Variante „hell": die Leistungen als Platten ----------------- */
+
+.querfahrt-hell .station-rahmen {
+  background:
+    linear-gradient(
+      170deg,
+      color-mix(in srgb, var(--ton, var(--marke)) 16%, #fff) 0%,
+      color-mix(in srgb, var(--ton, var(--marke)) 5%, #fff) 62%,
+      #fff 100%
+    );
+  border: 1px solid color-mix(in srgb, var(--ton, var(--marke)) 34%, transparent);
+  /* Der Schatten trägt den Ton mit — eine Platte färbt den Grund unter sich. */
+  box-shadow:
+    0 2px 4px rgba(35, 42, 28, 0.06),
+    2px 18px 40px color-mix(in srgb, var(--ton, var(--marke)) 26%, transparent),
+    var(--kante-licht);
+  color: color-mix(in srgb, var(--ton, var(--marke)) 72%, var(--dunkel));
+}
+/* Die Dicke: eine Oberkante im vollen Leistungston und eine dunklere
+   Unterkante. Damit liest sich die Platte als Gegenstand, nicht als
+   Rechteck — und man sieht beim Drehen, dass sie eine Seite hat. */
+.querfahrt-hell .station-rahmen::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  border-top: 6px solid var(--ton, var(--akzent));
+  border-bottom: 1px solid color-mix(in srgb, var(--ton, var(--marke)) 45%, var(--dunkel));
+  pointer-events: none;
+}
+.querfahrt-hell .station-geist {
+  -webkit-text-stroke-color: color-mix(in srgb, var(--ton, var(--marke)) 30%, transparent);
+}
+.querfahrt-hell .buehne-balken { background: var(--ton, var(--akzent)); }
+
+/* ---------- Der dunkle Raum: die Welt der Ausstellung ------------------- */
+
+/*
+  Der Raum wird nicht geschnitten, er wird betreten: das dunkle Panel fährt
+  seine Deckkraft hoch, wenn die Fahrt beginnt, und wieder herunter, wenn sie
+  endet. Der durchgehende Seitenhintergrund bleibt darunter erhalten.
+*/
+.ist-raum {
+  --text: var(--text-auf-dunkel);
+  --text-ruhig: var(--text-auf-dunkel-ruhig);
+  --text-leise: var(--text-auf-dunkel-ruhig);
+  --akzent: var(--akzent-hell);
+  --akzent-tief: var(--akzent-hell);
+  --linie: var(--linie-dunkel);
+  --linie-kraeftig: rgba(242, 241, 234, 0.22);
+  color: var(--text-auf-dunkel);
+}
+/* Dunkelgrün auf Dunkelgrün wäre unlesbar: im Raum kehrt sich der Knopf um. */
+.ist-raum .knopf-voll { background: var(--akzent-hell); color: var(--dunkel-tief); }
+.ist-raum .knopf-voll:hover { background: #d3e795; color: var(--dunkel-tief); }
+
+.raum {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  background: var(--dunkel-tief);
+  overflow: hidden;
+  z-index: 0;
+}
+/* Boden und Decke: zwei Flächen, nach hinten auslaufend. Sie verkaufen den
+   Raum stärker als alles andere. */
+.raum-boden, .raum-decke {
+  position: absolute;
+  left: -20%;
+  right: -20%;
+  height: 46%;
+  background: linear-gradient(
+    to top,
+    color-mix(in srgb, var(--dunkel-erhoben) 90%, var(--marke)) 0%,
+    transparent 92%
+  );
+}
+.raum-boden { bottom: 0; }
+.raum-decke { top: 0; transform: scaleY(-1); opacity: 0.5; }
+/* Das Licht wandert mit dem Fortschritt durch den Raum. */
+.raum-licht {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    46% 60% at var(--licht-x, 50%) 42%,
+    rgba(255, 246, 226, 0.16) 0%,
+    rgba(255, 246, 226, 0.06) 42%,
+    transparent 72%
+  );
+}
+.nebel {
+  position: absolute;
+  top: 0; bottom: 0;
+  width: clamp(3rem, 12vw, 11rem);
+  z-index: 2;
+  pointer-events: none;
+  opacity: 0;
+}
+.nebel-links  { left: 0;  background: linear-gradient(to right, var(--dunkel-tief), transparent); }
+.nebel-rechts { right: 0; background: linear-gradient(to left,  var(--dunkel-tief), transparent); }
+
+.ist-raum .buehne-leiste { background: rgba(242, 241, 234, 0.15); }
+.ist-raum .buehne-balken { background: var(--akzent-hell); }
+
+/* ---------- Der Rundgang: die Stationen auf einem Kreis ----------------- */
+
+/*
+  Eine eigene Perspektive, flacher als die der Bahn. Bei einem Kreis mit
+  Radius r steht die vorderste Karte um r näher als die Kreismitte; ist die
+  Perspektive zu kurz, wird sie dadurch so stark vergrößert, dass sie das Bild
+  erschlägt. 2400 zu 480 ergibt einen Faktor von 1,25 — sichtbar näher, aber
+  nicht aufdringlich.
+*/
+.rundgang .buehne {
+  perspective: 2400px;
+  perspective-origin: 50% 48%;
+}
+
+.rundgang-kreis {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+/*
+  Jede Karte steht fest auf dem Kreis und dreht sich nicht selbst: die
+  Projektion erledigt das, während sie am Fluchtpunkt vorbeiwandert.
+  `backface-visibility: hidden` blendet die Rückseiten aus — sonst stünden
+  hinter dem Kreis spiegelverkehrte Karten und fingen obendrein den Zeiger ab.
+*/
+.rundgang-karte {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 21rem;
+  height: 27rem;
+  margin: -13.5rem 0 0 -10.5rem;
+  display: flex;
+  flex-direction: column;
+  padding: var(--a4) var(--a4) var(--a5);
+  border-radius: var(--radius-l);
+  /* Deutlich heller als der Raum: --dunkel-erhoben allein reicht nicht,
+     unter dem Lichtkegel verschwimmen Karte und Wand sonst ineinander. */
+  background: linear-gradient(
+    168deg,
+    color-mix(in srgb, var(--dunkel-erhoben) 82%, var(--text-auf-dunkel)) 0%,
+    var(--dunkel-erhoben) 58%
+  );
+  border: 1px solid rgba(242, 241, 234, 0.16);
+  box-shadow: 0 34px 64px rgba(0, 0, 0, 0.55), var(--kante-licht-dunkel);
+  backface-visibility: hidden;
+  /* Ein langer Titel darf nicht über die Kante der Karte hinauslaufen. */
+  overflow: hidden;
+  transform: rotateY(calc(var(--i) * 360deg / var(--stationen)))
+             translateZ(var(--rundgang-radius, 30rem));
+}
+/* Der Lichtschein auf dem Blatt — als läge es unter einem Strahler. */
+.rundgang-karte::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(160deg, rgba(255, 246, 226, 0.1), transparent 58%);
+  pointer-events: none;
+}
+
+.karte-blatt {
+  flex: 1 1 auto;
+  display: grid;
+  place-items: center;
+  min-height: 0;
+  color: var(--akzent-hell);
+  border-radius: var(--radius-m);
+  background: linear-gradient(
+    170deg,
+    rgba(242, 241, 234, 0.07) 0%,
+    rgba(23, 28, 18, 0.34) 100%
+  );
+  border: 1px solid rgba(242, 241, 234, 0.09);
+  padding: var(--a3);
+}
+.karte-blatt svg { display: block; width: 100%; height: auto; max-height: 100%; }
+
+.karte-schild { flex: none; padding-top: var(--a4); }
+.karte-kopf { display: flex; align-items: center; gap: var(--a3); margin: 0 0 var(--a2); }
+.karte-nummer {
+  font-family: var(--schrift-display);
+  font-size: 1.15rem;
+  color: var(--akzent-hell);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+.karte-strich { width: 1.75rem; height: 1px; background: rgba(242, 241, 234, 0.22); }
+.karte-kategorie {
+  font-size: var(--gr-xs);
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-auf-dunkel-ruhig);
+}
+.rundgang-karte h2 {
+  margin: 0;
+  font-size: var(--gr-titel-s);
+  line-height: 1.2;
+  color: var(--text-auf-dunkel);
+  overflow-wrap: normal;
+}
+
+/*
+  Das Aufdeckfeld.
+
+  Beim Scrollen steht auf der Karte nur, worum es geht. Der Absatz kommt beim
+  Zeigen hervor — und nicht nur dann:
+
+  - `:focus-within` deckt ebenso auf. Wer mit der Tastatur auf den Knopf
+    tabbt, soll denselben Text sehen wie jemand mit einer Maus.
+  - Wo es kein Zeigen gibt (`hover: none`), steht das Feld dauerhaft offen.
+    Ein Touchgerät hat keinen Zeiger, den man darüberhalten könnte.
+  - Bewegt sich nur `opacity` und `transform`, nie die Höhe: die Karte darf
+    beim Aufdecken nicht wachsen, sonst springt der Kreis.
+
+  Im Ruhezustand ist das Feld für den Zeiger durchlässig, sonst fingen
+  unsichtbare Knöpfe die Klicks ab.
+*/
+.karte-tafel {
+  position: absolute;
+  inset: 32% 0 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: var(--a6) var(--a4) var(--a5);
+  border-radius: 0 0 var(--radius-l) var(--radius-l);
+  /* Deckend, wo der Text steht, und nach oben auslaufend: der Absatz muss
+     lesbar sein, die Zeichnung darf oben noch durchscheinen. */
+  background: linear-gradient(
+    to top,
+    var(--dunkel-tief) 0%,
+    var(--dunkel-tief) 62%,
+    color-mix(in srgb, var(--dunkel-tief) 88%, transparent) 84%,
+    transparent 100%
+  );
+  opacity: 0;
+  transform: translateY(0.75rem);
+  pointer-events: none;
+  transition: opacity var(--dauer-kurz) var(--kurve),
+              transform var(--dauer-kurz) var(--kurve);
+}
+.karte-tafel p {
+  margin: 0 0 var(--a4);
+  font-size: var(--gr-s);
+  line-height: 1.5;
+  color: var(--text-auf-dunkel);
+}
+.rundgang-karte:hover .karte-tafel,
+.rundgang-karte:focus-within .karte-tafel {
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+}
+@media (hover: none) {
+  .karte-tafel { position: static; opacity: 1; transform: none; pointer-events: auto; background: none; padding: var(--a4) 0 0; }
+  .rundgang-karte { height: auto; }
+}
+
+/*
+  Die Bewegung selbst.
+
+  `contain 0% contain 100%` ist genau der Bereich, in dem der hohe Abschnitt
+  den Bildschirm ausfüllt — also exakt die Zeit, in der die Bühne klebt.
+  Anfang und Ende der Fahrt fallen damit auf Anfang und Ende des Klebens.
+
+  Jede Station dreht sich um ihre eigene Mitte: `--mitte` kommt aus der
+  Komponente und sagt, bei welchem Fortschritt diese Station in der Bildmitte
+  steht. Der Bereich liegt symmetrisch darum, der mittlere Keyframe ist die
+  gerade Ansicht. Sieben Animationen, alle auf `transform`.
+*/
+@supports (animation-timeline: view()) {
+  @media (min-width: 900px) and (prefers-reduced-motion: no-preference) {
+    @keyframes fahren {
+      to { transform: translate3d(calc(-100vw * (var(--stationen) - 1)), 0, 0); }
+    }
+    @keyframes fortschritt { to { transform: scaleX(1); } }
+    @keyframes drehen {
+      from { transform: translate3d(0, 0, -230px) rotateY(26deg); }
+      50%  { transform: translate3d(0, 0, 0) rotateY(0deg); }
+      to   { transform: translate3d(0, 0, -230px) rotateY(-26deg); }
+    }
+    /* Der Raum ist dunkel, bevor man ihn betritt.
+
+       Das ist kein Geschmack, sondern Lesbarkeit: im Raum ist die Schrift
+       hell, und eine helle Schrift auf einem noch hellen Grund ist
+       unlesbar. Der Raum blendet darum früh in der Einfahrt auf und ist
+       spätestens fertig, wenn die Bühne zu kleben beginnt. Ein Ausblenden
+       braucht es nicht — am Ende scrollt die klebende Bühne von selbst aus
+       dem Bild. */
+    @keyframes raum-auf {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+    @keyframes licht-wandern {
+      from { --licht-x: 26%; }
+      to   { --licht-x: 74%; }
+    }
+
+    .querfahrt-bahn {
+      animation: fahren linear both;
+      animation-timeline: --fahrt;
+      animation-range: contain 0% contain 100%;
+    }
+    .buehne-balken {
+      animation: fortschritt linear both;
+      animation-timeline: --fahrt;
+      animation-range: contain 0% contain 100%;
+    }
+    /* Gedreht wird das Bild, nicht die Station.
+
+       Eine Station ist so groß wie das Fenster und enthält Fließtext. Dreht
+       man sie, muss der Browser bei jedem Bild die ganze Fläche samt Schrift
+       neu rastern — gemessen 21 ms je Bild statt 16,7. Dreht sich nur der
+       Rahmen, bleibt der Text flach (und damit lesbar), und die neu zu
+       rasternde Fläche ist weniger als die Hälfte. */
+    .station-bild {
+      animation: drehen linear both;
+      animation-timeline: --fahrt;
+      animation-range: contain calc(var(--mitte) - 19%) contain calc(var(--mitte) + 19%);
+    }
+    .raum, .nebel {
+      animation: raum-auf linear both;
+      animation-timeline: --fahrt;
+      animation-range: entry 15% entry 65%;
+    }
+    .raum-licht {
+      animation: licht-wandern linear both;
+      animation-timeline: --fahrt;
+      animation-range: contain 0% contain 100%;
+    }
+
+    /* Die Zeichnung zeichnet sich, während man auf sie zufährt, und ist
+       fertig, kurz bevor die Station gerade steht. `pathLength="1"` auf
+       jedem Pfad macht alle Linien gleich lang, sodass eine Regel reicht;
+       `stroke-dasharray` und `-dashoffset` erben von der Gruppe. */
+    @keyframes zeichnen-fahrt { to { stroke-dashoffset: 0; } }
+    .station [data-linie] {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 1;
+      animation: zeichnen-fahrt linear both;
+      animation-timeline: --fahrt;
+      animation-range: contain calc(var(--mitte) - 17%) contain calc(var(--mitte) - 4%);
+    }
+    .station [data-linie="2"] {
+      animation-range: contain calc(var(--mitte) - 14%) contain calc(var(--mitte) - 2%);
+    }
+    .station [data-linie="3"] {
+      animation-range: contain calc(var(--mitte) - 11%) contain calc(var(--mitte) + 1%);
+    }
+
+    /* ----- Der Rundgang -------------------------------------------------
+       Ein einziges animiertes Element. Die Drehung endet dort, wo die letzte
+       Station vorn steht — also nach (n−1)/n einer vollen Umdrehung, nicht
+       nach einer ganzen: sonst käme man am Ende wieder bei Station eins an. */
+    @keyframes rundgang-drehen {
+      to { transform: rotateY(calc(-360deg * (var(--stationen) - 1) / var(--stationen))); }
+    }
+    .rundgang-kreis {
+      --rundgang-radius: clamp(18rem, 31vw, 30rem);
+      animation: rundgang-drehen linear both;
+      animation-timeline: --fahrt;
+      animation-range: contain 0% contain 100%;
+    }
+
+    /* Die Zeichnung zeichnet sich, während die Karte nach vorn kommt. */
+    /* Alle Blätter zeichnen sich beim Betreten des Raums, nicht beim
+       Herandrehen.
+
+       Auf dem Korridor kam immer nur eine Station ins Bild, dort konnte jede
+       sich im eigenen Moment zeichnen. Auf dem Kreis sieht man immer drei —
+       darunter zwangsläufig die, die als letzte an die Reihe kommt. Hinge das
+       Zeichnen an ihrer Mitte, stünde sie die ganze Fahrt über als leerer
+       Rahmen da. Also zeichnet sich der ganze Raum, während man ihn betritt,
+       und ist fertig, bevor die Drehung beginnt. */
+    .rundgang-karte [data-linie] {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 1;
+      animation: zeichnen-fahrt linear both;
+      animation-timeline: --fahrt;
+      animation-range: entry 30% entry 78%;
+    }
+    .rundgang-karte [data-linie="2"] { animation-range: entry 40% entry 88%; }
+    .rundgang-karte [data-linie="3"] { animation-range: entry 50% entry 96%; }
+  }
+}
+
+/*
+  Rückfallebene — und zugleich die Fassung für Touchgeräte.
+
+  Ohne scrollgetriebene Animationen, auf schmalen Geräten und bei reduzierter
+  Bewegung gibt es keine überhohe Sektion und kein Kleben. Die Stationen
+  liegen dann in einer gewöhnlichen seitlich wischbaren Reihe mit Einrasten.
+  Eine Seite, die auf dem Handy am Finger klebt, wäre das Gegenteil von
+  hochwertig.
+*/
+@media (max-width: 899.98px), (prefers-reduced-motion: reduce) {
+  .buehne-abschnitt { height: auto !important; }
+  .buehne {
+    position: static; height: auto; overflow: visible;
+    perspective: none;
+    padding-block: var(--abschnitt);
+  }
+  .querfahrt-bahn {
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    overscroll-behavior-x: contain;
+    scrollbar-width: thin;
+    scrollbar-color: var(--linie-kraeftig) transparent;
+    padding: 0 var(--rand) var(--a5);
+    transform-style: flat;
+    will-change: auto;
+  }
+  .station {
+    flex: 0 0 min(88vw, 34rem);
+    scroll-snap-align: center;
+    height: auto;
+    grid-template-columns: 1fr;
+    padding: var(--a6) var(--a5);
+    border: 1px solid var(--linie);
+    border-radius: var(--radius-l);
+    background: var(--flaeche);
+    background-image: var(--flaeche-verlauf);
+    box-shadow: var(--schatten-2), var(--kante-licht);
+    margin-right: var(--a4);
+    transform: none;
+  }
+  .station-geist { display: none; }
+  .station-rahmen { padding: 0; border: 0; background: none; box-shadow: none; }
+  .station-rahmen svg { max-height: 30svh; }
+  .station h2 { font-size: clamp(1.4rem, 5vw, 1.9rem); }
+  .station-absatz, .station-claim { font-size: var(--gr-m); }
+  .buehne-leiste { display: none; }
+  /* Der Raum bleibt ein Raum, nur ohne Perspektive: die Karten sind dunkel,
+     der Hintergrund der Seite läuft weiter durch. */
+  .ist-raum .raum { position: absolute; opacity: 1; }
+  .ist-raum .station {
+    background: var(--dunkel-erhoben);
+    background-image: none;
+    border-color: var(--linie-dunkel);
+    box-shadow: var(--schatten-3);
+  }
+  .ist-raum .nebel { display: none; }
+
+  /* Aus dem Kreis wird eine Wischbahn: dieselben Karten nebeneinander, mit
+     offenem Textfeld. Auf einem Touchscreen ist Wischen die natürlichere
+     Geste als eine umgedeutete Scrollstrecke — und Zeigen gibt es dort
+     ohnehin nicht. */
+  .rundgang .buehne { perspective: none; }
+  .rundgang-kreis {
+    position: static;
+    display: flex;
+    gap: var(--a4);
+    height: auto;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    overscroll-behavior-x: contain;
+    scrollbar-width: thin;
+    scrollbar-color: var(--linie-kraeftig) transparent;
+    padding: 0 var(--rand) var(--a5);
+    transform: none;
+    transform-style: flat;
+    will-change: auto;
+  }
+  .rundgang-karte {
+    position: relative;
+    left: auto; top: auto; margin: 0;
+    flex: 0 0 min(84vw, 22rem);
+    height: auto;
+    scroll-snap-align: center;
+    transform: none;
+  }
+  .karte-blatt { min-height: 12rem; }
+  .karte-tafel {
+    position: static;
+    opacity: 1;
+    transform: none;
+    pointer-events: auto;
+    background: none;
+    padding: var(--a4) 0 0;
+  }
+}
+@supports not (animation-timeline: view()) {
+  .buehne-abschnitt { height: auto !important; }
+  .buehne { position: static; height: auto; overflow: visible; perspective: none; }
+  .querfahrt-bahn {
+    overflow-x: auto;
+    scroll-snap-type: x proximity;
+    overscroll-behavior-x: contain;
+    padding-bottom: var(--a5);
+    transform-style: flat;
+  }
+  .station { flex: 0 0 min(88vw, 40rem); scroll-snap-align: center; height: auto; transform: none; }
+  .station-geist { display: none; }
+  .buehne-leiste { display: none; }
+  .ist-raum .raum { opacity: 1; }
+  /* Ohne scrollgetriebene Animationen dreht sich nichts: der Kreis wird eine
+     wischbare Reihe, wie auf schmalen Geräten. */
+  .rundgang .buehne { perspective: none; }
+  .rundgang-kreis {
+    position: static;
+    display: flex;
+    gap: var(--a4);
+    height: auto;
+    overflow-x: auto;
+    scroll-snap-type: x proximity;
+    overscroll-behavior-x: contain;
+    padding: 0 var(--rand) var(--a5);
+    transform: none;
+    transform-style: flat;
+  }
+  .rundgang-karte {
+    position: relative;
+    left: auto; top: auto; margin: 0;
+    flex: 0 0 min(84vw, 22rem);
+    height: auto;
+    scroll-snap-align: center;
+    transform: none;
+  }
+  .karte-tafel { position: static; opacity: 1; transform: none; pointer-events: auto; background: none; padding: var(--a4) 0 0; }
+}
+
+/* Architektur- und Kompetenzabschnitte der Ausstellungsseite */
+.architektur-raster {
+  display: grid;
+  gap: var(--a6) var(--a7);
+  grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr));
+}
+.arch-block { border-top: 1px solid var(--linie); padding-top: var(--a4); }
+.arch-block h3 { font-size: var(--gr-xl); }
+.arch-block p { color: var(--text-ruhig); margin: 0; }
+
+.kompetenz { border-top: 1px solid var(--linie-zart); }
+.kompetenz-raster {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: clamp(var(--a6), 5vw, var(--a8));
+  align-items: start;
+}
+@media (max-width: 900px) { .kompetenz-raster { grid-template-columns: 1fr; } }
+.kompetenz-text p { color: var(--text-ruhig); }
+.kompetenz-liste { list-style: none; margin: 0; padding: 0; }
+.kompetenz-liste li { padding: var(--a4) 0; border-bottom: 1px solid var(--linie); }
+.kompetenz-liste li:first-child { padding-top: 0; }
+.kompetenz-liste strong { display: block; }
+.kompetenz-liste span { display: block; font-size: var(--gr-s); color: var(--text-ruhig); margin-top: var(--a1); }
+
+/* ========================================================================
+   Startseite: Leistungsstrecke, Teaser, Ablauf
+   ======================================================================== */
+
+/* Leistungen als Lesestrecke: eine Zeile je Leistung, durch Haarlinien
+   getrennt statt in Kästen gesperrt. */
+.strecke { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--linie); }
+.strecke > li { border-bottom: 1px solid var(--linie); }
+.strecke a {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: start;
+  gap: var(--a5);
+  padding: var(--a6) var(--a3);
+  text-decoration: none;
+  color: inherit;
+  /* Der Einzug läuft über `transform`, nicht über `padding` — Innenabstände
+     zu animieren heißt, bei jedem Bild neu zu setzen. */
+  transition: background var(--dauer-kurz) var(--kurve),
+              transform var(--dauer-kurz) var(--kurve);
+}
+.strecke a:hover { background: var(--flaeche-zart); transform: translateX(var(--a3)); }
+.strecke-nr {
+  font-family: var(--schrift-display);
+  font-size: 1.3rem;
+  color: var(--ton, var(--akzent));
+  font-variant-numeric: tabular-nums;
+  padding-top: 0.15em;
+  min-width: 2ch;
+}
+.strecke-inhalt h3 { margin: 0 0 var(--a1); font-size: var(--gr-titel-s); }
+.strecke-kurz { margin: 0 0 var(--a2); color: var(--akzent); font-weight: 600; font-size: var(--gr-s); }
+.strecke-text { margin: 0; color: var(--text-ruhig); font-size: var(--gr-s); max-width: 58ch; }
+.strecke-pfeil { color: var(--text-leise); font-size: 1.1rem; padding-top: 0.2em; }
+.strecke a:hover .strecke-pfeil { color: var(--akzent); }
+.strecke-fuss { margin-top: var(--a5); font-size: var(--gr-s); color: var(--text-ruhig); }
+
+@media (max-width: 640px) {
+  .strecke a { grid-template-columns: auto minmax(0, 1fr); gap: var(--a4); padding-inline: 0; }
+  .strecke-pfeil { display: none; }
+}
+
+/* Ausstellungs-Teaser */
+.teaser { border-top: 1px solid var(--linie-zart); }
+.teaser-raster {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+  gap: clamp(var(--a6), 5vw, var(--a8));
+  align-items: center;
+}
+/* minmax(0, 1fr) statt 1fr: sonst setzt der schmalste Inhalt eine
+   Mindestbreite durch und die Spalte wächst über das Fenster hinaus. */
+@media (max-width: 900px) { .teaser-raster { grid-template-columns: minmax(0, 1fr); } }
+.teaser-text p { color: var(--text-ruhig); }
+.teaser-vorschau {
+  display: grid;
+  /* Drei Blätter nebeneinander, solange Platz ist — auf 320 px werden zwei
+     daraus, statt dass die Zeile aus dem Fenster läuft. */
+  grid-template-columns: repeat(auto-fit, minmax(5.5rem, 1fr));
+  gap: var(--a3);
+}
+.teaser-blatt {
+  display: flex;
+  flex-direction: column;
+  gap: var(--a3);
+  padding: var(--a4);
+  background: var(--flaeche);
+  background-image: var(--flaeche-verlauf);
+  border: 1px solid var(--linie);
+  border-radius: var(--radius-m);
+  box-shadow: var(--schatten-2), var(--kante-licht);
+  color: var(--akzent);
+  /* Leichte Staffelung, damit es nach Blättern aussieht und nicht nach
+     drei gleichen Kacheln. */
+  transform: translateY(calc(var(--i) * 0.6rem));
+}
+.teaser-blatt svg { width: 100%; height: auto; }
+.teaser-blatt small {
+  font-size: 0.66rem;
+  overflow-wrap: anywhere;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-leise);
+}
+
+/* Besondere Situationen: sechs Themen mit eigenem Weg */
+.lagen-raster {
+  display: grid;
+  gap: var(--a6) var(--a7);
+  grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr));
+  list-style: none; margin: 0; padding: 0;
+  background: none; border: 0; border-radius: 0; overflow: visible;
+}
+.lagen-raster li {
+  background: none;
+  padding: var(--a4) 0 0;
+  border-top: 2px solid var(--marke);
+}
+.lagen-raster li:nth-child(2) { border-top-color: var(--ton-verkauf); }
+.lagen-raster li:nth-child(3) { border-top-color: var(--ton-betreuung); }
+.lagen-raster li:nth-child(4) { border-top-color: var(--ton-bewertung); }
+.lagen-raster li:nth-child(5) { border-top-color: var(--ton-beratung); }
+.lagen-raster li:nth-child(6) { border-top-color: var(--ton-vermietung); }
+.lagen-raster h3 { font-size: var(--gr-xl); color: var(--text); margin-bottom: var(--a3); }
+.lagen-raster p { color: var(--text-ruhig); font-size: var(--gr-s); margin-bottom: var(--a3); }
+.lagen-raster .mehr-zeichen { margin-top: 0; text-decoration: none; }
+
+/* Verkaufsablauf in acht Schritten */
+.ablauf { list-style: none; margin: 0 0 var(--a6); padding: 0; counter-reset: schritt; }
+.ablauf li {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--a4);
+  padding: var(--a4) 0;
+  border-bottom: 1px solid var(--linie);
+  position: relative;
+}
+.ablauf-nr {
+  font-family: var(--schrift-display);
+  font-size: 1.15rem;
+  color: var(--akzent);
+  font-variant-numeric: tabular-nums;
+  min-width: 2.2ch;
+}
+.ablauf-inhalt strong { display: block; margin-bottom: var(--a1); }
+.ablauf-inhalt span { display: block; color: var(--text-ruhig); font-size: var(--gr-s); }

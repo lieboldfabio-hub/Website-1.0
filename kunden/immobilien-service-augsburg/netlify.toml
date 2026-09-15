@@ -1,0 +1,17 @@
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+# Ohne diese Umleitung liefert der Server bei einem direkten Aufruf von
+# /impressum oder /immobilie/... einen 404: die Adressen existieren nur im
+# Browser, nicht als Dateien. Im Schwesterprojekt war genau das ein Fehler,
+# der erst nach dem Livegang auffiel.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"

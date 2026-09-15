@@ -1,0 +1,12 @@
+Objektfotos gehören hierher.
+
+Dateinamen müssen zu `bild` in src/daten/immobilien.js passen, zum Beispiel:
+  stadthaus-am-hochfeld.jpg
+
+Empfehlung:
+  - Querformat, 3:2, mindestens 1600 px breit, höchstens 2400 px
+  - als .jpg mit Qualität ~78 speichern, oder .webp
+  - pro Bild unter 400 KB bleiben
+
+Fehlt eine Datei, zeigt der Showroom eine deutlich erkennbare
+Platzhalterfläche mit dem Objektnamen. Die Ausstellung ist also nie leer.
