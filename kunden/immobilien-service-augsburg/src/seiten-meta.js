@@ -35,7 +35,7 @@ export const seiten = [
     weg: "/ausstellung",
     titel: `Ausstellung — Immobilien ${ORT} neu betrachtet`,
     beschreibung:
-      "Eine digitale Ausstellung: Bewertung, Verkauf, Vermietung, Mediation, Betreuungsverfahren und Raumgestaltung — Raum für Raum erklärt.",
+      "Ein Rundgang durch die Immobilienarten in Augsburg: Einfamilienhaus, Eigentumswohnung, Doppelhaushälfte, Mehrfamilienhaus, Grundstück, Altbau und geerbtes Haus.",
     menue: "Ausstellung",
   },
   {

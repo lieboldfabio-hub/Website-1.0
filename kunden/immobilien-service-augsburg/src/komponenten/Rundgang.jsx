@@ -54,7 +54,7 @@ export default function Rundgang({ stationen, beschriftung = "Ausstellung" }) {
         {stationen.map((s, i) => (
           <article
             className="rundgang-karte"
-            key={s.weg}
+            key={s.nummer}
             style={{ "--i": i, "--mitte": `${(i / letzte) * 100}%` }}
           >
             <div className="karte-blatt" aria-hidden="true">

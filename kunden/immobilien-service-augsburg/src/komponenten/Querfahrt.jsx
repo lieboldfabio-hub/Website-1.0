@@ -37,7 +37,7 @@ export default function Querfahrt({ stationen, variante = "hell", beschriftung =
         {stationen.map((s, i) => (
           <article
             className="station"
-            key={s.weg}
+            key={s.nummer}
             style={{
               "--mitte": `${(i / letzte) * 100}%`,
               "--ton": s.ton,

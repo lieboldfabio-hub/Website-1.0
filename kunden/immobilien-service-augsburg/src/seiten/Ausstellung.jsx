@@ -16,10 +16,10 @@ export default function Ausstellung() {
           <p className="ueberzeile">Die Ausstellung</p>
           <h1>Immobilien neu betrachtet.</h1>
           <p className="vorspann">
-            Eine Immobilie ist mehr als eine Zahl im Exposé. Sie ist ein Ort,
-            ein Vermögenswert und oft eine Entscheidung, die mehrere Menschen
-            betrifft. Diese Ausstellung zeigt die Arbeit dahinter — Raum für
-            Raum.
+            Kein Haus gleicht dem anderen, und keine Objektart stellt dieselben
+            Fragen. Diese Ausstellung führt durch die Immobilien, die in
+            Augsburg zu mir kommen — vom Einfamilienhaus bis zum geerbten Haus
+            — und zeigt, worauf es bei jeder von ihnen ankommt.
           </p>
           <div className="knopf-reihe">
             <a className="knopf knopf-voll" href="#ausstellung">Ausstellung entdecken</a>

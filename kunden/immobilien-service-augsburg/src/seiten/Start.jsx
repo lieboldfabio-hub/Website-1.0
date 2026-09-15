@@ -125,9 +125,9 @@ export default function Start() {
             <p className="ueberzeile">Die Ausstellung</p>
             <h2>Immobilien neu betrachtet.</h2>
             <p>
-              Entdecken Sie Immobilien, Architektur und Beratung aus einer
-              anderen Perspektive — sieben Stationen, durch die Sie sich
-              seitlich hindurchbewegen.
+              Ein Rundgang durch die Immobilienarten, die in Augsburg zu mir
+              kommen — vom Einfamilienhaus bis zum geerbten Haus. Sieben
+              Stationen, und das Scrollen dreht Sie daran vorbei.
             </p>
             <Link className="knopf knopf-voll" to="/ausstellung">Zur Ausstellung</Link>
           </Einblenden>
