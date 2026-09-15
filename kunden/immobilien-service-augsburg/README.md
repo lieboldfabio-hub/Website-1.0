@@ -30,7 +30,8 @@ zwei Helligkeiten.
 
 Dazu die sechs Nebenfarben der bestehenden Seite, eine je Leistung — Petrol,
 Sand, Hellblau, Limette, Bordeaux, Khaki. Dort tragen sie die Wiedererkennung,
-hier ebenso: als Kante der Leistungskarten und als Band der Showroom-Tafeln.
+hier ebenso: als Kante der Leistungen in der Lesestrecke und als Ton der
+Stationen in der Ausstellung.
 Fünf davon sind zu hell für weiße Schrift; die Schriftfarbe je Ton steht
 gerechnet in `daten/firma.js`.
 
@@ -38,18 +39,26 @@ Das grüne Band mit Aufruf und Telefonnummer (`Kontaktband.jsx`) ist das
 auffälligste wiederkehrende Element der bestehenden Seite und gliedert hier
 ebenso den Inhalt.
 
-## Der Showroom
+## Die Ausstellung
 
-Ein dunkler Ausstellungsraum, durch den man seitlich fährt — die Tafel in der
-Mitte steht groß und hell, die seitlichen treten zurück. Optisch ist das die
-Wirkung der Vorfassung, technisch hat es damit nichts mehr zu tun.
+`/ausstellung` ist eine eigene Seite: sieben Stationen, nummeriert wie Räume
+einer Ausstellung („01 — Bewertung"). Beim Scrollen bleibt die Bühne stehen und
+der Inhalt wandert seitlich durch, danach läuft die Seite normal weiter.
 
-Die Tiefe trägt eine scrollgetriebene CSS-Animation
-(`animation-timeline: view(inline)`). Die läuft auf dem Compositor: kein
-Scroll-Zuhörer, keine Rechnung je Bild, kein Zugriff aufs Layout. Animiert
-werden nur `transform` und `filter`, beides ohne Layoutwirkung. Browser ohne
-diese Technik zeigen alle Tafeln gleich — es fehlt dann die Tiefe, nicht der
-Inhalt.
+Technisch ist das kein Scroll-Hijacking, sondern eine scrollgetriebene
+CSS-Animation: die Sektion ist so hoch wie die Fahrt lang ist
+(`Stationen × 100svh + 50svh`), die Bühne darin ist `position: sticky`, und die
+Bahn bewegt sich über `animation-timeline: view()` um
+`-100vw × (Stationen − 1)`. Kein Scroll-Zuhörer, keine Rechnung je Bild, kein
+`preventDefault` — der Browser behält das Scrollen.
+
+Gemessen bei 1440 × 900 und sieben Stationen: die Bahn läuft linear von 0 auf
+−8640 px, genau die Breite von sechs Fenstern, dann gibt die Bühne frei.
+
+Unter 900 px Breite und bei `prefers-reduced-motion: reduce` gibt es keine
+Heftung: die Stationen stehen dann als Karten in einer Bahn mit
+`overflow-x: auto` und `scroll-snap-type: x mandatory` — man wischt sie
+seitlich durch, das senkrechte Scrollen bleibt unberührt.
 
 ## Warum das Scrollen so gebaut ist, wie es gebaut ist
 
@@ -59,10 +68,9 @@ Showroom als 660 Bildschirme hohe Sektion, deren Scroll-Fortschritt eine
 WebGL-Kamerafahrt steuerte. Jedes Scroll-Ereignis rechnete und zeichnete.
 
 **Beides ist entfernt und darf nicht zurückkommen.** Das Scrollen gehört dem
-Browser. Die waagerechte Präsentation (`Schaufenster.jsx`) ist ein Element mit
-`overflow-x: auto` — mehr nicht. Was dort an JavaScript steht, greift nie ins
-Scrollen ein: zwei Knöpfe, die `scrollBy` aufrufen, und ein Beobachter, der
-prüft, ob die Knöpfe noch etwas zu tun haben.
+Browser. Die Querfahrt der Ausstellung ist reines CSS (siehe oben), auf
+schmalen Geräten ein Element mit `overflow-x: auto`. In `Querfahrt.jsx` steht
+kein einziger Scroll-Zuhörer.
 
 Gemessen (Startseite, ganze Länge durchgescrollt): 16,7 ms je Bild auf
 Desktop, Laptop, Tablet und Handy — und ebenso bei vierfach gedrosselter
@@ -88,14 +96,19 @@ CPU. Kein einziges Bild über 32 ms. Layout-Verschiebung 0,000.
 - **Adressen stehen in `seiten-meta.js`**, und zwar genau einmal. Menü,
   Fußzeile, Brotkrumen und Routen speisen sich daraus. Eine Seite, die dort
   nicht steht, gibt es nicht — damit kann kein Menüpunkt ins Leere zeigen.
-- **`white-space: nowrap` nur mit Medienabfrage.** Eine Satzfeinheit in der
-  H1 erzwang sonst eine Mindestbreite, die die Seite auf einem 320-Pixel-Gerät
-  quer scrollen ließ.
+- **Kein `white-space: nowrap` in Fließtext-Überschriften.** Zweimal
+  danebengegangen: es erzwingt eine Mindestbreite, die die Seite auf einem
+  320-Pixel-Gerät quer scrollen ließ, und es schafft dahinter eine
+  Umbruchstelle, an der der Schlusspunkt allein in die nächste Zeile rutschte.
+  In der Kopfzeile ist es richtig, im Satz nicht.
+- **Rasterspalten als `minmax(0, 1fr)`, nicht als `1fr`.** Sonst setzt der
+  breiteste unteilbare Inhalt eine Mindestbreite durch und die Spalte wächst
+  über das Fenster hinaus — so entstand der letzte Querüberlauf auf 320 px.
 - **Schriftfarben auf Flächen neu rechnen**, wenn eine Farbe geändert wird:
   mindestens 4,5:1.
-- **Kein `content-visibility: auto` auf den Showroom-Tafeln.** Es spart bei
-  fünf Tafeln nichts und überspringt sie beim Zeichnen, solange sie außerhalb
-  liegen — in einem Bild der ganzen Seite war der Showroom dadurch leer.
+- **Kein `content-visibility: auto` auf den Stationen.** Es spart bei sieben
+  Stationen nichts und überspringt sie beim Zeichnen, solange sie außerhalb
+  liegen — in einem Bild der ganzen Seite war die Ausstellung dadurch leer.
 - **Farbbänder als Rahmenkante, nicht als Element mit negativen Rändern.**
   Solche Ränder vergrößern die Elementbreite; das Band ragte dadurch auf
   schmalen Geräten aus der Karte heraus und ließ die Seite quer scrollen.
@@ -103,14 +116,17 @@ CPU. Kein einziges Bild über 32 ms. Layout-Verschiebung 0,000.
 ## Struktur
 
 - `src/daten/firma.js` — sämtliche Inhalte: Stammdaten, zehn Leistungen,
-  Qualifikationen, Region, Kundenstimmen. Was `offen: true` trägt, liegt nicht
+  Qualifikationen, Verkaufsschritte, Lebenslagen, Region, Kundenstimmen. Was `offen: true` trägt, liegt nicht
   vor und wird in der Oberfläche markiert dargestellt.
 - `src/seiten-meta.js` — Adressregister mit Titel und Beschreibung je Seite.
 - `src/styles/tokens.css` — **alle** Farben, Größen, Abstände, Radien.
 - `src/styles/schriften.css` — selbst ausgelieferte Schriften, kein Aufruf an
   Google.
-- `src/komponenten/Schaufenster.jsx` — die waagerechte Präsentation.
-- `src/bausteine/` — Einblenden, Bildfläche, Seitenkopf, Aufruf, Signet.
+- `src/daten/ausstellung.js` — die sieben Stationen der Ausstellung.
+- `src/komponenten/Querfahrt.jsx` — die angeheftete Seitwärtsfahrt.
+- `src/komponenten/Stimmen.jsx` — Rückmeldungen; ab der zweiten Stimme
+  erscheinen die Punkte zum Blättern von selbst.
+- `src/bausteine/` — Einblenden, Bildfläche, Seitenkopf, Aufruf, Signet, Motiv.
 
 ## Vor dem Livegang
 
@@ -120,13 +136,14 @@ CPU. Kein einziges Bild über 32 ms. Layout-Verschiebung 0,000.
 - **Weitere Kundenstimmen** im Wortlaut; belegt ist bisher eine
 - **Impressum und Datenschutz** prüfen lassen: §34c GewO und DSGVO
 - **Empfänger-Adresse** fürs Formular bei Netlify hinterlegen
-- **Objektbilder**, falls der Showroom später echte Immobilien zeigen soll
+- **Objektbilder**, falls die Ausstellung später echte Immobilien zeigen soll
 
-## Bekannte Grenze
+## Geprüft
 
-Auf genau 320 Pixel Breite misst `scrollWidth` vier Pixel mehr als das
-Fenster. Die Seite lässt sich dort trotzdem nicht seitlich verschieben
-(`overflow-x: hidden` am `body`), es erscheint keine Scrollleiste und kein
-Element ragt sichtbar heraus. Für den Benutzer hat das keine Wirkung; sollte
-es später doch stören, liegt der Rest in der Innenabstands-Rechnung der
-waagerechten Bahn.
+26 Prüfungen, alle bestanden (Skript im Sitzungsverlauf, Vorschau auf `dist/`):
+20 Seiten erreichbar und kein 404, je genau eine H1, eigener Titel und eigene
+Beschreibung; kein Querüberlauf bei 1440, 820, 390 und 320 px; Scrollfluss
+16,7 ms Median ohne ein Bild über 32 ms; Querfahrt monoton und exakt am Ende;
+Ausstellung auf dem Handy bis unten scrollbar; Formular bei Netlify angemeldet
+und jedes Feld beschriftet; keine Fehler in der Konsole.
+Layout-Verschiebung 0,000 auf Desktop, Tablet und Handy.

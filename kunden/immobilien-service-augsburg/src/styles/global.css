@@ -18,6 +18,8 @@ body {
      statt den Kasten aufzudrücken. */
   overflow-wrap: break-word;
   background: var(--grund);
+  /* Der Hintergrund liegt in einem eigenen festen Element (siehe unten),
+     damit hier nichts mitscrollt und nichts neu gezeichnet wird. */
   color: var(--text);
   font-family: var(--schrift-text);
   font-size: var(--gr-m);
@@ -59,6 +61,40 @@ img { max-width: 100%; display: block; }
 .einstieg-raster > *, .kurz-ueber-raster > *, .leistung-raster > *,
 .kontakt-raster > *, .person-raster > *, .fusszeile-raster > *,
 .vertrauen-reihe > *, .knopf-reihe > * { min-width: 0; }
+
+/*
+  Der durchgehende Hintergrund.
+
+  Ein festes Element hinter allem — nicht `background-attachment: fixed` am
+  Body: das rechnet auf iOS bei jedem Scrollschritt neu und ruckelt. Ein
+  Element mit `position: fixed` wird einmal gezeichnet und danach vom
+  Compositor gehalten. Es scrollt nichts, es rechnet nichts.
+
+  Der Verlauf trägt das Gelbgrün der Marke oben, läuft nach unten ins
+  warme Off-White aus und nimmt am Fuß einen Hauch davon wieder auf.
+  Darüber liegt eine sehr feine Struktur, damit die Fläche auf großen
+  Schirmen nicht flach wirkt.
+*/
+.grundflaeche {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(120% 55% at 78% -6%, rgba(168, 196, 85, 0.22), transparent 58%),
+    radial-gradient(90% 45% at 8% 8%, rgba(222, 235, 191, 0.5), transparent 62%),
+    radial-gradient(130% 60% at 50% 108%, rgba(196, 214, 143, 0.2), transparent 64%),
+    linear-gradient(176deg, #f6f7ee 0%, var(--grund) 42%, #f7f6f0 100%);
+}
+/* Feine Körnung, damit der Verlauf auf großen Flächen nicht bandet.
+   Ein Datenbild von 120 Byte, kein Netzzugriff, keine Animation. */
+.grundflaeche::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0.35;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='r'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23r)' opacity='.055'/%3E%3C/svg%3E");
+}
 
 .mitte {
   width: 100%;
@@ -152,7 +188,7 @@ section[id], :target { scroll-margin-top: calc(var(--kopfzeile-hoehe) + var(--a5
 .knopf-voll:hover { background: var(--akzent); color: #fff; }
 .knopf-voll:disabled { opacity: 0.6; cursor: wait; }
 
-.knopf-linie { border-color: var(--linie-kraeftig); color: var(--text); background: var(--grund-rein); }
+.knopf-linie { border-color: var(--linie-kraeftig); color: var(--text); background: var(--flaeche-fest); }
 .knopf-linie:hover { border-color: var(--akzent); color: var(--akzent-tief); }
 
 .knopf-reihe { display: flex; flex-wrap: wrap; gap: var(--a3); margin-top: var(--a5); }
@@ -174,7 +210,7 @@ section[id], :target { scroll-margin-top: calc(var(--kopfzeile-hoehe) + var(--a5
   position: sticky;
   top: 0;
   z-index: 60;
-  background: color-mix(in srgb, var(--grund) 88%, transparent);
+  background: color-mix(in srgb, var(--grund) 82%, transparent);
   backdrop-filter: blur(10px);
   border-bottom: 1px solid transparent;
   transition: border-color var(--dauer-kurz) var(--kurve),
@@ -195,7 +231,7 @@ section[id], :target { scroll-margin-top: calc(var(--kopfzeile-hoehe) + var(--a5
   gap: var(--a5);
 }
 
-.marke { display: inline-flex; align-items: center; gap: var(--a3); text-decoration: none; color: var(--text); }
+.marke { display: inline-flex; align-items: center; gap: var(--a3); text-decoration: none; color: var(--text); min-width: 0; }
 .signet { color: var(--akzent); flex: none; }
 .marke-text { display: flex; flex-direction: column; line-height: 1.2; }
 .marke-text strong { font-family: var(--schrift-display); font-weight: 600; font-size: 1.18rem; }
@@ -207,8 +243,22 @@ section[id], :target { scroll-margin-top: calc(var(--kopfzeile-hoehe) + var(--a5
   color: var(--text-leise);
 }
 
-.hauptmenue { display: flex; align-items: center; gap: var(--a5); }
-.hauptmenue > ul { display: flex; align-items: center; gap: var(--a5); list-style: none; margin: 0; padding: 0; }
+/* Die Abstände schrumpfen mit der Fensterbreite, damit sechs Punkte plus
+   Aktionen auch knapp über dem Umbruchpunkt in eine Zeile passen. */
+.hauptmenue { display: flex; align-items: center; gap: clamp(1rem, 2.2vw, 2rem); }
+.hauptmenue > ul {
+  display: flex; align-items: center; list-style: none; margin: 0; padding: 0;
+  gap: clamp(0.8rem, 1.8vw, 1.75rem);
+}
+/* Menüpunkte brechen nie um — ein zweizeiliges „Über mich" verzieht die Zeile.
+   Nur oberhalb des Umbruchpunkts: im Klappmenü darf alles umbrechen. */
+@media (min-width: 1081px) {
+  .hauptmenue > ul > li > a,
+  .klappe-zeile > a { white-space: nowrap; }
+  .marke { flex: none; }
+  .marke-text strong,
+  .marke-text span { white-space: nowrap; }
+}
 .hauptmenue a {
   color: var(--text-ruhig);
   text-decoration: none;
@@ -218,6 +268,22 @@ section[id], :target { scroll-margin-top: calc(var(--kopfzeile-hoehe) + var(--a5
 }
 .hauptmenue a:hover, .hauptmenue a.active { color: var(--akzent-tief); }
 .hauptmenue a.knopf { color: #fff; }
+
+/* Telefonnummer als Text, Bewertung als Knopf. Zwei Klassen, damit die
+   Farbe die Menüfarbe schlägt — ohne !important. */
+.kopfzeile-aktionen { display: flex; align-items: center; gap: var(--a4); }
+.kopfzeile-aktionen .kopfzeile-anruf {
+  display: inline-flex; align-items: center; gap: var(--a2);
+  font-size: var(--gr-s); font-weight: 600;
+  color: var(--text-ruhig); text-decoration: none; white-space: nowrap;
+}
+.kopfzeile-aktionen .kopfzeile-anruf:hover { color: var(--akzent-tief); }
+
+/* Knapp über dem Umbruchpunkt hat die Nummer keinen Platz mehr. Sie steht
+   im Fuß und auf der Kontaktseite, der Knopf bleibt. */
+@media (min-width: 1081px) and (max-width: 1220px) {
+  .kopfzeile-aktionen .kopfzeile-anruf { display: none; }
+}
 
 .klappe-zeile { display: flex; align-items: center; gap: var(--a1); }
 .klappe-knopf {
@@ -239,7 +305,7 @@ section[id], :target { scroll-margin-top: calc(var(--kopfzeile-hoehe) + var(--a5
   gap: var(--a6);
   min-width: 34rem;
   padding: var(--a5);
-  background: var(--grund-rein);
+  background: var(--flaeche);
   border: 1px solid var(--linie);
   border-radius: var(--radius-l);
   box-shadow: var(--schatten-gehoben);
@@ -267,11 +333,12 @@ section[id], :target { scroll-margin-top: calc(var(--kopfzeile-hoehe) + var(--a5
 @media (max-width: 1080px) {
   .menue-knopf {
     display: inline-flex; align-items: center; gap: var(--a2);
-    background: var(--grund-rein); border: 1px solid var(--linie-kraeftig);
+    background: var(--flaeche); border: 1px solid var(--linie-kraeftig);
     border-radius: var(--radius-rund); color: var(--text);
     font: inherit; font-size: var(--gr-s); font-weight: 600;
-    padding: 0.5rem 0.95rem; cursor: pointer;
+    padding: 0.5rem 0.95rem; cursor: pointer; flex: none;
   }
+  .kopfzeile-innen { gap: var(--a3); }
   .hauptmenue {
     position: absolute;
     inset: 100% 0 auto;
@@ -279,7 +346,8 @@ section[id], :target { scroll-margin-top: calc(var(--kopfzeile-hoehe) + var(--a5
     align-items: stretch;
     gap: 0;
     padding: var(--a4) var(--rand) var(--a6);
-    background: var(--grund-rein);
+    /* Deckend, nicht durchscheinend: hinter dem offenen Menü liegt die Seite. */
+    background: var(--grund);
     border-bottom: 1px solid var(--linie);
     box-shadow: var(--schatten-gehoben);
     max-height: calc(100dvh - var(--kopfzeile-hoehe));
@@ -301,7 +369,8 @@ section[id], :target { scroll-margin-top: calc(var(--kopfzeile-hoehe) + var(--a5
     background: none;
   }
   .klappe.ist-offen { grid-template-columns: 1fr; gap: var(--a4); }
-  .kopfzeile-anruf { margin-top: var(--a5); justify-content: center; }
+  .kopfzeile-aktionen { flex-direction: column; align-items: stretch; gap: var(--a4); margin-top: var(--a5); }
+  .kopfzeile-aktionen .kopfzeile-anruf { justify-content: center; font-size: var(--gr-m); }
 }
 
 /* ========================================================================
@@ -309,14 +378,24 @@ section[id], :target { scroll-margin-top: calc(var(--kopfzeile-hoehe) + var(--a5
    ======================================================================== */
 
 .abschnitt { padding-block: var(--abschnitt); }
-.abschnitt-ruhig { background: var(--grund-ruhig); }
+/* Kein eigener Farbblock mehr: eine Haarlinie oben genügt als Trennung. */
+.abschnitt-ruhig { border-top: 1px solid var(--linie-zart); }
 .abschnitt-kopf { max-width: var(--breite-text); margin-bottom: var(--a7); }
 .abschnitt-vorspann { color: var(--text-ruhig); }
 
 .seitenkopf {
   padding-block: var(--a7) var(--a6);
-  background: linear-gradient(180deg, var(--marke-band), var(--marke-schleier) 62%, var(--grund));
-  border-bottom: 3px solid var(--ton, var(--marke));
+  border-bottom: 1px solid var(--linie);
+  position: relative;
+}
+/* Statt eines Farbblocks eine kurze kräftige Marke unter der Überschrift —
+   sie setzt den Akzent, ohne den durchgehenden Grund zu unterbrechen. */
+.seitenkopf::after {
+  content: "";
+  position: absolute;
+  left: var(--rand); bottom: -2px;
+  width: 4rem; height: 3px;
+  background: var(--ton, var(--marke));
 }
 .seitenkopf h1 { max-width: 20ch; }
 
@@ -356,10 +435,7 @@ section[id], :target { scroll-margin-top: calc(var(--kopfzeile-hoehe) + var(--a5
    Einstieg
    ======================================================================== */
 
-.einstieg {
-  padding-block: clamp(2.5rem, 6vw, 5rem) var(--abschnitt);
-  background: linear-gradient(168deg, var(--marke-band) 0%, var(--marke-schleier) 34%, var(--grund) 66%);
-}
+.einstieg { padding-block: clamp(2.5rem, 6vw, 5rem) var(--abschnitt); }
 .einstieg-raster {
   display: grid;
   grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
@@ -369,14 +445,11 @@ section[id], :target { scroll-margin-top: calc(var(--kopfzeile-hoehe) + var(--a5
 .einstieg h1 { max-width: 17ch; }
 .einstieg h1 em { font-style: italic; color: var(--akzent); }
 /*
-  Die betonte Wendung bleibt zusammen — aber erst, wenn dafür Platz ist.
-  Ohne diese Bedingung erzwingt `nowrap` eine Mindestbreite, die auf einem
-  320-Pixel-Gerät die ganze Spalte aufbläht und die Seite quer scrollen
-  lässt. Eine Satzfeinheit darf das Layout nicht sprengen.
+  Kein `white-space: nowrap` auf der Kursivstelle. Zweimal falsch gewesen:
+  es erzwingt eine Mindestbreite, die auf 320 Pixeln die Spalte aufbläht,
+  und es schafft hinter dem </em> eine Umbruchstelle, an der der Schlusspunkt
+  allein in die nächste Zeile rutscht. Darum steht der Punkt jetzt im <em>.
 */
-@media (min-width: 420px) {
-  .einstieg h1 em { white-space: nowrap; }
-}
 .einstieg-anruf {
   display: inline-flex; align-items: center; gap: var(--a2);
   margin-top: var(--a5);
@@ -447,9 +520,7 @@ section[id], :target { scroll-margin-top: calc(var(--kopfzeile-hoehe) + var(--a5
 
 .vertrauen {
   padding-block: var(--a7);
-  border-top: 3px solid var(--marke);
-  border-bottom: 1px solid var(--linie);
-  background: var(--grund-rein);
+  border-block: 1px solid var(--linie);
 }
 .vertrauen-reihe {
   display: grid;
@@ -499,188 +570,6 @@ section[id], :target { scroll-margin-top: calc(var(--kopfzeile-hoehe) + var(--a5
 .kontaktband-nummer:hover { color: var(--akzent-tief); }
 
 /* ========================================================================
-   Showroom — dunkler Ausstellungsraum, waagerecht begehbar
-   ======================================================================== */
-
-.showroom {
-  position: relative;
-  padding-block: var(--abschnitt);
-  background: var(--dunkel-tief);
-  color: var(--text-auf-dunkel);
-  isolation: isolate;
-  overflow: hidden;
-}
-
-/* Der Raum: ein Lichtkegel von oben und ein Bodenschein, beide gemalt.
-   Zwei Verläufe, die einmal gezeichnet werden und danach nichts kosten —
-   keine Schatten, keine Weichzeichner, keine Lichtberechnung. */
-.showroom-raum {
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  background:
-    radial-gradient(120% 62% at 50% -8%, rgba(191, 218, 113, 0.14), transparent 62%),
-    radial-gradient(90% 40% at 50% 104%, rgba(191, 218, 113, 0.09), transparent 66%);
-}
-
-.showroom h2 { color: var(--text-auf-dunkel); margin: 0; }
-.showroom .ueberzeile { color: var(--akzent-hell); }
-
-.showroom-kopf {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: var(--a5);
-  margin-bottom: var(--a7);
-}
-.showroom-steuerung { display: flex; gap: var(--a2); flex: none; }
-.showroom-steuerung button {
-  display: grid; place-items: center;
-  width: 2.75rem; height: 2.75rem;
-  border: 1px solid var(--linie-dunkel);
-  border-radius: var(--radius-rund);
-  background: transparent;
-  color: var(--text-auf-dunkel);
-  cursor: pointer;
-  transition: border-color var(--dauer-kurz) var(--kurve),
-              color var(--dauer-kurz) var(--kurve),
-              opacity var(--dauer-kurz) var(--kurve);
-}
-.showroom-steuerung button:hover:not(:disabled) {
-  border-color: var(--akzent-hell); color: var(--akzent-hell);
-}
-.showroom-steuerung button:disabled { opacity: 0.3; cursor: default; }
-
-.showroom-bahn {
-  display: flex;
-  gap: var(--a6);
-  list-style: none;
-  margin: 0;
-  padding: var(--a4) var(--rand) var(--a6);
-  overflow-x: auto;
-  scroll-snap-type: x proximity;
-  scroll-padding-inline: var(--rand);
-  /* Ein waagerechter Wisch bleibt in der Bahn und navigiert die Seite
-     nicht zurück. */
-  overscroll-behavior-x: contain;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(242, 241, 234, 0.22) transparent;
-}
-.showroom-bahn::-webkit-scrollbar { height: 5px; }
-.showroom-bahn::-webkit-scrollbar-thumb {
-  background: rgba(242, 241, 234, 0.22); border-radius: var(--radius-rund);
-}
-
-.tafel {
-  flex: 0 0 min(clamp(17rem, 30vw, 24rem), 80vw);
-  scroll-snap-align: center;
-}
-/*
-  Kein `content-visibility: auto` auf den Tafeln.
-
-  Es spart bei fünf Tafeln praktisch nichts, überspringt sie aber beim
-  Zeichnen, solange sie außerhalb liegen — in einem Bild der ganzen Seite
-  war der Showroom dadurch leer. Das ist derselbe Fehler wie Inhalt, der
-  auf `opacity: 0` wartet: Was ein Vorschaubild oder ein Crawler nicht
-  sieht, existiert für sie nicht.
-*/
-.tafel > a {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  text-decoration: none;
-  color: inherit;
-  border-radius: var(--radius-l);
-  overflow: hidden;
-  background: var(--dunkel-erhoben);
-  border: 1px solid var(--linie-dunkel);
-  transition: border-color var(--dauer-kurz) var(--kurve);
-}
-.tafel > a:hover { border-color: var(--akzent-hell); }
-
-/* Das Bild in der Tafel: Rahmen in der Leistungsfarbe, wie auf der
-   bestehenden Seite, dort trägt die Farbe die Wiedererkennung. */
-.tafel-rahmen {
-  position: relative;
-  display: grid;
-  place-items: center;
-  aspect-ratio: 4 / 3;
-  background:
-    radial-gradient(70% 58% at 50% 42%, rgba(255, 246, 226, 0.13), transparent 70%),
-    var(--dunkel);
-  border-bottom: 3px solid var(--ton, var(--marke));
-  color: var(--ton, var(--marke));
-}
-.tafel-motiv { display: block; width: 76%; }
-.tafel-motiv svg { width: 100%; height: auto; }
-.tafel-nummer {
-  position: absolute;
-  top: var(--a4); left: var(--a5);
-  font-family: var(--schrift-display);
-  font-size: var(--gr-s);
-  color: var(--text-auf-dunkel-ruhig);
-  font-variant-numeric: tabular-nums;
-}
-
-.tafel-schild { display: block; padding: var(--a5) var(--a5) var(--a6); }
-.tafel-marke {
-  display: block; width: 2rem; height: 2px;
-  background: var(--ton, var(--marke));
-  margin-bottom: var(--a4);
-}
-.tafel-schild h3 {
-  margin: 0 0 var(--a2);
-  font-size: var(--gr-xl);
-  color: var(--text-auf-dunkel);
-}
-.tafel-schild p { margin: 0; color: var(--text-auf-dunkel-ruhig); font-size: var(--gr-s); }
-.tafel-mehr {
-  display: inline-flex; align-items: center; gap: var(--a2);
-  margin-top: var(--a5);
-  font-size: var(--gr-s); font-weight: 600;
-  color: var(--akzent-hell);
-}
-
-/*
-  Die Tiefe.
-
-  Eine scrollgetriebene Animation auf der waagerechten Achse: Was sich der
-  Mitte nähert, tritt hervor; was zum Rand wandert, tritt zurück. Diese
-  Animation läuft auf dem Compositor — kein Scroll-Zuhörer, keine Rechnung
-  je Bild, kein Zugriff aufs Layout. Genau das unterscheidet sie von der
-  Kamerafahrt der Vorfassung, die dasselbe Bild erzeugte und dabei jedes
-  Scroll-Ereignis blockierte.
-
-  Animiert werden nur `transform` und `filter` — beides ohne Layoutwirkung,
-  also ohne jede Verschiebung des Seiteninhalts.
-*/
-@supports (animation-timeline: view()) {
-  @media (prefers-reduced-motion: no-preference) {
-    @keyframes tafel-tiefe {
-      entry 0%  { transform: scale(0.9) translateY(10px); filter: brightness(0.55); }
-      cover 42% { transform: scale(1) translateY(0);      filter: brightness(1); }
-      cover 58% { transform: scale(1) translateY(0);      filter: brightness(1); }
-      exit 100% { transform: scale(0.9) translateY(10px); filter: brightness(0.55); }
-    }
-    .tafel {
-      animation: tafel-tiefe linear both;
-      animation-timeline: view(inline);
-      animation-range: entry 0% exit 100%;
-      will-change: transform, filter;
-    }
-  }
-}
-
-.showroom-fuss { margin-top: var(--a5); }
-.showroom-fuss p { margin: 0; color: var(--text-auf-dunkel-ruhig); font-size: var(--gr-s); }
-.showroom-fuss a { color: var(--akzent-hell); }
-
-@media (max-width: 700px) {
-  .showroom-kopf { flex-direction: column; align-items: flex-start; }
-  .showroom-steuerung { display: none; }
-}
-
-/* ========================================================================
    Lebenslagen, Über-Anriss, Region, Stimmen
    ======================================================================== */
 
@@ -704,7 +593,7 @@ section[id], :target { scroll-margin-top: calc(var(--kopfzeile-hoehe) + var(--a5
 .lagen-raster p { margin: 0; color: var(--text-ruhig); font-size: var(--gr-s); }
 .lagen-fuss { margin-top: var(--a5); font-size: var(--gr-s); color: var(--text-ruhig); }
 
-.kurz-ueber { padding-block: var(--abschnitt); background: var(--grund-ruhig); }
+.kurz-ueber { padding-block: var(--abschnitt); border-top: 1px solid var(--linie-zart); }
 .kurz-ueber-raster {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
@@ -735,34 +624,80 @@ section[id], :target { scroll-margin-top: calc(var(--kopfzeile-hoehe) + var(--a5
 }
 .ort-mehr { font-size: var(--gr-s); font-weight: 600; margin-left: var(--a2); }
 
-.stimmen { padding-block: var(--abschnitt); background: var(--grund-ruhig); }
-.stimmen-liste {
-  display: grid; gap: var(--a5);
-  grid-template-columns: repeat(auto-fit, minmax(19rem, 1fr));
-  list-style: none; margin: 0; padding: 0;
+.stimmen { padding-block: var(--abschnitt); border-top: 1px solid var(--linie-zart); }
+
+/* Alle Stimmen liegen im selben Rasterfeld übereinander. Die längste gibt
+   die Höhe vor, darum springt beim Blättern nichts. */
+.stimmen-buehne { display: grid; }
+.stimme {
+  grid-area: 1 / 1;
+  margin: 0;
+  max-width: 46rem;
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity var(--dauer-kurz) var(--kurve);
 }
-.stimmen-liste blockquote {
-  margin: 0; height: 100%;
-  background: var(--grund-rein);
-  border: 1px solid var(--linie);
-  border-left: 4px solid var(--marke);
-  border-radius: var(--radius-m);
-  padding: var(--a5) var(--a6);
+.stimme[data-aktiv] { visibility: visible; opacity: 1; }
+
+.stimme blockquote { margin: 0; position: relative; padding-left: var(--a6); }
+/* Das Anführungszeichen sitzt in der Marge, nicht im Textfluss. */
+.stimme blockquote::before {
+  content: "\201C";
+  position: absolute; left: -0.06em; top: -0.34em;
+  font-family: var(--schrift-display);
+  font-size: 4.5rem; line-height: 1;
+  color: var(--marke-mittel);
 }
-.stimmen-liste p { color: var(--text-ruhig); font-size: var(--gr-s); }
-.stimmen-liste footer {
-  margin-top: var(--a4);
+.stimme blockquote p {
+  font-family: var(--schrift-display);
+  font-size: var(--gr-xl);
+  line-height: 1.45;
+  color: var(--text);
+  margin: 0;
+}
+.stimme figcaption {
+  display: flex; flex-direction: column; gap: var(--a1);
+  margin: var(--a5) 0 0 var(--a6);
+  padding-top: var(--a4);
+  border-top: 1px solid var(--linie);
+}
+.stimme-kontext {
   font-size: var(--gr-xs); font-weight: 600;
-  letter-spacing: 0.06em; color: var(--text-leise);
+  letter-spacing: 0.14em; text-transform: uppercase; color: var(--akzent);
 }
-.stimmen-hinweis { margin-top: var(--a5); font-size: var(--gr-s); }
+.stimme-quelle { font-size: var(--gr-s); font-weight: 600; color: var(--text-ruhig); }
+
+.stimmen-punkte { display: flex; gap: var(--a3); margin-top: var(--a6); margin-left: var(--a6); }
+.stimmen-punkte button {
+  width: 2.25rem; height: 2.25rem; padding: 0;
+  background: none; border: 0; cursor: pointer;
+  display: grid; place-items: center;
+}
+.stimmen-punkte button::before {
+  content: ""; width: 0.6rem; height: 0.6rem; border-radius: 50%;
+  background: var(--linie-kraeftig);
+  transition: background var(--dauer-kurz) var(--kurve), transform var(--dauer-kurz) var(--kurve);
+}
+.stimmen-punkte button.ist-aktiv::before { background: var(--akzent); transform: scale(1.35); }
+.stimmen-punkte button:hover::before { background: var(--akzent-tief); }
+
+@media (max-width: 640px) {
+  .stimme blockquote { padding-left: 0; }
+  .stimme blockquote::before { position: static; display: block; font-size: 3rem; }
+  .stimme blockquote p { font-size: var(--gr-l); }
+  .stimme figcaption, .stimmen-punkte { margin-left: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stimme { transition: none; }
+}
 
 /* ========================================================================
    Handlungsaufruf
    ======================================================================== */
 
 .aufruf { padding-block: var(--abschnitt); }
-.aufruf-ruhig { background: var(--grund-ruhig); }
+.aufruf-ruhig { border-block: 1px solid var(--linie-zart); }
 .aufruf-dunkel { background: var(--dunkel); }
 .aufruf-dunkel h2 { color: var(--text-auf-dunkel); }
 .aufruf-dunkel .ueberzeile { color: var(--akzent-hell); }
@@ -798,7 +733,7 @@ section[id], :target { scroll-margin-top: calc(var(--kopfzeile-hoehe) + var(--a5
   height: 100%;
   padding: var(--a6) var(--a5);
   overflow: hidden;
-  background: var(--grund-rein);
+  background: var(--flaeche);
   border: 1px solid var(--linie);
   border-radius: var(--radius-l);
   text-decoration: none; color: inherit;
@@ -866,7 +801,7 @@ section[id], :target { scroll-margin-top: calc(var(--kopfzeile-hoehe) + var(--a5
   list-style: none; margin: 0; padding: 0;
 }
 .qualifikations-raster li {
-  background: var(--grund-rein);
+  background: var(--flaeche);
   border: 1px solid var(--linie);
   border-radius: var(--radius-l);
   padding: var(--a5);
@@ -875,7 +810,21 @@ section[id], :target { scroll-margin-top: calc(var(--kopfzeile-hoehe) + var(--a5
 .qualifikations-raster p { margin: 0; color: var(--text-ruhig); font-size: var(--gr-s); }
 
 .gebiet-raster { display: grid; gap: var(--a6); grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr)); }
+.gebiet-block {
+  display: flex; flex-direction: column;
+  padding-top: var(--a4);
+  border-top: 2px solid var(--marke);
+}
 .gebiet-block h2 { font-size: var(--gr-xl); }
+.gebiet-anriss {
+  color: var(--text-ruhig); font-size: var(--gr-s);
+  margin: var(--a3) 0 var(--a4); max-width: 34ch;
+}
+.gebiet-zahl {
+  margin-top: auto; padding-top: var(--a4);
+  font-size: var(--gr-xs); font-weight: 600;
+  letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-leise);
+}
 .ort-liste { display: flex; flex-wrap: wrap; gap: var(--a2); list-style: none; margin: 0; padding: 0; }
 .ort-liste li {
   padding: 0.4rem 0.9rem;
@@ -933,7 +882,7 @@ section[id], :target { scroll-margin-top: calc(var(--kopfzeile-hoehe) + var(--a5
 
 .formular {
   display: grid; gap: var(--a4);
-  background: var(--grund-rein);
+  background: var(--flaeche);
   border: 1px solid var(--linie);
   border-radius: var(--radius-l);
   padding: clamp(var(--a5), 3vw, var(--a6));
@@ -950,7 +899,7 @@ section[id], :target { scroll-margin-top: calc(var(--kopfzeile-hoehe) + var(--a5
 }
 .formular textarea { resize: vertical; min-height: 8rem; }
 .formular :is(input, select, textarea):focus {
-  border-color: var(--akzent); outline: none; background: var(--grund-rein);
+  border-color: var(--akzent); outline: none; background: var(--flaeche);
 }
 .feld-paar { display: grid; gap: var(--a4); grid-template-columns: 1fr 1fr; align-items: end; }
 @media (max-width: 540px) { .feld-paar { grid-template-columns: 1fr; } }
@@ -1019,3 +968,350 @@ section[id], :target { scroll-margin-top: calc(var(--kopfzeile-hoehe) + var(--a5
 }
 .fusszeile-unten p { margin: 0; }
 .fusszeile-unten nav { display: flex; flex-wrap: wrap; gap: var(--a5); }
+
+/* ========================================================================
+   Ausstellung — die Querfahrt
+   ======================================================================== */
+
+.aus-einstieg { padding-block: clamp(3rem, 7vw, 6rem) var(--a8); }
+.aus-einstieg h1 { max-width: 16ch; }
+.aus-hinweis {
+  margin-top: var(--a6);
+  font-size: var(--gr-xs);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-leise);
+}
+
+/*
+  Die Querfahrt.
+
+  Der äußere Abschnitt ist hoch — eine Bildschirmhöhe je Station. Diese Höhe
+  IST die Scrollstrecke: Sie bestimmt, wie lange die Bühne klebt und wie
+  schnell die Stationen vorbeiziehen.
+
+  Die Bühne klebt mit `position: sticky`. Mehr Eingriff ins Scrollen gibt es
+  nicht: kein `preventDefault`, kein Rad-Abfangen, keine Bibliothek. Der
+  Browser scrollt weiter ganz normal, die Bühne steht nur still, solange der
+  Abschnitt an ihr vorbeiläuft.
+
+  Die Seitwärtsbewegung liest diesen Fortschritt mit — über eine
+  scrollgetriebene Animation auf dem Compositor. Sie kann deshalb weder
+  hängen noch blockieren: Sie steuert nichts, sie folgt.
+*/
+.querfahrt {
+  position: relative;
+  /* Der Fortschritt dieses Abschnitts steuert die Bahn. */
+  view-timeline-name: --fahrt;
+  view-timeline-axis: block;
+}
+
+.querfahrt-buehne {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.querfahrt-bahn {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  will-change: transform;
+}
+
+.station {
+  flex: 0 0 100vw;
+  height: 100%;
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  align-items: center;
+  gap: clamp(var(--a5), 5vw, var(--a8));
+  padding: var(--a7) var(--rand);
+  max-width: 100vw;
+}
+
+.station-motiv {
+  display: grid;
+  place-items: center;
+  color: var(--akzent);
+  opacity: 0.85;
+}
+.station-motiv svg { width: 100%; max-height: 58svh; height: auto; }
+
+.station-kopf {
+  display: flex;
+  align-items: center;
+  gap: var(--a3);
+  margin-bottom: var(--a5);
+}
+.station-nummer {
+  font-family: var(--schrift-display);
+  font-size: 1.6rem;
+  color: var(--akzent);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+.station-strich { width: 2.5rem; height: 1px; background: var(--linie-kraeftig); }
+.station-kategorie {
+  font-size: var(--gr-xs);
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-leise);
+}
+.station h2 { font-size: clamp(1.8rem, 3.6vw, 3.1rem); max-width: 16ch; }
+.station-absatz {
+  color: var(--text-ruhig);
+  font-size: var(--gr-l);
+  max-width: 44ch;
+  margin-bottom: var(--a5);
+}
+
+.querfahrt-leiste {
+  position: absolute;
+  left: var(--rand);
+  right: var(--rand);
+  bottom: clamp(1.5rem, 4vh, 3rem);
+  height: 2px;
+  background: var(--linie);
+}
+.querfahrt-balken {
+  display: block;
+  height: 100%;
+  width: 100%;
+  background: var(--akzent);
+  transform-origin: left;
+  transform: scaleX(0);
+}
+
+/*
+  Die Bewegung selbst.
+
+  `contain 0% contain 100%` ist genau der Bereich, in dem der hohe Abschnitt
+  den Bildschirm vollständig ausfüllt — also exakt die Zeit, in der die Bühne
+  klebt. Anfang und Ende der Querfahrt fallen damit auf Anfang und Ende des
+  Klebens: kein Nachlauf, kein Sprung beim Übergang.
+*/
+@supports (animation-timeline: view()) {
+  @media (min-width: 900px) and (prefers-reduced-motion: no-preference) {
+    @keyframes fahren {
+      to { transform: translate3d(calc(-100vw * (var(--stationen) - 1)), 0, 0); }
+    }
+    @keyframes fortschritt {
+      to { transform: scaleX(1); }
+    }
+    .querfahrt-bahn {
+      animation: fahren linear both;
+      animation-timeline: --fahrt;
+      animation-range: contain 0% contain 100%;
+    }
+    .querfahrt-balken {
+      animation: fortschritt linear both;
+      animation-timeline: --fahrt;
+      animation-range: contain 0% contain 100%;
+    }
+  }
+}
+
+/*
+  Rückfallebene — und zugleich die Fassung für Touchgeräte.
+
+  Ohne scrollgetriebene Animationen, auf schmalen Geräten und bei
+  reduzierter Bewegung gibt es keine überhohe Sektion und kein Kleben. Die
+  Stationen liegen dann in einer gewöhnlichen seitlich scrollbaren Reihe mit
+  Einrasten. Auf einem Touchscreen ist Wischen ohnehin die natürlichere
+  Geste als eine umgedeutete Scrollstrecke — und eine Seite, die auf dem
+  Handy am Finger klebt, wäre genau das Gegenteil von hochwertig.
+*/
+@media (max-width: 899.98px), (prefers-reduced-motion: reduce) {
+  .querfahrt { height: auto !important; }
+  .querfahrt-buehne { position: static; height: auto; overflow: visible; }
+  .querfahrt-bahn {
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    overscroll-behavior-x: contain;
+    scrollbar-width: thin;
+    scrollbar-color: var(--linie-kraeftig) transparent;
+    padding-bottom: var(--a5);
+    will-change: auto;
+  }
+  .station {
+    flex: 0 0 min(88vw, 34rem);
+    scroll-snap-align: center;
+    height: auto;
+    grid-template-columns: 1fr;
+    padding: var(--a6) var(--a5);
+    border: 1px solid var(--linie);
+    border-radius: var(--radius-l);
+    background: var(--flaeche);
+    margin-right: var(--a4);
+  }
+  .station-motiv svg { max-height: 30svh; }
+  .station h2 { font-size: clamp(1.4rem, 5vw, 1.9rem); }
+  .station-absatz { font-size: var(--gr-m); }
+  .querfahrt-leiste { display: none; }
+}
+@supports not (animation-timeline: view()) {
+  .querfahrt { height: auto !important; }
+  .querfahrt-buehne { position: static; height: auto; overflow: visible; }
+  .querfahrt-bahn {
+    overflow-x: auto;
+    scroll-snap-type: x proximity;
+    overscroll-behavior-x: contain;
+    padding-bottom: var(--a5);
+  }
+  .station { flex: 0 0 min(88vw, 40rem); scroll-snap-align: center; height: auto; }
+  .querfahrt-leiste { display: none; }
+}
+
+/* Architektur- und Kompetenzabschnitte der Ausstellungsseite */
+.architektur-raster {
+  display: grid;
+  gap: var(--a6) var(--a7);
+  grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr));
+}
+.arch-block { border-top: 1px solid var(--linie); padding-top: var(--a4); }
+.arch-block h3 { font-size: var(--gr-xl); }
+.arch-block p { color: var(--text-ruhig); margin: 0; }
+
+.kompetenz { border-top: 1px solid var(--linie-zart); }
+.kompetenz-raster {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: clamp(var(--a6), 5vw, var(--a8));
+  align-items: start;
+}
+@media (max-width: 900px) { .kompetenz-raster { grid-template-columns: 1fr; } }
+.kompetenz-text p { color: var(--text-ruhig); }
+.kompetenz-liste { list-style: none; margin: 0; padding: 0; }
+.kompetenz-liste li { padding: var(--a4) 0; border-bottom: 1px solid var(--linie); }
+.kompetenz-liste li:first-child { padding-top: 0; }
+.kompetenz-liste strong { display: block; }
+.kompetenz-liste span { display: block; font-size: var(--gr-s); color: var(--text-ruhig); margin-top: var(--a1); }
+
+/* ========================================================================
+   Startseite: Leistungsstrecke, Teaser, Ablauf
+   ======================================================================== */
+
+/* Leistungen als Lesestrecke: eine Zeile je Leistung, durch Haarlinien
+   getrennt statt in Kästen gesperrt. */
+.strecke { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--linie); }
+.strecke > li { border-bottom: 1px solid var(--linie); }
+.strecke a {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: start;
+  gap: var(--a5);
+  padding: var(--a6) var(--a3);
+  text-decoration: none;
+  color: inherit;
+  transition: background var(--dauer-kurz) var(--kurve),
+              padding-left var(--dauer-kurz) var(--kurve);
+}
+.strecke a:hover { background: var(--flaeche-zart); padding-left: var(--a5); }
+.strecke-nr {
+  font-family: var(--schrift-display);
+  font-size: 1.3rem;
+  color: var(--ton, var(--akzent));
+  font-variant-numeric: tabular-nums;
+  padding-top: 0.15em;
+  min-width: 2ch;
+}
+.strecke-inhalt h3 { margin: 0 0 var(--a1); font-size: var(--gr-titel-s); }
+.strecke-kurz { margin: 0 0 var(--a2); color: var(--akzent); font-weight: 600; font-size: var(--gr-s); }
+.strecke-text { margin: 0; color: var(--text-ruhig); font-size: var(--gr-s); max-width: 58ch; }
+.strecke-pfeil { color: var(--text-leise); font-size: 1.1rem; padding-top: 0.2em; }
+.strecke a:hover .strecke-pfeil { color: var(--akzent); }
+.strecke-fuss { margin-top: var(--a5); font-size: var(--gr-s); color: var(--text-ruhig); }
+
+@media (max-width: 640px) {
+  .strecke a { grid-template-columns: auto minmax(0, 1fr); gap: var(--a4); padding-inline: 0; }
+  .strecke-pfeil { display: none; }
+}
+
+/* Ausstellungs-Teaser */
+.teaser { border-top: 1px solid var(--linie-zart); }
+.teaser-raster {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+  gap: clamp(var(--a6), 5vw, var(--a8));
+  align-items: center;
+}
+/* minmax(0, 1fr) statt 1fr: sonst setzt der schmalste Inhalt eine
+   Mindestbreite durch und die Spalte wächst über das Fenster hinaus. */
+@media (max-width: 900px) { .teaser-raster { grid-template-columns: minmax(0, 1fr); } }
+.teaser-text p { color: var(--text-ruhig); }
+.teaser-vorschau {
+  display: grid;
+  /* Drei Blätter nebeneinander, solange Platz ist — auf 320 px werden zwei
+     daraus, statt dass die Zeile aus dem Fenster läuft. */
+  grid-template-columns: repeat(auto-fit, minmax(5.5rem, 1fr));
+  gap: var(--a3);
+}
+.teaser-blatt {
+  display: flex;
+  flex-direction: column;
+  gap: var(--a3);
+  padding: var(--a4);
+  background: var(--flaeche);
+  border: 1px solid var(--linie);
+  border-radius: var(--radius-m);
+  color: var(--akzent);
+  /* Leichte Staffelung, damit es nach Blättern aussieht und nicht nach
+     drei gleichen Kacheln. */
+  transform: translateY(calc(var(--i) * 0.6rem));
+}
+.teaser-blatt svg { width: 100%; height: auto; }
+.teaser-blatt small {
+  font-size: 0.66rem;
+  overflow-wrap: anywhere;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-leise);
+}
+
+/* Besondere Situationen: sechs Themen mit eigenem Weg */
+.lagen-raster {
+  display: grid;
+  gap: var(--a6) var(--a7);
+  grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr));
+  list-style: none; margin: 0; padding: 0;
+  background: none; border: 0; border-radius: 0; overflow: visible;
+}
+.lagen-raster li {
+  background: none;
+  padding: var(--a4) 0 0;
+  border-top: 2px solid var(--marke);
+}
+.lagen-raster li:nth-child(2) { border-top-color: var(--ton-verkauf); }
+.lagen-raster li:nth-child(3) { border-top-color: var(--ton-betreuung); }
+.lagen-raster li:nth-child(4) { border-top-color: var(--ton-bewertung); }
+.lagen-raster li:nth-child(5) { border-top-color: var(--ton-beratung); }
+.lagen-raster li:nth-child(6) { border-top-color: var(--ton-vermietung); }
+.lagen-raster h3 { font-size: var(--gr-xl); color: var(--text); margin-bottom: var(--a3); }
+.lagen-raster p { color: var(--text-ruhig); font-size: var(--gr-s); margin-bottom: var(--a3); }
+.lagen-raster .mehr-zeichen { margin-top: 0; text-decoration: none; }
+
+/* Verkaufsablauf in acht Schritten */
+.ablauf { list-style: none; margin: 0 0 var(--a6); padding: 0; counter-reset: schritt; }
+.ablauf li {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--a4);
+  padding: var(--a4) 0;
+  border-bottom: 1px solid var(--linie);
+  position: relative;
+}
+.ablauf-nr {
+  font-family: var(--schrift-display);
+  font-size: 1.15rem;
+  color: var(--akzent);
+  font-variant-numeric: tabular-nums;
+  min-width: 2.2ch;
+}
+.ablauf-inhalt strong { display: block; margin-bottom: var(--a1); }
+.ablauf-inhalt span { display: block; color: var(--text-ruhig); font-size: var(--gr-s); }

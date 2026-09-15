@@ -39,9 +39,44 @@ export const qualifikationen = [
 
 /* Die Vertrauensargumente direkt unter dem Einstieg. */
 export const vertrauen = [
-  { zahl: "30+", label: "Jahre Berufserfahrung", text: "Seit über drei Jahrzehnten im Augsburger Immobilienmarkt." },
-  { zahl: "5", label: "Qualifikationen", text: "Innenarchitektur, Immobilienwirtschaft, Mediation, Bewertung, Betreuung." },
-  { zahl: "1", label: "Ansprechpartnerin", text: "Von der Bewertung bis zum Notartermin dieselbe Person." },
+  {
+    zahl: "30+",
+    label: "Jahre Erfahrung",
+    text: "Langjährige Erfahrung in Bewertung, Verkauf und Vermietung.",
+  },
+  {
+    zahl: "24",
+    label: "Orte im Gebiet",
+    text: "Augsburg und die umliegende Region aus langjähriger Tätigkeit.",
+  },
+  {
+    zahl: "1",
+    label: "Ansprechpartnerin",
+    text: "Eine feste Ansprechpartnerin vom ersten Gespräch bis zum Abschluss.",
+  },
+  {
+    zahl: "4",
+    label: "Fachgebiete",
+    text: "Immobilienwirtschaft, Innenarchitektur, Marktwertermittlung und Mediation, miteinander verbunden.",
+  },
+];
+
+/*
+  Der Verkaufsprozess in acht Schritten.
+
+  Er macht sichtbar, was zwischen „Ich möchte verkaufen" und dem Schlüssel
+  in fremder Hand tatsächlich passiert — und wo die Arbeit steckt, die
+  Eigentümer selten sehen.
+*/
+export const verkaufsschritte = [
+  { nr: "01", titel: "Bewertung", text: "Ortstermin, Aufnahme des Objekts, belastbare Einschätzung des Marktwerts." },
+  { nr: "02", titel: "Vorbereitung", text: "Unterlagen zusammenstellen: Grundbuch, Flurkarte, Bauakte, Energieausweis." },
+  { nr: "03", titel: "Vermarktung", text: "Exposé, Grundrisse, Fotos, Anzeigen mit allen gesetzlichen Pflichtangaben." },
+  { nr: "04", titel: "Interessenten", text: "Anfragen sichten, Ernsthaftigkeit und Finanzierung klären, vorauswählen." },
+  { nr: "05", titel: "Besichtigungen", text: "Termine begleiten, Fragen beantworten, Rückmeldungen einholen." },
+  { nr: "06", titel: "Verhandlung", text: "Angebote bewerten, Bedingungen klären, Preis und Termine abstimmen." },
+  { nr: "07", titel: "Notartermin", text: "Kaufvertrag vorbereiten, Entwurf prüfen, Beurkundung begleiten." },
+  { nr: "08", titel: "Übergabe", text: "Zählerstände, Schlüssel, Protokoll — und der Abschluss ist wirklich abgeschlossen." },
 ];
 
 /*
@@ -121,6 +156,22 @@ export const leistungen = [
       "Betreuungsverfahren mit Beteiligung des Gerichts",
     ],
     text: "Es ist immer wieder erstaunlich, wie sich Konflikte um Immobilienbesitz mit einer neutralen Vermittlerin lösen lassen — in der Regel von allen Beteiligten getragen und schneller, als ein Verfahren dauern würde. Als geprüfte ImmoMediatorin bin ich für beide Seiten da, nicht für eine.",
+  },
+  {
+    weg: "/betreuungsverfahren",
+    ton: "var(--ton-betreuung)",
+    tonSchrift: "#2b2a14",
+    titel: "Betreuungsverfahren",
+    kurz: "Wenn das Gericht mitentscheidet",
+    anriss: "Verkauf einer Immobilie im Rahmen eines Betreuungsverfahrens — unter Aufsicht und mit Zustimmung des Betreuungsgerichts.",
+    haupt: true,
+    punkte: [
+      "Abstimmung mit Betreuerin oder Betreuer",
+      "Wertermittlung, die vor Gericht Bestand hat",
+      "Vollständige Unterlagen für den Genehmigungsantrag",
+      "Begleitung bis zur Genehmigung durch das Gericht",
+    ],
+    text: "Steht eine Immobilie im Eigentum einer betreuten Person, entscheidet nicht allein der Betreuer: Das Betreuungsgericht überwacht den gesamten Ablauf und muss dem Verkauf zustimmen. Das macht die Arbeit zeitintensiv, formell und anspruchsvoll — Wertermittlung und Unterlagen müssen einer gerichtlichen Prüfung standhalten. Auf genau diese Fälle bin ich spezialisiert, und Betreuungsbüros arbeiten seit Jahren aus diesem Grund mit mir.",
   },
   {
     weg: "/beratung",
@@ -218,26 +269,91 @@ export const leistungen = [
 export const hauptleistungen = leistungen.filter((l) => l.haupt);
 export const weitereLeistungen = leistungen.filter((l) => !l.haupt);
 
-/* Die Lebenslagen, die auf der bestehenden Seite eigens hervorgehoben sind. */
+/*
+  Besondere Situationen.
+
+  Die bestehende Seite hebt diese Fälle eigens hervor, und zu Recht: Hier
+  sucht jemand nicht nach einem Makler, sondern nach einem Weg aus einer
+  Lage. Jede Situation bekommt deshalb eine Erklärung und einen eigenen
+  nächsten Schritt.
+*/
 export const lebenslagen = [
-  { titel: "Scheidung", text: "Eine gemeinsame Immobilie muss nicht zum Streitpunkt werden. Als Mediatorin bin ich für beide Seiten da." },
-  { titel: "Erbschaft", text: "Erbengemeinschaften scheitern selten am Objekt und fast immer am Gespräch. Ich führe es, bevor es vor Gericht geführt wird." },
-  { titel: "Erbpacht", text: "Erbbaurechte sind erklärungsbedürftig und schrecken Käufer ab, wenn sie niemand einordnet." },
-  { titel: "Betreuung", text: "Beim Verkauf im Betreuungsverfahren überwacht das Gericht den Ablauf und muss zustimmen. Darauf bin ich eingerichtet." },
+  {
+    titel: "Scheidung und Trennung",
+    text: "Eine gemeinsame Immobilie muss nicht zum Streitpunkt werden. Ob verkauft, übernommen oder vermietet wird, ist zuerst eine Frage der Verständigung — und dann eine des Preises. Als geprüfte Mediatorin bin ich für beide Seiten da, nicht für eine.",
+    weg: "/immobilienmediation",
+    aufruf: "Zur Mediation",
+  },
+  {
+    titel: "Erbschaft",
+    text: "Erbengemeinschaften scheitern selten am Objekt und fast immer am Gespräch. Solange alle Beteiligten einig sind, ist der Verkauf unkompliziert; danach wird er teuer. Ich führe das Gespräch, bevor es vor Gericht geführt wird.",
+    weg: "/immobilienmediation",
+    aufruf: "Zur Mediation",
+  },
+  {
+    titel: "Betreuungsverfahren",
+    text: "Steht eine Immobilie im Eigentum einer betreuten Person, überwacht das Betreuungsgericht den Verkauf und muss zustimmen. Wertermittlung und Unterlagen müssen einer gerichtlichen Prüfung standhalten. Darauf bin ich spezialisiert.",
+    weg: "/betreuungsverfahren",
+    aufruf: "Zu Betreuungsverfahren",
+  },
+  {
+    titel: "Erbbaurecht",
+    text: "Erbbaurechte sind erklärungsbedürftig: Restlaufzeit, Erbbauzins und Heimfall entscheiden über den Wert. Wer sie nicht einordnet, schreckt Käufer ab oder verkauft zu billig.",
+    weg: "/immobilienbewertung",
+    aufruf: "Zur Bewertung",
+  },
+  {
+    titel: "Das Haus wird zu groß",
+    text: "Wenn die Kinder aus dem Haus sind oder Treppen zum Hindernis werden, steht selten nur ein Verkauf an, sondern ein ganzer Lebensabschnitt. Dafür braucht es Zeit und jemanden, der zuhört, bevor er rechnet.",
+    weg: "/beratung",
+    aufruf: "Zur Beratung",
+  },
+  {
+    titel: "Veränderte Lebenssituation",
+    text: "Ein neuer Beruf, eine Pflegesituation, ein Umzug in eine andere Stadt: Manche Entscheidungen lassen sich nicht aufschieben. Dann zählt, dass der Verkauf zuverlässig und ohne Nachfragen läuft.",
+    weg: "/immobilienverkauf",
+    aufruf: "Zum Verkauf",
+  },
 ];
 
-/* Einsatzgebiet. Die Orte stammen von der bestehenden Seite. */
-export const region = {
-  stadt: [
-    "Göggingen", "Pfersee", "Hochzoll", "Haunstetten", "Kriegshaber",
-    "Lechhausen", "Bismarckviertel", "Antonsviertel", "Firnhaberau",
-    "Hammerschmiede", "Hochfeld", "Inningen", "Univiertel", "Spickel-Herrenbach",
-  ],
-  umland: [
-    "Friedberg", "Bobingen", "Königsbrunn", "Mering", "Kissing",
-    "Neusäß", "Stadtbergen", "Leitershofen", "Bergheim", "Straßberg",
-  ],
-};
+/*
+  Einsatzgebiet. Die Orte stammen von der bestehenden Seite, sind hier aber
+  nach Gebietskörperschaft sortiert statt in eine lange Liste geworfen:
+  Stadtteile Augsburgs, Landkreis Augsburg, Landkreis Aichach-Friedberg.
+  Bergheim ist ein Stadtteil Augsburgs und steht darum oben, Leitershofen
+  gehört zu Stadtbergen, Straßberg zu Bobingen.
+*/
+export const region = [
+  {
+    schluessel: "stadt",
+    titel: "Augsburg — Stadtteile",
+    anriss:
+      "Der Augsburger Markt ist kleinteilig. Zwei gleich große Wohnungen in zwei Stadtteilen sind selten gleich viel wert.",
+    orte: [
+      "Antonsviertel", "Bergheim", "Bismarckviertel", "Firnhaberau",
+      "Göggingen", "Hammerschmiede", "Haunstetten", "Hochfeld", "Hochzoll",
+      "Inningen", "Kriegshaber", "Lechhausen", "Pfersee",
+      "Spickel-Herrenbach", "Univiertel",
+    ],
+  },
+  {
+    schluessel: "landkreis-a",
+    titel: "Landkreis Augsburg",
+    anriss:
+      "Westlich und südlich der Stadt. Hier entscheidet oft die Anbindung über den Preis, nicht die Quadratmeterzahl.",
+    orte: [
+      "Bobingen", "Königsbrunn", "Leitershofen", "Neusäß", "Stadtbergen",
+      "Straßberg",
+    ],
+  },
+  {
+    schluessel: "landkreis-af",
+    titel: "Landkreis Aichach-Friedberg",
+    anriss:
+      "Östlich des Lechs. Eigener Markt mit eigenem Tempo — und eigenen Vergleichswerten.",
+    orte: ["Friedberg", "Kissing", "Mering"],
+  },
+];
 
 /*
   Kundenstimmen.
@@ -250,6 +366,7 @@ export const region = {
 export const stimmen = [
   {
     text: "Als gesetzlicher Betreuer hatte ich mehrmals Unterstützung von Frau Sens bei der Veräußerung von Immobilien. Dabei ist zu beachten, dass solche Verkäufe kompliziert sind, es muss das Betreuungsgericht mit eingebunden werden. Frau Sens konnte durch ihre freundliche, sozial kompetente Art und ihr hohes Fachwissen zur Abwicklung der Geschäfte beitragen.",
+    kontext: "Immobilienverkauf im Betreuungsverfahren",
     quelle: "Betreuungsbüro Alberth, Augsburg",
   },
 ];

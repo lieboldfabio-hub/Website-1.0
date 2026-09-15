@@ -1,5 +1,5 @@
 import { useLocation, Link, Navigate } from "react-router-dom";
-import { leistungen, firma } from "../daten/firma.js";
+import { leistungen, firma, verkaufsschritte } from "../daten/firma.js";
 import { useSeitenkopf } from "../bausteine/useSeitenkopf.js";
 import Seitenkopf from "../bausteine/Seitenkopf.jsx";
 import Einblenden from "../bausteine/Einblenden.jsx";
@@ -41,6 +41,26 @@ export default function Leistungsseite() {
             <ul className="haken-liste">
               {l.punkte.map((p) => <li key={p}>{p}</li>)}
             </ul>
+
+            {/* Beim Verkauf zeigt eine Abfolge mehr als eine Aufzählung:
+                Sie macht sichtbar, wo die Arbeit steckt, die Eigentümer
+                selten zu sehen bekommen. */}
+            {weg === "/immobilienverkauf" && (
+              <>
+                <h2>Der Ablauf</h2>
+                <ol className="ablauf">
+                  {verkaufsschritte.map((sch) => (
+                    <Einblenden als="li" key={sch.nr}>
+                      <span className="ablauf-nr">{sch.nr}</span>
+                      <span className="ablauf-inhalt">
+                        <strong>{sch.titel}</strong>
+                        <span>{sch.text}</span>
+                      </span>
+                    </Einblenden>
+                  ))}
+                </ol>
+              </>
+            )}
 
             <div className="knopf-reihe">
               <Link className="knopf knopf-voll" to="/kontakt">Beratung vereinbaren</Link>

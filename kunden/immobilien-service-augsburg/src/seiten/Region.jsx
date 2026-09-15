@@ -18,19 +18,18 @@ export default function Region() {
 
       <section className="abschnitt">
         <div className="mitte gebiet-raster">
-          <Einblenden className="gebiet-block">
-            <h2>Augsburg Stadt</h2>
-            <ul className="ort-liste">
-              {region.stadt.map((o) => <li key={o}>{o}</li>)}
-            </ul>
-          </Einblenden>
-
-          <Einblenden className="gebiet-block" verzug={80}>
-            <h2>Umgebung und Landkreis</h2>
-            <ul className="ort-liste">
-              {region.umland.map((o) => <li key={o}>{o}</li>)}
-            </ul>
-          </Einblenden>
+          {region.map((gebiet, i) => (
+            <Einblenden className="gebiet-block" key={gebiet.schluessel} verzug={i * 70}>
+              <h2>{gebiet.titel}</h2>
+              <p className="gebiet-anriss">{gebiet.anriss}</p>
+              <ul className="ort-liste">
+                {gebiet.orte.map((o) => <li key={o}>{o}</li>)}
+              </ul>
+              <p className="gebiet-zahl">
+                {gebiet.orte.length} {gebiet.orte.length === 1 ? "Ort" : "Orte"}
+              </p>
+            </Einblenden>
+          ))}
         </div>
 
         <div className="mitte gebiet-text">

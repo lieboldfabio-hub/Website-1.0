@@ -1,13 +1,26 @@
 import { Link } from "react-router-dom";
-import { firma, vertrauen, lebenslagen, qualifikationen, region, stimmen } from "../daten/firma.js";
+import {
+  firma, vertrauen, lebenslagen, qualifikationen, region, hauptleistungen,
+} from "../daten/firma.js";
+import { stationen } from "../daten/ausstellung.js";
 import { useSeitenkopf } from "../bausteine/useSeitenkopf.js";
 import Einblenden from "../bausteine/Einblenden.jsx";
+import Stimmen from "../komponenten/Stimmen.jsx";
 import Bildflaeche from "../bausteine/Bildflaeche.jsx";
 import Aufruf from "../bausteine/Aufruf.jsx";
 import Kontaktband from "../bausteine/Kontaktband.jsx";
-import Schaufenster from "../komponenten/Schaufenster.jsx";
+import Motiv from "../bausteine/Motiv.jsx";
 import { TelefonZeichen } from "../komponenten/Kopfzeile.jsx";
 
+/*
+  Die Startseite erzählt in einer Reihenfolge, die sich beim Scrollen
+  entwickelt: Ankommen, Vertrauen, Kompetenz, Leistungen, besondere
+  Situationen, Persönlichkeit, Region, Ausstellung, Kontakt.
+
+  Kein Abschnitt bringt einen eigenen Farbblock mit — der Hintergrund läuft
+  unter allem durch, getrennt wird über Abstand, Haarlinien und leicht
+  erhobene Flächen.
+*/
 export default function Start() {
   useSeitenkopf("/");
 
@@ -18,17 +31,20 @@ export default function Start() {
           <div className="einstieg-text">
             <p className="ueberzeile">Immobilienmaklerin für {firma.gebiet}</p>
             <h1>
-              Ein Zuhause wechselt
-              <em> nicht nebenbei</em> den Besitzer.
+              Immobilien in Augsburg mit Erfahrung, Marktkenntnis und{" "}
+              <em>persönlicher Beratung.</em>
             </h1>
             <p className="vorspann">
-              Seit über {firma.erfahrungJahre} Jahren begleite ich Eigentümer in
-              Augsburg und Umgebung durch Bewertung, Verkauf und Vermietung —
-              und durch die Fälle, in denen mehrere Parteien entscheiden müssen.
+              Zertifizierte Immobilienmaklerin für Augsburg Stadt und Land mit
+              mehr als {firma.erfahrungJahre} Jahren Berufserfahrung.
             </p>
             <div className="knopf-reihe">
-              <Link className="knopf knopf-voll" to="/kontakt">Beratung vereinbaren</Link>
-              <Link className="knopf knopf-linie" to="/immobilienbewertung">Immobilie bewerten lassen</Link>
+              <Link className="knopf knopf-voll" to="/immobilienbewertung">
+                Immobilie bewerten lassen
+              </Link>
+              <Link className="knopf knopf-linie" to="/kontakt">
+                Persönliche Beratung
+              </Link>
             </div>
             <a className="einstieg-anruf" href={`tel:${firma.telefonLink}`}>
               <TelefonZeichen /> Direkt anrufen: {firma.telefon}
@@ -54,7 +70,7 @@ export default function Start() {
       <section className="vertrauen" aria-label="Auf einen Blick">
         <ul className="mitte vertrauen-reihe">
           {vertrauen.map((v, i) => (
-            <Einblenden als="li" key={v.label} verzug={i * 70}>
+            <Einblenden als="li" key={v.label} verzug={i * 60}>
               <span className="vertrauen-zahl">{v.zahl}</span>
               <strong>{v.label}</strong>
               <p>{v.text}</p>
@@ -63,49 +79,112 @@ export default function Start() {
         </ul>
       </section>
 
+      {/* Leistungen als Lesestrecke, nicht als Kartenreihe: eine Zeile je
+          Leistung, mit Nummer, Aussage und Weg dorthin. */}
+      <section className="abschnitt leistungsstrecke">
+        <div className="mitte">
+          <div className="abschnitt-kopf">
+            <p className="ueberzeile">Leistungen</p>
+            <h2>Wobei ich Sie begleite</h2>
+            <p className="abschnitt-vorspann">
+              Von der ersten Einschätzung bis zum Notartermin — und in den
+              Fällen, in denen mehr nötig ist als eine Vermarktung.
+            </p>
+          </div>
+
+          <ol className="strecke">
+            {hauptleistungen.map((l, i) => (
+              <Einblenden als="li" key={l.weg} verzug={(i % 3) * 50}
+                style={{ "--ton": l.ton }}>
+                <Link to={l.weg}>
+                  <span className="strecke-nr">{String(i + 1).padStart(2, "0")}</span>
+                  <span className="strecke-inhalt">
+                    <h3>{l.titel}</h3>
+                    <p className="strecke-kurz">{l.kurz}</p>
+                    <p className="strecke-text">{l.anriss}</p>
+                  </span>
+                  <span className="strecke-pfeil" aria-hidden="true">→</span>
+                </Link>
+              </Einblenden>
+            ))}
+          </ol>
+
+          <p className="strecke-fuss">
+            Dazu Wohnflächenberechnung, Grundrisse, Energieausweis, Unterlagen
+            und Innenarchitektur — alles in der{" "}
+            <Link to="/leistungen">Leistungsübersicht</Link>.
+          </p>
+        </div>
+      </section>
+
       <Kontaktband />
 
-      <Schaufenster />
+      {/* Teaser: die Ausstellung selbst liegt auf ihrer eigenen Seite. */}
+      <section className="abschnitt teaser">
+        <div className="mitte teaser-raster">
+          <Einblenden className="teaser-text">
+            <p className="ueberzeile">Die Ausstellung</p>
+            <h2>Immobilien neu betrachtet.</h2>
+            <p>
+              Entdecken Sie Immobilien, Architektur und Beratung aus einer
+              anderen Perspektive — sieben Stationen, durch die Sie sich
+              seitlich hindurchbewegen.
+            </p>
+            <Link className="knopf knopf-voll" to="/ausstellung">Zur Ausstellung</Link>
+          </Einblenden>
 
-      <section className="lagen">
+          <Einblenden className="teaser-vorschau" verzug={80} aria-hidden="true">
+            {stationen.slice(0, 3).map((s, i) => (
+              <span className="teaser-blatt" key={s.nummer} style={{ "--i": i }}>
+                <Motiv art={s.motiv} />
+                <small>{s.nummer} — {s.kategorie}</small>
+              </span>
+            ))}
+          </Einblenden>
+        </div>
+      </section>
+
+      <section className="abschnitt lagen">
         <div className="mitte">
           <div className="abschnitt-kopf">
             <p className="ueberzeile">Besondere Situationen</p>
-            <h2>Wenn es nicht nur um den Preis geht</h2>
+            <h2>Wenn eine Immobilie zur Herausforderung wird</h2>
             <p className="abschnitt-vorspann">
               Manche Immobilien werden nicht verkauft, weil jemand umziehen
               möchte, sondern weil eine Lebenslage es verlangt. Dann entscheidet
               die Gesprächsführung über das Ergebnis, nicht das Exposé.
             </p>
           </div>
+
           <ul className="lagen-raster">
             {lebenslagen.map((l, i) => (
-              <Einblenden als="li" key={l.titel} verzug={i * 60}>
+              <Einblenden als="li" key={l.titel} verzug={(i % 3) * 60}>
                 <h3>{l.titel}</h3>
                 <p>{l.text}</p>
+                <Link className="mehr-zeichen" to={l.weg}>{l.aufruf}</Link>
               </Einblenden>
             ))}
           </ul>
-          <p className="lagen-fuss">
-            Mehr dazu unter <Link to="/immobilienmediation">Immobilienmediation</Link>.
-          </p>
         </div>
       </section>
 
-      <Kontaktband text="Immobilie bewerten lassen" weg="/immobilienbewertung" />
-
-      <section className="kurz-ueber">
+      <section className="abschnitt kurz-ueber">
         <div className="mitte kurz-ueber-raster">
           <Einblenden className="kurz-ueber-text">
             <p className="ueberzeile">Über mich</p>
             <h2>Ich kenne die Straßen, nicht nur die Postleitzahlen.</h2>
             <p>
               Über {firma.erfahrungJahre} Jahre Immobilien in Augsburg Stadt und
-              Land. In dieser Zeit habe ich gelernt, dass hinter jedem Objekt eine
-              Entscheidung steht, die jemandem schwerfällt — ein Umzug, ein Erbe,
-              eine Trennung, ein Anfang.
+              Land. In dieser Zeit habe ich gelernt, dass hinter jedem Objekt
+              eine Entscheidung steht, die jemandem schwerfällt — ein Umzug, ein
+              Erbe, eine Trennung, ein Anfang.
             </p>
-            <Link className="knopf knopf-linie" to="/ueber-uns">Mehr über mich</Link>
+            <p>
+              Meine Arbeit beginnt deshalb mit Zuhören und nicht mit einem
+              Preisvorschlag. Was ich einschätze, erkläre ich so, dass Sie es
+              nachvollziehen können — und was ich nicht weiß, sage ich auch.
+            </p>
+            <Link className="knopf knopf-linie" to="/ueber-mich">Mehr über mich</Link>
           </Einblenden>
 
           <Einblenden als="ul" className="qualifikations-liste" verzug={80}>
@@ -119,14 +198,18 @@ export default function Start() {
         </div>
       </section>
 
-      <section className="region-kurz">
+      <section className="abschnitt region-kurz">
         <div className="mitte">
           <div className="abschnitt-kopf">
             <p className="ueberzeile">Einsatzgebiet</p>
             <h2>Augsburg Stadt und Land</h2>
+            <p className="abschnitt-vorspann">
+              Regionale Marktkenntnis heißt: wissen, warum zwei gleich große
+              Wohnungen in zwei Stadtteilen unterschiedlich viel wert sind.
+            </p>
           </div>
-          <Einblenden as="div" className="ort-wolke">
-            {[...region.stadt.slice(0, 8), ...region.umland.slice(0, 5)].map((o) => (
+          <Einblenden className="ort-wolke">
+            {region.flatMap((g) => g.orte.slice(0, 5)).map((o) => (
               <span key={o}>{o}</span>
             ))}
             <Link to="/region" className="ort-mehr">alle Orte ansehen</Link>
@@ -134,30 +217,7 @@ export default function Start() {
         </div>
       </section>
 
-      {stimmen.length > 0 && (
-        <section className="stimmen">
-          <div className="mitte">
-            <div className="abschnitt-kopf">
-              <p className="ueberzeile">Rückmeldungen</p>
-              <h2>Was Auftraggeber sagen</h2>
-            </div>
-            <ul className="stimmen-liste">
-              {stimmen.map((s, i) => (
-                <Einblenden als="li" key={s.quelle} verzug={i * 70}>
-                  <blockquote>
-                    <p>{s.text}</p>
-                    <footer>{s.quelle}</footer>
-                  </blockquote>
-                </Einblenden>
-              ))}
-            </ul>
-            <p className="stimmen-hinweis offen">
-              Weitere Google-Rezensionen der bestehenden Seite ergänzen, sobald
-              sie im Wortlaut vorliegen — erfundene Bewertungen kommen hier nicht hinein.
-            </p>
-          </div>
-        </section>
-      )}
+      <Stimmen />
 
       <Aufruf
         ueberzeile="Verkaufen oder vermieten?"

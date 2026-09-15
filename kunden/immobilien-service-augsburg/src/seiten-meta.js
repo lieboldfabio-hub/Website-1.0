@@ -15,7 +15,7 @@ export const seiten = [
     titel: `Immobilienmaklerin ${ORT} — Marion Sens`,
     beschreibung:
       "Immobilienmaklerin in Augsburg mit über 30 Jahren Erfahrung: Bewertung, Verkauf, Vermietung, Beratung und Immobilienmediation. Persönlich und regional.",
-    menue: null,
+    menue: "Startseite",
   },
   {
     weg: "/leistungen",
@@ -32,18 +32,25 @@ export const seiten = [
     untermenue: l.titel,
   })),
   {
+    weg: "/ausstellung",
+    titel: `Ausstellung — Immobilien ${ORT} neu betrachtet`,
+    beschreibung:
+      "Eine digitale Ausstellung: Bewertung, Verkauf, Vermietung, Mediation, Betreuungsverfahren und Raumgestaltung — Raum für Raum erklärt.",
+    menue: "Ausstellung",
+  },
+  {
+    weg: "/ueber-mich",
+    titel: `Marion Sens — Immobilienmaklerin und ImmoMediatorin`,
+    beschreibung:
+      "Dipl.-Ing. Innenarchitektin, diplomierte Immobilienwirtin, geprüfte ImmoMediatorin und zertifizierte MarktWert-Maklerin mit über 30 Jahren Berufserfahrung.",
+    menue: "Über mich",
+  },
+  {
     weg: "/region",
     titel: `Einsatzgebiet — Immobilien ${ORT} Stadt und Land`,
     beschreibung:
       "Einsatzgebiet: Augsburger Stadtteile von Göggingen bis Lechhausen sowie Friedberg, Königsbrunn, Neusäß, Mering und das weitere Umland.",
     menue: "Region",
-  },
-  {
-    weg: "/ueber-uns",
-    titel: `Marion Sens — Immobilienmaklerin und ImmoMediatorin`,
-    beschreibung:
-      "Dipl.-Ing. Innenarchitektin, diplomierte Immobilienwirtin, geprüfte ImmoMediatorin und zertifizierte MarktWert-Maklerin mit über 30 Jahren Berufserfahrung.",
-    menue: "Über mich",
   },
   {
     weg: "/kontakt",

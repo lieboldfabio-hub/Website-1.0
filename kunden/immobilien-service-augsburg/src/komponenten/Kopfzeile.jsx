@@ -66,56 +66,65 @@ export default function Kopfzeile() {
 
         <nav id="hauptmenue" className={`hauptmenue${offen ? " ist-offen" : ""}`} aria-label="Hauptmenü">
           <ul>
-            <li className="hat-klappe" ref={klappeRef}>
-              <div className="klappe-zeile">
-                <NavLink to="/leistungen">Leistungen</NavLink>
-                <button
-                  type="button"
-                  className="klappe-knopf"
-                  aria-expanded={klappeOffen}
-                  aria-label="Leistungen aufklappen"
-                  onClick={() => setKlappeOffen((o) => !o)}
-                >
-                  <svg viewBox="0 0 12 8" width="11" height="8" aria-hidden="true">
-                    <path d="M1 1.5 6 6.5l5-5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
-                  </svg>
-                </button>
-              </div>
+            {/* Ein Durchlauf über das Register, damit die Reihenfolge im Menü
+               dieselbe ist wie dort. Leistungen bekommen eine Klappe. */}
+            {menuepunkte.map((punkt) =>
+              punkt.weg === "/leistungen" ? (
+                <li className="hat-klappe" key={punkt.weg} ref={klappeRef}>
+                  <div className="klappe-zeile">
+                    <NavLink to={punkt.weg}>{punkt.menue}</NavLink>
+                    <button
+                      type="button"
+                      className="klappe-knopf"
+                      aria-expanded={klappeOffen}
+                      aria-label="Leistungen aufklappen"
+                      onClick={() => setKlappeOffen((o) => !o)}
+                    >
+                      <svg viewBox="0 0 12 8" width="11" height="8" aria-hidden="true">
+                        <path d="M1 1.5 6 6.5l5-5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+                      </svg>
+                    </button>
+                  </div>
 
-              <div className={`klappe${klappeOffen ? " ist-offen" : ""}`}>
-                <div className="klappe-spalte">
-                  <p className="klappe-titel">Kernleistungen</p>
-                  {hauptleistungen.map((l) => (
-                    <NavLink key={l.weg} to={l.weg}>
-                      <strong>{l.titel}</strong>
-                      <span>{l.kurz}</span>
-                    </NavLink>
-                  ))}
-                </div>
-                <div className="klappe-spalte">
-                  <p className="klappe-titel">Weitere Leistungen</p>
-                  {weitereLeistungen.map((l) => (
-                    <NavLink key={l.weg} to={l.weg}>
-                      <strong>{l.titel}</strong>
-                      <span>{l.kurz}</span>
-                    </NavLink>
-                  ))}
-                </div>
-              </div>
-            </li>
-
-            {menuepunkte
-              .filter((p) => p.weg !== "/leistungen")
-              .map((p) => (
-                <li key={p.weg}>
-                  <NavLink to={p.weg}>{p.menue}</NavLink>
+                  <div className={`klappe${klappeOffen ? " ist-offen" : ""}`}>
+                    <div className="klappe-spalte">
+                      <p className="klappe-titel">Kernleistungen</p>
+                      {hauptleistungen.map((l) => (
+                        <NavLink key={l.weg} to={l.weg}>
+                          <strong>{l.titel}</strong>
+                          <span>{l.kurz}</span>
+                        </NavLink>
+                      ))}
+                    </div>
+                    <div className="klappe-spalte">
+                      <p className="klappe-titel">Weitere Leistungen</p>
+                      {weitereLeistungen.map((l) => (
+                        <NavLink key={l.weg} to={l.weg}>
+                          <strong>{l.titel}</strong>
+                          <span>{l.kurz}</span>
+                        </NavLink>
+                      ))}
+                    </div>
+                  </div>
                 </li>
-              ))}
+              ) : (
+                <li key={punkt.weg}>
+                  <NavLink to={punkt.weg} end={punkt.weg === "/"}>
+                    {punkt.menue}
+                  </NavLink>
+                </li>
+              )
+            )}
           </ul>
 
-          <a className="knopf knopf-voll klein kopfzeile-anruf" href={`tel:${firma.telefonLink}`}>
-            <TelefonZeichen /> {firma.telefon}
-          </a>
+          <div className="kopfzeile-aktionen">
+            <a className="kopfzeile-anruf" href={`tel:${firma.telefonLink}`}>
+              <TelefonZeichen /> {firma.telefon}
+            </a>
+            <Link className="knopf knopf-voll klein" to="/immobilienbewertung">
+              Immobilie bewerten
+            </Link>
+          </div>
         </nav>
       </div>
     </header>

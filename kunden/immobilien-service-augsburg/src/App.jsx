@@ -1,4 +1,4 @@
-import { Routes, Route, useLocation } from "react-router-dom";
+import { Routes, Route, useLocation, Navigate } from "react-router-dom";
 import { useEffect } from "react";
 import { leistungen } from "./daten/firma.js";
 import Kopfzeile from "./komponenten/Kopfzeile.jsx";
@@ -7,6 +7,7 @@ import Start from "./seiten/Start.jsx";
 import Leistungsuebersicht from "./seiten/Leistungsuebersicht.jsx";
 import Leistungsseite from "./seiten/Leistungsseite.jsx";
 import UeberMich from "./seiten/UeberMich.jsx";
+import Ausstellung from "./seiten/Ausstellung.jsx";
 import RegionSeite from "./seiten/Region.jsx";
 import Kontakt from "./seiten/Kontakt.jsx";
 import Recht from "./seiten/Recht.jsx";
@@ -15,6 +16,9 @@ import NichtGefunden from "./seiten/NichtGefunden.jsx";
 export default function App() {
   return (
     <>
+      {/* Der Hintergrund der ganzen Seite — ein festes Element hinter allem. */}
+      <div className="grundflaeche" aria-hidden="true" />
+
       <a className="zum-inhalt" href="#inhalt">Zum Inhalt springen</a>
       <NachObenBeiWechsel />
       <Kopfzeile />
@@ -30,8 +34,12 @@ export default function App() {
             <Route key={l.weg} path={l.weg} element={<Leistungsseite />} />
           ))}
 
+          <Route path="/ausstellung" element={<Ausstellung />} />
           <Route path="/region" element={<RegionSeite />} />
-          <Route path="/ueber-uns" element={<UeberMich />} />
+          <Route path="/ueber-mich" element={<UeberMich />} />
+          {/* Die frühere Adresse bleibt gültig und leitet weiter — ein Link,
+              der einmal existiert hat, darf nicht ins Leere führen. */}
+          <Route path="/ueber-uns" element={<Navigate to="/ueber-mich" replace />} />
           <Route path="/kontakt" element={<Kontakt />} />
           <Route path="/impressum" element={<Recht art="impressum" />} />
           <Route path="/datenschutz" element={<Recht art="datenschutz" />} />

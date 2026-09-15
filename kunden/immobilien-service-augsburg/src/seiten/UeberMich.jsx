@@ -1,13 +1,14 @@
 import { Link } from "react-router-dom";
-import { firma, qualifikationen, stimmen } from "../daten/firma.js";
+import { firma, qualifikationen } from "../daten/firma.js";
 import { useSeitenkopf } from "../bausteine/useSeitenkopf.js";
 import Seitenkopf from "../bausteine/Seitenkopf.jsx";
 import Einblenden from "../bausteine/Einblenden.jsx";
+import Stimmen from "../komponenten/Stimmen.jsx";
 import Bildflaeche from "../bausteine/Bildflaeche.jsx";
 import Aufruf from "../bausteine/Aufruf.jsx";
 
 export default function UeberMich() {
-  useSeitenkopf("/ueber-uns");
+  useSeitenkopf("/ueber-mich");
 
   return (
     <>
@@ -71,26 +72,7 @@ export default function UeberMich() {
         </div>
       </section>
 
-      {stimmen.length > 0 && (
-        <section className="abschnitt">
-          <div className="mitte">
-            <div className="abschnitt-kopf">
-              <p className="ueberzeile">Rückmeldungen</p>
-              <h2>Was Auftraggeber sagen</h2>
-            </div>
-            <ul className="stimmen-liste">
-              {stimmen.map((s) => (
-                <li key={s.quelle}>
-                  <blockquote>
-                    <p>{s.text}</p>
-                    <footer>{s.quelle}</footer>
-                  </blockquote>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </section>
-      )}
+      <Stimmen ueberzeile="Rückmeldungen" titel="Womit Auftraggeber gekommen sind" />
 
       <Aufruf
         titel="Lernen wir uns kennen."

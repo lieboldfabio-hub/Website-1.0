@@ -16,11 +16,19 @@
 */
 
 :root {
-  /* --- Grundflächen, warm statt kalt ------------------------------------ */
-  --grund: #fbfaf7;          /* warmes Off-White */
+  /* --- Der Grund --------------------------------------------------------
+     Die Seite hat EINEN Hintergrund, der unter allem durchläuft. Abschnitte
+     bekommen keine eigenen Farbblöcke mehr — getrennt wird über Abstand,
+     feine Linien und leicht erhobene, halbdurchsichtige Flächen. Sonst
+     zerfällt die Seite beim Scrollen in eine Kette bunter Kästen. */
+  --grund: #fbfaf7;          /* warmes Off-White, Basis des Verlaufs */
   --grund-rein: #ffffff;
-  --grund-ruhig: #f4f2ec;    /* Greige für abgesetzte Abschnitte */
-  --grund-warm: #eeebe2;     /* etwas kräftiger, für Karten auf Greige */
+
+  /* Flächen, die sich vom Grund abheben, ohne ihn zu unterbrechen:
+     weiß mit Durchlässigkeit — der Hintergrund bleibt dahinter sichtbar. */
+  --flaeche: rgba(255, 255, 255, 0.62);
+  --flaeche-fest: rgba(255, 255, 255, 0.86);
+  --flaeche-zart: rgba(255, 255, 255, 0.34);
 
   /* --- Dunkel: der Showroom und die Fußzeile ---------------------------- */
   --dunkel: #232a1c;         /* Anthrazit mit Grünstich, passend zur Marke */
@@ -57,8 +65,9 @@
   --ton-weiteres: #8c9a60;    /* Oliv, für die übrigen Leistungen */
 
   /* --- Linien ------------------------------------------------------------ */
-  --linie: #e4e1d7;
-  --linie-kraeftig: #cdc9bb;
+  --linie: rgba(96, 92, 72, 0.14);
+  --linie-kraeftig: rgba(96, 92, 72, 0.26);
+  --linie-zart: rgba(96, 92, 72, 0.08);
   --linie-dunkel: rgba(242, 241, 234, 0.13);
 
   /* --- Offene Punkte sichtbar halten ------------------------------------ */
