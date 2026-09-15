@@ -1,9 +1,9 @@
 import { Link } from "react-router-dom";
-import { firma, qualifikationen, leistungen } from "../daten/firma.js";
+import { firma, qualifikationen } from "../daten/firma.js";
 import { stationen } from "../daten/ausstellung.js";
 import { useSeitenkopf } from "../bausteine/useSeitenkopf.js";
 import Aufruf from "../bausteine/Aufruf.jsx";
-import Querfahrt from "../komponenten/Querfahrt.jsx";
+import Rundgang from "../komponenten/Rundgang.jsx";
 import Motiv from "../bausteine/Motiv.jsx";
 
 export default function Ausstellung() {
@@ -26,14 +26,18 @@ export default function Ausstellung() {
             <Link className="knopf knopf-linie" to="/kontakt">Beratung vereinbaren</Link>
           </div>
           <p className="aus-hinweis">
-            Scrollen Sie weiter — die Ausstellung bewegt sich seitlich mit.
+            Scrollen Sie weiter — der Rundgang dreht sich mit.
+            {/* Auf einem Touchgerät gibt es nichts, worauf man zeigen könnte,
+                und dort steht der Text ohnehin offen auf der Karte. */}
+            <span className="nur-mit-zeiger">
+              {" "}Zeigen Sie auf eine Station, und sie erzählt mehr.
+            </span>
           </p>
         </div>
       </section>
 
       <div id="ausstellung">
-        <Querfahrt
-          variante="raum"
+        <Rundgang
           beschriftung="Ausstellung"
           stationen={stationen.map((s) => ({
             nummer: s.nummer,
@@ -43,7 +47,6 @@ export default function Ausstellung() {
             weg: s.weg,
             aufruf: s.aufruf,
             motiv: s.motiv,
-            ton: leistungen.find((l) => l.weg === s.weg)?.ton,
           }))}
         />
       </div>

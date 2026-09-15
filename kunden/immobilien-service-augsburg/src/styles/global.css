@@ -128,6 +128,11 @@ section[id], :target { scroll-margin-top: calc(var(--kopfzeile-hoehe) + var(--a5
   clip: rect(0 0 0 0); white-space: nowrap; border: 0;
 }
 
+/* Was nur stimmt, wenn es einen Zeiger gibt. Auf einem Touchgerät wäre der
+   Hinweis „zeigen Sie auf …" schlicht falsch. */
+.nur-mit-zeiger { display: none; }
+@media (hover: hover) { .nur-mit-zeiger { display: inline; } }
+
 /* Offene Punkte bleiben sichtbar, bis sie gefüllt sind. */
 .offen {
   background: var(--offen-flaeche);
@@ -1073,28 +1078,28 @@ section[id], :target { scroll-margin-top: calc(var(--kopfzeile-hoehe) + var(--a5
 }
 
 /*
-  Die Querfahrt, in zwei Varianten.
+  Die klebende Bühne — der gemeinsame Unterbau von Querfahrt und Rundgang.
 
   Der äußere Abschnitt ist hoch — eine Bildschirmhöhe je Station. Diese Höhe
   IST die Scrollstrecke: sie bestimmt, wie lange die Bühne klebt und wie
-  schnell die Stationen vorbeiziehen.
+  schnell sich bewegt, was darin liegt.
 
   Die Bühne klebt mit `position: sticky`. Mehr Eingriff ins Scrollen gibt es
   nicht: kein `preventDefault`, kein Rad-Abfangen, keine Bibliothek. Der
   Browser scrollt weiter ganz normal, die Bühne steht nur still, solange der
-  Abschnitt an ihr vorbeiläuft. Die Seitwärtsbewegung liest diesen Fortschritt
-  mit — auf dem Compositor. Sie steuert nichts, sie folgt.
+  Abschnitt an ihr vorbeiläuft. Was sich darin bewegt, liest diesen Fortschritt
+  mit — auf dem Compositor. Es steuert nichts, es folgt.
 */
-.querfahrt {
+.buehne-abschnitt {
   position: relative;
-  /* Der Fortschritt dieses Abschnitts steuert alles darin. Beide Varianten
-     dürfen denselben Namen tragen: er wird von innen nach außen aufgelöst,
-     jede Fahrt findet also ihre eigene. */
+  /* Der Fortschritt dieses Abschnitts steuert alles darin. Alle Bühnen dürfen
+     denselben Namen tragen: er wird von innen nach außen aufgelöst, jede
+     findet also ihre eigene. */
   view-timeline-name: --fahrt;
   view-timeline-axis: block;
 }
 
-.querfahrt-buehne {
+.buehne {
   position: sticky;
   top: 0;
   height: 100svh;
@@ -1204,7 +1209,7 @@ section[id], :target { scroll-margin-top: calc(var(--kopfzeile-hoehe) + var(--a5
   margin-bottom: var(--a5);
 }
 
-.querfahrt-leiste {
+.buehne-leiste {
   position: absolute;
   left: var(--rand);
   right: var(--rand);
@@ -1213,7 +1218,7 @@ section[id], :target { scroll-margin-top: calc(var(--kopfzeile-hoehe) + var(--a5
   background: var(--linie);
   z-index: 3;
 }
-.querfahrt-balken {
+.buehne-balken {
   display: block;
   height: 100%;
   width: 100%;
@@ -1255,16 +1260,16 @@ section[id], :target { scroll-margin-top: calc(var(--kopfzeile-hoehe) + var(--a5
 .querfahrt-hell .station-geist {
   -webkit-text-stroke-color: color-mix(in srgb, var(--ton, var(--marke)) 30%, transparent);
 }
-.querfahrt-hell .querfahrt-balken { background: var(--ton, var(--akzent)); }
+.querfahrt-hell .buehne-balken { background: var(--ton, var(--akzent)); }
 
-/* ---------- Variante „raum": die Ausstellung ---------------------------- */
+/* ---------- Der dunkle Raum: die Welt der Ausstellung ------------------- */
 
 /*
   Der Raum wird nicht geschnitten, er wird betreten: das dunkle Panel fährt
   seine Deckkraft hoch, wenn die Fahrt beginnt, und wieder herunter, wenn sie
   endet. Der durchgehende Seitenhintergrund bleibt darunter erhalten.
 */
-.querfahrt-raum {
+.ist-raum {
   --text: var(--text-auf-dunkel);
   --text-ruhig: var(--text-auf-dunkel-ruhig);
   --text-leise: var(--text-auf-dunkel-ruhig);
@@ -1274,13 +1279,9 @@ section[id], :target { scroll-margin-top: calc(var(--kopfzeile-hoehe) + var(--a5
   --linie-kraeftig: rgba(242, 241, 234, 0.22);
   color: var(--text-auf-dunkel);
 }
-.querfahrt-raum .station h2,
-.querfahrt-raum .station-absatz,
-.querfahrt-raum .station-kategorie { color: inherit; }
-.querfahrt-raum .station-absatz { color: var(--text-auf-dunkel-ruhig); }
 /* Dunkelgrün auf Dunkelgrün wäre unlesbar: im Raum kehrt sich der Knopf um. */
-.querfahrt-raum .knopf-voll { background: var(--akzent-hell); color: var(--dunkel-tief); }
-.querfahrt-raum .knopf-voll:hover { background: #d3e795; color: var(--dunkel-tief); }
+.ist-raum .knopf-voll { background: var(--akzent-hell); color: var(--dunkel-tief); }
+.ist-raum .knopf-voll:hover { background: #d3e795; color: var(--dunkel-tief); }
 
 .raum {
   position: absolute;
@@ -1327,24 +1328,170 @@ section[id], :target { scroll-margin-top: calc(var(--kopfzeile-hoehe) + var(--a5
 .nebel-links  { left: 0;  background: linear-gradient(to right, var(--dunkel-tief), transparent); }
 .nebel-rechts { right: 0; background: linear-gradient(to left,  var(--dunkel-tief), transparent); }
 
-.querfahrt-raum .station-rahmen {
-  background: var(--dunkel-erhoben);
-  border: 1px solid var(--linie-dunkel);
-  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.45), var(--kante-licht-dunkel);
+.ist-raum .buehne-leiste { background: rgba(242, 241, 234, 0.15); }
+.ist-raum .buehne-balken { background: var(--akzent-hell); }
+
+/* ---------- Der Rundgang: die Stationen auf einem Kreis ----------------- */
+
+/*
+  Eine eigene Perspektive, flacher als die der Bahn. Bei einem Kreis mit
+  Radius r steht die vorderste Karte um r näher als die Kreismitte; ist die
+  Perspektive zu kurz, wird sie dadurch so stark vergrößert, dass sie das Bild
+  erschlägt. 2400 zu 480 ergibt einen Faktor von 1,25 — sichtbar näher, aber
+  nicht aufdringlich.
+*/
+.rundgang .buehne {
+  perspective: 2400px;
+  perspective-origin: 50% 48%;
+}
+
+.rundgang-kreis {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+/*
+  Jede Karte steht fest auf dem Kreis und dreht sich nicht selbst: die
+  Projektion erledigt das, während sie am Fluchtpunkt vorbeiwandert.
+  `backface-visibility: hidden` blendet die Rückseiten aus — sonst stünden
+  hinter dem Kreis spiegelverkehrte Karten und fingen obendrein den Zeiger ab.
+*/
+.rundgang-karte {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 21rem;
+  height: 27rem;
+  margin: -13.5rem 0 0 -10.5rem;
+  display: flex;
+  flex-direction: column;
+  padding: var(--a4) var(--a4) var(--a5);
+  border-radius: var(--radius-l);
+  /* Deutlich heller als der Raum: --dunkel-erhoben allein reicht nicht,
+     unter dem Lichtkegel verschwimmen Karte und Wand sonst ineinander. */
+  background: linear-gradient(
+    168deg,
+    color-mix(in srgb, var(--dunkel-erhoben) 82%, var(--text-auf-dunkel)) 0%,
+    var(--dunkel-erhoben) 58%
+  );
+  border: 1px solid rgba(242, 241, 234, 0.16);
+  box-shadow: 0 34px 64px rgba(0, 0, 0, 0.55), var(--kante-licht-dunkel);
+  backface-visibility: hidden;
+  /* Ein langer Titel darf nicht über die Kante der Karte hinauslaufen. */
+  overflow: hidden;
+  transform: rotateY(calc(var(--i) * 360deg / var(--stationen)))
+             translateZ(var(--rundgang-radius, 30rem));
 }
 /* Der Lichtschein auf dem Blatt — als läge es unter einem Strahler. */
-.querfahrt-raum .station-rahmen::before {
+.rundgang-karte::before {
   content: "";
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  background: linear-gradient(160deg, rgba(255, 246, 226, 0.09), transparent 58%);
+  background: linear-gradient(160deg, rgba(255, 246, 226, 0.1), transparent 58%);
   pointer-events: none;
 }
-.querfahrt-raum .station-geist { -webkit-text-stroke-color: rgba(242, 241, 234, 0.13); }
-.querfahrt-raum .station-nummer { color: var(--akzent-hell); }
-.querfahrt-raum .querfahrt-leiste { background: rgba(242, 241, 234, 0.15); }
-.querfahrt-raum .querfahrt-balken { background: var(--akzent-hell); }
+
+.karte-blatt {
+  flex: 1 1 auto;
+  display: grid;
+  place-items: center;
+  min-height: 0;
+  color: var(--akzent-hell);
+  border-radius: var(--radius-m);
+  background: linear-gradient(
+    170deg,
+    rgba(242, 241, 234, 0.07) 0%,
+    rgba(23, 28, 18, 0.34) 100%
+  );
+  border: 1px solid rgba(242, 241, 234, 0.09);
+  padding: var(--a3);
+}
+.karte-blatt svg { display: block; width: 100%; height: auto; max-height: 100%; }
+
+.karte-schild { flex: none; padding-top: var(--a4); }
+.karte-kopf { display: flex; align-items: center; gap: var(--a3); margin: 0 0 var(--a2); }
+.karte-nummer {
+  font-family: var(--schrift-display);
+  font-size: 1.15rem;
+  color: var(--akzent-hell);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+.karte-strich { width: 1.75rem; height: 1px; background: rgba(242, 241, 234, 0.22); }
+.karte-kategorie {
+  font-size: var(--gr-xs);
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-auf-dunkel-ruhig);
+}
+.rundgang-karte h2 {
+  margin: 0;
+  font-size: var(--gr-titel-s);
+  line-height: 1.2;
+  color: var(--text-auf-dunkel);
+  overflow-wrap: normal;
+}
+
+/*
+  Das Aufdeckfeld.
+
+  Beim Scrollen steht auf der Karte nur, worum es geht. Der Absatz kommt beim
+  Zeigen hervor — und nicht nur dann:
+
+  - `:focus-within` deckt ebenso auf. Wer mit der Tastatur auf den Knopf
+    tabbt, soll denselben Text sehen wie jemand mit einer Maus.
+  - Wo es kein Zeigen gibt (`hover: none`), steht das Feld dauerhaft offen.
+    Ein Touchgerät hat keinen Zeiger, den man darüberhalten könnte.
+  - Bewegt sich nur `opacity` und `transform`, nie die Höhe: die Karte darf
+    beim Aufdecken nicht wachsen, sonst springt der Kreis.
+
+  Im Ruhezustand ist das Feld für den Zeiger durchlässig, sonst fingen
+  unsichtbare Knöpfe die Klicks ab.
+*/
+.karte-tafel {
+  position: absolute;
+  inset: 32% 0 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: var(--a6) var(--a4) var(--a5);
+  border-radius: 0 0 var(--radius-l) var(--radius-l);
+  /* Deckend, wo der Text steht, und nach oben auslaufend: der Absatz muss
+     lesbar sein, die Zeichnung darf oben noch durchscheinen. */
+  background: linear-gradient(
+    to top,
+    var(--dunkel-tief) 0%,
+    var(--dunkel-tief) 62%,
+    color-mix(in srgb, var(--dunkel-tief) 88%, transparent) 84%,
+    transparent 100%
+  );
+  opacity: 0;
+  transform: translateY(0.75rem);
+  pointer-events: none;
+  transition: opacity var(--dauer-kurz) var(--kurve),
+              transform var(--dauer-kurz) var(--kurve);
+}
+.karte-tafel p {
+  margin: 0 0 var(--a4);
+  font-size: var(--gr-s);
+  line-height: 1.5;
+  color: var(--text-auf-dunkel);
+}
+.rundgang-karte:hover .karte-tafel,
+.rundgang-karte:focus-within .karte-tafel {
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+}
+@media (hover: none) {
+  .karte-tafel { position: static; opacity: 1; transform: none; pointer-events: auto; background: none; padding: var(--a4) 0 0; }
+  .rundgang-karte { height: auto; }
+}
 
 /*
   Die Bewegung selbst.
@@ -1391,7 +1538,7 @@ section[id], :target { scroll-margin-top: calc(var(--kopfzeile-hoehe) + var(--a5
       animation-timeline: --fahrt;
       animation-range: contain 0% contain 100%;
     }
-    .querfahrt-balken {
+    .buehne-balken {
       animation: fortschritt linear both;
       animation-timeline: --fahrt;
       animation-range: contain 0% contain 100%;
@@ -1437,6 +1584,40 @@ section[id], :target { scroll-margin-top: calc(var(--kopfzeile-hoehe) + var(--a5
     .station [data-linie="3"] {
       animation-range: contain calc(var(--mitte) - 11%) contain calc(var(--mitte) + 1%);
     }
+
+    /* ----- Der Rundgang -------------------------------------------------
+       Ein einziges animiertes Element. Die Drehung endet dort, wo die letzte
+       Station vorn steht — also nach (n−1)/n einer vollen Umdrehung, nicht
+       nach einer ganzen: sonst käme man am Ende wieder bei Station eins an. */
+    @keyframes rundgang-drehen {
+      to { transform: rotateY(calc(-360deg * (var(--stationen) - 1) / var(--stationen))); }
+    }
+    .rundgang-kreis {
+      --rundgang-radius: clamp(18rem, 31vw, 30rem);
+      animation: rundgang-drehen linear both;
+      animation-timeline: --fahrt;
+      animation-range: contain 0% contain 100%;
+    }
+
+    /* Die Zeichnung zeichnet sich, während die Karte nach vorn kommt. */
+    /* Alle Blätter zeichnen sich beim Betreten des Raums, nicht beim
+       Herandrehen.
+
+       Auf dem Korridor kam immer nur eine Station ins Bild, dort konnte jede
+       sich im eigenen Moment zeichnen. Auf dem Kreis sieht man immer drei —
+       darunter zwangsläufig die, die als letzte an die Reihe kommt. Hinge das
+       Zeichnen an ihrer Mitte, stünde sie die ganze Fahrt über als leerer
+       Rahmen da. Also zeichnet sich der ganze Raum, während man ihn betritt,
+       und ist fertig, bevor die Drehung beginnt. */
+    .rundgang-karte [data-linie] {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 1;
+      animation: zeichnen-fahrt linear both;
+      animation-timeline: --fahrt;
+      animation-range: entry 30% entry 78%;
+    }
+    .rundgang-karte [data-linie="2"] { animation-range: entry 40% entry 88%; }
+    .rundgang-karte [data-linie="3"] { animation-range: entry 50% entry 96%; }
   }
 }
 
@@ -1450,8 +1631,8 @@ section[id], :target { scroll-margin-top: calc(var(--kopfzeile-hoehe) + var(--a5
   hochwertig.
 */
 @media (max-width: 899.98px), (prefers-reduced-motion: reduce) {
-  .querfahrt { height: auto !important; }
-  .querfahrt-buehne {
+  .buehne-abschnitt { height: auto !important; }
+  .buehne {
     position: static; height: auto; overflow: visible;
     perspective: none;
     padding-block: var(--abschnitt);
@@ -1485,21 +1666,59 @@ section[id], :target { scroll-margin-top: calc(var(--kopfzeile-hoehe) + var(--a5
   .station-rahmen svg { max-height: 30svh; }
   .station h2 { font-size: clamp(1.4rem, 5vw, 1.9rem); }
   .station-absatz, .station-claim { font-size: var(--gr-m); }
-  .querfahrt-leiste { display: none; }
+  .buehne-leiste { display: none; }
   /* Der Raum bleibt ein Raum, nur ohne Perspektive: die Karten sind dunkel,
      der Hintergrund der Seite läuft weiter durch. */
-  .querfahrt-raum .raum { position: absolute; opacity: 1; }
-  .querfahrt-raum .station {
+  .ist-raum .raum { position: absolute; opacity: 1; }
+  .ist-raum .station {
     background: var(--dunkel-erhoben);
     background-image: none;
     border-color: var(--linie-dunkel);
     box-shadow: var(--schatten-3);
   }
-  .querfahrt-raum .nebel { display: none; }
+  .ist-raum .nebel { display: none; }
+
+  /* Aus dem Kreis wird eine Wischbahn: dieselben Karten nebeneinander, mit
+     offenem Textfeld. Auf einem Touchscreen ist Wischen die natürlichere
+     Geste als eine umgedeutete Scrollstrecke — und Zeigen gibt es dort
+     ohnehin nicht. */
+  .rundgang .buehne { perspective: none; }
+  .rundgang-kreis {
+    position: static;
+    display: flex;
+    gap: var(--a4);
+    height: auto;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    overscroll-behavior-x: contain;
+    scrollbar-width: thin;
+    scrollbar-color: var(--linie-kraeftig) transparent;
+    padding: 0 var(--rand) var(--a5);
+    transform: none;
+    transform-style: flat;
+    will-change: auto;
+  }
+  .rundgang-karte {
+    position: relative;
+    left: auto; top: auto; margin: 0;
+    flex: 0 0 min(84vw, 22rem);
+    height: auto;
+    scroll-snap-align: center;
+    transform: none;
+  }
+  .karte-blatt { min-height: 12rem; }
+  .karte-tafel {
+    position: static;
+    opacity: 1;
+    transform: none;
+    pointer-events: auto;
+    background: none;
+    padding: var(--a4) 0 0;
+  }
 }
 @supports not (animation-timeline: view()) {
-  .querfahrt { height: auto !important; }
-  .querfahrt-buehne { position: static; height: auto; overflow: visible; perspective: none; }
+  .buehne-abschnitt { height: auto !important; }
+  .buehne { position: static; height: auto; overflow: visible; perspective: none; }
   .querfahrt-bahn {
     overflow-x: auto;
     scroll-snap-type: x proximity;
@@ -1509,8 +1728,32 @@ section[id], :target { scroll-margin-top: calc(var(--kopfzeile-hoehe) + var(--a5
   }
   .station { flex: 0 0 min(88vw, 40rem); scroll-snap-align: center; height: auto; transform: none; }
   .station-geist { display: none; }
-  .querfahrt-leiste { display: none; }
-  .querfahrt-raum .raum { opacity: 1; }
+  .buehne-leiste { display: none; }
+  .ist-raum .raum { opacity: 1; }
+  /* Ohne scrollgetriebene Animationen dreht sich nichts: der Kreis wird eine
+     wischbare Reihe, wie auf schmalen Geräten. */
+  .rundgang .buehne { perspective: none; }
+  .rundgang-kreis {
+    position: static;
+    display: flex;
+    gap: var(--a4);
+    height: auto;
+    overflow-x: auto;
+    scroll-snap-type: x proximity;
+    overscroll-behavior-x: contain;
+    padding: 0 var(--rand) var(--a5);
+    transform: none;
+    transform-style: flat;
+  }
+  .rundgang-karte {
+    position: relative;
+    left: auto; top: auto; margin: 0;
+    flex: 0 0 min(84vw, 22rem);
+    height: auto;
+    scroll-snap-align: center;
+    transform: none;
+  }
+  .karte-tafel { position: static; opacity: 1; transform: none; pointer-events: auto; background: none; padding: var(--a4) 0 0; }
 }
 
 /* Architektur- und Kompetenzabschnitte der Ausstellungsseite */

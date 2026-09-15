@@ -123,20 +123,51 @@ Tiefe ist Hierarchie, nicht Dekor: 1 Lesestrecken (Verlauf, kein Schatten),
 2 Karten und Formularfelder, 3 Gehobenes und die Stationen der Querfahrten,
 4 Kopfzeile und offene Menüs.
 
-## Die beiden Querfahrten
+## Die beiden Bühnen
 
-`komponenten/Querfahrt.jsx` trägt zwei Varianten derselben Mechanik:
+`komponenten/Buehne.jsx` ist der gemeinsame Unterbau: die klebende Bühne, die
+Höhe aus der Stationszahl, der Fortschrittsbalken und der Beobachter, der die
+Kopfzeile behandelt, solange eine Bühne dahinterliegt. Darauf sitzen zwei
+Anordnungen:
 
-- **`"raum"`** auf `/ausstellung` — dunkler Raum mit Boden, Decke, wanderndem
-  Licht und Rahmen an der Wand.
-- **`"hell"`** auf `/leistungen` — die sechs Kernleistungen als Platten im
-  eigenen Leistungston, mit Dicke und Schatten.
+- **`Querfahrt.jsx`** auf `/leistungen` — die sechs Kernleistungen ziehen als
+  Platten im eigenen Leistungston seitlich vorbei.
+- **`Rundgang.jsx`** auf `/ausstellung` — die sieben Stationen stehen auf
+  einem Kreis im dunklen Raum, und das Scrollen dreht ihn.
 
-Die Tiefe kommt aus echter Perspektive: die Bühne hat `perspective`, die Bahn
-steht in `preserve-3d`, und jede Station dreht sich um ihre eigene Mitte.
-Wann diese Mitte erreicht ist, sagt `--mitte` — in der Komponente
-ausgerechnet, weil Rechnen in JavaScript ehrlicher ist als eine Division im
-Stylesheet.
+Die Tiefe kommt in beiden aus echter Perspektive: die Bühne hat
+`perspective`, das Bewegte steht in `preserve-3d`. Bei der Bahn dreht sich
+jedes Stationsbild um seine eigene Mitte (`--mitte`, in der Komponente
+ausgerechnet); beim Rundgang steht jede Karte fest auf dem Kreis und die
+Projektion erledigt die Drehung von selbst — dort bewegt sich genau **ein**
+Element.
+
+### Woher der Rundgang kommt
+
+Die Optik stammt von einem Baustein von 21st.dev, der Motor ausdrücklich
+nicht. Die Vorlage hängt an einem `scroll`-Zuhörer und einer endlosen
+`requestAnimationFrame`-Schleife, die bei jedem Bild React-State setzt — die
+ganze Galerie wird damit 60-mal je Sekunde neu gerendert, auch außerhalb des
+Bildes. Das ist die Bauart, die die Vorfassung dieses Projekts unbrauchbar
+gemacht hat. Hier läuft stattdessen alles über `animation-timeline`.
+
+Sie setzt außerdem shadcn, Tailwind und TypeScript voraus. Nichts davon ist
+hier eingebaut, und nichts davon sollte es werden: ein zweites Farb- und
+Abstandssystem neben `tokens.css` löst kein Problem, das dieses Projekt hat.
+
+### Der Text beim Zeigen
+
+Auf einer Karte des Rundgangs steht beim Scrollen nur Nummer, Kategorie und
+Titel. Absatz und Knopf liegen in `.karte-tafel` und kommen beim Zeigen
+hervor. Drei Dinge hängen daran und dürfen beim Ändern nicht verlorengehen:
+
+- **`:focus-within` deckt ebenso auf.** Sonst käme nur mit der Maus jemand an
+  den Text. `werkzeuge/ganzseiten.mjs` weist das nach: es fokussiert jedes
+  `data-aufdecken` und verlangt, dass es dann sichtbar ist.
+- **Wo es kein Zeigen gibt, steht das Feld offen** (`hover: none`, und unter
+  900 px ohnehin).
+- **Bewegt wird nur `opacity` und `transform`, nie die Höhe** — die Karte darf
+  beim Aufdecken nicht wachsen, sonst springt der Kreis.
 
 ## Beim Ändern beachten
 
@@ -175,6 +206,13 @@ Stylesheet.
   IntersectionObserver in `Querfahrt.jsx` schaltet ihn ab, solange eine Fahrt
   hinter der Kopfzeile läuft — und die Kopfzeile über dem Ausstellungsraum
   gleich mit dunkel.
+- **Rückseitige Karten dürfen den Zeiger nicht fangen.**
+  `backface-visibility: hidden` erledigt das — geprüft, nicht angenommen:
+  `elementFromPoint` auf der Rückseite trifft die vordere Karte.
+- **Das Selbstzeichnen des Rundgangs hängt an der Einfahrt, nicht an der
+  Drehung.** Auf dem Kreis sieht man immer drei Karten, darunter die, die als
+  letzte drankommt — hinge ihr Zeichnen an ihrer eigenen Mitte, stünde sie die
+  ganze Fahrt über als leerer Rahmen da.
 - **`max-width` in Überschriften darf kein Wort zerreißen.**
   „Immobilienbewertung" wurde als „Immobilienbewertun|g" umbrochen. Auf
   Silbentrennung ist kein Verlass, also `overflow-wrap: normal` und das Wort
@@ -210,7 +248,9 @@ Stylesheet.
 - `src/styles/schriften.css` — selbst ausgelieferte Schriften, kein Aufruf an
   Google.
 - `src/daten/ausstellung.js` — die sieben Stationen der Ausstellung.
-- `src/komponenten/Querfahrt.jsx` — beide Querfahrten, hell und dunkel.
+- `src/komponenten/Buehne.jsx` — der gemeinsame Unterbau beider Bühnen.
+- `src/komponenten/Querfahrt.jsx` — die Bahn der Leistungen.
+- `src/komponenten/Rundgang.jsx` — der Kreis der Ausstellung.
 - `src/komponenten/Stimmen.jsx` — Rückmeldungen; ab der zweiten Stimme
   erscheinen die Punkte zum Blättern von selbst.
 - `src/bausteine/` — Einblenden, Bildfläche, Seitenkopf, Aufruf, Signet, Motiv.

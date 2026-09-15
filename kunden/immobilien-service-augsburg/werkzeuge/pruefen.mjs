@@ -104,38 +104,68 @@ for (const weg of ["/", "/ausstellung", "/immobilienverkauf", "/region", "/ueber
 }
 
 // ---------- 5. Querfahrt ----------
-for (const [seite, name] of [["/ausstellung", "Ausstellung"], ["/leistungen", "Leistungen"]]) {
+/*
+  Beide Bühnen prüfen — die Bahn auf /leistungen und den Rundgang auf
+  /ausstellung. Gemessen wird nicht die Zahl im Stylesheet, sondern was der
+  Browser daraus macht: bei der Bahn der Versatz in Pixeln, beim Rundgang der
+  Drehwinkel. Beides muss monoton in eine Richtung laufen und am Ende genau
+  dort stehen, wo die letzte Station vorn ist.
+*/
+for (const [seite, name, art] of [
+  ["/ausstellung", "Rundgang", "kreis"],
+  ["/leistungen", "Querfahrt", "bahn"],
+]) {
 await pf.goto(U + seite, { waitUntil: "networkidle" });
 await pf.waitForTimeout(500);
 await pf.addStyleTag({ content: HART });
-const quer = await pf.evaluate(async () => {
+const quer = await pf.evaluate(async (art) => {
   const ruhe = () => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
-  const abschnitt = document.querySelector(".querfahrt");
-  const bahn = document.querySelector(".querfahrt-bahn");
-  const buehne = document.querySelector(".querfahrt-buehne");
-  const stationen = document.querySelectorAll(".station").length;
+  const abschnitt = document.querySelector(".buehne-abschnitt");
+  const buehne = document.querySelector(".buehne");
+  const bewegt = document.querySelector(art === "kreis" ? ".rundgang-kreis" : ".querfahrt-bahn");
+  const stationen = document.querySelectorAll(art === "kreis" ? ".rundgang-karte" : ".station").length;
   const oben = abschnitt.offsetTop;
   const ende = oben + abschnitt.offsetHeight - window.innerHeight;
+
+  /* Der Drehwinkel muss kumulativ gelesen werden: `atan2` klappt bei ±180°
+     um, und eine Drehung über eine halbe Umdrehung hinaus sähe sonst aus,
+     als liefe sie zurück. */
+  let vorher = 0, umlauf = 0;
   const proben = [];
   for (let i = 0; i <= 24; i++) {
     const y = oben + ((ende - oben) * i) / 24;
     window.scrollTo(0, y);
     await ruhe(); await ruhe();
-    const m = new DOMMatrixReadOnly(getComputedStyle(bahn).transform);
-    proben.push({ y: Math.round(y), x: Math.round(m.m41), buehneOben: Math.round(buehne.getBoundingClientRect().top) });
+    const m = new DOMMatrixReadOnly(getComputedStyle(bewegt).transform);
+    let wert;
+    if (art === "kreis") {
+      const roh = Math.atan2(-m.m13, m.m11) * 180 / Math.PI;
+      if (i > 0 && roh - vorher > 180) umlauf -= 360;
+      if (i > 0 && roh - vorher < -180) umlauf += 360;
+      vorher = roh;
+      wert = Math.round(roh + umlauf);
+    } else {
+      wert = Math.round(m.m41);
+    }
+    proben.push({ y: Math.round(y), x: wert, buehneOben: Math.round(buehne.getBoundingClientRect().top) });
   }
   // Nach der Fahrt weiterscrollen: die Seite muss vertikal freigeben
   window.scrollTo(0, ende + 400);
   await ruhe(); await ruhe();
-  const danach = Math.round(document.querySelector(".querfahrt-buehne").getBoundingClientRect().top);
-  return { stationen, proben, danach, sollEnde: -(stationen - 1) * window.innerWidth, breite: window.innerWidth };
-});
+  const danach = Math.round(buehne.getBoundingClientRect().top);
+  const sollEnde = art === "kreis"
+    ? -Math.round(360 * (stationen - 1) / stationen)
+    : -(stationen - 1) * window.innerWidth;
+  return { stationen, proben, danach, sollEnde, einheit: art === "kreis" ? "°" : "px" };
+}, art);
+
 const xs = quer.proben.map((p) => p.x);
 const monoton = xs.every((x, i) => i === 0 || x <= xs[i - 1] + 0.5);
-merke(`${name}: Fahrt läuft monoton vorwärts`, monoton, xs.join(" "));
-merke(`${name}: Fahrt endet genau bei der letzten Station`,
-  Math.abs(xs[xs.length - 1] - quer.sollEnde) < 2, `${xs[xs.length - 1]} statt ${quer.sollEnde} (${quer.stationen} Stationen)`);
-merke(`${name}: Bühne bleibt während der Fahrt angeheftet`,
+merke(`${name}: läuft monoton vorwärts`, monoton, xs.join(" "));
+merke(`${name}: endet genau bei der letzten Station`,
+  Math.abs(xs[xs.length - 1] - quer.sollEnde) <= 1,
+  `${xs[xs.length - 1]}${quer.einheit} statt ${quer.sollEnde}${quer.einheit} (${quer.stationen} Stationen)`);
+merke(`${name}: Bühne bleibt angeheftet`,
   quer.proben.slice(1, -1).every((p) => Math.abs(p.buehneOben) <= 1), "");
 merke(`${name}: danach scrollt die Seite normal weiter`, quer.danach < -100, `Bühne bei ${quer.danach}px`);
 }

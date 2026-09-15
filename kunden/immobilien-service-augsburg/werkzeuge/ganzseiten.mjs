@@ -40,6 +40,9 @@ for (const [weg, name] of [["/", "g-start"], ["/leistungen", "g-leistungen"],
       if (el.closest("[aria-hidden='true']") || el.getAttribute("aria-hidden") === "true") continue;
       /* Was je nach Breite absichtlich fehlt: Klappmenü, Menüknopf, Honigtopf. */
       if (el.closest(".klappe, .hauptmenue, .menue-knopf, .honigtopf, .nur-vorlesen, .zum-inhalt")) continue;
+      /* Aufdeckfelder werden nicht hier beurteilt, sondern gleich darunter
+         mit der Tastatur geprüft. */
+      if (el.closest("[data-aufdecken]")) continue;
       const t = (el.textContent || "").trim();
       if (!t) continue;
       const s = getComputedStyle(el);
@@ -49,7 +52,30 @@ for (const [weg, name] of [["/", "g-start"], ["/leistungen", "g-leistungen"],
     }
     return [...new Set(raus)].slice(0, 6);
   });
-  if (versteckt.length) { schlecht++; console.log("✗", weg, "unsichtbarer Inhalt:", JSON.stringify(versteckt)); }
+
+  /* Verborgener Inhalt ist erlaubt, wenn er erreichbar ist — und das wird
+     nachgewiesen, nicht behauptet. Jedes `data-aufdecken` muss sichtbar
+     werden, sobald der Fokus hineinwandert. Sonst wäre es Inhalt, an den nur
+     jemand mit Maus herankommt. */
+  const unerreichbar = [];
+  const aufdecker = await p.$$("[data-aufdecken]");
+  for (const [i, feld] of aufdecker.entries()) {
+    const ziel = await feld.$("a, button");
+    if (!ziel) { unerreichbar.push(`Feld ${i + 1}: nichts zum Fokussieren darin`); continue; }
+    await ziel.focus();
+    await p.waitForTimeout(220);
+    const sichtbar = await feld.evaluate((el) => {
+      const s = getComputedStyle(el);
+      return +s.opacity > 0.9 && s.visibility !== "hidden" && s.display !== "none";
+    });
+    if (!sichtbar) unerreichbar.push(`Feld ${i + 1}: bleibt bei Tastaturfokus verborgen`);
+  }
+  if (aufdecker.length) {
+    console.log(`  ${aufdecker.length} Aufdeckfelder, davon ${unerreichbar.length} per Tastatur unerreichbar`);
+  }
+
+  const maengel = [...versteckt, ...unerreichbar];
+  if (maengel.length) { schlecht++; console.log("✗", weg, JSON.stringify(maengel)); }
   else console.log("✓", weg);
 }
 await b.close();
