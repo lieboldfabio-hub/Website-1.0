@@ -26,7 +26,28 @@ jobs:
       - name: Seiten zusammenstellen
         run: |
           mkdir -p _site
-          cp -r kunden/* _site/
+
+          # Kundenprojekte einzeln, weil nicht mehr alle statisch sind.
+          # Ein Projekt mit package.json muss gebaut werden: sein Quelltext
+          # laedt Module ueber absolute Pfade und ergaebe hier eine weisse
+          # Seite - unter dem Namen eines Kunden. Liegt ein fertiger Bau
+          # (dist/) bei, wird der ausgeliefert; fehlt er, wird das Projekt
+          # uebersprungen statt kaputt veroeffentlicht.
+          for ordner in kunden/*/; do
+            name=$(basename "$ordner")
+            if [ -f "$ordner/package.json" ]; then
+              if [ -d "$ordner/dist" ]; then
+                mkdir -p "_site/$name"
+                cp -r "$ordner/dist/." "_site/$name/"
+                echo "Gebaute Fassung uebernommen: $name"
+              else
+                echo "Uebersprungen: $name braucht einen Bauschritt, es liegt kein dist/ bei."
+              fi
+            else
+              cp -r "$ordner" "_site/$name"
+            fi
+          done
+
           cp -r beispiele/* _site/
 
           # Der eigene Auftritt der Agentur liegt an der Wurzel, damit er
