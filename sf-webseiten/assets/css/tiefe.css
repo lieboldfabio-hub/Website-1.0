@@ -1,0 +1,109 @@
+/* ============================================================================
+   Tiefe - Raum fuer die scrollgetriebene 3D-Ebene
+   ----------------------------------------------------------------------------
+   Ergaenzt site.css, ersetzt nichts.
+
+   Aufbau bewusst andersherum als erwartet: der Grundzustand ist die ruhige,
+   lesbare Seite - Szenen stehen untereinander, kein Raum, keine Perspektive.
+   Erst wenn tiefe.js laeuft, setzt es <html class="tiefe-an"> und alles
+   darunter greift. Faellt das Modul aus (kein JavaScript, GSAP nicht geladen,
+   Bewegung abgeschaltet), bleibt die Seite vollstaendig - nicht als Notbehelf,
+   sondern als zweite gueltige Fassung.
+   ========================================================================= */
+
+/* Perspektive gehoert auf den Eltern-Knoten, die 3D-Bewegung auf die Kinder.
+   Ein gemeinsamer Fluchtpunkt laesst die Karten zusammengehoeren - jede Karte
+   mit eigener Perspektive wirkt wie ein Haufen Einzelbilder. */
+.tiefe-an .tiefe-raum {
+  perspective: 1400px;
+  perspective-origin: 62% 45%;
+  transform-style: preserve-3d;
+}
+
+.tiefe-an .tiefe-raum > * {
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+/* --------------------------------------------------------- Partikelfeld -- */
+/* Liegt zwischen dem Farbverlauf (.hero::before) und dem Inhalt. Der Hero
+   setzt bereits position:relative und overflow:hidden - beides wird hier
+   gebraucht und bewusst nicht wiederholt. */
+.tiefe-feld {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  /* Gold auf Nacht: additiv gemischt gluehen die Punkte, statt wie Staub
+     auf dem Bildschirm zu liegen. */
+  mix-blend-mode: screen;
+}
+
+/* .hero__grid hat bereits position:relative, liegt also ueber dem Feld.
+   Der Farbverlauf muss aber ausdruecklich darunter bleiben. */
+.hero::before { z-index: 0; }
+.hero__grid { z-index: 1; }
+
+/* -------------------------------------------------------------- Kapitel -- */
+/* Grundzustand: ein gewoehnlicher Abschnitt, die Szenen stehen untereinander. */
+[data-szene] {
+  margin-block: clamp(3rem, 8vw, 5rem);
+}
+
+/* Angeheftet: der Abschnitt fuellt den Schirm und stapelt seine Szenen
+   uebereinander - sie loesen einander ab, statt untereinander zu stehen.
+   tiefe.js setzt .tiefe-kapitel nur dort, wo es den Abschnitt wirklich
+   anheftet, also nicht auf schmalen Schirmen. */
+.tiefe-an .tiefe-kapitel {
+  position: relative;
+  min-height: 100vh;
+  min-height: 100svh;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+
+/* Die Buehne ist der gemeinsame Elternknoten der Szenen - welches Element das
+   ist, weiss erst tiefe.js beim Lesen des Markups. Deshalb wird die Klasse
+   dort gesetzt und nicht hier auf .wrap geraten: die Szenen stecken oft eine
+   Ebene tiefer, und grid-area wirkt nur auf direkte Kinder. */
+.tiefe-an .tiefe-buehne {
+  display: grid;
+  grid-template-areas: "szene";
+  width: 100%;
+}
+
+.tiefe-an .tiefe-buehne > [data-szene] {
+  grid-area: szene;
+  margin-block: 0;
+  /* Startzustand doppelt: GSAP setzt ihn erst im naechsten Bild. Ohne diese
+     Zeile blitzen beim Laden alle Szenen kurz uebereinander auf. */
+  visibility: hidden;
+}
+
+/* ------------------------------------------------------------ Schmalbau -- */
+/* Auf dem Telefon bleibt die Perspektive flacher, sonst kippen die hinteren
+   Karten aus dem Bild. Das Partikelfeld bleibt: es kostet dort am wenigsten
+   und traegt am meisten. Angeheftete Kapitel gibt es hier gar nicht - dafuer
+   sorgt gsap.matchMedia in tiefe.js. */
+@media (max-width: 760px) {
+  .tiefe-an .tiefe-raum {
+    perspective: 900px;
+    perspective-origin: 50% 50%;
+  }
+}
+
+/* --------------------------------------------------- Bewegung abgeschaltet */
+/* Doppelt gesichert: tiefe.js steigt bei reduce ohnehin aus und setzt
+   .tiefe-an nie. Diese Regeln fangen den Fall ab, dass die Einstellung erst
+   nach dem Laden umgestellt wird. */
+@media (prefers-reduced-motion: reduce) {
+  .tiefe-feld { display: none; }
+  .tiefe-an .tiefe-raum { perspective: none; }
+  .tiefe-an .tiefe-kapitel { min-height: 0; display: block; }
+  .tiefe-an .tiefe-buehne { display: block; }
+  .tiefe-an .tiefe-buehne > [data-szene] {
+    visibility: visible;
+    margin-block: clamp(3rem, 8vw, 5rem);
+  }
+}

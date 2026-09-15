@@ -22,6 +22,7 @@
 <link rel="stylesheet" href="assets/css/fonts.css">
 <link rel="stylesheet" href="assets/css/basis.css">
 <link rel="stylesheet" href="assets/css/site.css">
+<link rel="stylesheet" href="assets/css/tiefe.css">
 <link rel="icon" href="assets/img/favicon-32.png" sizes="32x32">
 <link rel="icon" href="assets/img/favicon-64.png" sizes="64x64">
 <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
@@ -236,15 +237,15 @@ document.documentElement.classList.add("js");
     <div class="mock-stack" aria-hidden="true">
       <div class="mock mock--a">
         <div class="mock__bar"><span class="mock__dot"></span><span class="mock__dot"></span><span class="mock__dot"></span><span class="mock__url">brenner-kolb.example</span></div>
-        <img src="assets/img/folio-brenner-kolb-recht.jpg" alt="" loading="lazy">
+        <img data-cloudinary="(min-width: 900px) 40rem, 92vw" src="assets/img/folio-brenner-kolb-recht.jpg" alt="" loading="lazy">
       </div>
       <div class="mock mock--b">
         <div class="mock__bar"><span class="mock__dot"></span><span class="mock__dot"></span><span class="mock__dot"></span><span class="mock__url">osteria-fontana.example</span></div>
-        <img src="assets/img/folio-osteria-fontana.jpg" alt="" loading="lazy">
+        <img data-cloudinary="(min-width: 900px) 40rem, 92vw" src="assets/img/folio-osteria-fontana.jpg" alt="" loading="lazy">
       </div>
       <div class="mock mock--c">
         <div class="mock__bar"><span class="mock__dot"></span><span class="mock__dot"></span><span class="mock__dot"></span><span class="mock__url">koenigsplatz-zahnaerzte.example</span></div>
-        <img src="assets/img/folio-zahnaerzte-koenigsplatz.jpg" alt="" loading="lazy">
+        <img data-cloudinary="(min-width: 900px) 40rem, 92vw" src="assets/img/folio-zahnaerzte-koenigsplatz.jpg" alt="" loading="lazy">
       </div>
     </div>
   </div>
@@ -344,7 +345,7 @@ document.documentElement.classList.add("js");
 </section>
 
 <!-- ============================================================== Diff -->
-<section class="section diff">
+<section class="section diff" data-kapitel>
   <div class="wrap">
     <p class="eyebrow" data-reveal>Warum S &amp; F</p>
     <h2 class="section-h2" data-reveal>
@@ -352,21 +353,21 @@ document.documentElement.classList.add("js");
     </h2>
 
     <div style="margin-top:1rem">
-      <div class="diff__item" data-reveal>
+      <div class="diff__item" data-reveal data-szene>
         <span class="diff__num">01</span>
         <div>
           <h3>Vertraulichkeit hat Vorrang</h3>
           <p>Was in der Erstberatung besprochen wird, bleibt zwischen uns. Keine Vorlagen von der Stange, die auch Ihr Wettbewerber bekommt.</p>
         </div>
       </div>
-      <div class="diff__item" data-reveal>
+      <div class="diff__item" data-reveal data-szene>
         <span class="diff__num">02</span>
         <div>
           <h3>Entwickelt, nicht zusammengeklickt</h3>
           <p>Jede Website wird für das jeweilige Unternehmen konzipiert und von Hand gebaut – Struktur, Text und Design ziehen an einem Strang, statt einem Baukasten-Theme zu folgen.</p>
         </div>
       </div>
-      <div class="diff__item" data-reveal>
+      <div class="diff__item" data-reveal data-szene>
         <span class="diff__num">03</span>
         <div>
           <h3>Nach dem Launch sind wir noch da</h3>
@@ -463,7 +464,7 @@ document.documentElement.classList.add("js");
       <div class="coverflow__buehne">
       <article class="folio-card" data-karte="0">
         <a class="folio-card__shot" href="halbritter-haustechnik/">
-          <img src="assets/img/folio-halbritter-haustechnik.jpg" alt="Vorschau der Website für Halbritter Haustechnik" loading="lazy" width="1600" height="1050">
+          <img data-cloudinary="(min-width: 900px) 40rem, 92vw" src="assets/img/folio-halbritter-haustechnik.jpg" alt="Vorschau der Website für Halbritter Haustechnik" loading="lazy" width="1600" height="1050">
         </a>
         <div class="folio-card__body">
           <p class="folio-card__tag">Handwerk</p>
@@ -478,7 +479,7 @@ document.documentElement.classList.add("js");
 
       <article class="folio-card" data-karte="1">
         <a class="folio-card__shot" href="osteria-fontana/">
-          <img src="assets/img/folio-osteria-fontana.jpg" alt="Vorschau der Website für Osteria Fontana" loading="lazy" width="1600" height="1050">
+          <img data-cloudinary="(min-width: 900px) 40rem, 92vw" src="assets/img/folio-osteria-fontana.jpg" alt="Vorschau der Website für Osteria Fontana" loading="lazy" width="1600" height="1050">
         </a>
         <div class="folio-card__body">
           <p class="folio-card__tag">Gastronomie</p>
@@ -493,7 +494,7 @@ document.documentElement.classList.add("js");
 
       <article class="folio-card" data-karte="2">
         <a class="folio-card__shot" href="brenner-kolb-recht/">
-          <img src="assets/img/folio-brenner-kolb-recht.jpg" alt="Vorschau der Website für Brenner & Kolb Rechtsanwälte" loading="lazy" width="1600" height="1050">
+          <img data-cloudinary="(min-width: 900px) 40rem, 92vw" src="assets/img/folio-brenner-kolb-recht.jpg" alt="Vorschau der Website für Brenner & Kolb Rechtsanwälte" loading="lazy" width="1600" height="1050">
         </a>
         <div class="folio-card__body">
           <p class="folio-card__tag">Recht &amp; Beratung</p>
@@ -682,5 +683,12 @@ document.documentElement.classList.add("js");
 </footer>
 
 <script src="assets/js/site.js"></script>
+<script src="assets/js/bildquelle.js"></script>
+<!-- GSAP und ScrollTrigger liegen selbst gehostet im Repo: die Seite muss sich
+     auch ohne Netz vorfuehren lassen, und ein CDN waere der einzige Grund,
+     warum sie es nicht mehr koennte. -->
+<script src="assets/js/gsap.min.js"></script>
+<script src="assets/js/ScrollTrigger.min.js"></script>
+<script src="assets/js/tiefe.js"></script>
 </body>
 </html>
