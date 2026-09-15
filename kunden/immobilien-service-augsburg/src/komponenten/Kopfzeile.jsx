@@ -1,76 +1,131 @@
-import { useEffect, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
-import { firma } from "../daten/firma.js";
-
-const punkte = [
-  { ziel: "#immobilien", text: "Objekte" },
-  { ziel: "#leistungen", text: "Leistungen" },
-  { ziel: "#besonderheiten", text: "Besonderheiten" },
-  { ziel: "#ueber-mich", text: "Über mich" },
-  { ziel: "#kontakt", text: "Kontakt" },
-];
+import { useEffect, useRef, useState } from "react";
+import { NavLink, Link, useLocation } from "react-router-dom";
+import { firma, hauptleistungen, weitereLeistungen } from "../daten/firma.js";
+import { menuepunkte } from "../seiten-meta.js";
+import Signet from "../bausteine/Signet.jsx";
 
 export default function Kopfzeile() {
-  const [verkleinert, setVerkleinert] = useState(false);
   const [offen, setOffen] = useState(false);
+  const [klappeOffen, setKlappeOffen] = useState(false);
+  const [gescrollt, setGescrollt] = useState(false);
   const { pathname } = useLocation();
+  const klappeRef = useRef(null);
 
+  /* Nur eine Klasse umschalten, nichts berechnen — das läuft bei jedem
+     Scrollereignis und darf nichts kosten. */
   useEffect(() => {
-    const beiScroll = () => setVerkleinert(window.scrollY > 40);
+    const beiScroll = () => setGescrollt(window.scrollY > 8);
     beiScroll();
     window.addEventListener("scroll", beiScroll, { passive: true });
     return () => window.removeEventListener("scroll", beiScroll);
   }, []);
 
-  useEffect(() => setOffen(false), [pathname]);
+  useEffect(() => {
+    setOffen(false);
+    setKlappeOffen(false);
+  }, [pathname]);
 
-  const aufStartseite = pathname === "/";
+  /* Klick daneben und Escape schließen die Klappe — sonst bleibt sie hängen. */
+  useEffect(() => {
+    if (!klappeOffen) return;
+    const beiKlick = (e) => {
+      if (!klappeRef.current?.contains(e.target)) setKlappeOffen(false);
+    };
+    const beiTaste = (e) => e.key === "Escape" && setKlappeOffen(false);
+    document.addEventListener("pointerdown", beiKlick);
+    document.addEventListener("keydown", beiTaste);
+    return () => {
+      document.removeEventListener("pointerdown", beiKlick);
+      document.removeEventListener("keydown", beiTaste);
+    };
+  }, [klappeOffen]);
 
   return (
-    <header className={`kopfzeile${verkleinert ? " ist-klein" : ""}`}>
-      <Link to="/" className="marke">
-        <span className="marke-zeichen" aria-hidden="true">
-          {/* Haus mit Zweig — nach dem Signet der bestehenden Seite.
-              Das Originallogo ersetzt dies, sobald es vorliegt. */}
-          <svg viewBox="0 0 40 34" width="30" height="26" fill="none" stroke="currentColor" strokeWidth="1.6">
-            <path d="M6 17.5 20 6l14 11.5" strokeLinecap="round" strokeLinejoin="round" />
-            <path d="M9.5 16v13h21V16" strokeLinecap="round" strokeLinejoin="round" />
-            <rect x="17" y="19.5" width="6" height="6" />
-            <path d="M3 31c5.5-3.5 11-3.5 17-1.5s11.5 2 17-1.5" strokeLinecap="round" />
-            <path d="M25.5 7.5c2-2.5 4.5-3 6.5-2.5-.5 2.5-2.5 4-4.5 4" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-        </span>
-        <span className="marke-text">
-          <strong>Marion Sens</strong>
-          <span>Immobilien Augsburg</span>
-        </span>
-      </Link>
+    <header className={`kopfzeile${gescrollt ? " ist-gescrollt" : ""}`}>
+      <div className="kopfzeile-innen">
+        <Link to="/" className="marke" aria-label={`${firma.name} — zur Startseite`}>
+          <Signet />
+          <span className="marke-text">
+            <strong>{firma.inhaberin}</strong>
+            <span>Immobilien {firma.ort}</span>
+          </span>
+        </Link>
 
-      <button
-        type="button"
-        className="menue-knopf"
-        aria-expanded={offen}
-        aria-controls="hauptmenue"
-        onClick={() => setOffen((o) => !o)}
-      >
-        <span aria-hidden="true" />
-        {offen ? "Schließen" : "Menü"}
-      </button>
+        <button
+          type="button"
+          className="menue-knopf"
+          aria-expanded={offen}
+          aria-controls="hauptmenue"
+          onClick={() => setOffen((o) => !o)}
+        >
+          <span className="menue-striche" aria-hidden="true">
+            <i /><i /><i />
+          </span>
+          {offen ? "Schließen" : "Menü"}
+        </button>
 
-      <nav
-        id="hauptmenue"
-        className={`hauptmenue${offen ? " ist-offen" : ""}`}
-        aria-label="Hauptmenü"
-      >
-        {punkte.map((p) => (
-          <a key={p.ziel} href={aufStartseite ? p.ziel : `/${p.ziel}`}>
-            {p.text}
+        <nav id="hauptmenue" className={`hauptmenue${offen ? " ist-offen" : ""}`} aria-label="Hauptmenü">
+          <ul>
+            <li className="hat-klappe" ref={klappeRef}>
+              <div className="klappe-zeile">
+                <NavLink to="/leistungen">Leistungen</NavLink>
+                <button
+                  type="button"
+                  className="klappe-knopf"
+                  aria-expanded={klappeOffen}
+                  aria-label="Leistungen aufklappen"
+                  onClick={() => setKlappeOffen((o) => !o)}
+                >
+                  <svg viewBox="0 0 12 8" width="11" height="8" aria-hidden="true">
+                    <path d="M1 1.5 6 6.5l5-5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+                  </svg>
+                </button>
+              </div>
+
+              <div className={`klappe${klappeOffen ? " ist-offen" : ""}`}>
+                <div className="klappe-spalte">
+                  <p className="klappe-titel">Kernleistungen</p>
+                  {hauptleistungen.map((l) => (
+                    <NavLink key={l.weg} to={l.weg}>
+                      <strong>{l.titel}</strong>
+                      <span>{l.kurz}</span>
+                    </NavLink>
+                  ))}
+                </div>
+                <div className="klappe-spalte">
+                  <p className="klappe-titel">Weitere Leistungen</p>
+                  {weitereLeistungen.map((l) => (
+                    <NavLink key={l.weg} to={l.weg}>
+                      <strong>{l.titel}</strong>
+                      <span>{l.kurz}</span>
+                    </NavLink>
+                  ))}
+                </div>
+              </div>
+            </li>
+
+            {menuepunkte
+              .filter((p) => p.weg !== "/leistungen")
+              .map((p) => (
+                <li key={p.weg}>
+                  <NavLink to={p.weg}>{p.menue}</NavLink>
+                </li>
+              ))}
+          </ul>
+
+          <a className="knopf knopf-voll klein kopfzeile-anruf" href={`tel:${firma.telefonLink}`}>
+            <TelefonZeichen /> {firma.telefon}
           </a>
-        ))}
-        <a className="knopf knopf-akzent klein" href={`tel:${firma.telefonLink}`}>
-          <span aria-hidden="true">☏</span> {firma.telefon}
-        </a>
-      </nav>
+        </nav>
+      </div>
     </header>
+  );
+}
+
+export function TelefonZeichen() {
+  return (
+    <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" fill="currentColor">
+      <path d="M3.2 1.5a1.4 1.4 0 0 1 2 .3l1 1.4a1.4 1.4 0 0 1-.1 1.8l-.7.7a.4.4 0 0 0-.1.4 7 7 0 0 0 3.6 3.6.4.4 0 0 0 .4-.1l.7-.7a1.4 1.4 0 0 1 1.8-.1l1.4 1a1.4 1.4 0 0 1 .3 2l-.6.8c-.5.6-1.4.9-2.2.6A13 13 0 0 1 1.8 4.5c-.3-.8 0-1.7.6-2.2l.8-.8Z" />
+    </svg>
   );
 }

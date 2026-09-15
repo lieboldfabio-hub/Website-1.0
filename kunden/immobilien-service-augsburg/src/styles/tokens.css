@@ -1,78 +1,100 @@
 /*
-  Gestaltungswerte an einer Stelle.
+  Ein Satz Werte für die ganze Seite — Startseite, Unterseiten und Showroom
+  greifen ausschließlich hierauf zu.
 
-  Die Farben sind aus der bestehenden Seite immobilien-service-augsburg.de
-  ausgelesen (Pixelanalyse der Screenshots vom 14.09.2026). Die Marke ist ein
-  Gelbgrün bei Farbton 75–78° — es zieht sich dort durch Kopfband, Bänder,
-  Symbole und Schaltflächen. Dazu kommt je Leistung eine eigene Nebenfarbe;
-  auch die stammt aus der alten Seite und wird hier beibehalten, weil sie den
-  Leistungen als Wiedererkennung dient.
+  Farbwelt: warmes Off-White als Grund, Anthrazit für Text, ein gedämpftes
+  Salbeigrün als Akzent. Das Grün ist die Marke der bestehenden Seite, hier
+  aber entsättigt und abgedunkelt — das grelle Limettengrün des Originals
+  wirkt als Flächenfarbe billig und trägt keinen seriösen Auftritt. Dazu
+  ein warmes Greige für ruhige Flächen. Keine zweite Signalfarbe.
 */
 
 :root {
-  /* --- Marke: Gelbgrün, Ton 76° ----------------------------------------- */
-  --gruen: #7d8c4e;               /* Schrift- und Linienfarbe, kontraststark */
-  --gruen-tief: #5f6b3a;          /* für Text auf Hell: 6,2:1 auf Weiß */
-  --gruen-kraeftig: #a8c455;      /* Signalfarbe, aus den Symbolen */
-  --gruen-mittel: #c4d68f;        /* Verläufe, Kopfband */
-  --gruen-hell: #deebbf;          /* die hellen Bänder der alten Seite */
-  --gruen-schleier: #eef4e0;      /* ganz zarte Flächen */
+  /* --- Grundflächen, warm statt kalt ------------------------------------ */
+  --grund: #fbfaf7;          /* warmes Off-White */
+  --grund-rein: #ffffff;
+  --grund-ruhig: #f4f2ec;    /* Greige für abgesetzte Abschnitte */
+  --grund-warm: #eeebe2;     /* etwas kräftiger, für Karten auf Greige */
 
-  /* --- Nebenfarben je Leistung, aus der alten Seite ---------------------- */
-  --ton-bewertung: #699ba9;       /* Petrol */
-  --ton-verkauf: #e9c078;         /* Sand */
-  --ton-vermietung: #b8c4db;      /* Hellblau */
-  --ton-mediation: #a8c455;       /* Limette */
-  --ton-betreuung: #c9c684;       /* Khaki */
-  --ton-beratung: #ad4f74;        /* Bordeaux */
+  /* --- Dunkel: der Showroom und die Fußzeile ---------------------------- */
+  --dunkel: #232622;         /* Anthrazit mit minimalem Grünstich */
+  --dunkel-tief: #1a1c19;
+  --dunkel-erhoben: #2c302b;
 
-  /* --- Grundflächen: hell, wie die bestehende Seite ---------------------- */
-  --grund: #ffffff;
-  --grund-leise: #f7f7f5;         /* der Grauton der alten Seitenleiste */
-  --grund-band: var(--gruen-hell);
+  /* --- Text -------------------------------------------------------------- */
+  --text: #24261f;
+  --text-ruhig: #5c5f55;
+  --text-leise: #6f7266;      /* 4,7:1 — auch in Kleinschrift lesbar */
+  --text-auf-dunkel: #f2f1ea;
+  --text-auf-dunkel-ruhig: #b3b5a9;
 
-  /* --- Der Showroom ist der einzige dunkle Ort --------------------------- */
-  --dunkel: #1b1e16;              /* Schwarz mit einem Stich ins Grüne */
-  --dunkel-tief: #10120d;
+  /* --- Akzent: gedämpftes Salbei ---------------------------------------- */
+  --akzent: #5c6b4a;         /* 6,4:1 auf --grund, taugt für Text */
+  --akzent-tief: #47543a;
+  --akzent-hell: #8ea173;    /* nur auf dunklem Grund */
+  --akzent-schleier: #eaeee0;
 
-  /* --- Schrift ---------------------------------------------------------- */
-  --text: #23261f;
-  --text-gedaempft: #5a5e52;
-  --text-schwach: #85897c;
-  --text-auf-dunkel: #f2f4ec;
-  --text-auf-dunkel-leise: #a9ae9c;
+  /* --- Linien ------------------------------------------------------------ */
+  --linie: #e4e1d7;
+  --linie-kraeftig: #cdc9bb;
+  --linie-dunkel: rgba(242, 241, 234, 0.13);
 
-  --linie: #e3e5dd;
-  --linie-stark: #c9ccbf;
-  --linie-dunkel: rgba(242, 244, 236, 0.14);
+  /* --- Offene Punkte sichtbar halten ------------------------------------ */
+  --offen: #8a5a12;
+  --offen-flaeche: #fbf1dd;
 
-  /* --- Platzhalter sichtbar machen (Grundsatz aus dem Hauptrepo) --------- */
-  --todo: #b45309;
-  --todo-flaeche: #fff4d6;
+  /* --- Schrift ----------------------------------------------------------- */
+  --schrift-display: "Cormorant Garamond", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+  --schrift-text: "Inter Tight", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
 
-  /* --- Schriftfamilien -------------------------------------------------- */
-  --schrift-titel: "Georgia", "Times New Roman", serif;
-  --schrift-text: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  /* Eine Skala, und die Seite bleibt darauf. */
+  --gr-xs: 0.78rem;
+  --gr-s: 0.9rem;
+  --gr-m: 1rem;
+  --gr-l: 1.1rem;
+  --gr-xl: clamp(1.25rem, 1.6vw, 1.45rem);
+  --gr-titel-s: clamp(1.5rem, 2.4vw, 1.95rem);
+  --gr-titel-m: clamp(1.9rem, 3.4vw, 2.8rem);
+  --gr-titel-l: clamp(2.3rem, 5vw, 4rem);
 
-  /* --- Raster ----------------------------------------------------------- */
-  --breite: 1180px;
+  /* --- Abstände: eine Reihe, keine Zwischenwerte ------------------------- */
+  --a1: 0.25rem;
+  --a2: 0.5rem;
+  --a3: 0.75rem;
+  --a4: 1rem;
+  --a5: 1.5rem;
+  --a6: 2rem;
+  --a7: 3rem;
+  --a8: 4rem;
+  --abschnitt: clamp(4rem, 9vw, 7rem);
+
+  /* --- Form -------------------------------------------------------------- */
+  --radius-s: 3px;
+  --radius-m: 6px;
+  --radius-l: 10px;
+  --radius-rund: 999px;
+
+  /* Zwei Schatten, mehr braucht die Seite nicht. */
+  --schatten-ruhig: 0 1px 2px rgba(36, 38, 31, 0.04),
+                    0 6px 18px rgba(36, 38, 31, 0.05);
+  --schatten-gehoben: 0 2px 4px rgba(36, 38, 31, 0.05),
+                      0 14px 34px rgba(36, 38, 31, 0.09);
+
+  /* --- Raster ------------------------------------------------------------ */
+  --breite: 1200px;
+  --breite-text: 44rem;
   --rand: clamp(1.25rem, 5vw, 4rem);
+  --kopfzeile-hoehe: 4.5rem;
 
-  /* --- Bewegung --------------------------------------------------------- */
-  --weich: cubic-bezier(0.22, 1, 0.36, 1);
-  --dauer-kurz: 0.28s;
-  --dauer-mittel: 0.6s;
+  /* --- Bewegung: eine Kurve, zwei Dauern --------------------------------- */
+  --kurve: cubic-bezier(0.22, 1, 0.36, 1);
+  --dauer-kurz: 0.2s;
+  --dauer-lang: 0.5s;
 }
 
-/* Wer Bewegung reduziert haben will, bekommt sie reduziert — überall. */
 @media (prefers-reduced-motion: reduce) {
-  :root {
-    --dauer-kurz: 0.01s;
-    --dauer-mittel: 0.01s;
-  }
-  *,
-  *::before,
-  *::after {
+  :root { --dauer-kurz: 0.01ms; --dauer-lang: 0.01ms; }
+  *, *::before, *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;

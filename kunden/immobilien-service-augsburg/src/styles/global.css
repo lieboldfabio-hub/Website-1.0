@@ -1,668 +1,889 @@
-/*
-  Die Seite ist hell, wie die bestehende — und der Showroom ist der einzige
-  dunkle Ort darin. Das ist Absicht: Wer hier ankommt, steht oft in einer
-  Trennung, einem Erbfall oder einem Betreuungsverfahren. Ein durchgehend
-  schwarzer Hochglanzauftritt wäre für diese Menschen der falsche Ton. Die
-  Ausstellung darf trotzdem eine Ausstellung sein — man betritt einen dunklen
-  Raum und verlässt ihn wieder.
-*/
+/* ========================================================================
+   Grundlagen
+   ======================================================================== */
 
-*,
-*::before,
-*::after { box-sizing: border-box; }
+*, *::before, *::after { box-sizing: border-box; }
 
-html { -webkit-text-size-adjust: 100%; }
-
-/* Die Kopfzeile steht fest über allem. Ohne diesen Abstand landet jeder
-   Menüklick so, dass sie die Überschrift des Abschnitts verdeckt. */
-:target,
-section[id] {
-  scroll-margin-top: 5.5rem;
+html {
+  -webkit-text-size-adjust: 100%;
+  /* Sanftes Springen zu Ankern überlässt der Browser sich selbst — keine
+     Bibliothek greift ins Scrollen ein. */
+  scroll-behavior: smooth;
 }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
 
 body {
   margin: 0;
+  /* Lange Fachwörter wie „Wohnflächenberechnung" brechen notfalls um,
+     statt den Kasten aufzudrücken. */
+  overflow-wrap: break-word;
   background: var(--grund);
   color: var(--text);
   font-family: var(--schrift-text);
-  font-size: 1.0625rem;
-  line-height: 1.68;
+  font-size: var(--gr-m);
+  line-height: 1.65;
   -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  /* Verhindert waagerechtes Wackeln, ohne das Scrollen zu kapern. */
   overflow-x: hidden;
 }
 
 h1, h2, h3 {
-  font-family: var(--schrift-titel);
-  font-weight: 400;
-  line-height: 1.14;
-  letter-spacing: -0.012em;
-  margin: 0 0 0.6em;
+  font-family: var(--schrift-display);
+  font-weight: 500;
+  line-height: 1.12;
+  letter-spacing: -0.005em;
+  text-wrap: balance;
+  margin: 0 0 var(--a4);
+  color: var(--text);
 }
-h1 { font-size: clamp(2.2rem, 5vw, 3.9rem); }
-h2 { font-size: clamp(1.75rem, 3.4vw, 2.7rem); }
-h3 { font-size: clamp(1.15rem, 1.8vw, 1.45rem); }
-p  { margin: 0 0 1.1em; }
+h1 { font-size: var(--gr-titel-l); }
+h2 { font-size: var(--gr-titel-m); }
+h3 { font-size: var(--gr-titel-s); font-weight: 500; }
+p { margin: 0 0 var(--a4); }
+p:last-child { margin-bottom: 0; }
 
-a { color: inherit; }
+a { color: var(--akzent); text-underline-offset: 0.18em; }
+a:hover { color: var(--akzent-tief); }
 img { max-width: 100%; display: block; }
 
 :focus-visible {
-  outline: 2px solid var(--gruen-tief);
+  outline: 2px solid var(--akzent);
   outline-offset: 3px;
-  border-radius: 2px;
+  border-radius: var(--radius-s);
 }
+
+/* Ohne `min-width: 0` weigern sich Grid- und Flex-Kinder, unter ihre
+   Inhaltsbreite zu schrumpfen — die klassische Ursache dafür, dass eine
+   Seite auf schmalen Geräten ein paar Pixel zu breit wird. */
+.einstieg-raster > *, .kurz-ueber-raster > *, .leistung-raster > *,
+.kontakt-raster > *, .person-raster > *, .fusszeile-raster > *,
+.vertrauen-reihe > *, .knopf-reihe > * { min-width: 0; }
+
+.mitte {
+  width: 100%;
+  max-width: var(--breite);
+  margin-inline: auto;
+  padding-inline: var(--rand);
+}
+
+section[id], :target { scroll-margin-top: calc(var(--kopfzeile-hoehe) + var(--a5)); }
 
 .zum-inhalt {
   position: absolute;
-  left: -9999px;
+  left: 0;
+  top: 0;
+  transform: translateY(-120%);
   z-index: 100;
-  padding: 0.9rem 1.4rem;
-  background: var(--gruen-tief);
+  padding: var(--a3) var(--a5);
+  background: var(--akzent-tief);
   color: #fff;
   font-weight: 600;
+  border-radius: 0 0 var(--radius-m) 0;
 }
-.zum-inhalt:focus { left: 1rem; top: 1rem; }
+.zum-inhalt:focus { transform: translateY(0); }
 
 .nur-vorlesen {
-  position: absolute;
-  width: 1px; height: 1px;
-  padding: 0; margin: -1px;
-  overflow: hidden;
-  clip: rect(0 0 0 0);
-  white-space: nowrap;
-  border: 0;
+  position: absolute; width: 1px; height: 1px;
+  padding: 0; margin: -1px; overflow: hidden;
+  clip: rect(0 0 0 0); white-space: nowrap; border: 0;
 }
 
-/* Platzhalter, die nicht versehentlich live gehen dürfen. */
-.todo {
-  background: var(--todo-flaeche);
-  color: var(--todo);
-  box-shadow: inset 0 -1px 0 var(--todo);
+/* Offene Punkte bleiben sichtbar, bis sie gefüllt sind. */
+.offen {
+  background: var(--offen-flaeche);
+  color: var(--offen);
+  box-shadow: inset 0 -1px 0 currentColor;
   padding: 0 0.25em;
-  border-radius: 2px;
+  border-radius: var(--radius-s);
 }
 
 .ueberzeile {
-  font-size: 0.76rem;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--gruen-tief);
+  font-size: var(--gr-xs);
   font-weight: 600;
-  margin-bottom: 1rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--akzent);
+  margin: 0 0 var(--a3);
 }
 
-/* Knöpfe ----------------------------------------------------------------- */
+.vorspann {
+  font-size: var(--gr-xl);
+  line-height: 1.55;
+  color: var(--text-ruhig);
+  max-width: var(--breite-text);
+}
+
+/* Einblenden: Ruhelage sichtbar, animiert wird nur die Lage. */
+.einblenden {
+  transition: transform var(--dauer-lang) var(--kurve);
+}
+.einblenden[data-wartet] { transform: translateY(18px); }
+@media (prefers-reduced-motion: reduce) {
+  .einblenden, .einblenden[data-wartet] { transform: none; transition: none; }
+}
+
+/* ========================================================================
+   Knöpfe — drei Varianten, mehr braucht die Seite nicht
+   ======================================================================== */
 
 .knopf {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
-  padding: 0.9rem 1.6rem;
+  gap: var(--a2);
+  padding: 0.85rem 1.6rem;
   border: 1px solid transparent;
-  border-radius: 999px;   /* die Pillenform der bestehenden Seite */
+  border-radius: var(--radius-rund);
   font: inherit;
   font-weight: 600;
+  font-size: var(--gr-s);
+  letter-spacing: 0.01em;
   text-decoration: none;
   cursor: pointer;
-  transition: background var(--dauer-kurz) var(--weich),
-              color var(--dauer-kurz) var(--weich),
-              border-color var(--dauer-kurz) var(--weich),
-              transform var(--dauer-kurz) var(--weich);
+  white-space: nowrap;
+  transition: background var(--dauer-kurz) var(--kurve),
+              border-color var(--dauer-kurz) var(--kurve),
+              color var(--dauer-kurz) var(--kurve);
 }
-.knopf:hover { transform: translateY(-1px); }
-.knopf:active { transform: translateY(0); }
-.knopf.klein { padding: 0.55rem 1.05rem; font-size: 0.92rem; }
+.knopf.klein { padding: 0.55rem 1.1rem; }
 
-.knopf-akzent { background: var(--gruen-tief); color: #fff; }
-.knopf-akzent:hover { background: var(--gruen); }
-.knopf-akzent:disabled { opacity: 0.55; cursor: wait; transform: none; }
+.knopf-voll { background: var(--akzent-tief); color: #fff; }
+.knopf-voll:hover { background: var(--akzent); color: #fff; }
+.knopf-voll:disabled { opacity: 0.6; cursor: wait; }
 
-.knopf-linie { border-color: var(--linie-stark); color: var(--text); background: #fff; }
-.knopf-linie:hover { border-color: var(--gruen-tief); color: var(--gruen-tief); }
+.knopf-linie { border-color: var(--linie-kraeftig); color: var(--text); background: var(--grund-rein); }
+.knopf-linie:hover { border-color: var(--akzent); color: var(--akzent-tief); }
 
-/* Kopfzeile -------------------------------------------------------------- */
+.knopf-reihe { display: flex; flex-wrap: wrap; gap: var(--a3); margin-top: var(--a5); }
+
+.mehr-zeichen {
+  display: inline-block;
+  margin-top: var(--a3);
+  font-size: var(--gr-s);
+  font-weight: 600;
+  color: var(--akzent);
+}
+.mehr-zeichen::after { content: " →"; }
+
+/* ========================================================================
+   Kopfzeile
+   ======================================================================== */
 
 .kopfzeile {
-  position: fixed;
-  inset: 0 0 auto;
-  z-index: 50;
+  position: sticky;
+  top: 0;
+  z-index: 60;
+  background: color-mix(in srgb, var(--grund) 88%, transparent);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid transparent;
+  transition: border-color var(--dauer-kurz) var(--kurve),
+              box-shadow var(--dauer-kurz) var(--kurve);
+}
+.kopfzeile.ist-gescrollt {
+  border-bottom-color: var(--linie);
+  box-shadow: 0 1px 12px rgba(36, 38, 31, 0.04);
+}
+.kopfzeile-innen {
+  max-width: var(--breite);
+  margin-inline: auto;
+  padding-inline: var(--rand);
+  min-height: var(--kopfzeile-hoehe);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 1rem;
-  padding: 1.15rem var(--rand);
-  background: rgba(255, 255, 255, 0.82);
-  backdrop-filter: blur(12px);
-  border-bottom: 1px solid transparent;
-  transition: padding var(--dauer-mittel) var(--weich),
-              box-shadow var(--dauer-mittel) var(--weich),
-              border-color var(--dauer-mittel) var(--weich);
-}
-.kopfzeile.ist-klein {
-  padding-block: 0.7rem;
-  border-bottom-color: var(--linie);
-  box-shadow: 0 4px 20px rgba(35, 38, 31, 0.05);
+  gap: var(--a5);
 }
 
-.marke { display: flex; align-items: center; gap: 0.7rem; text-decoration: none; }
-.marke-zeichen { display: grid; place-items: center; color: var(--gruen-tief); }
+.marke { display: inline-flex; align-items: center; gap: var(--a3); text-decoration: none; color: var(--text); }
+.signet { color: var(--akzent); flex: none; }
 .marke-text { display: flex; flex-direction: column; line-height: 1.2; }
-.marke-text strong {
-  font-family: var(--schrift-titel);
-  font-weight: 400;
-  font-size: 1.12rem;
-}
+.marke-text strong { font-family: var(--schrift-display); font-weight: 600; font-size: 1.18rem; }
 .marke-text span {
-  font-size: 0.68rem;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--gruen-tief);
+  font-size: 0.66rem;
   font-weight: 600;
+  letter-spacing: 0.19em;
+  text-transform: uppercase;
+  color: var(--text-leise);
 }
 
-.hauptmenue { display: flex; align-items: center; gap: 1.7rem; }
-.hauptmenue a { text-decoration: none; font-size: 0.95rem; color: var(--text-gedaempft); }
-.hauptmenue a:hover { color: var(--gruen-tief); }
+.hauptmenue { display: flex; align-items: center; gap: var(--a5); }
+.hauptmenue > ul { display: flex; align-items: center; gap: var(--a5); list-style: none; margin: 0; padding: 0; }
+.hauptmenue a {
+  color: var(--text-ruhig);
+  text-decoration: none;
+  font-size: var(--gr-s);
+  font-weight: 500;
+  padding: var(--a2) 0;
+}
+.hauptmenue a:hover, .hauptmenue a.active { color: var(--akzent-tief); }
 .hauptmenue a.knopf { color: #fff; }
 
-.menue-knopf { display: none; }
+.klappe-zeile { display: flex; align-items: center; gap: var(--a1); }
+.klappe-knopf {
+  display: grid; place-items: center;
+  width: 1.5rem; height: 1.5rem;
+  border: 0; background: none; padding: 0;
+  color: var(--text-leise); cursor: pointer;
+}
+.klappe-knopf[aria-expanded="true"] svg { transform: rotate(180deg); }
+.klappe-knopf svg { transition: transform var(--dauer-kurz) var(--kurve); }
 
-@media (max-width: 980px) {
+.hat-klappe { position: relative; }
+.klappe {
+  position: absolute;
+  top: calc(100% + 0.7rem);
+  left: 50%;
+  transform: translateX(-50%);
+  display: none;
+  gap: var(--a6);
+  min-width: 34rem;
+  padding: var(--a5);
+  background: var(--grund-rein);
+  border: 1px solid var(--linie);
+  border-radius: var(--radius-l);
+  box-shadow: var(--schatten-gehoben);
+}
+.klappe.ist-offen { display: grid; grid-template-columns: 1fr 1fr; }
+.klappe-titel {
+  font-size: var(--gr-xs); font-weight: 600; letter-spacing: 0.13em;
+  text-transform: uppercase; color: var(--text-leise);
+  margin: 0 0 var(--a3);
+}
+.klappe-spalte a {
+  display: block;
+  padding: var(--a2) var(--a3);
+  margin-inline: calc(var(--a3) * -1);
+  border-radius: var(--radius-m);
+}
+.klappe-spalte a:hover { background: var(--akzent-schleier); }
+.klappe-spalte strong { display: block; font-size: var(--gr-s); color: var(--text); }
+.klappe-spalte span { display: block; font-size: var(--gr-xs); color: var(--text-leise); }
+
+.menue-knopf { display: none; }
+.menue-striche { display: inline-grid; gap: 3px; }
+.menue-striche i { display: block; width: 15px; height: 1.5px; background: currentColor; }
+
+@media (max-width: 1080px) {
   .menue-knopf {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    background: #fff;
-    border: 1px solid var(--linie-stark);
-    border-radius: 999px;
-    color: var(--text);
-    font: inherit;
-    font-size: 0.9rem;
-    padding: 0.5rem 0.95rem;
-    cursor: pointer;
+    display: inline-flex; align-items: center; gap: var(--a2);
+    background: var(--grund-rein); border: 1px solid var(--linie-kraeftig);
+    border-radius: var(--radius-rund); color: var(--text);
+    font: inherit; font-size: var(--gr-s); font-weight: 600;
+    padding: 0.5rem 0.95rem; cursor: pointer;
   }
   .hauptmenue {
-    position: fixed;
-    inset: 4.2rem 0 auto;
+    position: absolute;
+    inset: 100% 0 auto;
     flex-direction: column;
     align-items: stretch;
     gap: 0;
-    padding: 0.5rem var(--rand) 1.8rem;
-    background: #fff;
+    padding: var(--a4) var(--rand) var(--a6);
+    background: var(--grund-rein);
     border-bottom: 1px solid var(--linie);
-    box-shadow: 0 18px 40px rgba(35, 38, 31, 0.09);
-    transform: translateY(-130%);
-    visibility: hidden;
-    transition: transform var(--dauer-mittel) var(--weich), visibility var(--dauer-mittel);
+    box-shadow: var(--schatten-gehoben);
+    max-height: calc(100dvh - var(--kopfzeile-hoehe));
+    overflow-y: auto;
+    /* Das Menü scrollt für sich, ohne die Seite dahinter mitzuziehen. */
+    overscroll-behavior: contain;
+    display: none;
   }
-  .hauptmenue.ist-offen { transform: translateY(0); visibility: visible; }
-  .hauptmenue a { padding: 0.9rem 0; border-bottom: 1px solid var(--linie); font-size: 1.05rem; }
-  .hauptmenue a.knopf { margin-top: 1.1rem; border-bottom: none; justify-content: center; }
+  .hauptmenue.ist-offen { display: flex; }
+  .hauptmenue > ul { flex-direction: column; align-items: stretch; gap: 0; }
+  .hauptmenue > ul > li { border-bottom: 1px solid var(--linie); }
+  .hauptmenue > ul > li > a,
+  .klappe-zeile > a { padding: var(--a4) 0; font-size: var(--gr-l); flex: 1; }
+  .klappe-zeile { justify-content: space-between; }
+  .klappe-knopf { width: 2.75rem; height: 2.75rem; }
+  .klappe {
+    position: static; transform: none; min-width: 0;
+    border: 0; box-shadow: none; padding: 0 0 var(--a4);
+    background: none;
+  }
+  .klappe.ist-offen { grid-template-columns: 1fr; gap: var(--a4); }
+  .kopfzeile-anruf { margin-top: var(--a5); justify-content: center; }
 }
 
-/* Abschnitte ------------------------------------------------------------- */
+/* ========================================================================
+   Seitenkopf und Abschnitte
+   ======================================================================== */
 
-.abschnitt { padding: clamp(4.5rem, 10vw, 8rem) var(--rand); }
-.abschnitt.schmal { max-width: 48rem; margin-inline: auto; padding-top: 8.5rem; }
-.abschnitt-kopf { max-width: var(--breite); margin: 0 auto clamp(2.2rem, 5vw, 3.4rem); }
+.abschnitt { padding-block: var(--abschnitt); }
+.abschnitt-ruhig { background: var(--grund-ruhig); }
+.abschnitt-kopf { max-width: var(--breite-text); margin-bottom: var(--a7); }
+.abschnitt-vorspann { color: var(--text-ruhig); }
 
-/* Held ------------------------------------------------------------------- */
+.seitenkopf {
+  padding-block: var(--a7) var(--a6);
+  background: linear-gradient(180deg, var(--akzent-schleier), var(--grund));
+  border-bottom: 1px solid var(--linie);
+}
+.seitenkopf h1 { max-width: 20ch; }
 
-.held {
+.krumen { margin-bottom: var(--a5); }
+.krumen ol { display: flex; flex-wrap: wrap; gap: var(--a2); list-style: none; margin: 0; padding: 0; font-size: var(--gr-xs); }
+.krumen li { display: flex; gap: var(--a2); color: var(--text-leise); }
+.krumen a { color: var(--text-ruhig); text-decoration: none; }
+.krumen a:hover { color: var(--akzent-tief); text-decoration: underline; }
+
+.gruppen-titel { font-size: var(--gr-titel-s); margin-bottom: var(--a5); }
+.gruppen-titel-zweit { margin-top: var(--a8); }
+
+.fliesstext { max-width: var(--breite-text); }
+.fliesstext h2 { font-size: var(--gr-xl); margin-top: var(--a6); }
+.fliesstext h2:first-child { margin-top: 0; }
+.fliesstext p, .fliesstext li { color: var(--text-ruhig); }
+.fliesstext ul { padding-left: 1.1rem; }
+.fliesstext li { margin-bottom: var(--a2); }
+
+.haken-liste { list-style: none; padding: 0; margin: 0 0 var(--a5); }
+.haken-liste li {
   position: relative;
-  padding: 9rem var(--rand) clamp(4rem, 8vw, 6rem);
-  background:
-    linear-gradient(180deg, var(--gruen-schleier) 0%, #fff 62%);
+  padding: var(--a2) 0 var(--a2) 1.8rem;
+  border-bottom: 1px solid var(--linie);
+  color: var(--text-ruhig);
 }
-.held-raum {
-  max-width: var(--breite);
-  margin-inline: auto;
+.haken-liste li::before {
+  content: "";
+  position: absolute; left: 0; top: 1.05em;
+  width: 0.6rem; height: 0.35rem;
+  border-left: 1.5px solid var(--akzent);
+  border-bottom: 1.5px solid var(--akzent);
+  transform: rotate(-45deg);
+}
+
+/* ========================================================================
+   Einstieg
+   ======================================================================== */
+
+.einstieg {
+  padding-block: clamp(2.5rem, 6vw, 5rem) var(--abschnitt);
+  background: linear-gradient(170deg, var(--akzent-schleier) 0%, var(--grund) 58%);
+}
+.einstieg-raster {
   display: grid;
-  grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.85fr);
-  gap: clamp(2rem, 5vw, 4.5rem);
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+  gap: clamp(var(--a6), 5vw, var(--a8));
   align-items: center;
 }
-.held h1 em { font-style: italic; color: var(--gruen-tief); }
-.held-text { max-width: 34rem; color: var(--text-gedaempft); font-size: 1.1rem; }
-
-.held-qualifikationen {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin: 1.8rem 0 0;
-  padding: 0;
-  list-style: none;
+.einstieg h1 { max-width: 17ch; }
+.einstieg h1 em { font-style: italic; color: var(--akzent); }
+/*
+  Die betonte Wendung bleibt zusammen — aber erst, wenn dafür Platz ist.
+  Ohne diese Bedingung erzwingt `nowrap` eine Mindestbreite, die auf einem
+  320-Pixel-Gerät die ganze Spalte aufbläht und die Seite quer scrollen
+  lässt. Eine Satzfeinheit darf das Layout nicht sprengen.
+*/
+@media (min-width: 420px) {
+  .einstieg h1 em { white-space: nowrap; }
 }
-.held-qualifikationen li {
-  font-size: 0.82rem;
-  font-weight: 600;
-  color: var(--gruen-tief);
-  background: var(--gruen-hell);
-  border-radius: 999px;
-  padding: 0.4rem 0.9rem;
+.einstieg-anruf {
+  display: inline-flex; align-items: center; gap: var(--a2);
+  margin-top: var(--a5);
+  font-size: var(--gr-s); font-weight: 600;
+  color: var(--text-ruhig); text-decoration: none;
 }
+.einstieg-anruf:hover { color: var(--akzent-tief); }
 
-.held-knoepfe { display: flex; flex-wrap: wrap; gap: 0.8rem; margin-top: 2rem; }
+/*
+  Die Bildfläche hat ihre Größe, bevor irgendetwas geladen ist.
 
-.held-portraet { margin: 0; position: relative; }
-.held-portraet img {
+  Vorher wurde ein fehlendes Bild per display:none entfernt — danach sprang
+  die ganze Spalte nach oben. Auf dem Handy waren das allein 0,97 an
+  Layout-Verschiebung. Jetzt steckt das Bild in einem Rahmen mit festem
+  Seitenverhältnis; fehlt es, wird nur seine Deckkraft null, und das Layout
+  merkt davon nichts.
+*/
+.einstieg-portraet, .person-bild { margin: 0; }
+
+.bildflaeche {
+  position: relative;
+  display: block;
   width: 100%;
   aspect-ratio: 4 / 5;
-  object-fit: cover;
-  border-radius: 999px 999px 14px 14px;
-}
-.held-portraet[data-fehlt] {
-  aspect-ratio: 4 / 5;
-  background: var(--gruen-hell);
-  border-radius: 999px 999px 14px 14px;
-  display: grid;
-  place-items: center;
-}
-.held-portraet[data-fehlt]::before {
-  content: attr(data-fehlt);
-  color: var(--todo);
-  background: var(--todo-flaeche);
-  padding: 0.3rem 0.7rem;
-  border-radius: 3px;
-  font-size: 0.85rem;
-}
-.held-portraet figcaption {
-  margin-top: 1rem;
-  display: flex;
-  flex-direction: column;
-  text-align: center;
-}
-.held-portraet figcaption strong { font-family: var(--schrift-titel); font-weight: 400; font-size: 1.2rem; }
-.held-portraet figcaption span { font-size: 0.85rem; color: var(--text-schwach); }
-
-@media (max-width: 860px) {
-  .held-raum { grid-template-columns: 1fr; }
-  .held-portraet { order: -1; max-width: 15rem; margin-inline: auto; }
-  .held-portraet img, .held-portraet[data-fehlt] { aspect-ratio: 1; border-radius: 999px; }
-}
-
-/* Leistungen ------------------------------------------------------------- */
-
-.leistungen { background: var(--grund-leise); }
-.leistungs-liste {
-  max-width: var(--breite);
-  margin-inline: auto;
-  padding: 0;
-  list-style: none;
-  display: grid;
-  gap: 1.2rem;
-  /* Genau drei Spalten, sobald Platz ist: sechs Leistungen brechen sonst in
-     vier plus zwei, und die halbleere zweite Zeile sieht aus wie ein Fehler. */
-  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
-}
-@media (min-width: 1060px) {
-  .leistungs-liste { grid-template-columns: repeat(3, 1fr); }
-}
-.leistungs-liste li {
-  background: #fff;
-  border: 1px solid var(--linie);
-  border-top: 3px solid var(--ton, var(--gruen-kraeftig));
-  border-radius: 4px;
-  padding: 1.7rem 1.6rem 1.9rem;
-  transition: box-shadow var(--dauer-mittel) var(--weich),
-              transform var(--dauer-mittel) var(--weich);
-}
-.leistungs-liste li:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 14px 34px rgba(35, 38, 31, 0.08);
-}
-.leistungs-liste li.ist-hervorgehoben { background: var(--gruen-schleier); }
-/* Schriftfarbe kommt aus den Daten, weil sie je Farbe gerechnet ist —
-   siehe die Begründung in src/daten/firma.js. */
-.leistungs-pille {
-  display: inline-block;
-  background: var(--ton, var(--gruen-kraeftig));
-  color: var(--ton-schrift, #23261f);
-  font-size: 0.82rem;
-  font-weight: 700;
-  padding: 0.35rem 0.95rem;
-  border-radius: 999px;
-  margin-bottom: 1.1rem;
-}
-.leistungs-liste h3 { margin: 0 0 0.5rem; }
-.leistungs-liste p { color: var(--text-gedaempft); margin: 0; font-size: 0.97rem; }
-
-/* Besonderheiten --------------------------------------------------------- */
-
-.lebenslagen-liste {
-  max-width: var(--breite);
-  margin-inline: auto;
-  padding: 0;
-  list-style: none;
-  display: grid;
-  gap: 1px;
-  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
-  background: var(--linie);
-  border: 1px solid var(--linie);
-  border-radius: 4px;
+  background: var(--grund-warm);
+  border-radius: var(--radius-l);
   overflow: hidden;
 }
-.lebenslagen-liste li { background: #fff; padding: 2rem 1.7rem 2.2rem; }
-.lebenslagen-liste h3 { color: var(--gruen-tief); }
-.lebenslagen-liste p { color: var(--text-gedaempft); margin: 0; font-size: 0.97rem; }
-
-/* Über mich -------------------------------------------------------------- */
-
-.ueber-mich { background: linear-gradient(180deg, #fff 0%, var(--gruen-schleier) 100%); }
-.ueber-mich-raum {
-  max-width: var(--breite);
-  margin-inline: auto;
-  display: grid;
-  grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
-  gap: clamp(2rem, 5vw, 4rem);
-  align-items: start;
-}
-@media (max-width: 860px) { .ueber-mich-raum { grid-template-columns: 1fr; } }
-.ueber-mich-text p { color: var(--text-gedaempft); }
-
-.qualifikations-liste { margin: 2rem 0 0; padding: 0; list-style: none; }
-.qualifikations-liste li {
-  position: relative;
-  padding: 0.55rem 0 0.55rem 1.9rem;
-  border-bottom: 1px solid var(--linie);
-  font-size: 0.97rem;
-}
-.qualifikations-liste li::before {
-  content: "✓";
+.bildflaeche img {
   position: absolute;
-  left: 0;
-  color: var(--gruen-tief);
-  font-weight: 700;
-}
-
-.kennzahlen {
-  margin: 0;
-  background: #fff;
-  border: 1px solid var(--linie);
-  border-radius: 4px;
-  padding: 1.6rem;
-}
-.kennzahlen > div + div { margin-top: 1.3rem; padding-top: 1.3rem; border-top: 1px solid var(--linie); }
-.kennzahlen dt {
-  font-size: 0.72rem;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  color: var(--text-schwach);
-  margin-bottom: 0.3rem;
-}
-.kennzahlen dd { margin: 0; font-family: var(--schrift-titel); font-size: 1.35rem; }
-
-/* Objektkarten ----------------------------------------------------------- */
-
-.objekt-liste {
-  max-width: var(--breite);
-  margin-inline: auto;
-  padding: 0;
-  list-style: none;
-  display: grid;
-  gap: 1.4rem;
-  grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr));
-}
-.objekt-liste.schlicht { display: block; }
-.objekt-karte a {
-  display: block;
-  text-decoration: none;
-  border: 1px solid var(--linie);
-  border-radius: 4px;
-  background: #fff;
-  overflow: hidden;
-  padding-bottom: 1.4rem;
+  inset: 0;
+  width: 100%;
   height: 100%;
-  transition: border-color var(--dauer-kurz) var(--weich),
-              box-shadow var(--dauer-kurz) var(--weich),
-              transform var(--dauer-kurz) var(--weich);
+  object-fit: cover;
+  transition: opacity var(--dauer-kurz) var(--kurve);
 }
-.objekt-karte a:hover {
-  border-color: var(--gruen-kraeftig);
-  transform: translateY(-3px);
-  box-shadow: 0 14px 34px rgba(35, 38, 31, 0.09);
-}
-.objekt-bild {
-  display: block;
-  position: relative;
-  aspect-ratio: 3 / 2;
-  background: var(--gruen-hell);
-  overflow: hidden;
-}
-.objekt-bild img { width: 100%; height: 100%; object-fit: cover; }
-.objekt-bild[data-fehlt]::after {
+.bildflaeche[data-fehlt] { border: 1px dashed var(--linie-kraeftig); }
+.bildflaeche[data-fehlt] img { opacity: 0; }
+.bildflaeche[data-fehlt]::after {
   content: attr(data-fehlt);
   position: absolute;
   inset: 0;
   display: grid;
   place-items: center;
-  color: var(--todo);
-  font-size: 0.85rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-.objekt-karte .objekt-lage,
-.objekt-karte h3,
-.objekt-karte p { padding-inline: 1.4rem; }
-.objekt-karte .objekt-lage {
-  display: block;
-  margin-top: 1.3rem;
-  font-size: 0.72rem;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--gruen-tief);
+  text-align: center;
+  padding: var(--a4);
+  color: var(--offen);
+  font-size: var(--gr-s);
   font-weight: 600;
 }
-.objekt-karte h3 { margin: 0.45rem 0 0.5rem; }
-.objekt-daten { color: var(--text-schwach); font-size: 0.89rem; margin: 0 0 0.7rem; }
-.objekt-preis { margin: 0; font-family: var(--schrift-titel); font-size: 1.3rem; color: var(--gruen-tief); }
-
-/* Objektseite ------------------------------------------------------------ */
-
-.objektseite { max-width: var(--breite); margin-inline: auto; padding: 7.5rem var(--rand) 5rem; }
-.zurueck {
-  background: #fff;
-  border: 1px solid var(--linie-stark);
-  border-radius: 999px;
-  color: var(--text-gedaempft);
-  font: inherit;
-  font-size: 0.9rem;
-  padding: 0.45rem 1.05rem;
-  margin-bottom: 2.2rem;
-  cursor: pointer;
+.einstieg-portraet .bildflaeche { box-shadow: var(--schatten-ruhig); }
+.einstieg-portraet figcaption {
+  display: flex; flex-direction: column; text-align: center;
+  margin-top: var(--a4);
 }
-.zurueck:hover { color: var(--gruen-tief); border-color: var(--gruen-tief); }
-.objektseite-kopf { margin-bottom: 2.2rem; }
-.objektseite-preis { font-family: var(--schrift-titel); font-size: 1.8rem; color: var(--gruen-tief); margin: 0; }
-.objektseite-bild {
-  position: relative;
-  margin: 0 0 2.6rem;
-  aspect-ratio: 3 / 2;
-  background: var(--gruen-hell);
-  border-radius: 6px;
-  overflow: hidden;
+.einstieg-portraet figcaption strong { font-family: var(--schrift-display); font-size: 1.25rem; font-weight: 600; }
+.einstieg-portraet figcaption span { font-size: var(--gr-s); color: var(--text-leise); }
+
+@media (max-width: 900px) {
+  .einstieg-raster { grid-template-columns: 1fr; }
+  .einstieg-portraet { order: -1; max-width: 17rem; margin-inline: auto; }
+  .einstieg-portraet .bildflaeche { aspect-ratio: 1; border-radius: var(--radius-rund); }
 }
-.objektseite-bild img { width: 100%; height: 100%; object-fit: cover; }
-.objektseite-bild[data-fehlt]::after {
-  content: attr(data-fehlt);
-  position: absolute; inset: 0;
+
+/* ========================================================================
+   Vertrauensbereich
+   ======================================================================== */
+
+.vertrauen { padding-block: var(--a7); border-block: 1px solid var(--linie); background: var(--grund-rein); }
+.vertrauen-reihe {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  gap: var(--a6);
+  list-style: none; margin: 0; padding-block: 0;
+}
+.vertrauen-zahl {
+  display: block;
+  font-family: var(--schrift-display);
+  font-size: 2.6rem;
+  line-height: 1;
+  color: var(--akzent);
+  font-variant-numeric: tabular-nums;
+}
+.vertrauen-reihe strong { display: block; margin-top: var(--a2); font-size: var(--gr-m); }
+.vertrauen-reihe p { margin: var(--a1) 0 0; font-size: var(--gr-s); color: var(--text-ruhig); }
+
+/* ========================================================================
+   Schaufenster — native waagerechte Bahn
+   ======================================================================== */
+
+.schaufenster { padding-block: var(--abschnitt); background: var(--grund-ruhig); }
+.schaufenster-kopf { display: flex; align-items: flex-end; justify-content: space-between; gap: var(--a5); max-width: none; }
+.schaufenster-kopf h2 { margin: 0; }
+.schaufenster-steuerung { display: flex; gap: var(--a2); }
+.schaufenster-steuerung button {
   display: grid; place-items: center;
-  color: var(--todo);
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
+  width: 2.6rem; height: 2.6rem;
+  border: 1px solid var(--linie-kraeftig);
+  border-radius: var(--radius-rund);
+  background: var(--grund-rein);
+  color: var(--text); cursor: pointer;
+  transition: border-color var(--dauer-kurz) var(--kurve), opacity var(--dauer-kurz);
 }
-.objektseite-raster {
-  display: grid;
-  gap: 2.6rem;
-  grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
-}
-@media (max-width: 800px) { .objektseite-raster { grid-template-columns: 1fr; } }
-.objektseite-text p { color: var(--text-gedaempft); }
-.objektseite-daten { margin: 0; border-top: 1px solid var(--linie); }
-.objektseite-daten > div {
+.schaufenster-steuerung button:hover:not(:disabled) { border-color: var(--akzent); color: var(--akzent-tief); }
+.schaufenster-steuerung button:disabled { opacity: 0.35; cursor: default; }
+
+.schaufenster-bahn {
   display: flex;
-  justify-content: space-between;
-  gap: 1rem;
-  padding: 0.85rem 0;
-  border-bottom: 1px solid var(--linie);
+  gap: var(--a5);
+  list-style: none;
+  margin: 0;
+  padding: var(--a2) var(--rand) var(--a5);
+  /* Das ist die ganze Mechanik: das Scrollen des Browsers.
+     `proximity` statt `mandatory` — es fängt weich, statt zu greifen. */
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+  scroll-padding-inline: var(--rand);
+  /* Verhindert, dass ein waagerechter Wisch die Seite zurücknavigiert
+     oder das senkrechte Scrollen der Seite übernimmt. */
+  overscroll-behavior-x: contain;
+  scrollbar-width: thin;
+  scrollbar-color: var(--linie-kraeftig) transparent;
 }
-.objektseite-daten dt { color: var(--text-schwach); font-size: 0.91rem; }
-.objektseite-daten dd { margin: 0; font-weight: 600; }
+.schaufenster-bahn::-webkit-scrollbar { height: 6px; }
+.schaufenster-bahn::-webkit-scrollbar-thumb { background: var(--linie-kraeftig); border-radius: var(--radius-rund); }
 
-/* Kontakt ---------------------------------------------------------------- */
-
-.kontakt { background: var(--grund-leise); }
-.kontakt-raster {
-  max-width: var(--breite);
-  margin-inline: auto;
-  display: grid;
-  gap: clamp(2.2rem, 5vw, 4.5rem);
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+.schaufenster-karte {
+  /* `min()` statt einer festen Untergrenze: auf sehr schmalen Geräten
+     schrumpft die Karte mit, statt den Kasten zu sprengen. Dass rechts
+     ein Stück der nächsten Karte hervorschaut, zeigt zugleich, dass es
+     seitlich weitergeht. */
+  flex: 0 0 min(clamp(16rem, 27vw, 21rem), 78vw);
+  scroll-snap-align: start;
+  /* Weit außen liegende Karten überspringt der Browser beim Zeichnen. */
+  content-visibility: auto;
+  contain-intrinsic-size: 340px 400px;
 }
-@media (max-width: 880px) { .kontakt-raster { grid-template-columns: 1fr; } }
-.kontakt-text p { color: var(--text-gedaempft); }
-
-.kontakt-telefon {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.85rem;
-  text-decoration: none;
-  background: var(--gruen-hell);
-  border-radius: 999px;
-  padding: 0.75rem 1.6rem 0.8rem 1.35rem;
-  margin-bottom: 1.8rem;
-  font-family: var(--schrift-titel);
-  font-size: 1.3rem;
-  color: var(--gruen-tief);
-  transition: background var(--dauer-kurz) var(--weich);
-}
-.kontakt-telefon:hover { background: var(--gruen-mittel); }
-.kontakt-telefon > span:first-child { font-size: 1.5rem; line-height: 1; }
-/* Der Text steht in einem direkten Kind, nicht in einem verschachtelten —
-   mit `span span` griff die Regel nie, und „Direkt anrufen" klebte an der
-   Nummer. */
-.kontakt-telefon > span:last-child {
+.schaufenster-karte > a {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  line-height: 1.25;
-}
-.kontakt-telefon small {
-  font-family: var(--schrift-text);
-  font-size: 0.66rem;
-  font-weight: 600;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--text-gedaempft);
-  margin-bottom: 0.1rem;
-}
-
-.kontakt-daten > div { padding: 0.85rem 0; border-top: 1px solid var(--linie); }
-.kontakt-daten dt {
-  font-size: 0.72rem;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  color: var(--text-schwach);
-  margin-bottom: 0.25rem;
-}
-.kontakt-daten dd { margin: 0; }
-
-.kontakt-formular {
-  display: grid;
-  gap: 1rem;
-  background: #fff;
+  height: 100%;
+  background: var(--grund-rein);
   border: 1px solid var(--linie);
-  border-radius: 6px;
-  padding: clamp(1.4rem, 3vw, 2.2rem);
+  border-radius: var(--radius-l);
+  overflow: hidden;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color var(--dauer-kurz) var(--kurve),
+              box-shadow var(--dauer-kurz) var(--kurve),
+              transform var(--dauer-kurz) var(--kurve);
 }
-.kontakt-formular label { display: grid; gap: 0.4rem; font-size: 0.86rem; color: var(--text-gedaempft); font-weight: 600; }
-.kontakt-formular input,
-.kontakt-formular select,
-.kontakt-formular textarea {
-  background: var(--grund-leise);
-  border: 1px solid var(--linie-stark);
-  border-radius: 4px;
-  color: var(--text);
-  font: inherit;
-  font-size: 1rem;
-  font-weight: 400;
-  padding: 0.75rem 0.85rem;
-  width: 100%;
+.schaufenster-karte > a:hover {
+  border-color: var(--akzent);
+  box-shadow: var(--schatten-gehoben);
+  transform: translateY(-2px);
 }
-.kontakt-formular textarea { resize: vertical; }
-.kontakt-formular input:focus,
-.kontakt-formular select:focus,
-.kontakt-formular textarea:focus {
-  border-color: var(--gruen-tief);
-  outline: none;
-  background: #fff;
-}
-/* Die Eingabefelder sitzen auf einer Linie, auch wenn ein Label zweizeilig
-   wird ("Telefon (freiwillig)"). Ohne das rutscht ein Feld nach unten. */
-.feld-paar {
+.schaufenster-bild {
+  position: relative;
+  display: block;
+  aspect-ratio: 3 / 2;
+  background: var(--akzent-schleier);
+  color: var(--akzent);
   display: grid;
-  gap: 1rem;
-  grid-template-columns: 1fr 1fr;
-  align-items: end;
+  place-items: center;
 }
-@media (max-width: 520px) { .feld-paar { grid-template-columns: 1fr; } }
-.freiwillig { color: var(--text-schwach); font-weight: 400; }
-.zustimmung {
-  grid-template-columns: auto 1fr;
+.schaufenster-bild svg { width: 78%; height: auto; }
+.schaufenster-bild::after {
+  content: attr(data-nummer);
+  position: absolute;
+  top: var(--a3); left: var(--a4);
+  font-family: var(--schrift-display);
+  font-size: var(--gr-s);
+  color: var(--akzent);
+  opacity: 0.6;
+  font-variant-numeric: tabular-nums;
+}
+.schaufenster-inhalt { display: block; padding: var(--a5); }
+.schaufenster-inhalt h3 { margin: 0 0 var(--a2); font-size: var(--gr-xl); }
+.schaufenster-inhalt p { margin: 0; color: var(--text-ruhig); font-size: var(--gr-s); }
+.schaufenster-mehr {
+  display: inline-flex; align-items: center; gap: var(--a2);
+  margin-top: var(--a4);
+  font-size: var(--gr-s); font-weight: 600; color: var(--akzent);
+}
+.schaufenster-fuss { margin-top: var(--a4); color: var(--text-ruhig); font-size: var(--gr-s); }
+
+/* ========================================================================
+   Lebenslagen, Über-Anriss, Region, Stimmen
+   ======================================================================== */
+
+.lagen { padding-block: var(--abschnitt); }
+.lagen-raster {
+  display: grid; gap: 1px;
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  list-style: none; margin: 0; padding: 0;
+  background: var(--linie);
+  border: 1px solid var(--linie);
+  border-radius: var(--radius-l);
+  overflow: hidden;
+}
+.lagen-raster li { background: var(--grund); padding: var(--a6) var(--a5); }
+.lagen-raster h3 { font-size: var(--gr-xl); color: var(--akzent-tief); }
+.lagen-raster p { margin: 0; color: var(--text-ruhig); font-size: var(--gr-s); }
+.lagen-fuss { margin-top: var(--a5); font-size: var(--gr-s); color: var(--text-ruhig); }
+
+.kurz-ueber { padding-block: var(--abschnitt); background: var(--grund-ruhig); }
+.kurz-ueber-raster {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: clamp(var(--a6), 5vw, var(--a8));
   align-items: start;
-  gap: 0.65rem;
-  font-size: 0.84rem;
-  line-height: 1.5;
-  font-weight: 400;
+}
+.kurz-ueber-text p { color: var(--text-ruhig); }
+.kurz-ueber-text .knopf { margin-top: var(--a3); }
+
+.qualifikations-liste { list-style: none; margin: 0; padding: 0; }
+.qualifikations-liste li {
+  padding: var(--a4) 0;
+  border-bottom: 1px solid var(--linie);
+}
+.qualifikations-liste li:first-child { padding-top: 0; }
+.qualifikations-liste strong { display: block; font-size: var(--gr-m); }
+.qualifikations-liste span { display: block; font-size: var(--gr-s); color: var(--text-ruhig); margin-top: var(--a1); }
+
+.region-kurz { padding-block: var(--abschnitt); }
+.ort-wolke { display: flex; flex-wrap: wrap; gap: var(--a2); align-items: center; }
+.ort-wolke span {
+  padding: 0.4rem 0.9rem;
+  background: var(--grund-rein);
+  border: 1px solid var(--linie);
+  border-radius: var(--radius-rund);
+  font-size: var(--gr-s);
+  color: var(--text-ruhig);
+}
+.ort-mehr { font-size: var(--gr-s); font-weight: 600; margin-left: var(--a2); }
+
+.stimmen { padding-block: var(--abschnitt); background: var(--grund-ruhig); }
+.stimmen-liste {
+  display: grid; gap: var(--a5);
+  grid-template-columns: repeat(auto-fit, minmax(19rem, 1fr));
+  list-style: none; margin: 0; padding: 0;
+}
+.stimmen-liste blockquote {
+  margin: 0; height: 100%;
+  background: var(--grund-rein);
+  border: 1px solid var(--linie);
+  border-left: 3px solid var(--akzent);
+  border-radius: var(--radius-m);
+  padding: var(--a5) var(--a6);
+}
+.stimmen-liste p { color: var(--text-ruhig); font-size: var(--gr-s); }
+.stimmen-liste footer {
+  margin-top: var(--a4);
+  font-size: var(--gr-xs); font-weight: 600;
+  letter-spacing: 0.06em; color: var(--text-leise);
+}
+.stimmen-hinweis { margin-top: var(--a5); font-size: var(--gr-s); }
+
+/* ========================================================================
+   Handlungsaufruf
+   ======================================================================== */
+
+.aufruf { padding-block: var(--abschnitt); }
+.aufruf-ruhig { background: var(--grund-ruhig); }
+.aufruf-dunkel { background: var(--dunkel); }
+.aufruf-dunkel h2 { color: var(--text-auf-dunkel); }
+.aufruf-dunkel .ueberzeile { color: var(--akzent-hell); }
+.aufruf-dunkel .aufruf-text { color: var(--text-auf-dunkel-ruhig); }
+.aufruf-dunkel .knopf-voll { background: var(--akzent-hell); color: var(--dunkel-tief); }
+.aufruf-dunkel .knopf-voll:hover { background: #a3b68a; color: var(--dunkel-tief); }
+.aufruf-innen { text-align: center; display: flex; flex-direction: column; align-items: center; }
+.aufruf-innen h2 { max-width: 20ch; }
+.aufruf-text { max-width: 48ch; color: var(--text-ruhig); margin-bottom: var(--a5); }
+
+/* ========================================================================
+   Leistungen
+   ======================================================================== */
+
+.leistungs-raster {
+  display: grid; gap: var(--a5);
+  grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr));
+  list-style: none; margin: 0; padding: 0;
+}
+.leistungs-raster > li > a,
+.leistungs-raster > li > div > a { display: block; height: 100%; }
+.leistungs-raster a {
+  display: flex; flex-direction: column;
+  height: 100%;
+  padding: var(--a6) var(--a5);
+  background: var(--grund-rein);
+  border: 1px solid var(--linie);
+  border-radius: var(--radius-l);
+  text-decoration: none; color: inherit;
+  transition: border-color var(--dauer-kurz) var(--kurve),
+              box-shadow var(--dauer-kurz) var(--kurve);
+}
+.leistungs-raster a:hover { border-color: var(--akzent); box-shadow: var(--schatten-ruhig); }
+.leistungs-raster h3 { margin-bottom: var(--a2); }
+.leistungs-raster p { color: var(--text-ruhig); font-size: var(--gr-s); margin-bottom: 0; }
+.leistungs-kurz { color: var(--akzent) !important; font-weight: 600; margin-bottom: var(--a3) !important; }
+.leistungs-raster .mehr-zeichen { margin-top: auto; padding-top: var(--a4); }
+.leistungs-raster-schlank a { padding: var(--a5); }
+.leistungs-raster-schlank h3 { font-size: var(--gr-xl); }
+
+.leistung-raster {
+  display: grid;
+  grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr);
+  gap: clamp(var(--a6), 5vw, var(--a8));
+  align-items: start;
+}
+.leistung-text h2 { font-size: var(--gr-xl); margin-top: var(--a6); }
+.leistung-text h2:first-child { margin-top: 0; }
+.leistung-text > p { color: var(--text-ruhig); max-width: var(--breite-text); }
+.rand-karte {
+  background: var(--grund-ruhig);
+  border: 1px solid var(--linie);
+  border-radius: var(--radius-l);
+  padding: var(--a6) var(--a5);
+  position: sticky;
+  top: calc(var(--kopfzeile-hoehe) + var(--a5));
+}
+.rand-karte h2 { font-size: var(--gr-l); margin-bottom: var(--a2); }
+.rand-karte > p { color: var(--akzent); font-weight: 600; font-size: var(--gr-s); }
+.rand-karte dl { margin: var(--a5) 0 0; border-top: 1px solid var(--linie); }
+.rand-karte dl > div { display: flex; justify-content: space-between; gap: var(--a3); padding: var(--a3) 0; border-bottom: 1px solid var(--linie); }
+.rand-karte dt { font-size: var(--gr-xs); color: var(--text-leise); }
+.rand-karte dd { margin: 0; font-size: var(--gr-s); font-weight: 600; text-align: right; }
+
+@media (max-width: 900px) {
+  .leistung-raster, .kurz-ueber-raster { grid-template-columns: 1fr; }
+  .rand-karte { position: static; }
+}
+
+/* ========================================================================
+   Über mich, Region
+   ======================================================================== */
+
+.person-raster {
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  gap: clamp(var(--a6), 5vw, var(--a8));
+  align-items: start;
+}
+.person-bild { margin: 0; position: relative; }
+.person-text h2 { font-size: var(--gr-xl); }
+.person-text p { color: var(--text-ruhig); }
+@media (max-width: 900px) {
+  .person-raster { grid-template-columns: 1fr; }
+  .person-bild { max-width: 17rem; }
+}
+
+.qualifikations-raster {
+  display: grid; gap: var(--a5);
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  list-style: none; margin: 0; padding: 0;
+}
+.qualifikations-raster li {
+  background: var(--grund-rein);
+  border: 1px solid var(--linie);
+  border-radius: var(--radius-l);
+  padding: var(--a5);
+}
+.qualifikations-raster h3 { font-size: var(--gr-l); }
+.qualifikations-raster p { margin: 0; color: var(--text-ruhig); font-size: var(--gr-s); }
+
+.gebiet-raster { display: grid; gap: var(--a6); grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr)); }
+.gebiet-block h2 { font-size: var(--gr-xl); }
+.ort-liste { display: flex; flex-wrap: wrap; gap: var(--a2); list-style: none; margin: 0; padding: 0; }
+.ort-liste li {
+  padding: 0.4rem 0.9rem;
+  background: var(--grund-rein);
+  border: 1px solid var(--linie);
+  border-radius: var(--radius-rund);
+  font-size: var(--gr-s);
+  color: var(--text-ruhig);
+}
+.gebiet-text { margin-top: var(--a7); max-width: var(--breite-text); }
+.gebiet-text p { color: var(--text-ruhig); }
+
+/* ========================================================================
+   Kontakt
+   ======================================================================== */
+
+.kontakt-raster {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: clamp(var(--a6), 5vw, var(--a8));
+  align-items: start;
+}
+@media (max-width: 900px) { .kontakt-raster { grid-template-columns: 1fr; } }
+
+.anruf-feld {
+  display: inline-flex; align-items: center; gap: var(--a3);
+  padding: var(--a3) var(--a5) var(--a3) var(--a4);
+  background: var(--akzent-schleier);
+  border-radius: var(--radius-rund);
+  text-decoration: none;
+  color: var(--akzent-tief);
+  font-family: var(--schrift-display);
+  font-size: 1.4rem;
+  transition: background var(--dauer-kurz) var(--kurve);
+}
+.anruf-feld:hover { background: #dfe6d0; }
+.anruf-feld > span { display: flex; flex-direction: column; line-height: 1.25; }
+.anruf-feld small {
+  font-family: var(--schrift-text);
+  font-size: 0.64rem; font-weight: 600;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--text-ruhig);
+}
+
+.angaben-liste { margin: var(--a6) 0 0; }
+.angaben-liste > div { padding: var(--a4) 0; border-top: 1px solid var(--linie); }
+.angaben-liste dt {
+  font-size: var(--gr-xs); font-weight: 600;
+  letter-spacing: 0.13em; text-transform: uppercase;
+  color: var(--text-leise); margin-bottom: var(--a1);
+}
+.angaben-liste dd { margin: 0; color: var(--text-ruhig); }
+.angaben-liste address { font-style: normal; }
+.kontakt-hinweis { margin-top: var(--a5); font-size: var(--gr-s); color: var(--text-ruhig); }
+
+.formular {
+  display: grid; gap: var(--a4);
+  background: var(--grund-rein);
+  border: 1px solid var(--linie);
+  border-radius: var(--radius-l);
+  padding: clamp(var(--a5), 3vw, var(--a6));
+}
+.formular label { display: grid; gap: var(--a2); font-size: var(--gr-s); font-weight: 600; color: var(--text-ruhig); }
+.formular input, .formular select, .formular textarea {
+  width: 100%;
+  padding: 0.72rem 0.85rem;
+  background: var(--grund);
+  border: 1px solid var(--linie-kraeftig);
+  border-radius: var(--radius-m);
+  color: var(--text);
+  font: inherit; font-weight: 400; font-size: var(--gr-m);
+}
+.formular textarea { resize: vertical; min-height: 8rem; }
+.formular :is(input, select, textarea):focus {
+  border-color: var(--akzent); outline: none; background: var(--grund-rein);
+}
+.feld-paar { display: grid; gap: var(--a4); grid-template-columns: 1fr 1fr; align-items: end; }
+@media (max-width: 540px) { .feld-paar { grid-template-columns: 1fr; } }
+.freiwillig { color: var(--text-leise); font-weight: 400; }
+.zustimmung {
+  grid-template-columns: auto 1fr; align-items: start;
+  gap: var(--a3); font-weight: 400; font-size: var(--gr-s); line-height: 1.5;
 }
 .zustimmung input { width: auto; margin-top: 0.2rem; }
 .honigtopf { position: absolute; left: -9999px; }
-.formular-meldung { margin: 0; font-size: 0.92rem; font-weight: 600; }
-.formular-meldung.ist-gut { color: var(--gruen-tief); }
-.formular-meldung.ist-schlecht { color: #a8322a; }
-.formular-hinweis { font-size: 0.8rem; margin: 0; }
+.formular-fehler { margin: 0; font-size: var(--gr-s); color: #9c3324; font-weight: 600; }
+.formular-fussnote { margin: 0; font-size: var(--gr-xs); }
 
-/* Rechtstexte ------------------------------------------------------------ */
-
-.rechtstext h2 { font-size: 1.25rem; margin-top: 2.2rem; }
-.rechtstext p { color: var(--text-gedaempft); }
-
-/* Fußzeile --------------------------------------------------------------- */
-
-.fusszeile {
-  border-top: 3px solid var(--gruen-kraeftig);
-  padding: 3.5rem var(--rand) 2.2rem;
-  background: var(--gruen-schleier);
+.formular-erfolg {
+  background: var(--akzent-schleier);
+  border: 1px solid var(--akzent-hell);
+  border-radius: var(--radius-l);
+  padding: clamp(var(--a6), 4vw, var(--a7));
 }
-.fusszeile-oben {
-  max-width: var(--breite);
-  margin-inline: auto;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  gap: 2rem;
+.formular-erfolg h2 { font-size: var(--gr-titel-s); }
+.formular-erfolg p { color: var(--text-ruhig); }
+
+.nicht-gefunden { padding-block: var(--a8); }
+
+/* ========================================================================
+   Fußzeile
+   ======================================================================== */
+
+.fusszeile { background: var(--dunkel-tief); color: var(--text-auf-dunkel-ruhig); padding-block: var(--a8) var(--a5); }
+.fusszeile-raster {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr 1.2fr;
+  gap: var(--a6);
 }
-.fusszeile .marke-text { display: flex; flex-direction: column; margin: 0; }
-.fusszeile-satz { color: var(--text-gedaempft); font-size: 0.92rem; max-width: 27rem; margin-top: 0.7rem; }
-.fusszeile-telefon {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  text-decoration: none;
-  font-family: var(--schrift-titel);
-  font-size: 1.2rem;
-  color: var(--gruen-tief);
+@media (max-width: 960px) { .fusszeile-raster { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 560px) { .fusszeile-raster { grid-template-columns: 1fr; } }
+
+.fusszeile .marke { color: var(--text-auf-dunkel); }
+.fusszeile .signet { color: var(--akzent-hell); }
+.fusszeile .marke-text span { color: var(--akzent-hell); }
+.fusszeile-marke p { margin-top: var(--a4); font-size: var(--gr-s); max-width: 26rem; }
+.fusszeile h2 {
+  font-family: var(--schrift-text);
+  font-size: var(--gr-xs); font-weight: 600;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--text-auf-dunkel); margin-bottom: var(--a4);
 }
-.fusszeile-telefon:hover { text-decoration: underline; }
-.fusszeile nav { display: flex; flex-direction: column; gap: 0.55rem; }
-.fusszeile nav a { text-decoration: none; color: var(--text-gedaempft); font-size: 0.92rem; }
-.fusszeile nav a:hover { color: var(--gruen-tief); }
+.fusszeile ul { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--a2); }
+.fusszeile a { color: var(--text-auf-dunkel-ruhig); text-decoration: none; font-size: var(--gr-s); }
+.fusszeile a:hover { color: var(--akzent-hell); }
+.fusszeile address { font-style: normal; font-size: var(--gr-s); margin-bottom: var(--a4); }
+.fusszeile-anruf {
+  display: inline-flex; align-items: center; gap: var(--a2);
+  font-family: var(--schrift-display); font-size: 1.2rem;
+  color: var(--akzent-hell) !important; margin-bottom: var(--a4);
+}
+.fusszeile .knopf-linie { background: none; border-color: var(--linie-dunkel); color: var(--text-auf-dunkel); }
+.fusszeile .knopf-linie:hover { border-color: var(--akzent-hell); color: var(--akzent-hell); }
+
 .fusszeile-unten {
-  max-width: var(--breite);
-  margin: 2.6rem auto 0;
-  padding-top: 1.4rem;
-  border-top: 1px solid var(--linie-stark);
-  font-size: 0.83rem;
-  color: var(--text-schwach);
+  margin-top: var(--a8);
+  padding-top: var(--a5);
+  border-top: 1px solid var(--linie-dunkel);
+  display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--a4);
+  font-size: var(--gr-xs);
 }
+.fusszeile-unten p { margin: 0; }
+.fusszeile-unten nav { display: flex; flex-wrap: wrap; gap: var(--a5); }
