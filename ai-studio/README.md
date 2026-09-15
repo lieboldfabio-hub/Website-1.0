@@ -185,6 +185,27 @@ Das Frontend fragt den Job-Status per Polling ab (`GET /api/jobs/:id`, alle
 1,3 s) und zeigt Fortschritt, Status-Text und – bei Fehlern – die
 Fehlermeldung des Anbieters an.
 
+### 5.1 Ein einzelnes Bild ohne Server
+
+Für ein schnelles Bild zwischendurch lohnt es sich nicht, den Server zu
+starten und die Oberfläche zu öffnen. Dafür gibt es
+`werkzeuge/bild-erzeugen.js`:
+
+```bash
+node werkzeuge/bild-erzeugen.js "Werkstatt eines Elektrikers, Morgenlicht" \
+    --seite 16:9 --ziel beispiele/halbritter-haustechnik/assets/img/held.png
+```
+
+Das Skript ruft denselben `openaiImageProvider` auf wie das Studio – ein
+Modellwechsel oder Fix dort wirkt also mit. Den Schlüssel nimmt es aus der
+Umgebung oder direkt aus `server/.env`; `npm install` ist nicht nötig, weil
+der Provider nur `fetch` aus Node 18+ braucht.
+
+Was dabei **nicht** passiert: keine Branchen-Vorlage aus dem `promptBuilder`
+(der Prompt geht wörtlich an die API), kein Eintrag in der Medienverwaltung,
+kein Tageslimit aus `MAX_DAILY_GENERATIONS`. Für Bilderserien und alles, was
+in der Mediathek auftauchen soll, bleibt das Studio der richtige Weg.
+
 ---
 
 ## 6. Wie die Videogenerierung funktioniert
